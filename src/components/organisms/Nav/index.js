@@ -1,26 +1,27 @@
 import styles from './styles.module.scss';
 import { Facebook, Instagram, Logo, Youtube } from '@/components/atoms/Icons';
 import Link from 'next/link';
+import { Fetch } from '@/utils/fetch-query';
 
-const socials = [
-  {
-    name: 'Facebook',
-    url: 'https://www.facebook.com/zrobmimamo',
-    icon: <Facebook />
-  },
-  {
-    name: 'Instagram',
-    url: 'https://www.instagram.com/zrobmimamo',
-    icon: <Instagram />
-  },
-  {
-    name: 'YouTube',
-    url: 'https://www.youtube.com/@zrobmimamo2473',
-    icon: <Youtube />
-  },
-]
-
-const Nav = () => {
+const Nav = async () => {
+  const { data: { global } } = await getData();
+  const socials = [
+    {
+      name: 'Facebook',
+      url: global.facebook,
+      icon: <Facebook />
+    },
+    {
+      name: 'Instagram',
+      url: global.instagram,
+      icon: <Instagram />
+    },
+    {
+      name: 'YouTube',
+      url: global.youtube,
+      icon: <Youtube />
+    },
+  ]
   return (
     <nav className={styles.wrapper}>
       <div className="max-width">
@@ -39,6 +40,19 @@ const Nav = () => {
       </div>
     </nav>
   );
+}
+
+const getData = async () => {
+  const { body: { data } } = await Fetch({
+    query: `
+      global: Global(id: "global") {
+        facebook
+        instagram
+        youtube
+      }
+    `,
+  })
+  return { data };
 }
  
 export default Nav;

@@ -1,26 +1,36 @@
 import { Fetch } from "@/utils/fetch-query"
+import Heading from "@/utils/Heading";
+import Markdown from "@/utils/Markdown";
 
 export const runtime = 'edge'
 
 export default async function Home() {
-  // const {  } = await getData()
+  const { data: { homepage: {
+    hero_Heading,
+    hero_Paragraph,
+  }}} = await getData();
   return (
     <main>
-
+      <Heading level='h1'>{hero_Heading}</Heading>
+      <Markdown className='paragraph'>{hero_Paragraph}</Markdown>
     </main>
   )
 }
 
 
-async function getData() {
+const getData = async () => {
   const { body: { data } } = await Fetch({
     query: `
-      query Page {
-
+      homepage: Homepage(id: "homepage") {
+        hero_Heading
+        hero_Paragraph
+        hero_Cta {
+          theme
+          text
+          href
+        }
       }
     `,
-    revalidate: 600
   })
-
-  return { }
+  return { data };
 }

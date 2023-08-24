@@ -11,6 +11,9 @@
       display: flex;
       align-items: center;
       gap: clamp(16px, calc(24vw/7.68), 40px);
+      a {
+        display: block;
+      }
     }
   }
 }

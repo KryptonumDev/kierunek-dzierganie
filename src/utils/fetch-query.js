@@ -2,8 +2,9 @@ export async function Fetch({
   headers,
   query,
   variables,
-  revalidate
+  revalidate=600
 }) {
+  query = `query { ${query} }`
   try {
     const result = await fetch(process.env.GRAPHQL_ENDPOINT, {
       method: 'POST',

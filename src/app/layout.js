@@ -2,6 +2,7 @@ import './globals.scss'
 import localFont from 'next/font/local'
 import Nav from '@/components/organisms/Nav'
 import Footer from '@/components/organisms/Footer'
+import GlobalScript from './global'
  
 const Lato = localFont({
   src: [
@@ -32,6 +33,7 @@ export default function RootLayout({ children }) {
         <Nav />
         {children}
         <Footer />
+        <GlobalScript />
       </body>
     </html>
   )
