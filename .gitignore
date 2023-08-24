@@ -33,3 +33,18 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+node_modules/
+.cache/
+public
+.DS_Store
+Thumbs.db
+.env*
+
+# lock files
+yarn.lock
+package-lock.json
+!/yarn.lock
+
+# IDE specific
+.vscode/
