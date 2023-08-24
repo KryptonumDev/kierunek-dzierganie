@@ -3,7 +3,7 @@ import { Fetch } from "@/utils/fetch-query"
 export const runtime = 'edge'
 
 export default async function Home() {
-  const {  } = await getData()
+  // const {  } = await getData()
   return (
     <main>
 
@@ -15,11 +15,12 @@ export default async function Home() {
 async function getData() {
   const { body: { data } } = await Fetch({
     query: `
-    query Page {
-    }
-  `,
+      query Page {
+
+      }
+    `,
     revalidate: 600
   })
 
-  return {}
+  return { }
 }

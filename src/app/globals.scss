@@ -1,0 +1,151 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --primary-100: #FDFBF8;
+  --primary-200: #FAF4F0;
+  --primary-300: #EFE8E7;
+  --primary-400: #E5D8D4;
+  --primary-500: #B4A29C;
+  --primary-600: #9A827A;
+  --primary-700: #766965;
+  --primary-800: #53423C;
+  --primary-900: #332621;
+
+  --success-100: #EDFAF8;
+  --success-200: #C8F1EA;
+  --success-300: #88E0D1;
+  --success-400: #71DAC8;
+  --success-500: #4ED1BA;
+  --success-600: #47BEA9;
+  --success-700: #379484;
+  --success-800: #2B7366;
+  --success-900: #21584E;
+
+  --error-100: #FBF1F1;
+  --error-200: #EDBDBD;
+  --error-300: #E49F9F;
+  --error-400: #DF8D8D;
+  --error-500: #D77070;
+  --error-600: #C46666;
+  --error-700: #995050;
+  --error-800: #763E3E;
+  --error-900: #5A2F2F;
+
+  --pageMargin: clamp(16px, calc(40vw/7.68), 40px);
+}
+
+body.scrollLock {
+  overflow: hidden;
+  touch-action: none;
+}
+
+body {
+  min-width: 320px;
+  font-size: 16px;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+  font-family: 'Erode', serif;
+  background-color: var(--primary-300);
+  color: var(--primary-500);
+  // font-size: clamp(16, 18, 18);
+}
+
+:focus {
+  outline: none;
+}
+
+.tabbing :focus-visible {
+  outline: 1px solid var(--primary-600);
+  outline-offset: 5px;
+}
+
+main,
+.max-width {
+  max-width: 1280px;
+  width: calc(100% - var(--pageMargin) * 2);
+  margin: 0 auto;
+  height: 100%;
+}
+
+svg {
+  display: block;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+label {
+  display: block;
+}
+
+button {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+sup {
+  font-size: .6em;
+  vertical-align: top;
+}
+
+input,
+textarea,
+button,
+select {
+  font: inherit;
+  color: inherit;
+  background-color: transparent;
+  appearance: none;
+}
+
+summary {
+  cursor: pointer;
+  list-style: none;
+  &::marker,
+  &::-webkit-details-marker {
+    display: none;
+  }
+}
+
+iframe {
+  border: none;
+  display: block;
+}
+
+.cta-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+main {
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: clamp(96px, calc(144vw/7.68), 172px);
+  margin: clamp(96px, calc(144vw/7.68), 172px) auto;
+}
+
+.unorderedList {
+  list-style-type: none;
+  margin-top: 16px;
+  li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px;
+    &:not(:last-child) {
+      margin-bottom: 12px;
+    }
+    svg {
+      height: 1.4em;
+    }
+  }
+}
