@@ -17,9 +17,9 @@ const Hero = ({
     <section className={styles.wrapper}>
       <header>
         <Heading level='h1'>{hero_Heading}</Heading>
-        <Markdown className='paragraph'>{hero_Paragraph}</Markdown>
+        <Markdown className={styles.paragraph}>{hero_Paragraph}</Markdown>
         <Button data={hero_Cta} />
-        <Markdown className='annotation'>{hero_Annotation}</Markdown>
+        <Markdown className={styles.annotation}>{hero_Annotation}</Markdown>
       </header>
       <Img data={hero_Img} />
     </section>

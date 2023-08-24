@@ -1,5 +1,6 @@
 import { Fetch } from "@/utils/fetch-query"
 import Hero from "@/components/sections/homepage-hero";
+import Standout from "@/components/sections/homepage-standout";
 
 export const runtime = 'edge'
 
@@ -10,6 +11,8 @@ export default async function Home() {
     hero_Cta,
     hero_Annotation,
     hero_Img,
+    standout_Heading,
+    standout_Paragraph,
   }}} = await getData();
   
   return (
@@ -20,6 +23,10 @@ export default async function Home() {
         hero_Cta,
         hero_Annotation,
         hero_Img,
+      }} />
+      <Standout data={{
+        standout_Heading,
+        standout_Paragraph,
       }} />
     </main>
   )
@@ -50,6 +57,8 @@ const getData = async () => {
             }
           }
         }
+        standout_Heading
+        standout_Paragraph
       }
     `,
   })
