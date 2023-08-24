@@ -17,4 +17,10 @@
       }
     }
   }
+  @media (max-width: 369px){
+    > div > a svg {
+      width: 150px;
+      height: auto;
+    }
+  }
 }

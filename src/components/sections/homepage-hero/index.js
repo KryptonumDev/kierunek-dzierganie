@@ -1,5 +1,7 @@
+import styles from './styles.module.scss';
 import Button from "@/components/atoms/Button";
 import Heading from "@/utils/Heading";
+import Img from "@/utils/Img";
 import Markdown from "@/utils/Markdown";
 
 const Hero = ({
@@ -7,14 +9,19 @@ const Hero = ({
     hero_Heading,
     hero_Paragraph,
     hero_Cta,
+    hero_Annotation,
     hero_Img
   }
 }) => {
   return (
-    <section>
-      <Heading level='h1'>{hero_Heading}</Heading>
-      <Markdown className='paragraph'>{hero_Paragraph}</Markdown>
-      <Button data={hero_Cta} />
+    <section className={styles.wrapper}>
+      <header>
+        <Heading level='h1'>{hero_Heading}</Heading>
+        <Markdown className='paragraph'>{hero_Paragraph}</Markdown>
+        <Button data={hero_Cta} />
+        <Markdown className='annotation'>{hero_Annotation}</Markdown>
+      </header>
+      <Img data={hero_Img} />
     </section>
   );
 }

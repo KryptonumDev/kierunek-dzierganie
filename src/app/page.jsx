@@ -8,7 +8,8 @@ export default async function Home() {
     hero_Heading,
     hero_Paragraph,
     hero_Cta,
-    hero_Img
+    hero_Annotation,
+    hero_Img,
   }}} = await getData();
   
   return (
@@ -17,7 +18,8 @@ export default async function Home() {
         hero_Heading,
         hero_Paragraph,
         hero_Cta,
-        hero_Img
+        hero_Annotation,
+        hero_Img,
       }} />
     </main>
   )
@@ -35,6 +37,7 @@ const getData = async () => {
           text
           href
         }
+        hero_Annotation
         hero_Img {
           asset {
             altText

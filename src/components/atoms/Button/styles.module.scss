@@ -1,0 +1,33 @@
+.wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  > span {
+    margin-left: -32px;
+  }
+  position: relative;
+  .arrow, span {
+    transition: transform .5s;
+  }
+  .arrow {
+    &:nth-child(1){
+      position: absolute;
+      left: 0;
+      transform: translateX(-100%);
+    }
+  }
+  &:hover {
+    .arrow:first-child {
+      transform: translateX(13px);
+      transition-delay: .2s;
+    }
+    span {
+      transform: translateX(21px);
+      transition-delay: .1s;
+    }
+    .arrow:last-child {
+      transform: translateX(100%);
+    }
+  }
+}
