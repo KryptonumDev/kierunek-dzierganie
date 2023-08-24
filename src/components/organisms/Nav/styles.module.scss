@@ -1,7 +1,9 @@
 .wrapper {
   position: sticky;
+  z-index: 9;
+  box-shadow: 0 0 13px #53423c08;
   top: 0;
-  padding: 36px 0 12px;
+  padding: clamp(16px, calc(32vw/7.68), 36px) 0 12px;
   background-color: var(--primary-100);
   > div {
     display: flex;

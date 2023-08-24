@@ -1,7 +1,7 @@
 .wrapper {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 32px;
+  gap: clamp(36px, calc(64vw/7.68), 64px) 32px;
   > header {
     max-width: 680px;
   }
@@ -17,5 +17,19 @@
   .annotation {
     font-size: 14px;
     margin-top: 8px;
+  }
+  @media (max-width: 899px) {
+    grid-template-columns: 1fr;
+    text-align: center;
+    > header {
+      order: 2;
+      max-width: unset;
+    }
+    .paragraph {
+      max-width: unset;
+    }
+    > img {
+      margin: 0 auto;
+    }
   }
 }
