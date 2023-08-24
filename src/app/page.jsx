@@ -1,6 +1,5 @@
 import { Fetch } from "@/utils/fetch-query"
-import Heading from "@/utils/Heading";
-import Markdown from "@/utils/Markdown";
+import Hero from "@/components/sections/homepage-hero";
 
 export const runtime = 'edge'
 
@@ -8,11 +7,18 @@ export default async function Home() {
   const { data: { homepage: {
     hero_Heading,
     hero_Paragraph,
+    hero_Cta,
+    hero_Img
   }}} = await getData();
+  
   return (
     <main>
-      <Heading level='h1'>{hero_Heading}</Heading>
-      <Markdown className='paragraph'>{hero_Paragraph}</Markdown>
+      <Hero data={{
+        hero_Heading,
+        hero_Paragraph,
+        hero_Cta,
+        hero_Img
+      }} />
     </main>
   )
 }
@@ -28,6 +34,18 @@ const getData = async () => {
           theme
           text
           href
+        }
+        hero_Img {
+          asset {
+            altText
+            url
+            metadata {
+              dimensions {
+                width
+                height
+              }
+            }
+          }
         }
       }
     `,

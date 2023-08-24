@@ -23,13 +23,14 @@ const Lato = localFont({
 const CityStreetwear = localFont({
   src: '../assets/fonts/CityStreetwear-Regular.woff2',
   display: 'swap',
+  variable: '--font-city-streetwear',
   fallback: [ "sans-serif" ]
 })
 
 export default function RootLayout({ children }) {
   return (
     <html lang="pl">
-      <body className={`body ${Lato.className} ${CityStreetwear.className}`}>
+      <body className={`body ${Lato.className} ${CityStreetwear.variable}`}>
         <Nav />
         {children}
         <Footer />

@@ -1,0 +1,10 @@
+.wrapper {
+  background-color: var(--primary-200);
+  padding: 24px 0;
+  > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px 0;
+  }
+}

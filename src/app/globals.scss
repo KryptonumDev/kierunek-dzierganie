@@ -39,12 +39,10 @@
 
   --pageMargin: clamp(16px, calc(40vw/7.68), 40px);
 }
-
 body.scrollLock {
   overflow: hidden;
   touch-action: none;
 }
-
 body {
   min-width: 320px;
   overflow-x: hidden;
@@ -54,16 +52,13 @@ body {
   color: var(--primary-800);
   font-size: clamp(16px, calc(18vw/7.68), 18px);
 }
-
 :focus {
   outline: none;
 }
-
 .tabbing :focus-visible {
   outline: 1px solid var(--primary-900);
   outline-offset: 5px;
 }
-
 main,
 .max-width {
   max-width: 1280px;
@@ -71,31 +66,25 @@ main,
   margin: 0 auto;
   height: 100%;
 }
-
 svg {
   display: block;
 }
-
 a {
   text-decoration: none;
   color: inherit;
 }
-
 label {
   display: block;
 }
-
 button {
   border: none;
   background-color: transparent;
   cursor: pointer;
 }
-
 sup {
   font-size: .6em;
   vertical-align: top;
 }
-
 input,
 textarea,
 button,
@@ -105,7 +94,6 @@ select {
   background-color: transparent;
   appearance: none;
 }
-
 summary {
   cursor: pointer;
   list-style: none;
@@ -114,10 +102,55 @@ summary {
     display: none;
   }
 }
-
 iframe {
   border: none;
   display: block;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 400;
+  strong {
+    font-family: var(--font-city-streetwear);
+    font-weight: inherit;
+  }
+}
+h1 {
+  font-size: clamp(calc(22rem/16), calc(26vw/7.68), calc(36rem/16));
+  strong {
+    font-size: 1.6em;
+    line-height: 1;
+  }
+}
+
+.link {
+  position: relative;
+  &::after {
+    content: '';
+    width: 100%;
+    height: 1px;
+    background-color: var(--primary-800);
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+  }
+  @keyframes link {
+    0%, 100% {
+      transform: scaleX(1);
+    }
+    50% {
+      transform: scaleX(0);
+      transform-origin: right;
+    }
+    0%, 50% {
+      transform-origin: right;
+    }
+    51%, 100% {
+      transform-origin: left;
+    }
+  }
+  &:hover::after {
+    animation: link .8s;
+  }
 }
 
 .cta-wrapper {
