@@ -1,0 +1,24 @@
+.wrapper {
+  max-width: 794px;
+  margin: 0 auto;
+  text-align: center;
+  .paragraph {
+    margin: clamp(20px, calc(24vw/7.68), 28px) 0 clamp(28px, calc(36vw/7.68), 36px);
+    p:not(:last-child){
+      margin-bottom: 8px;
+    }
+  }
+  .ctaAnnotation {
+    font-size: calc(14rem/16);
+    margin-top: 8px;
+  }
+  position: relative;
+  .decoration {
+    position: absolute;
+    width: clamp(68px, calc(92vw/7.68), 120px);
+    height: auto;
+    left: 0;
+    bottom: 0;
+    transform: translate(-50%, 50%);
+  }
+}

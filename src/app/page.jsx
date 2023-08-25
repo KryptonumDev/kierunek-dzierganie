@@ -8,6 +8,7 @@ import Frequency from "@/components/sections/homepage-frequency";
 import Testimonials from "@/components/sections/homepage-testimonials";
 import Showcase from "@/components/sections/homepage-showcase";
 import AboutMe from "@/components/sections/homepage-aboutMe";
+import CtaSection from "@/components/sections/homepage-ctaSection";
 
 // export const runtime = 'edge'
 
@@ -44,6 +45,10 @@ export default async function Home() {
     aboutMe_Heading,
     aboutMe_Paragraph,
     aboutMe_Img,
+    ctaSection_Heading,
+    ctaSection_Paragraph,
+    ctaSection_Cta,
+    ctaSection_CtaAnnotation
   }}} = await getData();
   
   return (
@@ -96,6 +101,12 @@ export default async function Home() {
         aboutMe_Heading,
         aboutMe_Paragraph,
         aboutMe_Img,
+      }} />
+      <CtaSection data={{
+        ctaSection_Heading,
+        ctaSection_Paragraph,
+        ctaSection_Cta,
+        ctaSection_CtaAnnotation
       }} />
     </main>
   )
@@ -228,6 +239,16 @@ const getData = async () => {
             }
           }
         }
+
+        # Cta Section
+        ctaSection_Heading
+        ctaSection_Paragraph
+        ctaSection_Cta {
+          theme
+          text
+          href
+        }
+        ctaSection_CtaAnnotation
       }
     `,
   })
