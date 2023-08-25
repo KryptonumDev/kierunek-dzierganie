@@ -5,16 +5,16 @@ const Img = ({
   data,
   loading='lazy',
   quality=80,
-  className,
+  ...props
 }) => (
   <NextImage
-    loading={loading}
-    quality={quality}
     src={data.asset.url}
     alt={data.asset.altText || ''}
     width={data.asset.metadata.dimensions.width}
     height={data.asset.metadata.dimensions.height}
-    className={className || ''}
+    loading={loading}
+    quality={quality}
+    {...props}
   />
 )
 

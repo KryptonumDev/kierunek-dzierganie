@@ -3,6 +3,7 @@ import Hero from "@/components/sections/homepage-hero";
 import Standout from "@/components/sections/homepage-standout";
 import Info from "@/components/sections/homepage-info";
 import Characteristics from "@/components/sections/homepage-characteristics";
+import Benefits from "@/components/sections/homepage-benefits";
 
 // export const runtime = 'edge'
 
@@ -18,6 +19,11 @@ export default async function Home() {
     info_Heading,
     info_List,
     characteristics_List,
+    benefits_Heading,
+    benefits_List,
+    benefits_Paragraph,
+    benefits_Cta,
+    benefits_CtaAnnotation,
   }}} = await getData();
   
   return (
@@ -39,6 +45,13 @@ export default async function Home() {
       }} />
       <Characteristics data={{
         characteristics_List
+      }} />
+      <Benefits data={{
+        benefits_Heading,
+        benefits_List,
+        benefits_Paragraph,
+        benefits_Cta,
+        benefits_CtaAnnotation,
       }} />
     </main>
   )
@@ -88,6 +101,17 @@ const getData = async () => {
           title
           description
         }
+
+        # Benefits
+        benefits_Heading
+        benefits_List
+        benefits_Paragraph
+        benefits_Cta {
+          theme
+          text
+          href
+        }
+        benefits_CtaAnnotation
       }
     `,
   })

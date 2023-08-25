@@ -21,7 +21,7 @@ const Hero = ({
         <Button data={hero_Cta} />
         <Markdown className={styles.annotation}>{hero_Annotation}</Markdown>
       </header>
-      <Img data={hero_Img} loading='eager' />
+      <Img data={hero_Img} loading='eager' priority />
     </section>
   );
 }
