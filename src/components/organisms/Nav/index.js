@@ -28,7 +28,7 @@ const Nav = async () => {
         <Link href='/' aria-label="Strona główna">
           <Logo />
         </Link>
-        <ul className="socials">
+        <ul>
           {socials.map((social, i) => (
             <li key={i}>
               <a href={social.url} target="_blank" rel='noopener' aria-label={social.name}>

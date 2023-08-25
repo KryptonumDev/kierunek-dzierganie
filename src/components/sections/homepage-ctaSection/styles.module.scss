@@ -20,5 +20,8 @@
     left: 0;
     bottom: 0;
     transform: translate(-50%, 50%);
+    @media (max-width: 499px){
+      transform: translate(0, 100%);
+    }
   }
 }

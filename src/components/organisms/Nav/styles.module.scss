@@ -15,6 +15,11 @@
       align-items: center;
       gap: clamp(16px, calc(24vw/7.68), 40px);
       a {
+        color: var(--primary-600);
+        transition: color .4s;
+        &:hover {
+          color: var(--primary-800);
+        }
         display: block;
       }
     }
