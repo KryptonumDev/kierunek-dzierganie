@@ -9,7 +9,7 @@ const Info = ({
   }
 }) => {
   return (
-    <section className={styles.wrapper}>
+    <section className={`sec-wo-margin ${styles.wrapper}`}>
       <Heading level='h2'>{info_Heading}</Heading>
       <ul className={styles.list}>
         {info_List.map((item, i) => (
