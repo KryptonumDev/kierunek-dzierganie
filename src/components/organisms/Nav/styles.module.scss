@@ -3,7 +3,7 @@
   z-index: 9;
   box-shadow: 0 0 13px #53423c08;
   top: 0;
-  padding: clamp(16px, calc(32vw/7.68), 36px) 0 12px;
+  padding: clamp(16px, calc(32vw/7.68), 32px) 0 12px;
   background-color: var(--primary-100);
   > div {
     display: flex;
@@ -19,9 +19,9 @@
       }
     }
   }
-  @media (max-width: 369px){
+  @media (max-width: 500px){
     > div > a svg {
-      width: 150px;
+      width: clamp(150px, calc(250vw/5.00), 250px);
       height: auto;
     }
   }
