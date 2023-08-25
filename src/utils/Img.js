@@ -14,6 +14,8 @@ const Img = ({
     height={data.asset.metadata.dimensions.height}
     loading={loading}
     quality={quality}
+    blurDataURL={data.asset.metadata.lqip}
+    placeholder="blur"
     {...props}
   />
 )

@@ -4,6 +4,7 @@ import Standout from "@/components/sections/homepage-standout";
 import Info from "@/components/sections/homepage-info";
 import Characteristics from "@/components/sections/homepage-characteristics";
 import Benefits from "@/components/sections/homepage-benefits";
+import Frequency from "@/components/sections/homepage-frequency";
 
 // export const runtime = 'edge'
 
@@ -24,6 +25,9 @@ export default async function Home() {
     benefits_Paragraph,
     benefits_Cta,
     benefits_CtaAnnotation,
+    frequency_Heading,
+    frequency_Paragraph,
+    frequency_Img,
   }}} = await getData();
   
   return (
@@ -53,6 +57,11 @@ export default async function Home() {
         benefits_Cta,
         benefits_CtaAnnotation,
       }} />
+      <Frequency data={{
+        frequency_Heading,
+        frequency_Paragraph,
+        frequency_Img,
+      }} />
     </main>
   )
 }
@@ -77,6 +86,7 @@ const getData = async () => {
             altText
             url
             metadata {
+              lqip
               dimensions {
                 width
                 height
@@ -112,6 +122,23 @@ const getData = async () => {
           href
         }
         benefits_CtaAnnotation
+
+        # Frequency
+        frequency_Heading
+        frequency_Paragraph
+        frequency_Img {
+          asset {
+            altText
+            url
+            metadata {
+              lqip
+              dimensions {
+                width
+                height
+              }
+            }
+          }
+        }
       }
     `,
   })

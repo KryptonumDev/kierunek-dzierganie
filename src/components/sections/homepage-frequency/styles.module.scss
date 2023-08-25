@@ -1,0 +1,26 @@
+.wrapper {
+  display: grid;
+  align-items: center;
+  gap: clamp(36px, calc(64vw/7.68), 64px) 32px;
+  @media (min-width: 900px){
+    grid-template-columns: 1.3fr 1fr;
+    .img {
+      max-width: 380px;
+      margin-left: auto;
+    }
+  }
+  @media (max-width: 899px){
+    .img {
+      order: -1;
+    }
+    text-align: center;
+  }
+  h2 {
+    margin-bottom: clamp(20px, calc(28vw/7.68), 32px);
+  }
+  .paragraph {
+    p:not(:last-child) {
+      margin-bottom: 8px;
+    }
+  }
+}
