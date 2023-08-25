@@ -7,6 +7,7 @@ import Benefits from "@/components/sections/homepage-benefits";
 import Frequency from "@/components/sections/homepage-frequency";
 import Testimonials from "@/components/sections/homepage-testimonials";
 import Showcase from "@/components/sections/homepage-showcase";
+import AboutMe from "@/components/sections/homepage-aboutMe";
 
 // export const runtime = 'edge'
 
@@ -40,6 +41,9 @@ export default async function Home() {
     showcase_Paragraph,
     showcase_Cta,
     showcase_CtaAnnotation,
+    aboutMe_Heading,
+    aboutMe_Paragraph,
+    aboutMe_Img,
   }}} = await getData();
   
   return (
@@ -87,6 +91,11 @@ export default async function Home() {
         showcase_Paragraph,
         showcase_Cta,
         showcase_CtaAnnotation,
+      }} />
+      <AboutMe data={{
+        aboutMe_Heading,
+        aboutMe_Paragraph,
+        aboutMe_Img,
       }} />
     </main>
   )
@@ -202,6 +211,23 @@ const getData = async () => {
           href
         }
         showcase_CtaAnnotation
+
+        # About me
+        aboutMe_Heading
+        aboutMe_Paragraph
+        aboutMe_Img {
+          asset {
+            altText
+            url
+            metadata {
+              lqip
+              dimensions {
+                width
+                height
+              }
+            }
+          }
+        }
       }
     `,
   })
