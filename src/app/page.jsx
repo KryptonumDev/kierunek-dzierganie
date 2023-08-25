@@ -10,10 +10,11 @@ import Showcase from "@/components/sections/homepage-showcase";
 import AboutMe from "@/components/sections/homepage-aboutMe";
 import CtaSection from "@/components/sections/homepage-ctaSection";
 import Faq from "@/components/sections/homepage-faq";
+import Seo from "@/global/Seo";
 
 // export const runtime = 'edge'
 
-export default async function Home() {
+const IndexPage = async () => {
   const { data: { homepage: {
     hero_Heading,
     hero_Paragraph,
@@ -51,9 +52,9 @@ export default async function Home() {
     ctaSection_Heading,
     ctaSection_Paragraph,
     ctaSection_Cta,
-    ctaSection_CtaAnnotation
+    ctaSection_CtaAnnotation,
   }}} = await getData();
-  
+
   return (
     <main>
       <Hero data={{
@@ -119,6 +120,14 @@ export default async function Home() {
   )
 }
 
+
+export async function generateMetadata() {
+  const { data: { homepage: { seo } } } = await getData();
+  return Seo ({
+    title: seo?.title,
+    description: seo?.description
+  })
+}
 
 const getData = async () => {
   const { body: { data } } = await Fetch({
@@ -263,8 +272,16 @@ const getData = async () => {
           href
         }
         ctaSection_CtaAnnotation
+
+        # SEO
+        seo {
+          title
+          description
+        }
       }
     `,
   })
   return { data };
 }
+
+export default IndexPage;
