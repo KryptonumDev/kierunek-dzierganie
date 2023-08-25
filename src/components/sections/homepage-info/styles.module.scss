@@ -16,7 +16,7 @@
     gap: clamp(24px, calc(32vw/7.68), 64px) 32px;
     .title {
       font-family: var(--font-city-streetwear);
-      font-size: clamp(40px, calc(48vw/7.68), 48px);
+      font-size: clamp(calc(40rem/16), calc(48vw/7.68), calc(48rem/16));
     }
     .description {
       em {

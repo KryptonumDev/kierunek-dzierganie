@@ -9,6 +9,7 @@ import Testimonials from "@/components/sections/homepage-testimonials";
 import Showcase from "@/components/sections/homepage-showcase";
 import AboutMe from "@/components/sections/homepage-aboutMe";
 import CtaSection from "@/components/sections/homepage-ctaSection";
+import Faq from "@/components/sections/homepage-faq";
 
 // export const runtime = 'edge'
 
@@ -45,6 +46,8 @@ export default async function Home() {
     aboutMe_Heading,
     aboutMe_Paragraph,
     aboutMe_Img,
+    faq_Heading,
+    faq_List,
     ctaSection_Heading,
     ctaSection_Paragraph,
     ctaSection_Cta,
@@ -101,6 +104,10 @@ export default async function Home() {
         aboutMe_Heading,
         aboutMe_Paragraph,
         aboutMe_Img,
+      }} />
+      <Faq data={{
+        faq_Heading,
+        faq_List,
       }} />
       <CtaSection data={{
         ctaSection_Heading,
@@ -238,6 +245,13 @@ const getData = async () => {
               }
             }
           }
+        }
+
+        # FAQ
+        faq_Heading
+        faq_List {
+          question: title
+          answer: description
         }
 
         # Cta Section

@@ -15,7 +15,7 @@
     }
   }
   .annotation {
-    font-size: 14px;
+    font-size: calc(14rem/16);
     margin-top: 8px;
   }
   @media (max-width: 899px) {
