@@ -12,7 +12,7 @@ import CtaSection from "@/components/sections/homepage-ctaSection";
 import Faq from "@/components/sections/homepage-faq";
 import Seo from "@/global/Seo";
 
-// export const runtime = 'edge'
+export const runtime = 'edge'
 
 const IndexPage = async () => {
   const { data: { homepage: {
