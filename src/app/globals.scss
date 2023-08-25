@@ -138,6 +138,7 @@ h1, h2 {
 
 .link {
   position: relative;
+  font-style: italic;
   &::after {
     content: '';
     width: 100%;
