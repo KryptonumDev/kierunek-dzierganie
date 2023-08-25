@@ -1,0 +1,20 @@
+.wrapper {
+  display: grid;
+  @media (min-width: 900px){
+    grid-template-columns: 1fr 1fr;
+  }
+  padding: clamp(24px, calc(32vw/7.68), 36px) 0;
+  gap: clamp(36px, calc(48vw/7.68), 48px) 32px;
+  .title {
+    margin-bottom: clamp(12px, calc(20vw/7.68), 28px);
+  }
+  position: relative;
+  .decoration {
+    width: clamp(72px, calc(98vw/7.68), 128px);
+    height: auto;
+    position: absolute;
+    right: 5%;
+    top: 0;
+    transform: translateY(-50%);
+  }
+}

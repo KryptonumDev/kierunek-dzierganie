@@ -2,8 +2,9 @@ import { Fetch } from "@/utils/fetch-query"
 import Hero from "@/components/sections/homepage-hero";
 import Standout from "@/components/sections/homepage-standout";
 import Info from "@/components/sections/homepage-info";
+import Characteristics from "@/components/sections/homepage-characteristics";
 
-export const runtime = 'edge'
+// export const runtime = 'edge'
 
 export default async function Home() {
   const { data: { homepage: {
@@ -16,6 +17,7 @@ export default async function Home() {
     standout_Paragraph,
     info_Heading,
     info_List,
+    characteristics_List,
   }}} = await getData();
   
   return (
@@ -34,6 +36,9 @@ export default async function Home() {
       <Info data={{
         info_Heading,
         info_List,
+      }} />
+      <Characteristics data={{
+        characteristics_List
       }} />
     </main>
   )
@@ -74,6 +79,12 @@ const getData = async () => {
         # Info
         info_Heading
         info_List {
+          title
+          description
+        }
+
+        # Characteristics
+        characteristics_List {
           title
           description
         }
