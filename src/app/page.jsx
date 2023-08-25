@@ -5,6 +5,7 @@ import Info from "@/components/sections/homepage-info";
 import Characteristics from "@/components/sections/homepage-characteristics";
 import Benefits from "@/components/sections/homepage-benefits";
 import Frequency from "@/components/sections/homepage-frequency";
+import Testimonials from "@/components/sections/homepage-testimonials";
 
 // export const runtime = 'edge'
 
@@ -28,6 +29,11 @@ export default async function Home() {
     frequency_Heading,
     frequency_Paragraph,
     frequency_Img,
+    testimonials_Title,
+    testimonials_List,
+    testimonials_Paragraph,
+    testimonials_Cta,
+    testimonials_CtaAnnotation,
   }}} = await getData();
   
   return (
@@ -61,6 +67,13 @@ export default async function Home() {
         frequency_Heading,
         frequency_Paragraph,
         frequency_Img,
+      }} />
+      <Testimonials data={{
+        testimonials_Title,
+        testimonials_List,
+        testimonials_Paragraph,
+        testimonials_Cta,
+        testimonials_CtaAnnotation,
       }} />
     </main>
   )
@@ -139,6 +152,20 @@ const getData = async () => {
             }
           }
         }
+
+        # Testimonials
+        testimonials_Title
+        testimonials_List {
+          author: title
+          content: description
+        }
+        testimonials_Paragraph
+        testimonials_Cta {
+          theme
+          text
+          href
+        }
+        testimonials_CtaAnnotation
       }
     `,
   })
