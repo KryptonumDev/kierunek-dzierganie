@@ -52,17 +52,11 @@
   }
   position: relative;
   .decoration {
-    width: clamp(67px, calc(89vw/7.68), 118px);
-    height: auto;
-    transform: translateY(50%);
-    left: 5%;
-
-    @media (max-width: 699px) {
-      left: 0;
-      transform: translateY(calc(100% + 8px));
-    }
-
     position: absolute;
+    width: clamp(76px, calc(96vw/7.68), 134px);
+    height: auto;
+    right: 5%;
     bottom: 0;
+    transform: translateY(100%);
   }
 }

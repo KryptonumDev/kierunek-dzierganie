@@ -29,6 +29,7 @@ const Testimonials = ({
         <Button data={testimonials_Cta} />
         <Markdown className={styles.ctaAnnotation}>{testimonials_CtaAnnotation}</Markdown>
       </div>
+      <Decoration aria-hidden="true" className={styles.decoration} />
     </section>
   );
 };
@@ -59,5 +60,62 @@ const Quote = ({ ...props }) => (
       strokeWidth='2'
       d='M17.247 31.666C25.93 22.712 35.968 7.45 28.312 1.808 26.818.454 22.522.454 21.546 5.827c-1.221 6.715 8.394 5.258 10.454.606'
     ></path>
+  </svg>
+)
+
+const Decoration = ({ ...props }) => (
+  <svg
+    xmlns='http://www.w3.org/2000/svg'
+    width='148'
+    height='115'
+    viewBox='0 0 148 115'
+    fill='none'
+    {...props}
+  >
+    <path
+      stroke='#9A827A'
+      strokeLinecap='round'
+      d='M50.4 63.514c6.376-4.746 16.917-20.037 8.084-43.233M49.675 63.885c4.098-6.646 10.206-23.683 1.852-38.659'
+    ></path>
+    <path
+      stroke='#9A827A'
+      strokeLinecap='round'
+      d='M49.821 63.956c-.027-6.003-1.713-21.056-8.235-33.249M49.9 64.538c-6.395-5.85-19.538-21.5-20.958-37.294M49.824 64.32c5.578 12.59 28.088 39.041 73.512 44.13M16.082 32.386c3.154 10.618 14.29 31.855 33.596 31.863'
+    ></path>
+    <circle
+      cx='15.555'
+      cy='30.495'
+      r='2.771'
+      fill='#9A827A'
+      transform='rotate(-63.931 15.555 30.495)'
+    ></circle>
+    <circle
+      cx='28.552'
+      cy='24.331'
+      r='2.771'
+      fill='#9A827A'
+      transform='rotate(-63.931 28.552 24.331)'
+    ></circle>
+    <circle
+      cx='39.816'
+      cy='28.39'
+      r='2.771'
+      fill='#9A827A'
+      transform='rotate(-63.931 39.816 28.39)'
+    ></circle>
+    <circle
+      cx='50.418'
+      cy='23.413'
+      r='2.771'
+      fill='#9A827A'
+      transform='rotate(-63.931 50.418 23.413)'
+    ></circle>
+    <circle
+      cx='57.814'
+      cy='18.683'
+      r='2.771'
+      fill='#9A827A'
+      transform='rotate(-63.931 57.814 18.683)'
+    ></circle>
   </svg>
 )
