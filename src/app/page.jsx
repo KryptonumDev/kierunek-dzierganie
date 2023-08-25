@@ -6,6 +6,7 @@ import Characteristics from "@/components/sections/homepage-characteristics";
 import Benefits from "@/components/sections/homepage-benefits";
 import Frequency from "@/components/sections/homepage-frequency";
 import Testimonials from "@/components/sections/homepage-testimonials";
+import Showcase from "@/components/sections/homepage-showcase";
 
 // export const runtime = 'edge'
 
@@ -34,6 +35,11 @@ export default async function Home() {
     testimonials_Paragraph,
     testimonials_Cta,
     testimonials_CtaAnnotation,
+    showcase_Heading,
+    showcase_Images,
+    showcase_Paragraph,
+    showcase_Cta,
+    showcase_CtaAnnotation,
   }}} = await getData();
   
   return (
@@ -74,6 +80,13 @@ export default async function Home() {
         testimonials_Paragraph,
         testimonials_Cta,
         testimonials_CtaAnnotation,
+      }} />
+      <Showcase data={{
+        showcase_Heading,
+        showcase_Images,
+        showcase_Paragraph,
+        showcase_Cta,
+        showcase_CtaAnnotation,
       }} />
     </main>
   )
@@ -166,6 +179,29 @@ const getData = async () => {
           href
         }
         testimonials_CtaAnnotation
+
+        # Showcase
+        showcase_Heading
+        showcase_Images {
+          asset {
+            altText
+            url
+            metadata {
+              lqip
+              dimensions {
+                width
+                height
+              }
+            }
+          }
+        }
+        showcase_Paragraph
+        showcase_Cta {
+          theme
+          text
+          href
+        }
+        showcase_CtaAnnotation
       }
     `,
   })

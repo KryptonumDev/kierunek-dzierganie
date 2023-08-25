@@ -1,0 +1,38 @@
+.wrapper {
+  max-width: 910px;
+  margin: 0 auto;
+  .images {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    img {
+      width: calc((100% - clamp(16px, calc(24vw/7.68), 32px) * 2) / 3);
+    }
+    @media (max-width: 749px){
+      img {
+        width: calc((100% - clamp(16px, calc(24vw/7.68), 32px)) / 2);
+      }
+    }
+    gap: clamp(16px, calc(24vw/7.68), 32px);
+    margin: clamp(32px, calc(48vw/7.68), 80px) 0;
+  }
+  h2,
+  .copy {
+    text-align: center;
+  }
+  h2 {
+    max-width: 792px;
+    margin: 0 auto;
+  }
+  .copy {
+    max-width: 588px;
+    margin: 0 auto;
+    .paragraph {
+      margin-bottom: clamp(28px, calc(36vw/7.68), 36px);
+    }
+    .ctaAnnotation {
+      margin-top: 8px;
+      font-size: calc(14rem/16);
+    }
+  }
+}
