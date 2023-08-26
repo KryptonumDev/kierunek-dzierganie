@@ -1,5 +1,6 @@
-export const Logo = () => (
- <svg xmlns='http://www.w3.org/2000/svg' width='284' height='69' viewBox="0 0 284 69" fill='none'>
+export const Logo = ({ ...props }) => (
+ <svg xmlns='http://www.w3.org/2000/svg' width='284' height='69' viewBox="0 0 284 69" fill='none' {...props}>
+   <title>Kierunek Dzierganie</title>
     <path
       stroke='#53423C'
       strokeLinecap='round'

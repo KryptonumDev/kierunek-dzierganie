@@ -4,6 +4,7 @@ import Heading from '@/utils/Heading';
 import Markdown from '@/utils/Markdown';
 import styles from './styles.module.scss';
 import { motion, AnimatePresence } from 'framer-motion';
+import SchemaFaq from '@/global/SchemaFaq';
 
 const Faq = ({
   data: {
@@ -43,6 +44,7 @@ const Faq = ({
           </details>
         ))}
       </div>
+      <SchemaFaq data={faq_List} />
     </section>
   );
 };

@@ -26,7 +26,7 @@ const Nav = async () => {
     <nav className={styles.wrapper}>
       <div className="max-width">
         <Link href='/' aria-label="Strona główna">
-          <Logo />
+          <Logo role="img" />
         </Link>
         <ul>
           {socials.map((social, i) => (
