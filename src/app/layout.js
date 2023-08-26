@@ -3,6 +3,7 @@ import localFont from 'next/font/local'
 import Nav from '@/components/organisms/Nav'
 import Footer from '@/components/organisms/Footer'
 import GlobalScript from './global'
+import Script from 'next/script'
  
 const Lato = localFont({
   src: [
@@ -35,6 +36,16 @@ export default function RootLayout({ children }) {
         {children}
         <Footer />
         <GlobalScript />
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-F5CD13WL6R" />
+        <Script id="google-analytics">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-F5CD13WL6R');
+          `}
+        </Script>
       </body>
     </html>
   )
