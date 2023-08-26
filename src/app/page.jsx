@@ -25,7 +25,7 @@ const IndexPage = async () => {
     standout_Paragraph,
     info_Heading,
     info_List,
-    characteristics_List,
+    // characteristics_List,
     benefits_Heading,
     benefits_List,
     benefits_Paragraph,
@@ -72,9 +72,9 @@ const IndexPage = async () => {
         info_Heading,
         info_List,
       }} />
-      <Characteristics data={{
+      {/* <Characteristics data={{
         characteristics_List
-      }} />
+      }} /> */}
       <Benefits data={{
         benefits_Heading,
         benefits_List,
@@ -169,10 +169,10 @@ const getData = async () => {
         }
 
         # Characteristics
-        characteristics_List {
-          title
-          description
-        }
+        # characteristics_List {
+        #   title
+        #   description
+        # }
 
         # Benefits
         benefits_Heading
