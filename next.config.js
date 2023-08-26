@@ -5,6 +5,7 @@ const nextConfig = {
     appDir: true,
     serverActions: true,
   },
+  productionBrowserSourceMaps: true,
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
   },
