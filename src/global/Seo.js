@@ -1,6 +1,6 @@
 import { Fetch } from "@/utils/fetch-query";
 
-const domain = 'https://kierunekdzierganie.pl';
+export const domain = 'https://kierunekdzierganie.pl';
 const locale = "pl_PL";
 
 const Seo = async ({ title, description, url }) => {
@@ -36,9 +36,6 @@ const Seo = async ({ title, description, url }) => {
       type: 'website',
     },
     themeColor: '#FDFBF8',
-    robots: {
-      index: false,
-    }
   }
 
   return metadata;
