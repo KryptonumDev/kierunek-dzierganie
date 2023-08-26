@@ -9,7 +9,7 @@ const Seo = async ({ title, description, url }) => {
   const seo = {
     title: title || 'Kierunek Dzierganie',
     description: description || '',
-    url: url || '',
+    url: `${domain}${url}` || '',
     ogImage: global.seo.og_Img.asset.url
   }
 

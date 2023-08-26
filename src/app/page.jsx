@@ -125,7 +125,8 @@ export async function generateMetadata() {
   const { data: { homepage: { seo } } } = await getData();
   return Seo ({
     title: seo?.title,
-    description: seo?.description
+    description: seo?.description,
+    url: '/'
   })
 }
 
