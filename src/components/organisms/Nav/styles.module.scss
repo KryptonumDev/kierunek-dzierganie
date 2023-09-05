@@ -24,10 +24,4 @@
       }
     }
   }
-  @media (max-width: 500px){
-    > div > a svg {
-      width: clamp(150px, calc(250vw/5.00), 250px);
-      height: auto;
-    }
-  }
 }
