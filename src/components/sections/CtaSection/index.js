@@ -22,10 +22,12 @@ const CtaSection = ({
         <Markdown.h2>{heading}</Markdown.h2>
         <Markdown className={styles.paragraph}>{paragraph}</Markdown>
         {cta.href && (
-          <Button data={cta} className={styles.cta} />
-        )}
-        {cta_Annotation && (
-          <Markdown className={styles.ctaAnnotation}>{cta_Annotation}</Markdown>
+          <>
+            <Button data={cta} className={styles.cta} />
+            {cta_Annotation && (
+              <Markdown className={styles.ctaAnnotation}>{cta_Annotation}</Markdown>
+            )}
+          </>
         )}
       </header>
       <Img data={img} className={styles.img} />
