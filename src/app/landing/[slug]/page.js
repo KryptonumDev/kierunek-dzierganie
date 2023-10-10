@@ -4,6 +4,7 @@ import Seo from "@/global/Seo";
 import Faq from "@/components/sections/Faq";
 import Opinions from "@/components/sections/Opinions";
 import TileList from "@/components/sections/TileList";
+import CtaSection from "@/components/sections/CtaSection";
 
 const LandingPage = async ({ params }) => {
   const {
@@ -19,6 +20,8 @@ const LandingPage = async ({ params }) => {
             return <Opinions key={i} data={component} />
           case 'TileList':
             return <TileList key={i} data={component} />
+          case 'CtaSection':
+            return <CtaSection key={i} data={component} />
           default:
             break;
         }
@@ -97,6 +100,30 @@ const getData = async (slug) => {
               href
             }
             cta_Annotation
+          }
+          ... on CtaSection {
+            _type
+            heading
+            paragraph
+            cta {
+              theme
+              text
+              href
+            }
+            cta_Annotation
+            img {
+              asset {
+                altText
+                url
+                metadata {
+                  lqip
+                  dimensions {
+                    width
+                    height
+                  }
+                }
+              }
+            }
           }
         }
 

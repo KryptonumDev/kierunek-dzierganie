@@ -1,0 +1,38 @@
+.wrapper {
+  display: grid;
+  align-items: center;
+  @media (min-width: 1000px){
+    grid-template-columns: 1fr auto;
+  }
+  gap: clamp(24px, calc(48vw/7.68), 48px) clamp(64px, calc(82vw/7.68), 142px);
+  header {
+    h2 {
+      margin-bottom: clamp(16px, calc(20vw/7.68), 28px);
+    }
+    .paragraph {
+      p:not(:last-child){
+        margin-bottom: 8px;
+      }
+    }
+  }
+  .img {
+    margin: auto;
+    width: 100%;
+    max-width: 380px;
+  }
+  @media (max-width: 999px){
+    .img {
+      order: -1;
+      max-width: 450px;
+    }
+  }
+  position: relative;
+  .decoration {
+    position: absolute;
+    width: clamp(76px, calc(92vw/7.68), 122px);
+    height: auto;
+    right: 0;
+    bottom: 0;
+    transform: translate(0, 100%);
+  }
+}

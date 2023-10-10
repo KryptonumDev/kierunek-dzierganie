@@ -7,7 +7,7 @@ import Benefits from "@/components/sections/TileList";
 import Frequency from "@/components/sections/homepage-frequency";
 import Testimonials from "@/components/sections/Opinions";
 import Showcase from "@/components/sections/homepage-showcase";
-import AboutMe from "@/components/sections/homepage-aboutMe";
+import AboutMe from "@/components/sections/CtaSection";
 import CtaSection from "@/components/sections/homepage-ctaSection";
 import Faq from "@/components/sections/Faq";
 import Seo from "@/global/Seo";
