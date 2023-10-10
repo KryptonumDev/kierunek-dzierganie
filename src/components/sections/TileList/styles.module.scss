@@ -11,6 +11,10 @@
       border-radius: 6px;
       background-color: var(--primary-200);
       padding: clamp(16px, calc(24vw/7.68), 32px);
+      h3 {
+        font-size: clamp(calc(18rem/16), calc(24vw/7.68), calc(24rem/16));
+        margin-bottom: clamp(8px, calc(12vw/7.68), 12px);
+      }
     }
   }
   h2,

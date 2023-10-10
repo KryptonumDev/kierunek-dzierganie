@@ -3,7 +3,7 @@ import Hero from "@/components/sections/homepage-hero";
 import Standout from "@/components/sections/homepage-standout";
 import Info from "@/components/sections/homepage-info";
 import Characteristics from "@/components/sections/homepage-characteristics";
-import Benefits from "@/components/sections/homepage-benefits";
+import Benefits from "@/components/sections/TileList";
 import Frequency from "@/components/sections/homepage-frequency";
 import Testimonials from "@/components/sections/Opinions";
 import Showcase from "@/components/sections/homepage-showcase";

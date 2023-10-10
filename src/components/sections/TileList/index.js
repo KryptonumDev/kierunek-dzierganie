@@ -2,36 +2,37 @@ import Button from '@/components/atoms/Button';
 import Markdown from '@/utils/Markdown';
 import styles from './styles.module.scss';
 
-const Benefits = ({
+const TileList = ({
   data: {
-    benefits_Heading,
-    benefits_List,
-    benefits_Paragraph,
-    benefits_Cta,
-    benefits_CtaAnnotation,
+    heading,
+    list,
+    paragraph,
+    cta,
+    cta_Annotation,
   }
 }) => {
   return (
     <section className={styles.wrapper}>
-      <Markdown.h2>{benefits_Heading}</Markdown.h2>
+      <Markdown.h2>{heading}</Markdown.h2>
       <ul className={styles.list}>
-        {benefits_List.map((item, i) => (
+        {list.map(({ title, description }, i) => (
           <li key={i}>
-            <Markdown>{item}</Markdown>
+            <Markdown.h3>{title}</Markdown.h3>
+            <Markdown>{description}</Markdown>
           </li>
         ))}
       </ul>
       <div className={styles.copy}>
-        <Markdown className={styles.paragraph}>{benefits_Paragraph}</Markdown>
-        <Button data={benefits_Cta} />
-        <Markdown className={styles.ctaAnnotation}>{benefits_CtaAnnotation}</Markdown>
+        <Markdown className={styles.paragraph}>{paragraph}</Markdown>
+        <Button data={cta} />
+        <Markdown className={styles.ctaAnnotation}>{cta_Annotation}</Markdown>
       </div>
       <Decoration aria-hidden="true" className={styles.decoration} />
     </section>
   );
 };
 
-export default Benefits;
+export default TileList;
 
 const Decoration = ({ ...props }) => (
   <svg

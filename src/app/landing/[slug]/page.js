@@ -3,7 +3,7 @@ import fetchData from "@/utils/fetchData";
 import Seo from "@/global/Seo";
 import Faq from "@/components/sections/Faq";
 import Opinions from "@/components/sections/Opinions";
-
+import TileList from "@/components/sections/TileList";
 
 const LandingPage = async ({ params }) => {
   const {
@@ -17,6 +17,8 @@ const LandingPage = async ({ params }) => {
             return <Faq key={i} data={component} />
           case 'Opinions':
             return <Opinions key={i} data={component} />
+          case 'TileList':
+            return <TileList key={i} data={component} />
           default:
             break;
         }
@@ -72,6 +74,21 @@ const getData = async (slug) => {
                   }
                 }
               }
+            }
+            paragraph
+            cta {
+              theme
+              text
+              href
+            }
+            cta_Annotation
+          }
+          ... on TileList {
+            _type
+            heading
+            list {
+              title
+              description
             }
             paragraph
             cta {
