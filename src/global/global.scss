@@ -133,7 +133,7 @@ h1, h2 {
   font-size: clamp(calc(24rem/16), calc(26vw/7.68), calc(36rem/16));
   strong {
     font-size: 1.6em;
-    line-height: 1;
+    line-height: .62;
     margin: -.15em 4px;
   }
 }
