@@ -1,10 +1,10 @@
+import fetchData from '@/utils/fetchData';
 import styles from './styles.module.scss';
 import { Facebook, Instagram, Logo, Youtube } from '@/components/atoms/Icons';
 import Link from 'next/link';
-import { Fetch } from '@/utils/fetch-query';
 
 const Nav = async () => {
-  const { data: { global } } = await getData();
+  const { global } = await getData();
   const socials = [
     {
       name: 'Facebook',
@@ -43,16 +43,13 @@ const Nav = async () => {
 }
 
 const getData = async () => {
-  const { body: { data } } = await Fetch({
-    query: `
-      global: Global(id: "global") {
-        facebook
-        instagram
-        youtube
-      }
-    `,
-  })
-  return { data };
+  return await fetchData(`
+    global: Global(id: "global") {
+      facebook
+      instagram
+      youtube
+    }
+  `);
 }
  
 export default Nav;

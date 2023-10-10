@@ -1,16 +1,16 @@
-import { Fetch } from "@/utils/fetch-query";
+import fetchData from "@/utils/fetchData";
 
 export const domain = 'https://kierunekdzierganie.pl';
 const locale = "pl_PL";
 
 const Seo = async ({ title, description, url }) => {
-  const { data: { global } } = await getData();
+  const { global } = await getData();
 
   const seo = {
     title: title || 'Kierunek Dzierganie',
     description: description || '',
     url: `${domain}${url}` || '',
-    ogImage: global.seo.og_Img.asset.url
+    ogImage: global.seo?.og_Img.asset.url
   }
 
   const metadata = {
@@ -44,18 +44,15 @@ const Seo = async ({ title, description, url }) => {
 export default Seo;
 
 const getData = async () => {
-  const { body: { data } } = await Fetch({
-    query: `
-      global: Global(id: "global") {
-        seo {
-          og_Img {
-            asset {
-              url
-            }
+  return await fetchData(`
+    global: Global(id: "global") {
+      seo {
+        og_Img {
+          asset {
+            url
           }
         }
       }
-    `,
-  })
-  return { data };
+    }
+  `)
 }

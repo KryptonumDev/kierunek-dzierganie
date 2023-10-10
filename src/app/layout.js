@@ -1,8 +1,7 @@
-import './globals.scss'
+import '@/global/global.scss'
 import localFont from 'next/font/local'
 import Nav from '@/components/organisms/Nav'
 import Footer from '@/components/organisms/Footer'
-import GlobalScript from './global'
 import Script from 'next/script'
  
 const Lato = localFont({
@@ -33,9 +32,10 @@ export default function RootLayout({ children }) {
     <html lang="pl">
       <body className={`body ${Lato.className} ${CityStreetwear.variable}`}>
         <Nav />
-        {children}
+        <main id="main">
+          {children}
+        </main>
         <Footer />
-        <GlobalScript />
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-F5CD13WL6R" />
         <Script id="google-analytics">
           {`
