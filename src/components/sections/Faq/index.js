@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Markdown from '@/utils/Markdown';
 import styles from './styles.module.scss';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import SchemaFaq from '@/global/Schema/Faq';
 
 const Faq = ({
@@ -23,23 +23,26 @@ const Faq = ({
       <Markdown.h2>{heading}</Markdown.h2>
       <div className={styles.list}>
         {list.map(({ question, answer }, i) => (
-          <details key={i} open data-opened={opened === i}>
-            <summary onClick={(e) => handleClick(e, i)}>
+          <details
+            key={i}
+            open
+            data-opened={opened === i}
+          >
+            <summary
+              onClick={(e) => handleClick(e, i)}
+              tabIndex={opened === i ? -1 : 0}
+            >
               <Markdown components={{ p: 'span' }}>{question}</Markdown>
               <Indicator className={styles.indicator} />
             </summary>
-            <AnimatePresence mode="wait">
-              {opened === i && (
-                <motion.div
-                  className={styles.answer}
-                  initial={{ height: 'auto', marginBottom: '24px'}}
-                  animate={{ height: 'auto', marginBottom: '24px' }}
-                  exit={{ height: 0, marginBottom: '0' }}
-                >
-                  <Markdown>{answer}</Markdown>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <motion.div
+              className={styles.answer}
+              initial={i === 0 ? { height: 'auto', marginBottom: '24px' } : { height: 0, marginBottom: 0 }}
+              animate={opened === i ? { height: 'auto', marginBottom: '24px' } : { height: 0, marginBottom: 0 }}
+              exit={{ height: 0, marginBottom: '0' }}
+            >
+              <Markdown>{answer}</Markdown>
+            </motion.div>
           </details>
         ))}
       </div>
