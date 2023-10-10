@@ -5,6 +5,7 @@ import Button from '@/components/atoms/Button';
 
 const CtaSection = ({
   data: {
+    isReversed,
     heading,
     paragraph,
     cta,
@@ -13,12 +14,15 @@ const CtaSection = ({
   }
 }) => {
   return (
-    <section className={`${styles.wrapper}`}>
+    <section
+      className={`${styles.wrapper}`}
+      data-reversed={Boolean(isReversed)}
+    >
       <header>
         <Markdown.h2>{heading}</Markdown.h2>
         <Markdown className={styles.paragraph}>{paragraph}</Markdown>
         {cta.href && (
-          <Button data={cta} />
+          <Button data={cta} className={styles.cta} />
         )}
         {cta_Annotation && (
           <Markdown className={styles.ctaAnnotation}>{cta_Annotation}</Markdown>
@@ -37,6 +41,7 @@ const Decoration = ({ ...props }) => (
     xmlns='http://www.w3.org/2000/svg'
     width='134'
     height='113'
+    viewBox='0 0 134 113'
     fill='none'
     {...props}
   >

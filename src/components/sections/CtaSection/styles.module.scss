@@ -1,10 +1,22 @@
 .wrapper {
   display: grid;
   align-items: center;
+  gap: clamp(24px, calc(48vw/7.68), 48px) clamp(64px, calc(82vw/7.68), 142px);
   @media (min-width: 1000px){
     grid-template-columns: 1fr auto;
   }
-  gap: clamp(24px, calc(48vw/7.68), 48px) clamp(64px, calc(82vw/7.68), 142px);
+  &[data-reversed="true"]{
+    @media (min-width: 1000px){
+      grid-template-columns: auto 1fr;
+    }
+    .img {
+      order: -1;
+    }
+    .decoration {
+      left: 0;
+      right: unset;
+    }
+  }
   header {
     h2 {
       margin-bottom: clamp(16px, calc(20vw/7.68), 28px);
@@ -13,6 +25,17 @@
       p:not(:last-child){
         margin-bottom: 8px;
       }
+      em {
+        font-size: calc(14em/18);
+        font-style: normal;
+      }
+    }
+    .cta {
+      margin-top: clamp(16px, calc(28vw/7.68), 36px);
+    }
+    .ctaAnnotation {
+      font-size: calc(14rem/16);
+      margin-top: 8px;
     }
   }
   .img {
@@ -22,8 +45,13 @@
   }
   @media (max-width: 999px){
     .img {
-      order: -1;
       max-width: 450px;
+      order: -1;
+    }
+    &[data-reversed="true"] {
+      .img {
+        order: 1;
+      }
     }
   }
   position: relative;

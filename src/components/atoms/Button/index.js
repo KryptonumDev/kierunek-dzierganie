@@ -10,7 +10,7 @@ const Button = ({ data, theme = 'primary', children, to, className, ...props }) 
   const isExternal = to?.startsWith('https://');
 
   const commonProps = {
-    className: `cta ${className} ${styles.wrapper}`,
+    className: `cta ${className || ''} ${styles.wrapper}`,
     "data-theme": theme,
     ...props,
   };

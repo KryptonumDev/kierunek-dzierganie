@@ -5,6 +5,7 @@ import Faq from "@/components/sections/Faq";
 import Opinions from "@/components/sections/Opinions";
 import TileList from "@/components/sections/TileList";
 import CtaSection from "@/components/sections/CtaSection";
+import SimpleCtaSection from "@/components/sections/SimpleCtaSection";
 
 const LandingPage = async ({ params }) => {
   const {
@@ -22,6 +23,8 @@ const LandingPage = async ({ params }) => {
             return <TileList key={i} data={component} />
           case 'CtaSection':
             return <CtaSection key={i} data={component} />
+          case 'SimpleCtaSection':
+            return <SimpleCtaSection key={i} data={component} />
           default:
             break;
         }
@@ -103,6 +106,7 @@ const getData = async (slug) => {
           }
           ... on CtaSection {
             _type
+            isReversed
             heading
             paragraph
             cta {
@@ -124,6 +128,17 @@ const getData = async (slug) => {
                 }
               }
             }
+          }
+          ... on SimpleCtaSection {
+            _type
+            heading
+            paragraph
+            cta {
+              theme
+              text
+              href
+            }
+            cta_Annotation
           }
         }
 
