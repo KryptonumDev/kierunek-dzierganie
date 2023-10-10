@@ -2,38 +2,38 @@ import Button from '@/components/atoms/Button';
 import Markdown from '@/utils/Markdown';
 import styles from './styles.module.scss';
 
-const Testimonials = ({
+const Opinions = ({
   data: {
-    testimonials_Title,
-    testimonials_List,
-    testimonials_Paragraph,
-    testimonials_Cta,
-    testimonials_CtaAnnotation,
+    heading,
+    list,
+    paragraph,
+    cta,
+    cta_Annotation,
   }
 }) => {
   return (
     <section className={styles.wrapper}>
-      <Markdown.h2 className={styles.title}>{testimonials_Title}</Markdown.h2>
-      <ul className={styles.testimonials}>
-        {testimonials_List.map((testimonial, i) => (
+      <Markdown.h2>{heading}</Markdown.h2>
+      <ul className={styles.opinions}>
+        {list.map(({ author, description }, i) => (
           <li key={i}>
             <Quote aria-hidden="true" className={styles.quote} />
-            <Markdown className={styles.content}>{testimonial.content}</Markdown>
-            <Markdown className={styles.author}>{testimonial.author}</Markdown>
+            <p className={styles.author}>{author}</p>
+            <Markdown className={styles.description}>{description}</Markdown>
           </li>
         ))}
       </ul>
       <div className={styles.copy}>
-        <Markdown className={styles.paragraph}>{testimonials_Paragraph}</Markdown>
-        <Button data={testimonials_Cta} />
-        <Markdown className={styles.ctaAnnotation}>{testimonials_CtaAnnotation}</Markdown>
+        <Markdown className={styles.paragraph}>{paragraph}</Markdown>
+        <Button data={cta} />
+        <Markdown className={styles.ctaAnnotation}>{cta_Annotation}</Markdown>
       </div>
       <Decoration aria-hidden="true" className={styles.decoration} />
     </section>
   );
 };
 
-export default Testimonials;
+export default Opinions;
 
 const Quote = ({ ...props }) => (
   <svg xmlns='http://www.w3.org/2000/svg' width='33' height='35' viewBox='0 0 33 35' fill='none' {...props}> 

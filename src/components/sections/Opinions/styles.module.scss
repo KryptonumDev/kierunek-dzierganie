@@ -3,10 +3,7 @@
   .copy {
     text-align: center;
   }
-  h2 {
-    font-size: clamp(1rem, calc(18vw/7.68), calc(18rem/16));
-  }
-  .testimonials {
+  .opinions {
     margin: clamp(28px, calc(36vw/7.68), 64px) 0 clamp(36px, calc(48vw/7.68), 80px);
     padding-top: 20px;
     list-style-type: none;
@@ -15,6 +12,7 @@
       gap: 32px;
     }
     li {
+      overflow: visible;
       margin: 32px 0;
       border-radius: 6px;
       background-color: var(--primary-200);
@@ -24,10 +22,9 @@
         margin: 0;
       }
       .author {
-        margin-top: clamp(12px, calc(16vw/7.68), 16px);
+        margin-bottom: clamp(12px, calc(16vw/7.68), 16px);
         font-family: var(--font-city-streetwear);
         font-size: clamp(calc(40rem/16), calc(48vw/7.68), calc(48rem/16));
-        text-align: right;
       }
       position: relative;
       .quote {
@@ -39,11 +36,14 @@
     }
   }
   .copy {
-    max-width: 588px;
+    max-width: calc(588rem/16);
     margin: 0 auto;
     text-align: center;
     .paragraph {
       margin-bottom: clamp(28px, calc(36vw/7.68), 36px);
+      p:not(:last-child){
+        margin-bottom: calc(8em/16);
+      }
     }
     .ctaAnnotation {
       margin-top: 8px;

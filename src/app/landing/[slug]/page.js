@@ -2,6 +2,7 @@ import { notFound } from "next/navigation"
 import fetchData from "@/utils/fetchData";
 import Seo from "@/global/Seo";
 import Faq from "@/components/sections/Faq";
+import Opinions from "@/components/sections/Opinions";
 
 
 const LandingPage = async ({ params }) => {
@@ -14,6 +15,8 @@ const LandingPage = async ({ params }) => {
         switch (component._type) {
           case 'Faq':
             return <Faq key={i} data={component} />
+          case 'Opinions':
+            return <Opinions key={i} data={component} />
           default:
             break;
         }
@@ -49,6 +52,34 @@ const getData = async (slug) => {
               question: title
               answer: description
             }
+          }
+          ... on Opinions {
+            _type
+            heading
+            list {
+              author
+              description
+              gallery {
+                asset {
+                  altText
+                  url
+                  metadata {
+                    lqip
+                    dimensions {
+                      width
+                      height
+                    }
+                  }
+                }
+              }
+            }
+            paragraph
+            cta {
+              theme
+              text
+              href
+            }
+            cta_Annotation
           }
         }
 

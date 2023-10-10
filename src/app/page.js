@@ -5,7 +5,7 @@ import Info from "@/components/sections/homepage-info";
 import Characteristics from "@/components/sections/homepage-characteristics";
 import Benefits from "@/components/sections/homepage-benefits";
 import Frequency from "@/components/sections/homepage-frequency";
-import Testimonials from "@/components/sections/homepage-testimonials";
+import Testimonials from "@/components/sections/Opinions";
 import Showcase from "@/components/sections/homepage-showcase";
 import AboutMe from "@/components/sections/homepage-aboutMe";
 import CtaSection from "@/components/sections/homepage-ctaSection";

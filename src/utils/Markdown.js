@@ -1,7 +1,22 @@
 import NextImage from "next/image"
+import Link from "next/link";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
+
+
+const LinkRenderer = ({ href, children }) => {
+  const isExternal = href && (href.startsWith('https://') || href.startsWith('mailto:') || href.startsWith('tel:'));
+  return (
+    isExternal ? (
+      <a href={href} target="_blank" rel="noopener noreferrer" className="link">
+        {children}
+      </a>
+    ) : (
+      <Link href={href} className="link">{children}</Link>
+    )
+  );
+};
 
 const ListRenderer = ({ children }) => (
   <li>
@@ -22,6 +37,7 @@ const Markdown = ({ level, children, components, ...props }) => {
   return (
     <ReactMarkdown
       components={{
+        a: LinkRenderer,
         li: ListRenderer,
         ol: ({ children }) => <ol className="orderedList">{children}</ol>,
         ul: ({ children }) => <ul className="unorderedList">{children}</ul>,
