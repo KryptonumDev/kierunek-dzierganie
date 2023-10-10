@@ -1,4 +1,3 @@
-import Heading from '@/utils/Heading';
 import Img from '@/utils/Img';
 import Markdown from '@/utils/Markdown';
 import styles from './styles.module.scss';
@@ -13,7 +12,7 @@ const AboutMe = ({
   return (
     <section className={`sec-wo-margin ${styles.wrapper}`}>
       <header>
-        <Heading level='h2'>{aboutMe_Heading}</Heading>
+        <Markdown.h2>{aboutMe_Heading}</Markdown.h2>
         <Markdown className={styles.paragraph}>{aboutMe_Paragraph}</Markdown>
       </header>
       <Img data={aboutMe_Img} className={styles.img} />

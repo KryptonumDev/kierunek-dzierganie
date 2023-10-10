@@ -1,5 +1,4 @@
 import Button from '@/components/atoms/Button';
-import Heading from '@/utils/Heading';
 import Markdown from '@/utils/Markdown';
 import styles from './styles.module.scss';
 
@@ -14,7 +13,7 @@ const CtaSection = ({
   return (
     <section className={styles.wrapper}>
       <header>
-        <Heading level='h2'>{ctaSection_Heading}</Heading>
+        <Markdown.h2>{ctaSection_Heading}</Markdown.h2>
         <Markdown className={styles.paragraph}>{ctaSection_Paragraph}</Markdown>
         <Button data={ctaSection_Cta} />
         <Markdown className={styles.ctaAnnotation}>{ctaSection_CtaAnnotation}</Markdown>

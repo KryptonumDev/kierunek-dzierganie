@@ -1,5 +1,4 @@
 import styles from './styles.module.scss';
-import Heading from '@/utils/Heading';
 import Markdown from '@/utils/Markdown';
 
 const Characteristics = ({
@@ -11,7 +10,7 @@ const Characteristics = ({
     <section className={styles.wrapper}>
       {characteristics_List.map((item, i) => (
         <div className="item" key={i}>
-          <Heading level='h2' className={styles.title}>{item.title}</Heading>
+          <Markdown.h2 className={styles.title}>{item.title}</Markdown.h2>
           <Markdown className={styles.description}>{item.description}</Markdown>
         </div>
       ))}

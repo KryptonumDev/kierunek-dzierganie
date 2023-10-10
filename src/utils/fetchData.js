@@ -1,5 +1,4 @@
-const fetchData = async (query) => {
-  query = `query { ${query} }`
+const fetchData = async (query, variables) => {
   try {
     const response = await fetch(process.env.GRAPHQL_ENDPOINT, {
       method: 'POST',
@@ -8,6 +7,7 @@ const fetchData = async (query) => {
       },
       body: JSON.stringify({
         ...{ query },
+        ...(variables && { variables })
       }),
       next: {
         revalidate: 0,
@@ -21,6 +21,7 @@ const fetchData = async (query) => {
     }
 
     return body.data;
+
   } catch (error) {
     throw {
       status: error.status || 500,

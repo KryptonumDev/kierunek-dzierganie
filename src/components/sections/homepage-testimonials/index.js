@@ -1,5 +1,4 @@
 import Button from '@/components/atoms/Button';
-import Heading from '@/utils/Heading';
 import Markdown from '@/utils/Markdown';
 import styles from './styles.module.scss';
 
@@ -14,7 +13,7 @@ const Testimonials = ({
 }) => {
   return (
     <section className={styles.wrapper}>
-      <Heading level='h2' className={styles.title}>{testimonials_Title}</Heading>
+      <Markdown.h2 className={styles.title}>{testimonials_Title}</Markdown.h2>
       <ul className={styles.testimonials}>
         {testimonials_List.map((testimonial, i) => (
           <li key={i}>

@@ -1,6 +1,5 @@
 'use client';
 import { useState } from 'react';
-import Heading from '@/utils/Heading';
 import Markdown from '@/utils/Markdown';
 import styles from './styles.module.scss';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -8,8 +7,8 @@ import SchemaFaq from '@/global/Schema/Faq';
 
 const Faq = ({
   data: {
-    faq_Heading,
-    faq_List,
+    heading,
+    list,
   }
 }) => {
   const [ opened, setOpened ] = useState(0);
@@ -21,30 +20,30 @@ const Faq = ({
 
   return (
     <section className={styles.wrapper}>
-      <Heading level='h2'>{faq_Heading}</Heading>
+      <Markdown.h2>{heading}</Markdown.h2>
       <div className={styles.list}>
-        {faq_List.map((item, i) => (
+        {list.map(({ question, answer }, i) => (
           <details key={i} open data-opened={opened === i}>
             <summary onClick={(e) => handleClick(e, i)}>
-              <Markdown components={{ p: 'span' }}>{item.question}</Markdown>
+              <Markdown components={{ p: 'span' }}>{question}</Markdown>
               <Indicator className={styles.indicator} />
             </summary>
             <AnimatePresence mode="wait">
               {opened === i && (
                 <motion.div
                   className={styles.answer}
-                  initial={{ height: 0, marginBottom: '0'}}
+                  initial={{ height: 'auto', marginBottom: '24px'}}
                   animate={{ height: 'auto', marginBottom: '24px' }}
                   exit={{ height: 0, marginBottom: '0' }}
                 >
-                  <Markdown>{item.answer}</Markdown>
+                  <Markdown>{answer}</Markdown>
                 </motion.div>
               )}
             </AnimatePresence>
           </details>
         ))}
       </div>
-      <SchemaFaq data={faq_List} />
+      <SchemaFaq data={list} />
     </section>
   );
 };

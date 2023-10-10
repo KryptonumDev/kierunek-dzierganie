@@ -5,15 +5,13 @@ const SchemaFaq = ({ data }) => {
   const schama = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": data.map(item => {
-      const question = renderToStaticMarkup(<ReactMarkdown>{item.question}</ReactMarkdown>);
-      const answer = renderToStaticMarkup(<ReactMarkdown>{item.answer}</ReactMarkdown>);
+    "mainEntity": data.map(({ question, answer }) => {
       return {
         "@type": "Question",
-        "name": question,
+        "name": renderToStaticMarkup(<ReactMarkdown>{question}</ReactMarkdown>),
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": answer
+          "text": renderToStaticMarkup(<ReactMarkdown>{answer}</ReactMarkdown>)
         }
       };
     })

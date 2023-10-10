@@ -45,11 +45,13 @@ export default Seo;
 
 const getData = async () => {
   return await fetchData(`
-    global: Global(id: "global") {
-      seo {
-        og_Img {
-          asset {
-            url
+    query {
+      global: Global(id: "global") {
+        seo {
+          og_Img {
+            asset {
+              url
+            }
           }
         }
       }

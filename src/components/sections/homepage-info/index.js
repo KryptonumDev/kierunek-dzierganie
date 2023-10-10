@@ -1,4 +1,3 @@
-import Heading from '@/utils/Heading';
 import Markdown from '@/utils/Markdown';
 import styles from './styles.module.scss';
 
@@ -10,7 +9,7 @@ const Info = ({
 }) => {
   return (
     <section className={`sec-wo-margin ${styles.wrapper}`}>
-      <Heading level='h2'>{info_Heading}</Heading>
+      <Markdown.h1>{info_Heading}</Markdown.h1>
       <ul className={styles.list}>
         {info_List.map((item, i) => (
           <li key={i}>

@@ -1,4 +1,3 @@
-import Heading from '@/utils/Heading';
 import Markdown from '@/utils/Markdown';
 import styles from './styles.module.scss';
 
@@ -10,7 +9,7 @@ const Standout = ({
 }) => {
   return (
     <section className={styles.wrapper}>
-      <Heading level='h2'>{standout_Heading}</Heading>
+      <Markdown.h2>{standout_Heading}</Markdown.h2>
       <Markdown className={styles.paragraph}>{standout_Paragraph}</Markdown>
     </section>
   );

@@ -44,10 +44,12 @@ const Nav = async () => {
 
 const getData = async () => {
   return await fetchData(`
-    global: Global(id: "global") {
-      facebook
-      instagram
-      youtube
+    query {
+      global: Global(id: "global") {
+        facebook
+        instagram
+        youtube
+      }
     }
   `);
 }

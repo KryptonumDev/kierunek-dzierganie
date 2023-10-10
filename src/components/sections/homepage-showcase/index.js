@@ -1,5 +1,4 @@
 import Button from '@/components/atoms/Button';
-import Heading from '@/utils/Heading';
 import Img from '@/utils/Img';
 import Markdown from '@/utils/Markdown';
 import styles from './styles.module.scss';
@@ -15,7 +14,7 @@ const Showcase = ({
 }) => {
   return (
     <section className={styles.wrapper}>
-      <Heading level='h2'>{showcase_Heading}</Heading>
+      <Markdown.h2>{showcase_Heading}</Markdown.h2>
       <div className={styles.images}>
         {showcase_Images.map((image, i) => (
           <Img data={image} key={i} />
