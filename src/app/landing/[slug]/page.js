@@ -7,6 +7,7 @@ import TileList from "@/components/sections/TileList";
 import CtaSection from "@/components/sections/CtaSection";
 import SimpleCtaSection from "@/components/sections/SimpleCtaSection";
 import HeroBackgroundImg from "@/components/sections/HeroBackgroundImg";
+import Benefits from "@/components/sections/Benefits";
 
 const LandingPage = async ({ params }) => {
   const {
@@ -18,6 +19,8 @@ const LandingPage = async ({ params }) => {
         switch (component._type) {
           case 'HeroBackgroundImg':
             return <HeroBackgroundImg key={i} data={component} />
+          case 'Benefits':
+            return <Benefits key={i} data={component} />
           case 'Faq':
             return <Faq key={i} data={component} />
           case 'Opinions':
@@ -79,6 +82,17 @@ const getData = async (slug) => {
                 }
               }
             }
+          }
+          ... on Benefits {
+            _type
+            benefits: list
+            claim
+            cta {
+              theme
+              text
+              href
+            }
+            cta_Annotation
           }
           ... on Faq {
             _type
