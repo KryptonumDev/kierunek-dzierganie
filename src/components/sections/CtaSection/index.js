@@ -12,7 +12,8 @@ const CtaSection = ({
     cta,
     cta_Annotation,
     img,
-  }
+  },
+  aboveTheFold
 }) => {
   return (
     <section
@@ -31,7 +32,7 @@ const CtaSection = ({
           </>
         )}
       </header>
-      <Img data={img} className={styles.img} />
+      <Img data={img} className={styles.img} priority={aboveTheFold} />
       <Decoration aria-hidden="true" className={styles.decoration} />
     </section>
   );

@@ -10,13 +10,14 @@ const HeroBackgroundImg = ({
     cta,
     cta_Annotation,
     img,
-  }
+  },
+  aboveTheFold
 }) => {
   return (
     <section
       className={`${styles.wrapper}`}
     >
-      <Img data={img} className={styles.img} priority={true} />
+      <Img data={img} className={styles.img} priority={aboveTheFold} />
       <header>
         <Markdown.h1>{heading}</Markdown.h1>
         <Markdown className={styles.paragraph}>{paragraph}</Markdown>

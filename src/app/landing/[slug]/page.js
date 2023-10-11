@@ -21,7 +21,7 @@ const LandingPage = async ({ params }) => {
       {content.map((component, i) => {
         switch (component._type) {
           case 'HeroBackgroundImg':
-            return <HeroBackgroundImg key={i} data={component} />
+            return <HeroBackgroundImg key={i} data={component} aboveTheFold={Boolean(i === 0)} />
           case 'Benefits':
             return <Benefits key={i} data={component} />
           case 'Faq':
@@ -31,7 +31,7 @@ const LandingPage = async ({ params }) => {
           case 'TileList':
             return <TileList key={i} data={component} />
           case 'CtaSection':
-            return <CtaSection key={i} data={component} />
+            return <CtaSection key={i} data={component} aboveTheFold={Boolean(i===0)} />
           case 'SimpleCtaSection':
             return <SimpleCtaSection key={i} data={component} />
           case 'CourseModules':
