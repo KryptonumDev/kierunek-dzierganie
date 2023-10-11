@@ -53,6 +53,7 @@ body {
   font-family: 'Erode', serif;
   background-color: var(--primary-100);
   color: var(--primary-800);
+  line-height: 150%;
   font-size: clamp(1rem, calc(18vw/7.68), calc(18rem/16));
 }
 :focus {
@@ -116,7 +117,6 @@ img {
 }
 
 p {
-  line-height: 150%;
   strong {
     background: linear-gradient(rgba(255,255,255,0) 50%, var(--primary-300) 50%);
     font-weight: inherit;
@@ -201,16 +201,12 @@ main {
 
 .unorderedList {
   list-style-type: none;
-  margin-top: 16px;
   li {
     display: grid;
     grid-template-columns: auto 1fr;
     gap: 8px;
-    &:not(:last-child) {
-      margin-bottom: 12px;
-    }
     svg {
-      height: 1.4em;
+      height: 1.5em;
     }
   }
 }

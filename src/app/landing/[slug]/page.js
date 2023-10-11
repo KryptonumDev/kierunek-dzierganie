@@ -8,6 +8,7 @@ import CtaSection from "@/components/sections/CtaSection";
 import SimpleCtaSection from "@/components/sections/SimpleCtaSection";
 import HeroBackgroundImg from "@/components/sections/HeroBackgroundImg";
 import Benefits from "@/components/sections/Benefits";
+import CourseModules from "@/components/sections/CourseModules";
 
 const LandingPage = async ({ params }) => {
   const {
@@ -31,6 +32,8 @@ const LandingPage = async ({ params }) => {
             return <CtaSection key={i} data={component} />
           case 'SimpleCtaSection':
             return <SimpleCtaSection key={i} data={component} />
+          case 'CourseModules':
+            return <CourseModules key={i} data={component} />
           default:
             break;
         }
@@ -181,6 +184,28 @@ const getData = async (slug) => {
               href
             }
             cta_Annotation
+          }
+          ... on CourseModules {
+            _type
+            heading
+            paragraph
+            list {
+              title
+              description
+              img {
+                asset {
+                  altText
+                  url
+                  metadata {
+                    lqip
+                    dimensions {
+                      width
+                      height
+                    }
+                  }
+                }
+              }
+            }
           }
         }
 
