@@ -1,6 +1,8 @@
 .wrapper {
   h2 {
-    margin-bottom: clamp(48px, calc(64vw/7.68), 80px);
+    max-width: calc(584rem/16);
+    margin: 0 auto clamp(48px, calc(64vw/7.68), 80px);
+    text-align: center;
   }
   .list {
     counter-reset: counter;

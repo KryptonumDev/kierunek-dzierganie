@@ -18,8 +18,8 @@ const Opinions = ({
         {list.map(({ author, description }, i) => (
           <li key={i}>
             <Quote aria-hidden="true" className={styles.quote} />
-            <p className={styles.author}>{author}</p>
             <Markdown className={styles.description}>{description}</Markdown>
+            <p className={styles.author}>{author}</p>
           </li>
         ))}
       </ul>

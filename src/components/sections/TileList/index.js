@@ -17,15 +17,23 @@ const TileList = ({
       <ul className={styles.list}>
         {list.map(({ title, description }, i) => (
           <li key={i}>
-            <Markdown.h3>{title}</Markdown.h3>
-            <Markdown>{description}</Markdown>
+            {title && (
+              <Markdown.h3>{title}</Markdown.h3>
+            )}
+            <Markdown className={styles.description}>{description}</Markdown>
           </li>
         ))}
       </ul>
       <div className={styles.copy}>
         <Markdown className={styles.paragraph}>{paragraph}</Markdown>
-        <Button data={cta} />
-        <Markdown className={styles.ctaAnnotation}>{cta_Annotation}</Markdown>
+        {cta.href && (
+          <>
+            <Button data={cta} className={styles.cta} />
+            {cta_Annotation && (
+              <Markdown className={styles.ctaAnnotation}>{cta_Annotation}</Markdown>
+            )}
+          </>
+        )}
       </div>
       <Decoration aria-hidden="true" className={styles.decoration} />
     </section>

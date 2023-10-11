@@ -15,6 +15,9 @@
         font-size: clamp(calc(18rem/16), calc(24vw/7.68), calc(24rem/16));
         margin-bottom: clamp(8px, calc(12vw/7.68), 12px);
       }
+      .description {
+        font-size: clamp(calc(14rem/16), calc(18vw/7.68), calc(18rem/16));
+      }
     }
   }
   h2,

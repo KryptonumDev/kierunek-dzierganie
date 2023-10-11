@@ -22,9 +22,11 @@
         margin: 0;
       }
       .author {
-        margin-bottom: clamp(12px, calc(16vw/7.68), 16px);
+        margin-top: clamp(12px, calc(16vw/7.68), 16px);
+        text-align: right;
         font-family: var(--font-city-streetwear);
         font-size: clamp(calc(40rem/16), calc(48vw/7.68), calc(48rem/16));
+        color: var(--primary-600);
       }
       position: relative;
       .quote {
