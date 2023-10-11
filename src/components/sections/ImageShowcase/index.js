@@ -22,8 +22,8 @@ const ImageShowcase = ({
     offset: ['start end', 'end start']
   })
 
-  const progress = useTransform(scrollYProgress, [0, 1], [50, -100]);
-  const progressReversed = useTransform(scrollYProgress, [0, 1], [0, 50]);
+  const progress = useTransform(scrollYProgress, [0, 1], [50, -150]);
+  const progressReversed = useTransform(scrollYProgress, [0, 1], [-50, 100]);
 
   return (
     <section className={`${styles.wrapper}`} ref={wrapper}>

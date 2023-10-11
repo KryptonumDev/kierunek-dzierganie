@@ -1,5 +1,5 @@
 .wrapper {
-  min-height: clamp(800px, calc(800vw/7.68), 1000px);
+  min-height: clamp(1000px, calc(1000vw/7.68), 1200px);
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -41,6 +41,9 @@
         left: 0;
         top: 0;
         transform: translate(-100%, -100%);
+        @media (max-width: 899px){
+          transform: translate(0%, -150%);
+        }
       }
       &:nth-child(2){
         width: clamp(70px, calc(134vw/7.68), 174px);
@@ -53,42 +56,63 @@
         left: 75%;
         top: 0;
         transform: translate(-50%, -120%);
+        @media (max-width: 899px){
+          transform: translate(-75%, -175%);
+        }
       }
       &:nth-child(4){
         width: clamp(70px, calc(134vw/7.68), 174px);
         left: 100%;
         top: 0;
         transform: translate(0, -100%);
+        @media (max-width: 899px){
+          transform: translate(-100%, -125%);
+        }
       }
       &:nth-child(5){
         width: clamp(156px, calc(213vw/7.68), 280px);
         left: 0;
         bottom: 0;
         transform: translate(-50%, 50%);
+        @media (max-width: 899px){
+          transform: translate(0%, 250%);
+        }
       }
       &:nth-child(6){
         width: clamp(70px, calc(134vw/7.68), 174px);
         left: 75%;
         bottom: 0;
-        transform: translate(-50%, 100%);
+        transform: translate(-100%, 100%);
+        @media (max-width: 899px){
+          transform: translate(-100%, 400%);
+        }
       }
       &:nth-child(7){
         width: clamp(70px, calc(134vw/7.68), 174px);
         left: 100%;
         bottom: 0;
-        transform: translate(0, 25%);
+        transform: translate(-50%, 25%);
+        @media (max-width: 899px){
+          transform: translate(-75%, 200%);
+        }
       }
       &:nth-child(8){
         width: clamp(70px, calc(134vw/7.68), 174px);
         left: 0;
         bottom: 0;
         transform: translate(-100%, 150%);
+        @media (max-width: 899px){
+          transform: translate(0%, 100%);
+        }
       }
       &:nth-child(9){
-        width: clamp(70px, calc(134vw/7.68), 280px);
+        width: clamp(156px, calc(213vw/7.68), 280px);
         left: 100%;
         bottom: 0;
-        transform: translate(0, 150%);
+        transform: translate(-50%, 150%);
+        @media (max-width: 899px){
+          transform: translate(-125%, 150%);
+        }
       }
     }
   }
