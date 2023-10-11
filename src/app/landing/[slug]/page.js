@@ -10,6 +10,7 @@ import HeroBackgroundImg from "@/components/sections/HeroBackgroundImg";
 import Benefits from "@/components/sections/Benefits";
 import CourseModules from "@/components/sections/CourseModules";
 import ImageShowcase from "@/components/sections/ImageShowcase";
+import Bonuses from "@/components/sections/Bonuses";
 
 const LandingPage = async ({ params }) => {
   const {
@@ -37,6 +38,8 @@ const LandingPage = async ({ params }) => {
             return <CourseModules key={i} data={component} />
           case 'ImageShowcase':
             return <ImageShowcase key={i} data={component} />
+          case 'Bonuses':
+            return <Bonuses key={i} data={component} />
           default:
             break;
         }
@@ -251,6 +254,26 @@ const getData = async (slug) => {
                   dimensions {
                     width
                     height
+                  }
+                }
+              }
+            }
+          }
+          ... on Bonuses {
+            _type
+            heading
+            list {
+              description
+              img {
+                asset {
+                  altText
+                  url
+                  metadata {
+                    lqip
+                    dimensions {
+                      width
+                      height
+                    }
                   }
                 }
               }
