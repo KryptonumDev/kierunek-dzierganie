@@ -1,7 +1,9 @@
-import Img from '@/utils/Img';
+'use client';
 import Markdown from '@/utils/Markdown';
 import styles from './styles.module.scss';
 import Button from '@/components/atoms/Button';
+import { useInView } from 'framer-motion';
+import { useRef } from 'react';
 
 const Benefits = ({
   data: {
@@ -15,7 +17,7 @@ const Benefits = ({
     <section className={`${styles.wrapper}`}>
       <ul className={styles.benefits}>
         {benefits.map((item, i) => (
-          <li key={i}>{item}</li>
+          <Item key={i}>{item}</Item>
         ))}
       </ul>
       <p className={styles.claim}>{claim}</p>
@@ -33,6 +35,16 @@ const Benefits = ({
 };
 
 export default Benefits;
+
+const Item = ({ children }) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "0px 0px -80px 0px" });
+  return (
+    <li ref={ref} data-visible={isInView}>
+      <Markdown>{children}</Markdown>
+    </li>
+  )
+}
 
 const Decoration = ({ ...props }) => (
   <svg

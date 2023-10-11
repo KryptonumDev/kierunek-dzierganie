@@ -7,11 +7,17 @@
     gap: clamp(12px, calc(20vw/7.68), 28px);
     list-style-type: none;
     li {
+      &[data-visible="false"]{
+        transform: translateY(8px);
+        opacity: 0;
+      }
+      transition: opacity .6s, transform .6s;
       padding: clamp(12px, calc(16vw/7.68), 20px) clamp(16px, calc(28vw/7.68), 36px);
       border-radius: 2px;
-      border: 1px solid var(--primary-400);
+      border: 1px solid var(--primary-300);
       background: var(--primary-100);
       font-size: clamp(calc(18rem/16), calc(28vw/7.68), calc(28rem/16));
+      line-height: 128%;
     }
   }
   .claim {
