@@ -9,6 +9,7 @@ import SimpleCtaSection from "@/components/sections/SimpleCtaSection";
 import HeroBackgroundImg from "@/components/sections/HeroBackgroundImg";
 import Benefits from "@/components/sections/Benefits";
 import CourseModules from "@/components/sections/CourseModules";
+import ImageShowcase from "@/components/sections/ImageShowcase";
 
 const LandingPage = async ({ params }) => {
   const {
@@ -34,6 +35,8 @@ const LandingPage = async ({ params }) => {
             return <SimpleCtaSection key={i} data={component} />
           case 'CourseModules':
             return <CourseModules key={i} data={component} />
+          case 'ImageShowcase':
+            return <ImageShowcase key={i} data={component} />
           default:
             break;
         }
@@ -202,6 +205,52 @@ const getData = async (slug) => {
                       width
                       height
                     }
+                  }
+                }
+              }
+            }
+          }
+          ... on CourseModules {
+            _type
+            heading
+            paragraph
+            list {
+              title
+              description
+              img {
+                asset {
+                  altText
+                  url
+                  metadata {
+                    lqip
+                    dimensions {
+                      width
+                      height
+                    }
+                  }
+                }
+              }
+            }
+          }
+          ... on ImageShowcase {
+            _type
+            heading
+            paragraph
+            cta {
+              theme
+              text
+              href
+            }
+            cta_Annotation
+            images: img {
+              asset {
+                altText
+                url
+                metadata {
+                  lqip
+                  dimensions {
+                    width
+                    height
                   }
                 }
               }
