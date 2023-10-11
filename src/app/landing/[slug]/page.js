@@ -237,6 +237,7 @@ const getData = async (slug) => {
           }
           ... on ImageShowcase {
             _type
+            isGrid
             heading
             paragraph
             cta {

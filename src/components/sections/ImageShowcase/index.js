@@ -7,6 +7,51 @@ import Button from '@/components/atoms/Button';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 const ImageShowcase = ({
+  data: { isGrid },
+  data
+}) => (
+  isGrid ? (
+    <GridImageShowcase data={data} />
+  ) : (
+    <ParallaxImageShowcase data={data} />
+  )
+);
+
+export default ImageShowcase;
+
+const GridImageShowcase = ({
+  data: {
+    heading,
+    paragraph,
+    cta,
+    cta_Annotation,
+    images,
+  }
+}) => {
+  return (
+    <section className={styles.GridImageShowcase}>
+      <Markdown.h2>{heading}</Markdown.h2>
+      <div className={styles.images}>
+        {images.map((image, i) => (
+          <Img data={image} key={i} />
+        ))}
+      </div>
+      <div className={styles.copy}>
+        <Markdown className={styles.paragraph}>{paragraph}</Markdown>
+        {cta.href && (
+          <>
+            <Button data={cta} className={styles.cta} />
+            {cta_Annotation && (
+              <Markdown className={styles.ctaAnnotation}>{cta_Annotation}</Markdown>
+            )}
+          </>
+        )}
+      </div>
+    </section>
+  )
+}
+
+const ParallaxImageShowcase = ({
   data: {
     heading,
     paragraph,
@@ -26,7 +71,7 @@ const ImageShowcase = ({
   const progressReversed = useTransform(scrollYProgress, [0, 1], [-50, 100]);
 
   return (
-    <section className={`${styles.wrapper}`} ref={wrapper}>
+    <section className={`${styles.ParallaxImageShowcase}`} ref={wrapper}>
       <header>
         <Markdown.h2>{heading}</Markdown.h2>
         <Markdown className={styles.paragraph}>{paragraph}</Markdown>
@@ -49,7 +94,5 @@ const ImageShowcase = ({
         </div>
       </header>
     </section>
-  );
-};
-
-export default ImageShowcase;
+  )
+}
