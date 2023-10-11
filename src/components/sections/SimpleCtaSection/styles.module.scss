@@ -7,6 +7,8 @@
       margin-bottom: clamp(16px, calc(24vw/7.68), 28px);
     }
     .paragraph {
+      max-width: calc(584rem/16);
+      margin: 0 auto;
       p:not(:last-child) {
         margin-bottom: 8px;
       }
