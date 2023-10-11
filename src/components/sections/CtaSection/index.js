@@ -6,6 +6,7 @@ import Button from '@/components/atoms/Button';
 const CtaSection = ({
   data: {
     isReversed,
+    isHighlighted,
     heading,
     paragraph,
     cta,
@@ -15,7 +16,7 @@ const CtaSection = ({
 }) => {
   return (
     <section
-      className={`${styles.wrapper}`}
+      className={`${styles.wrapper} ${Boolean(isHighlighted) ? styles.isHighlighted : ''}`}
       data-reversed={Boolean(isReversed)}
     >
       <header>

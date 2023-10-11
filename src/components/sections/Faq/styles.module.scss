@@ -48,6 +48,9 @@
         overflow: hidden;
         margin-left: calc(clamp(40px, calc(66vw/7.68), 60px) + clamp(8px, calc(16vw/7.68), 36px));
         max-width: 800px;
+        p:not(:last-child){
+          margin-bottom: 8px;
+        }
       }
       &[data-opened="true"]{
         .indicator {

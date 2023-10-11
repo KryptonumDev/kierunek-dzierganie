@@ -148,6 +148,7 @@ const getData = async (slug) => {
           ... on CtaSection {
             _type
             isReversed
+            isHighlighted
             heading
             paragraph
             cta {
