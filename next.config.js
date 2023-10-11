@@ -8,7 +8,16 @@ const nextConfig = {
   images: {
     dangerouslyAllowSVG: true,
     domains: ['cdn.sanity.io']
-  }
+  },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/landing/program-rozwojowy-dziergania-na-drutach',
+        permanent: false,
+      },
+    ];
+  },
 }
 
 module.exports = nextConfig
