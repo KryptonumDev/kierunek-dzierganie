@@ -16,7 +16,7 @@ const HeroBackgroundImg = ({
     <section
       className={`${styles.wrapper}`}
     >
-      <Img data={img} className={styles.img} />
+      <Img data={img} className={styles.img} priority={true} />
       <header>
         <Markdown.h1>{heading}</Markdown.h1>
         <Markdown className={styles.paragraph}>{paragraph}</Markdown>
