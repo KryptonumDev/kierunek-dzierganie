@@ -1,12 +1,13 @@
 .wrapper {
   display: grid;
   align-items: flex-start;
-  gap: clamp(24px, calc(48vw/7.68), 48px) clamp(64px, calc(82vw/7.68), 108px);
-  @media (min-width: 1000px){
+  gap: clamp(24px, calc(48vw / 7.68), 48px)
+    clamp(64px, calc(82vw / 7.68), 108px);
+  @media (min-width: 1000px) {
     grid-template-columns: 2fr 1fr;
   }
-  &[data-reversed="true"]{
-    @media (min-width: 1000px){
+  &[data-reversed='true'] {
+    @media (min-width: 1000px) {
       grid-template-columns: 1fr 2fr;
     }
     .img {
@@ -19,22 +20,28 @@
   }
   header {
     h2 {
-      margin-bottom: clamp(16px, calc(20vw/7.68), 28px);
+      margin-bottom: clamp(16px, calc(20vw / 7.68), 28px);
     }
     .paragraph {
-      p:not(:last-child){
+      p:not(:last-child) {
         margin-bottom: 8px;
       }
       em {
-        font-size: calc(14em/18);
+        font-size: calc(14em / 18);
         font-style: normal;
+        > strong {
+          background: none;
+          font-size: calc(31em / 18);
+          display: inline-block;
+          margin-top: 0.1em;
+        }
       }
     }
     .cta {
-      margin-top: clamp(16px, calc(28vw/7.68), 36px);
+      margin-top: clamp(16px, calc(28vw / 7.68), 36px);
     }
     .ctaAnnotation {
-      font-size: calc(14rem/16);
+      font-size: calc(14rem / 16);
       margin-top: 8px;
     }
   }
@@ -43,12 +50,12 @@
     width: 100%;
     max-width: 380px;
   }
-  @media (max-width: 999px){
+  @media (max-width: 999px) {
     .img {
       max-width: 450px;
       order: -1;
     }
-    &[data-reversed="true"] {
+    &[data-reversed='true'] {
       .img {
         order: 1;
       }
@@ -57,7 +64,7 @@
   position: relative;
   .decoration {
     position: absolute;
-    width: clamp(76px, calc(92vw/7.68), 122px);
+    width: clamp(76px, calc(92vw / 7.68), 122px);
     height: auto;
     right: 0;
     bottom: 0;
@@ -67,9 +74,10 @@
   &.isHighlighted {
     border-radius: 6px;
     background: var(--primary-200);
-    padding: clamp(16px, calc(24vw/7.68), 36px);
-    gap: clamp(28px, calc(32vw/7.68), 32px) clamp(32px, calc(36vw/7.68), 36px);
-    @media (max-width: 999px){
+    padding: clamp(16px, calc(24vw / 7.68), 36px);
+    gap: clamp(28px, calc(32vw / 7.68), 32px)
+      clamp(32px, calc(36vw / 7.68), 36px);
+    @media (max-width: 999px) {
       .img {
         order: -1;
         margin-left: 0;
