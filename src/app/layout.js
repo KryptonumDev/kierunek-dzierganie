@@ -27,6 +27,10 @@ const CityStreetwear = localFont({
   fallback: [ "sans-serif" ]
 })
 
+export const viewport = {
+  themeColor: '#FDFBF8',
+}
+
 export default function RootLayout({ children }) {
   return (
     <html lang="pl">

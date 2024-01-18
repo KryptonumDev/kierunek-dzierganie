@@ -35,7 +35,6 @@ const Seo = async ({ title, description, url }) => {
       locale: locale,
       type: 'website',
     },
-    themeColor: '#FDFBF8',
   }
 
   return metadata;
