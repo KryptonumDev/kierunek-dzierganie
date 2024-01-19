@@ -16,7 +16,7 @@ const Faq = ({ data: { heading, list } }) => {
         list={formattedList}
         Indicator={Indicator}
       />
-      <SchemaFaq list={list} />
+      {/* <SchemaFaq list={list} /> */}
     </section>
   );
 };
