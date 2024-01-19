@@ -12,13 +12,14 @@
     "eslint": "8.47.0",
     "eslint-config-next": "13.4.19",
     "framer-motion": "^10.16.1",
-    "next": "latest",
+    "next": "^14.0.4",
+    "next-mdx-remote": "^4.4.1",
     "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-markdown": "^8.0.7",
-    "rehype-raw": "^6.1.1"
+    "react-dom": "18.2.0"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^14.0.4",
+    "cross-env": "^7.0.3",
     "sass": "^1.66.1"
   }
 }
