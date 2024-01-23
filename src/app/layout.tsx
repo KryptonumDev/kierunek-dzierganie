@@ -1,9 +1,9 @@
-import '@/global/global.scss'
-import localFont from 'next/font/local'
-import Nav from '@/components/organisms/Nav'
-import Footer from '@/components/organisms/Footer'
-import Script from 'next/script'
- 
+import '@/global/global.scss';
+import Script from 'next/script';
+import localFont from 'next/font/local';
+import Nav from '@/components/organisms/Nav';
+import Footer from '@/components/organisms/Footer';
+
 const Lato = localFont({
   src: [
     {
@@ -17,31 +17,29 @@ const Lato = localFont({
       style: 'italic',
     },
   ],
-  fallback: [ "sans-serif" ]
-})
+  fallback: ['sans-serif'],
+});
 
-const CityStreetwear = localFont({
+const CityStreetWear = localFont({
   src: '../assets/fonts/CityStreetwear-Regular.woff2',
   display: 'swap',
   variable: '--font-city-streetwear',
-  fallback: [ "sans-serif" ]
-})
+  fallback: ['sans-serif'],
+});
 
 export const viewport = {
   themeColor: '#FDFBF8',
-}
+};
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pl">
-      <body className={`body ${Lato.className} ${CityStreetwear.variable}`}>
+    <html lang='pl'>
+      <body className={`body ${Lato.className} ${CityStreetWear.variable}`}>
         <Nav />
-        <main id="main">
-          {children}
-        </main>
+        <main id='main'>{children}</main>
         <Footer />
-        <Script src="https://www.googletagmanager.com/gtag/js?id=G-F5CD13WL6R" />
-        <Script id="google-analytics">
+        <Script src='https://www.googletagmanager.com/gtag/js?id=G-F5CD13WL6R' />
+        <Script id='google-analytics'>
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
@@ -50,7 +48,7 @@ export default function RootLayout({ children }) {
             gtag('config', 'G-F5CD13WL6R');
           `}
         </Script>
-        <Script id="fb-pixel">
+        <Script id='fb-pixel'>
           {`
             !function(f,b,e,v,n,t,s)
             {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -66,9 +64,15 @@ export default function RootLayout({ children }) {
         </Script>
         <noscript>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img height="1" width="1" style={{ display: 'none' }} alt="" src="https://www.facebook.com/tr?id=106002735936658&ev=PageView&noscript=1" />
+          <img
+            height='1'
+            width='1'
+            style={{ display: 'none' }}
+            alt=''
+            src='https://www.facebook.com/tr?id=106002735936658&ev=PageView&noscript=1'
+          />
         </noscript>
       </body>
     </html>
-  )
+  );
 }
