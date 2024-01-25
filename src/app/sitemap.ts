@@ -17,7 +17,7 @@ export default async function sitemap() {
 
 const query = async (): Promise<FetchProps[]> => {
   const data = await sanityFetch(/* groq */ `
-    *[_type == 'landingPage' && !(_id in path('drafts.**'))] {
+    *[_type == 'landingPage'] {
       'slug': slug.current
     }
   `);

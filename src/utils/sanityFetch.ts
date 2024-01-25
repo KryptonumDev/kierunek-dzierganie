@@ -9,6 +9,7 @@ export const client = createClient({
   projectId,
   dataset,
   apiVersion,
+  perspective: 'published',
 });
 
 const DEFAULT_PARAMS = {} as QueryParams;
