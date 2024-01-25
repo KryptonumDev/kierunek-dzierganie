@@ -1,4 +1,4 @@
-const path = require('path');
+/** @type {import('next').NextConfig} */
 
 const nextConfig = {
   productionBrowserSourceMaps: true,
@@ -23,4 +23,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;
