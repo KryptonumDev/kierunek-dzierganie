@@ -284,3 +284,15 @@ const query = async (slug) => {
 };
 
 export default LandingPage;
+
+export async function generateStaticParams() {
+  const data = await sanityFetch(/* groq */`
+    *[_type == "landingPage"] {
+      'slug': slug.current,
+    }
+  `);
+
+  return data.map(({ slug }) => ({
+    slug
+  }));
+}
