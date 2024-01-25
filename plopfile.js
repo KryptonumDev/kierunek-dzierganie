@@ -1,4 +1,4 @@
-export default function (plop) {
+const generator = function (plop) {
   plop.setGenerator('component', {
     description: 'Component generator Next.js',
     prompts: [
@@ -32,3 +32,5 @@ export default function (plop) {
     ],
   });
 };
+
+export default generator;
