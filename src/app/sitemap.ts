@@ -9,7 +9,7 @@ type FetchProps = {
 export default async function sitemap() {
   const pages = await query();
   const sitemap = pages.map(route => ({
-    url: `${domain}${route}`,
+    url: `${domain}/${route}`,
     lastModified: currentDate,
   }));
   return sitemap;
