@@ -19,7 +19,7 @@ const CourseModules = ({
   list
 }: Props) => {
   return (
-    <section className={`${styles.wrapper} sec-wo-margin`}>
+    <section className={`${styles.CourseModules} sec-wo-margin`}>
       <header>
         <Markdown.h2>{heading}</Markdown.h2>
         <Markdown className={styles.paragraph}>{paragraph}</Markdown>
@@ -33,6 +33,7 @@ const CourseModules = ({
             <Img
               data={img}
               className={styles.img}
+              sizes='(max-width: 649px) 40vw, 33vw'
             />
             <div>
               <Markdown className={styles.title}>{title}</Markdown>

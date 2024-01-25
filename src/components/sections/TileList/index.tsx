@@ -22,7 +22,7 @@ const TileList = ({
   cta_Annotation
 }: Props) => {
   return (
-    <section className={styles.wrapper}>
+    <section className={styles.TileList}>
       <Markdown.h2>{heading}</Markdown.h2>
       <ul className={styles.list}>
         {list.map(({ title, description }, i) => (

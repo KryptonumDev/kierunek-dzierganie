@@ -20,7 +20,7 @@ const Faq = ({
   }));
 
   return (
-    <section className={styles.wrapper}>
+    <section className={styles.Faq}>
       <Markdown.h2>{heading}</Markdown.h2>
       <List
         list={formattedList}

@@ -20,8 +20,7 @@ const LandingPage = async ({ params: { slug } }) => {
         switch (component._type) {
         case 'HeroBackgroundImg':
           return (
-            <HeroBackgroundImg key={i} {...component} aboveTheFold={Boolean(i === 0)}
-            />
+            <HeroBackgroundImg key={i} {...component} aboveTheFold={Boolean(i === 0)} />
           );
         case 'Benefits':
           return (

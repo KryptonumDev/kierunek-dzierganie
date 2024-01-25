@@ -1,4 +1,4 @@
-.wrapper {
+.CourseModules {
   background: var(--primary-200);
   padding: clamp(20px, calc(36vw/7.68), 48px) 0;
   header {
@@ -22,7 +22,7 @@
       display: grid;
       align-items: center;
       @media (min-width: 1000px){
-        grid-template-columns: auto 1fr;
+        grid-template-columns: 1fr 2fr;
       }
       gap: 24px clamp(24px, calc(24vw/7.68), 32px);
       .img {

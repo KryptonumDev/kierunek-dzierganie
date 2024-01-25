@@ -6,17 +6,17 @@ import type { ImgType } from '@/global/types';
 type Props = {
   heading: string,
   list: {
+    img: ImgType,
     description: string,
-    img: ImgType
   }[]
-}
+};
 
 const Bonuses = ({
   heading,
   list
 }: Props) => {
   return (
-    <section className={`${styles.wrapper}`}>
+    <section className={`${styles.Bonuses}`}>
       <header>
         <Markdown.h2>{heading}</Markdown.h2>
       </header>
@@ -29,6 +29,7 @@ const Bonuses = ({
             <Img
               data={img}
               className={styles.img}
+              sizes={i === 0 ? '(max-width: 412px), 380px' : '(max-width: 599px) 156px, (max-width: 950px) 50vw, 380px'}
             />
             <div className={styles.description}>
               <Markdown>{description}</Markdown>

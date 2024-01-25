@@ -27,7 +27,7 @@ const CtaSection = ({
 }: Props) => {
   return (
     <section
-      className={styles.wrapper}
+      className={styles.CtaSection}
       data-highlighted={Boolean(isHighlighted)}
       data-reversed={Boolean(isReversed)}
     >
@@ -48,6 +48,10 @@ const CtaSection = ({
         data={img}
         className={styles.img}
         priority={Boolean(aboveTheFold)}
+        sizes={isHighlighted
+          ? '(max-width: 378px) 100vw, 344px'
+          : '(max-width: 482px) 100vw, (max-width: 999px) 450px, 380px'
+        }
       />
       <Decoration
         aria-hidden='true'

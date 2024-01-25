@@ -15,11 +15,12 @@ type Props = {
 
 const HeroBackgroundImg = ({ heading, paragraph, cta, cta_Annotation, img, aboveTheFold }: Props) => {
   return (
-    <section className={`${styles.wrapper}`}>
+    <section className={`${styles.HeroBackgroundImg}`}>
       <Img
         data={img}
         className={styles.img}
         priority={aboveTheFold}
+        sizes='100vw'
       />
       <header>
         <Markdown.h1>{heading}</Markdown.h1>

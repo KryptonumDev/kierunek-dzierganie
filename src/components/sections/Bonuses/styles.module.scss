@@ -1,4 +1,4 @@
-.wrapper {
+.Bonuses {
   header {
     max-width: calc(690rem/16);
     margin: 0 auto;
@@ -27,7 +27,7 @@
       }
       @media (max-width: 599px){
         &:not(:first-child) {
-          grid-template-columns: auto 1fr;
+          grid-template-columns: 156px 1fr;
           gap: 16px;
           .img {
             max-width: 156px;

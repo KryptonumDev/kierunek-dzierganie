@@ -17,7 +17,7 @@ const SimpleCtaSection = ({
   cta_Annotation
 }: Props) => {
   return (
-    <section className={`${styles.wrapper}`}>
+    <section className={`${styles.SimpleCtaSection}`}>
       <header>
         <Markdown.h2>{heading}</Markdown.h2>
         <Markdown className={styles.paragraph}>{paragraph}</Markdown>

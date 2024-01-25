@@ -16,7 +16,7 @@ type Props = {
 
 const Benefits = ({ benefits, claim, cta, cta_Annotation }: Props) => {
   return (
-    <section className={`${styles.wrapper}`}>
+    <section className={`${styles.Benefits}`}>
       <ul className={styles.benefits}>
         {benefits.map((item, i) => (
           <Item key={i}>

@@ -22,7 +22,7 @@ const Opinions = ({
   cta_Annotation
 }: Props) => {
   return (
-    <section className={styles.wrapper}>
+    <section className={styles.Opinions}>
       <Markdown.h2>{heading}</Markdown.h2>
       <ul className={styles.opinions}>
         {list.map(({ author, description }, i) => (

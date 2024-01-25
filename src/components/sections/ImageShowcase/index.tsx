@@ -37,8 +37,20 @@ const ImageShowcase = ({
     },
     images: images.map((image, i) => (
       <Img
-        data={image}
         key={i}
+        data={image}
+        sizes={
+          i === 0 ? '(max-width: 768px) 28vw, 280px' :
+            i === 1 ? '(max-width: 768px) 12vw, 174px' :
+              i === 2 ? '(max-width: 768px) 25vw, 278px' :
+                i === 3 ? '(max-width: 768px) 12vw, 174px' :
+                  i === 4 ? '(max-width: 768px) 28vw, 280px' :
+                    i === 5 ? '(max-width: 768px) 12vw, 174px' :
+                      i === 6 ? '(max-width: 768px) 12vw, 174px' :
+                        i === 7 ? '(max-width: 768px) 12vw, 174px' :
+                          i === 8 ? '(max-width: 768px) 25vw, 280px' :
+                            '(max-width: 768px) 28vw, 280px'
+        }
       />
     )),
   };

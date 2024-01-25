@@ -1,4 +1,4 @@
-.wrapper {
+.CtaSection {
   display: grid;
   align-items: flex-start;
   gap: clamp(24px, calc(48vw / 7.68), 48px) clamp(64px, calc(82vw / 7.68), 108px);
@@ -69,7 +69,7 @@
     bottom: 0;
     transform: translate(0, 100%);
   }
-  &[data-highlighted] {
+  &[data-highlighted="true"] {
     border-radius: 6px;
     background: var(--primary-200);
     padding: clamp(16px, calc(24vw / 7.68), 36px);
