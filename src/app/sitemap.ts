@@ -3,23 +3,27 @@ import { domain } from '../global/Seo';
 
 const currentDate = new Date();
 type FetchProps = {
-  slug: string;
+  landings: {
+    slug: string;
+  }[];
 }
 
 export default async function sitemap() {
-  const pages = await query();
-  const sitemap = pages.map(route => ({
-    url: `${domain}${route}`,
+  const { landings } = await query();
+  const sitemap = landings.map(({ slug }) => ({
+    url: `${domain}${slug}`,
     lastModified: currentDate,
   }));
   return sitemap;
 }
 
-const query = async (): Promise<FetchProps[]> => {
+const query = async (): Promise<FetchProps> => {
   const data = await sanityFetch(/* groq */ `
-    *[_type == 'landingPage'] {
-      'slug': slug.current
+    {
+      'landings': *[_type == 'landingPage'] {
+        'slug': slug.current
+      }
     }
   `);
-  return data as FetchProps[];
+  return data as FetchProps;
 };
