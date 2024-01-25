@@ -1,8 +1,7 @@
 .wrapper {
   display: grid;
   align-items: flex-start;
-  gap: clamp(24px, calc(48vw / 7.68), 48px)
-    clamp(64px, calc(82vw / 7.68), 108px);
+  gap: clamp(24px, calc(48vw / 7.68), 48px) clamp(64px, calc(82vw / 7.68), 108px);
   @media (min-width: 1000px) {
     grid-template-columns: 2fr 1fr;
   }
@@ -70,13 +69,11 @@
     bottom: 0;
     transform: translate(0, 100%);
   }
-
-  &.isHighlighted {
+  &[data-highlighted] {
     border-radius: 6px;
     background: var(--primary-200);
     padding: clamp(16px, calc(24vw / 7.68), 36px);
-    gap: clamp(28px, calc(32vw / 7.68), 32px)
-      clamp(32px, calc(36vw / 7.68), 36px);
+    gap: clamp(28px, calc(32vw / 7.68), 32px) clamp(32px, calc(36vw / 7.68), 36px);
     @media (max-width: 999px) {
       .img {
         order: -1;

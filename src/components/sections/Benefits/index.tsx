@@ -1,16 +1,20 @@
-import Markdown from '@/utils/Markdown';
 import styles from './styles.module.scss';
+import Markdown from '@/utils/markdown';
 import Button from '@/components/atoms/Button';
 import Item from './item';
 
-const Benefits = ({
-  data: {
-    benefits,
-    claim,
-    cta,
-    cta_Annotation,
-  }
-}) => {
+type Props = {
+  benefits: string[];
+  claim: string;
+  cta: {
+    theme: 'primary' | 'secondary';
+    text: string;
+    href: string;
+  };
+  cta_Annotation: string;
+};
+
+const Benefits = ({ benefits, claim, cta, cta_Annotation }: Props) => {
   return (
     <section className={`${styles.wrapper}`}>
       <ul className={styles.benefits}>
@@ -23,13 +27,17 @@ const Benefits = ({
       <p className={styles.claim}>{claim}</p>
       {cta.href && (
         <>
-          <Button data={cta} className={styles.cta} />
-          {cta_Annotation && (
-            <Markdown className={styles.ctaAnnotation}>{cta_Annotation}</Markdown>
-          )}
+          <Button
+            data={cta}
+            className={styles.cta}
+          />
+          {cta_Annotation && <Markdown className={styles.ctaAnnotation}>{cta_Annotation}</Markdown>}
         </>
       )}
-      <Decoration aria-hidden="true" className={styles.decoration} />
+      <Decoration
+        aria-hidden='true'
+        className={styles.decoration}
+      />
     </section>
   );
 };
@@ -57,4 +65,4 @@ const Decoration = ({ ...props }) => (
       d='M93.84 108.765c-.11-3.19-.675-11.075-2.066-17.09M41.883 51.637c1.853.141 6.939 1.503 12.46 5.822m3.376 28.742c5.243-.388 17.253-.227 23.344 3.52M31.86 38.37c11.444 6.823 41.386 33.103 69.602 83.632M71.257 76.603c-1.98-7.014-5.721-22.798-4.85-29.815'
     ></path>
   </svg>
-)
+);

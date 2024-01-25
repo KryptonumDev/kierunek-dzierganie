@@ -1,13 +1,20 @@
-import Img from '@/utils/Img';
-import Markdown from '@/utils/Markdown';
+import Markdown from '@/utils/markdown';
+import Img from '@/utils/image';
 import styles from './styles.module.scss';
+import type { ImgType } from '@/global/types';
+
+type Props = {
+  heading: string,
+  list: {
+    description: string,
+    img: ImgType
+  }[]
+}
 
 const Bonuses = ({
-  data: {
-    heading,
-    list,
-  }
-}) => {
+  heading,
+  list
+}: Props) => {
   return (
     <section className={`${styles.wrapper}`}>
       <header>
@@ -15,15 +22,24 @@ const Bonuses = ({
       </header>
       <div className={styles.list}>
         {list.map(({ description, img }, i) => (
-          <div className={styles.item} key={i}>
-            <Img data={img} className={styles.img} />
+          <div
+            className={styles.item}
+            key={i}
+          >
+            <Img
+              data={img}
+              className={styles.img}
+            />
             <div className={styles.description}>
               <Markdown>{description}</Markdown>
             </div>
           </div>
         ))}
       </div>
-      <Decoration aria-hidden="true" className={styles.decoration} />
+      <Decoration
+        aria-hidden='true'
+        className={styles.decoration}
+      />
     </section>
   );
 };
@@ -58,4 +74,4 @@ const Decoration = ({ ...props }) => (
       d='M16.4 27.158c3.006 9.284 20.324 20.417 28.606 24.823-8.059-21.322-17.368-30.872-21.016-32.983-2.98-1.724-10.596-1.123-7.59 8.16zm28.605 24.824c6.094 15.354 26.03 48.097 57.021 56.24'
     ></path>
   </svg>
-)
+);

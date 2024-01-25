@@ -1,8 +1,8 @@
 import '@/global/global.scss';
-import Script from 'next/script';
 import localFont from 'next/font/local';
 import Nav from '@/components/organisms/Nav';
 import Footer from '@/components/organisms/Footer';
+import Analitics from '@/global/Analitics';
 
 const Lato = localFont({
   src: [
@@ -17,61 +17,34 @@ const Lato = localFont({
       style: 'italic',
     },
   ],
+  display: 'swap',
   fallback: ['sans-serif'],
 });
-
 const CityStreetWear = localFont({
-  src: '../assets/fonts/CityStreetwear-Regular.woff2',
+  src: [
+    {
+      path: '../assets/fonts/CityStreetwear-Regular.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+  ],
   display: 'swap',
-  variable: '--font-city-streetwear',
   fallback: ['sans-serif'],
+  variable: '--font-city-streetwear',
 });
 
 export const viewport = {
-  themeColor: '#FDFBF8',
+  themeColor: '#FAF4F0',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang='pl'>
-      <body className={`body ${Lato.className} ${CityStreetWear.variable}`}>
+      <body className={`${Lato.className} ${CityStreetWear.variable}`}>
         <Nav />
         <main id='main'>{children}</main>
         <Footer />
-        <Script src='https://www.googletagmanager.com/gtag/js?id=G-F5CD13WL6R' />
-        <Script id='google-analytics'>
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-
-            gtag('config', 'G-F5CD13WL6R');
-          `}
-        </Script>
-        <Script id='fb-pixel'>
-          {`
-            !function(f,b,e,v,n,t,s)
-            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-            n.queue=[];t=b.createElement(e);t.async=!0;
-            t.src=v;s=b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t,s)}(window, document,'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '106002735936658');
-            fbq('track', 'PageView');
-          `}
-        </Script>
-        <noscript>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            height='1'
-            width='1'
-            style={{ display: 'none' }}
-            alt=''
-            src='https://www.facebook.com/tr?id=106002735936658&ev=PageView&noscript=1'
-          />
-        </noscript>
+        <Analitics />
       </body>
     </html>
   );

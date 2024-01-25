@@ -1,4 +1,13 @@
-import { Fragment } from "react";
+import { Fragment } from 'react';
+import styles from './styles.module.scss';
+
+type Props = {
+  heading: React.ReactNode,
+  paragraph: React.ReactNode,
+  cta: React.ReactNode,
+  cta_Annotation?: React.ReactNode,
+  images: React.ReactNode[]
+};
 
 const GridImageShowcase = ({
   heading,
@@ -6,7 +15,7 @@ const GridImageShowcase = ({
   cta,
   cta_Annotation,
   images,
-}) => {
+}: Props) => {
   return (
     <section className={styles.GridImageShowcase}>
       {heading}
@@ -19,17 +28,11 @@ const GridImageShowcase = ({
       </div>
       <div className={styles.copy}>
         {paragraph}
-        {cta.href && (
-          <>
-            {cta}
-            {cta_Annotation && (
-              {cta_Annotation}
-            )}
-          </>
-        )}
+        {cta}
+        {cta_Annotation && cta_Annotation}
       </div>
     </section>
-  )
-}
+  );
+};
 
 export default GridImageShowcase;

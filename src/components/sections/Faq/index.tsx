@@ -1,9 +1,19 @@
-import Markdown from '@/utils/Markdown';
+import Markdown from '@/utils/markdown';
 import styles from './styles.module.scss';
-import SchemaFaq from '@/global/Schema/Faq';
 import List from './list';
 
-const Faq = ({ data: { heading, list } }) => {
+type Props = {
+  heading: string;
+  list: {
+    question: string;
+    answer: string;
+  }[];
+};
+
+const Faq = ({
+  heading,
+  list
+}: Props) => {
   const formattedList = list.map(({ question, answer }) => ({
     question: <Markdown.span>{question}</Markdown.span>,
     answer: <Markdown>{answer}</Markdown>,

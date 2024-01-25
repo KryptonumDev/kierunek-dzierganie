@@ -3,12 +3,23 @@ import { useState } from 'react';
 import styles from './styles.module.scss';
 import { motion } from 'framer-motion';
 
-const List = ({ Indicator, list }) => {
+type Props = {
+  Indicator: JSX.Element;
+  list: {
+    question: JSX.Element;
+    answer: JSX.Element;
+  }[];
+};
+
+const List = ({
+  Indicator,
+  list
+}: Props) => {
   const [ opened, setOpened ] = useState(0);
-  const handleClick = (e, i) => {
+  const handleClick = (e: React.MouseEvent<HTMLElement>, i: number) => {
     e.preventDefault();
     setOpened(i);
-  }
+  };
 
   return (
     <div className={styles.list}>

@@ -1,23 +1,34 @@
-import Img from '@/utils/Img';
-import Markdown from '@/utils/Markdown';
+import Img from '@/utils/image';
+import Markdown from '@/utils/markdown';
 import styles from './styles.module.scss';
 import Button from '@/components/atoms/Button';
+import type { CtaType, ImgType } from '@/global/types';
+
+type Props = {
+  isReversed?: boolean;
+  isHighlighted?: boolean;
+  heading: string;
+  paragraph: string;
+  cta: CtaType;
+  cta_Annotation?: string;
+  img: ImgType,
+  aboveTheFold?: boolean;
+};
 
 const CtaSection = ({
-  data: {
-    isReversed,
-    isHighlighted,
-    heading,
-    paragraph,
-    cta,
-    cta_Annotation,
-    img,
-  },
-  aboveTheFold
-}) => {
+  isReversed,
+  isHighlighted,
+  heading,
+  paragraph,
+  cta,
+  cta_Annotation,
+  img,
+  aboveTheFold,
+}: Props) => {
   return (
     <section
-      className={`${styles.wrapper} ${Boolean(isHighlighted) ? styles.isHighlighted : ''}`}
+      className={styles.wrapper}
+      data-highlighted={Boolean(isHighlighted)}
       data-reversed={Boolean(isReversed)}
     >
       <header>
@@ -25,15 +36,23 @@ const CtaSection = ({
         <Markdown className={styles.paragraph}>{paragraph}</Markdown>
         {cta.href && (
           <>
-            <Button data={cta} className={styles.cta} />
-            {cta_Annotation && (
-              <Markdown className={styles.ctaAnnotation}>{cta_Annotation}</Markdown>
-            )}
+            <Button
+              data={cta}
+              className={styles.cta}
+            />
+            {cta_Annotation && <Markdown className={styles.ctaAnnotation}>{cta_Annotation}</Markdown>}
           </>
         )}
       </header>
-      <Img data={img} className={styles.img} priority={aboveTheFold} />
-      <Decoration aria-hidden="true" className={styles.decoration} />
+      <Img
+        data={img}
+        className={styles.img}
+        priority={Boolean(aboveTheFold)}
+      />
+      <Decoration
+        aria-hidden='true'
+        className={styles.decoration}
+      />
     </section>
   );
 };
@@ -62,4 +81,4 @@ const Decoration = ({ ...props }) => (
       d='M6.197 81.826C24.835 79.072 68.493 66.015 94.02 35.82m0 0c5.07-6.555 17.068-19.16 24.502-17.138 1.389.91 3.227 3.537-.532 6.768-4.808 4.24-16.334 12.252-23.97 10.37z'
     ></path>
   </svg>
-)
+);

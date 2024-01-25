@@ -1,25 +1,33 @@
 import Button from '@/components/atoms/Button';
-import Markdown from '@/utils/Markdown';
+import Markdown from '@/utils/markdown';
 import styles from './styles.module.scss';
+import type { CtaType } from '@/global/types';
+
+type Props = {
+  heading: string,
+  list: {
+    title: string,
+    description: string
+  }[],
+  paragraph: string,
+  cta: CtaType,
+  cta_Annotation?: string
+};
 
 const TileList = ({
-  data: {
-    heading,
-    list,
-    paragraph,
-    cta,
-    cta_Annotation,
-  }
-}) => {
+  heading,
+  list,
+  paragraph,
+  cta,
+  cta_Annotation
+}: Props) => {
   return (
     <section className={styles.wrapper}>
       <Markdown.h2>{heading}</Markdown.h2>
       <ul className={styles.list}>
         {list.map(({ title, description }, i) => (
           <li key={i}>
-            {title && (
-              <Markdown.h3>{title}</Markdown.h3>
-            )}
+            {title && <Markdown.h3>{title}</Markdown.h3>}
             <Markdown className={styles.description}>{description}</Markdown>
           </li>
         ))}
@@ -28,14 +36,18 @@ const TileList = ({
         <Markdown className={styles.paragraph}>{paragraph}</Markdown>
         {cta.href && (
           <>
-            <Button data={cta} className={styles.cta} />
-            {cta_Annotation && (
-              <Markdown className={styles.ctaAnnotation}>{cta_Annotation}</Markdown>
-            )}
+            <Button
+              data={cta}
+              className={styles.cta}
+            />
+            {cta_Annotation && <Markdown className={styles.ctaAnnotation}>{cta_Annotation}</Markdown>}
           </>
         )}
       </div>
-      <Decoration aria-hidden="true" className={styles.decoration} />
+      <Decoration
+        aria-hidden='true'
+        className={styles.decoration}
+      />
     </section>
   );
 };
@@ -70,4 +82,4 @@ const Decoration = ({ ...props }) => (
       d='M16.387 27.086c3.006 9.284 20.323 20.416 28.606 24.822-8.06-21.321-17.369-30.872-21.016-32.982-2.98-1.725-10.596-1.124-7.59 8.16zM44.99 51.91c6.093 15.354 26.03 48.096 57.02 56.239'
     ></path>
   </svg>
-)
+);

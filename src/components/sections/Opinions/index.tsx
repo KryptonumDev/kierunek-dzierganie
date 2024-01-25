@@ -1,23 +1,36 @@
 import Button from '@/components/atoms/Button';
-import Markdown from '@/utils/Markdown';
+import Markdown from '@/utils/markdown';
 import styles from './styles.module.scss';
+import type { CtaType } from '@/global/types';
+
+type Props = {
+  heading: string;
+  list: {
+    author: string;
+    description: string;
+  }[];
+  paragraph: string;
+  cta: CtaType;
+  cta_Annotation: string;
+}
 
 const Opinions = ({
-  data: {
-    heading,
-    list,
-    paragraph,
-    cta,
-    cta_Annotation,
-  }
-}) => {
+  heading,
+  list,
+  paragraph,
+  cta,
+  cta_Annotation
+}: Props) => {
   return (
     <section className={styles.wrapper}>
       <Markdown.h2>{heading}</Markdown.h2>
       <ul className={styles.opinions}>
         {list.map(({ author, description }, i) => (
           <li key={i}>
-            <Quote aria-hidden="true" className={styles.quote} />
+            <Quote
+              aria-hidden='true'
+              className={styles.quote}
+            />
             <Markdown className={styles.description}>{description}</Markdown>
             <p className={styles.author}>{author}</p>
           </li>
@@ -28,7 +41,10 @@ const Opinions = ({
         <Button data={cta} />
         <Markdown className={styles.ctaAnnotation}>{cta_Annotation}</Markdown>
       </div>
-      <Decoration aria-hidden="true" className={styles.decoration} />
+      <Decoration
+        aria-hidden='true'
+        className={styles.decoration}
+      />
     </section>
   );
 };
@@ -36,7 +52,14 @@ const Opinions = ({
 export default Opinions;
 
 const Quote = ({ ...props }) => (
-  <svg xmlns='http://www.w3.org/2000/svg' width='33' height='35' viewBox='0 0 33 35' fill='none' {...props}> 
+  <svg
+    xmlns='http://www.w3.org/2000/svg'
+    width='33'
+    height='35'
+    viewBox='0 0 33 35'
+    fill='none'
+    {...props}
+  >
     <path
       fill='#EFE8E7'
       d='M12.948 1.808c2.082 1.534 2.818 3.915 2.612 6.748-5.496 2.752-10.486 3.366-9.378-2.73C7.16.455 11.455.455 12.948 1.809z'
@@ -60,7 +83,7 @@ const Quote = ({ ...props }) => (
       d='M17.247 31.666C25.93 22.712 35.968 7.45 28.312 1.808 26.818.454 22.522.454 21.546 5.827c-1.221 6.715 8.394 5.258 10.454.606'
     ></path>
   </svg>
-)
+);
 
 const Decoration = ({ ...props }) => (
   <svg
@@ -117,4 +140,4 @@ const Decoration = ({ ...props }) => (
       transform='rotate(-63.931 57.814 18.683)'
     ></circle>
   </svg>
-)
+);

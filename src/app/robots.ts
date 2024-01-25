@@ -1,4 +1,4 @@
-import { domain } from '../global/Seo';
+import { domain } from '@/global/Seo';
 
 export default function robots() {
   return {
@@ -7,5 +7,5 @@ export default function robots() {
       allow: '/',
     },
     sitemap: `${domain}/sitemap.xml`,
-  }
+  };
 }
