@@ -2,7 +2,7 @@ import '@/global/global.scss';
 import localFont from 'next/font/local';
 import Nav from '@/components/organisms/Nav';
 import Footer from '@/components/organisms/Footer';
-
+import Analitics from '@/global/Analitics';
 
 const Lato = localFont({
   src: [
@@ -44,7 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Nav />
         <main id='main'>{children}</main>
         <Footer />
-        {/* <Analitics /> */}
+        <Analitics />
       </body>
     </html>
   );
