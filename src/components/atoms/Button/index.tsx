@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import styles from './styles.module.scss';
-import { domain } from '@/global/Seo';
 import { CtaType } from '@/global/types';
+import isExternalLink from '@/utils/is-external-link';
 
 type ButtonProps = (
   | {
@@ -24,11 +24,7 @@ const Button = ({ data, theme = 'primary', children, href, className, ...props }
     children = data.text;
   }
 
-  const isExternal = href && (
-    (href.startsWith('https://') && !href.startsWith(domain)) ||
-    href.startsWith('mailto:') ||
-    href.startsWith('tel:')
-  );
+  const isExternal = isExternalLink(href);
   const Element: 'a' | typeof Link | 'button' = href ? (isExternal ? 'a' : Link) : 'button';
 
   return (

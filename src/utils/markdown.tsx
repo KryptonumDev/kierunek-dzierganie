@@ -1,6 +1,6 @@
 import { MDXRemote } from 'next-mdx-remote/rsc';
-import { domain } from '@/global/Seo';
 import Link from 'next/link';
+import isExternalLink from './is-external-link';
 
 const LinkRenderer = ({
   href,
@@ -8,11 +8,7 @@ const LinkRenderer = ({
 }: React.AnchorHTMLAttributes<HTMLAnchorElement> & {
   children?: React.ReactNode;
 }) => {
-  const isExternal =
-    href &&
-    ((href.startsWith('https://') && !href.startsWith(domain)) ||
-      href.startsWith('mailto:') ||
-      href.startsWith('tel:'));
+  const isExternal = isExternalLink(href);
   const Element = isExternal ? 'a' : Link;
 
   return (
