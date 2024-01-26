@@ -1,8 +1,6 @@
 import sanityFetch from '@/utils/sanityFetch';
 import type { Metadata } from 'next';
-
-export const domain = 'https://kierunekdzierganie.pl';
-export const locale = 'pl_PL';
+import { domain, locale } from './constants';
 
 type SeoProps = {
   title: string;

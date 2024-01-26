@@ -1,6 +1,6 @@
-import type { MetadataRoute } from 'next';
 import sanityFetch from '@/utils/sanityFetch';
-import { domain } from '../global/Seo';
+import type { MetadataRoute } from 'next';
+import { domain } from '@/global/constants';
 
 type FetchProps = {
   landings: {

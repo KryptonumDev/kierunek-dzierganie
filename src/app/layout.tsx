@@ -4,7 +4,7 @@ import Nav from '@/components/organisms/Nav';
 import Footer from '@/components/organisms/Footer';
 import Analitics from '@/global/Analitics';
 import type { Viewport } from 'next';
-import { themeColor } from '@/global/constants';
+import { locale, themeColor } from '@/global/constants';
 
 const Lato = localFont({
   src: [
@@ -41,7 +41,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang='pl'>
+    <html lang={locale}>
       <body className={`${Lato.className} ${CityStreetWear.variable}`}>
         <Nav />
         <main id='main'>{children}</main>
