@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint --fix --dir src",
-    "generate": "plop"
+    "template": "plop"
   },
   "dependencies": {
     "framer-motion": "^10.18.0",

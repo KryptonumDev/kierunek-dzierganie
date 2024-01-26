@@ -1,10 +1,8 @@
 import '@/global/global.scss';
 import localFont from 'next/font/local';
-import Nav from '@/components/organisms/Nav';
-import Footer from '@/components/organisms/Footer';
 import Analitics from '@/global/Analitics';
-import type { Viewport } from 'next';
 import { locale, themeColor } from '@/global/constants';
+import type { Viewport } from 'next';
 
 const Lato = localFont({
   src: [
@@ -22,6 +20,7 @@ const Lato = localFont({
   display: 'swap',
   fallback: ['sans-serif'],
 });
+
 const CityStreetWear = localFont({
   src: [
     {
@@ -43,9 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang={locale}>
       <body className={`${Lato.className} ${CityStreetWear.variable}`}>
-        <Nav />
-        <main id='main'>{children}</main>
-        <Footer />
+        {children}
         <Analitics />
       </body>
     </html>
