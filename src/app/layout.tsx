@@ -3,6 +3,8 @@ import localFont from 'next/font/local';
 import Nav from '@/components/organisms/Nav';
 import Footer from '@/components/organisms/Footer';
 import Analitics from '@/global/Analitics';
+import type { Viewport } from 'next';
+import { themeColor } from '@/global/constants';
 
 const Lato = localFont({
   src: [
@@ -33,8 +35,8 @@ const CityStreetWear = localFont({
   variable: '--font-city-streetwear',
 });
 
-export const viewport = {
-  themeColor: '#FAF4F0',
+export const viewport: Viewport = {
+  themeColor: themeColor,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

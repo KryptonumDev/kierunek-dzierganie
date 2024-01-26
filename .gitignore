@@ -34,7 +34,6 @@ next-env.d.ts
 
 node_modules/
 .cache/
-public
 .DS_Store
 Thumbs.db
 .env*

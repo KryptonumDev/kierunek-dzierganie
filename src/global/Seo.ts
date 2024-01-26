@@ -1,4 +1,5 @@
 import sanityFetch from '@/utils/sanityFetch';
+import type { Metadata } from 'next';
 
 export const domain = 'https://kierunekdzierganie.pl';
 export const locale = 'pl_PL';
@@ -11,14 +12,14 @@ type SeoProps = {
 type QueryProps = {
   robotsIndex: boolean;
   seo: {
-    og_Img: string,
+    og_Img: string;
   };
 };
 
-const Seo = async ({ title, description, path, ...props }: SeoProps) => {
+const Seo = async ({ title, description, path, ...props }: SeoProps): Promise<Metadata> => {
   const {
     robotsIndex,
-    seo: { og_Img }
+    seo: { og_Img },
   }: QueryProps = await query();
 
   const seo = {
@@ -28,7 +29,7 @@ const Seo = async ({ title, description, path, ...props }: SeoProps) => {
     ogImage: og_Img || '',
   };
 
-  const metadata = {
+  const metadata: Metadata = {
     ...(!robotsIndex && {
       robots: {
         index: false,

@@ -1,19 +1,22 @@
+import type { MetadataRoute } from 'next';
 import sanityFetch from '@/utils/sanityFetch';
 import { domain } from '../global/Seo';
 
-const currentDate = new Date();
 type FetchProps = {
   landings: {
     slug: string;
   }[];
 }
 
-export default async function sitemap() {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { landings } = await query();
-  const sitemap = landings.map(route => ({
-    url: `${domain}/landing/${route}`,
-    lastModified: currentDate,
-  }));
+  const sitemap = [
+    ...landings.map(route => ({
+      url: `${domain}/landing/${route}`,
+      lastModified: new Date(),
+    })),
+  ];
+
   return sitemap;
 }
 
