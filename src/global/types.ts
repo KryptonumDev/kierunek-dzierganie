@@ -17,3 +17,11 @@ export type ImgType = {
     },
   },
 };
+
+export type generateMetadataProps = {
+  slug?: string;
+  seo: {
+    title: string;
+    description: string;
+  };
+};

@@ -41,6 +41,7 @@
   @media (max-width: 899px) and (min-width: 649px) {
     --pageMargin: clamp(40px, calc(80vw/7.68), 80px);
   }
+  --easing: cubic-bezier(0.46,0.03,0.52,0.96);
 }
 body.scrollLock {
   overflow: hidden;
@@ -52,6 +53,7 @@ body {
   -webkit-tap-highlight-color: transparent;
   font-family: 'Erode', serif;
   background-color: var(--primary-100);
+  -webkit-font-smoothing: antialiased;
   color: var(--primary-800);
   line-height: 150%;
   font-size: clamp(1rem, calc(18vw/7.68), calc(18rem/16));
@@ -72,6 +74,7 @@ main,
 }
 svg {
   display: block;
+  max-width: 100%;
 }
 a {
   text-decoration: none;
@@ -122,6 +125,9 @@ p {
     font-weight: inherit;
   }
 }
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
 h1, h2, h3, h4, h5, h6 {
   font-weight: 400;
   line-height: 133%;
@@ -166,8 +172,11 @@ h1, h2 {
       transform-origin: left;
     }
   }
-  &:hover::after {
-    animation: link .8s;
+  &:hover,
+  &:focus-visible {
+    &::after {
+      animation: link .8s var(--easing);
+    }
   }
 }
 

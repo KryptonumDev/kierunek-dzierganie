@@ -16,11 +16,15 @@ export const client = createClient({
 const DEFAULT_PARAMS = {} as QueryParams;
 const NEXT_REVALIDATE = 900;
 
-export default async function sanityFetch<QueryResponse>(
-  query: string,
-  params: QueryParams = DEFAULT_PARAMS,
-  isDraftMode: boolean = false,
-): Promise<QueryResponse> {
+export default async function sanityFetch<QueryResponse>({
+  query,
+  params = DEFAULT_PARAMS,
+  isDraftMode = false,
+}: {
+  query: string;
+  params?: QueryParams;
+  isDraftMode?: boolean;
+}): Promise<QueryResponse> {
   if (isDraftMode && !token) {
     throw new Error('The `SANITY_API_TOKEN` environment variable is required.');
   }

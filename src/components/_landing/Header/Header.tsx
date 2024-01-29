@@ -55,14 +55,15 @@ const Nav = async () => {
 };
 
 const query = async (): Promise<QueryProps> => {
-  const data = await sanityFetch(/* groq */ `
+  const data = await sanityFetch(
+    /* groq */ `
     *[_id == 'global'][0] {
       facebook,
       instagram,
       youtube,
     }`,
-  {},
-  draftMode().isEnabled
+    {},
+    draftMode().isEnabled
   );
   return data as QueryProps;
 };
