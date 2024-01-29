@@ -1,4 +1,4 @@
-import sanityFetch from '@/utils/sanityFetch';
+import sanityFetch from '@/utils/sanity.fetch';
 import type { Metadata } from 'next';
 import { domain, locale } from './constants';
 

@@ -1,3 +1,4 @@
+import { draftMode } from 'next/headers';
 import { notFound } from 'next/navigation';
 import Seo from '@/global/Seo';
 import Faq from '@/components/_global/Faq';
@@ -10,7 +11,7 @@ import Benefits from '@/components/_global/Benefits';
 import CourseModules from '@/components/_global/CourseModules';
 import ImageShowcase from '@/components/_global/ImageShowcase';
 import Bonuses from '@/components/_global/Bonuses';
-import sanityFetch from '@/utils/sanityFetch';
+import sanityFetch from '@/utils/sanity.fetch';
 
 const LandingPage = async ({ params: { slug } }) => {
   const { content } = await query(slug);
@@ -108,8 +109,7 @@ export async function generateMetadata({ params: { slug: paramsSlug } }) {
 }
 
 const query = async (slug) => {
-  const data = await sanityFetch(
-    /* groq */ `
+  const data = await sanityFetch(/* groq */ `
     *[_type == "landingPage" && slug.current == $slug][0] {
       name,
       'slug': slug.current,
@@ -311,7 +311,8 @@ const query = async (slug) => {
       }
     }
 	`,
-    { slug: slug }
+  { slug: slug },
+  draftMode().isEnabled
   );
   !data && notFound();
   return data;

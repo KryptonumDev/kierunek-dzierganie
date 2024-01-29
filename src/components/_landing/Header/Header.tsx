@@ -1,15 +1,12 @@
-import sanityFetch from '@/utils/sanityFetch';
+import { draftMode } from 'next/headers';
+import sanityFetch from '@/utils/sanity.fetch';
 import styles from './Header.module.scss';
 import { Facebook, Instagram, Youtube } from '@/components/ui/Icons';
 import Link from 'next/link';
 import type { QueryProps } from './Header.types';
 
 const Nav = async () => {
-  const {
-    facebook,
-    instagram,
-    youtube,
-  }: QueryProps = await query();
+  const { facebook, instagram, youtube }: QueryProps = await query();
 
   const socials = [
     {
@@ -63,8 +60,10 @@ const query = async (): Promise<QueryProps> => {
       facebook,
       instagram,
       youtube,
-    }
-  `);
+    }`,
+  {},
+  draftMode().isEnabled
+  );
   return data as QueryProps;
 };
 
