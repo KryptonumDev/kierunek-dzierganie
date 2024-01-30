@@ -11,6 +11,10 @@
   },
   "dependencies": {
     "@sanity/client": "^6.11.1",
+    "@supabase/auth-helpers-nextjs": "^0.8.7",
+    "@supabase/auth-ui-react": "^0.4.7",
+    "@supabase/auth-ui-shared": "^0.1.8",
+    "@supabase/supabase-js": "^2.39.3",
     "eslint": "^8.56.0",
     "eslint-config-next": "^14.1.0",
     "framer-motion": "^10.18.0",
@@ -32,8 +36,8 @@
     "plop": "^4.0.1",
     "prettier": "^3.2.4",
     "sass": "^1.70.0",
+    "server-only": "^0.0.1",
     "typescript": "^5.3.3",
-    "yarn-upgrade-all": "^0.7.2",
-    "server-only": "^0.0.1"
+    "yarn-upgrade-all": "^0.7.2"
   }
 }

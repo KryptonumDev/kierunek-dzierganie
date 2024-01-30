@@ -26,6 +26,6 @@
       "@/assets/*": ["src/assets/*"],
     },
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/ui/markdown.jsx", "src/utils/functions.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/ui/markdown.jsx", "src/utils/functions.js", "src/app/auth-form.js", "src/app/auth/callback/route.js"],
   "exclude": ["node_modules"],
 }
