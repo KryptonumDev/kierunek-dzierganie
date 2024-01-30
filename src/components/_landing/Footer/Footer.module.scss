@@ -1,0 +1,14 @@
+.Footer {
+  background-color: var(--primary-200);
+  padding: 32px 0;
+  > div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px 32px;
+  }
+  @media (max-width: 499px) {
+    padding: 48px 0;
+  }
+}

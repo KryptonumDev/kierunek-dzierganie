@@ -1,0 +1,64 @@
+.Opinions {
+  h2,
+  .copy {
+    text-align: center;
+  }
+  .opinions {
+    margin: clamp(28px, calc(36vw/7.68), 64px) 0 clamp(36px, calc(48vw/7.68), 80px);
+    padding-top: 20px;
+    list-style-type: none;
+    @media (min-width: 900px){
+      columns: 2;
+      gap: 32px;
+    }
+    li {
+      overflow: visible;
+      margin: 32px 0;
+      border-radius: 6px;
+      background-color: var(--primary-200);
+      padding: clamp(16px, calc(28vw/7.68), 32px) clamp(16px, calc(24vw/7.68), 28px);
+      &:first-child,
+      &:last-child {
+        margin: 0;
+      }
+      .author {
+        margin-top: clamp(12px, calc(16vw/7.68), 16px);
+        text-align: right;
+        font-family: var(--font-city-streetwear);
+        font-size: clamp(calc(40rem/16), calc(48vw/7.68), calc(48rem/16));
+        color: var(--primary-600);
+      }
+      position: relative;
+      .quote {
+        right: clamp(16px, calc(24vw/7.68), 28px);
+        top: 0;
+        transform: translateY(-50%);
+        position: absolute;
+      }
+    }
+  }
+  .copy {
+    max-width: calc(588rem/16);
+    margin: 0 auto;
+    text-align: center;
+    .paragraph {
+      margin-bottom: clamp(28px, calc(36vw/7.68), 36px);
+      p:not(:last-child){
+        margin-bottom: calc(8em/16);
+      }
+    }
+    .ctaAnnotation {
+      margin-top: 8px;
+      font-size: calc(14rem/16);
+    }
+  }
+  position: relative;
+  .decoration {
+    position: absolute;
+    width: clamp(76px, calc(96vw/7.68), 134px);
+    height: auto;
+    right: 5%;
+    bottom: 0;
+    transform: translateY(100%);
+  }
+}

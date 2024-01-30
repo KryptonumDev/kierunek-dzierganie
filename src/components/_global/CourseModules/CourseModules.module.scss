@@ -1,0 +1,86 @@
+.CourseModules {
+  background: var(--primary-200);
+  padding: clamp(20px, calc(36vw/7.68), 48px) 0;
+  header {
+    max-width: calc(794rem/16);
+    margin: 0 auto clamp(28px, calc(48vw/7.68), 64px);
+    text-align: center;
+    h2 {
+      margin-bottom: clamp(24px, calc(24vw/7.68), 28px);
+    }
+  }
+  .list {
+    display: grid;
+    gap: clamp(28px, calc(42vw/7.68), 42px);
+    overflow: hidden;
+    margin: 0 calc(var(--pageMargin) * -1);
+    padding: 0 var(--pageMargin);
+    @media (min-width: 1000px){
+      gap: 20px;
+    }
+    .item {
+      display: grid;
+      align-items: center;
+      @media (min-width: 1000px){
+        grid-template-columns: 1fr 2fr;
+      }
+      gap: 24px clamp(24px, calc(24vw/7.68), 32px);
+      .img {
+        width: 100%;
+        max-width: clamp(242px, calc(280vw/7.68), 380px);
+      }
+      position: relative;
+      .arrow {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        transform: translate(35%, 50%);
+        z-index: 2;
+      }
+    }
+    .title {
+      font-size: clamp(calc(40rem/16), calc(60vw/7.68), calc(60rem/16));
+      font-family: var(--font-city-streetwear);
+      strong {
+        width: clamp(40px, calc(60vw/7.68), 60px);
+        height: clamp(40px, calc(60vw/7.68), 60px);
+        border-radius: 50%;
+        background: var(--primary-300);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding-top: .4em;
+      }
+      margin-bottom: clamp(12px, calc(16vw/7.68), 28px);
+    }
+    .description {
+      > *:not(:last-child){
+        margin-bottom: 8px;
+      }
+      ul {
+        display: grid;
+        gap: clamp(8px, calc(12vw/7.68), 12px);
+        @media (min-width: 500px){
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    }
+  }
+  position: relative;
+  .decoration1,
+  .decoration2 {
+    position: absolute;
+    width: clamp(89px, calc(103vw/7.68), 134px);
+    height: auto;
+  }
+  .decoration1 {
+    left: 0;
+    top: 0;
+    transform: translate(0, -50%);
+  }
+  .decoration2 {
+    right: 0;
+    bottom: 0;
+    transform: translate(0, 75%);
+  }
+}
