@@ -53,7 +53,6 @@ body {
   -webkit-tap-highlight-color: transparent;
   font-family: 'Erode', serif;
   background-color: var(--primary-100);
-  -webkit-font-smoothing: antialiased;
   color: var(--primary-800);
   line-height: 150%;
   font-size: clamp(1rem, calc(18vw/7.68), calc(18rem/16));
@@ -100,6 +99,7 @@ select {
   color: inherit;
   background-color: transparent;
   appearance: none;
+  border: none;
 }
 summary {
   cursor: pointer;

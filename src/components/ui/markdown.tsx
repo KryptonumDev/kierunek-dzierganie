@@ -1,6 +1,6 @@
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import Link from 'next/link';
-import isExternalLink from '../../utils/is-external-link';
+import isExternalLink from '@/utils/is-external-link';
 
 const LinkRenderer = ({
   href,

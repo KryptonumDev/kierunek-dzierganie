@@ -1,5 +1,4 @@
 export type CtaType = {
-  theme: 'primary' | 'secondary';
   href: string;
   text: string | React.ReactNode;
 };

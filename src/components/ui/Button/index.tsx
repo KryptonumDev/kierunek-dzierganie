@@ -1,25 +1,22 @@
 import Link from 'next/link';
 import styles from './styles.module.scss';
-import type { CtaType } from '@/global/types';
 import isExternalLink from '@/utils/is-external-link';
+import type { CtaType } from '@/global/types';
 
 type ButtonProps = (
   | {
     data: CtaType;
-    theme?: never;
     href?: never;
     children?: never;
   } | {
     data?: never;
-    theme: CtaType['theme'],
     href?: CtaType['href'],
     children: CtaType['text']
   }
 ) & React.HTMLAttributes<HTMLAnchorElement | HTMLButtonElement>;
 
-const Button = ({ data, theme = 'primary', children, href, className, ...props }: ButtonProps) => {
+const Button = ({ data, children, href, className, ...props }: ButtonProps) => {
   if(data){
-    theme = data.theme;
     href = data.href;
     children = data.text;
   }
@@ -35,7 +32,6 @@ const Button = ({ data, theme = 'primary', children, href, className, ...props }
       } : {
         type: 'submit'
       })}
-      data-theme={theme}
       className={`${styles.wrapper}${className ? ` ${className}` : ''}`}
       {...props}
     >
