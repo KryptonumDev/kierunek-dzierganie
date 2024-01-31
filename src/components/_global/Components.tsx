@@ -54,7 +54,7 @@ const Components = ({ data, index }: { data: ComponentProps; index: number }) =>
 
 export default Components;
 
-const Componenets_Query = /* groq */ `
+const Components_Query = /* groq */ `
   content[] {
     ${HeroBackgroundImg_Query}
     ${Benefits_Query}
@@ -69,4 +69,4 @@ const Componenets_Query = /* groq */ `
   },
 `;
 
-export { Componenets_Query };
+export { Components_Query };

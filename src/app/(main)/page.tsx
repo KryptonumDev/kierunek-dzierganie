@@ -3,11 +3,11 @@ import { notFound } from 'next/navigation';
 import sanityFetch from '@/utils/sanity.fetch';
 import Seo, { Seo_Query } from '@/global/Seo';
 import type { PageQueryProps } from '@/global/types';
-import Components, { Componenets_Query } from '@/components/_global/Components';
+import Components, { Components_Query } from '@/components/_global/Components';
 
 const IndexPage = async () => {
   const { content }: PageQueryProps = await query();
-  
+
   return content.map((content, i) => (
     <Components
       key={i}
@@ -16,6 +16,8 @@ const IndexPage = async () => {
     />
   ));
 };
+
+export default IndexPage;
 
 export async function generateMetadata() {
   const {
@@ -33,7 +35,7 @@ const query = async (): Promise<PageQueryProps> => {
     query: /* groq */ `
       *[_type == "homepage"][0] {
         name,
-        ${Componenets_Query}
+        ${Components_Query}
         ${Seo_Query}
       }
     `,
@@ -42,5 +44,3 @@ const query = async (): Promise<PageQueryProps> => {
   !data && notFound();
   return data as PageQueryProps;
 };
-
-export default IndexPage;

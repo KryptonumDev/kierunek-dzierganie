@@ -33,3 +33,7 @@ export type PageQueryProps = {
   slug?: string;
   content: ComponentProps[];
 } & generateMetadataProps;
+
+export type generateStaticParamsProps = {
+  slug: string;
+}
