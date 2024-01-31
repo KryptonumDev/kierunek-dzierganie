@@ -49,6 +49,7 @@ const Components = ({ data, index }: { data: ComponentProps; index: number }) =>
     Bonuses: <Bonuses {...(data as BonusesProps)} />,
     TileList: <TileList {...(data as TileListProps)} />,
   }[componentType] as React.ReactNode;
+
   return Component;
 };
 

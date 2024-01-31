@@ -7,7 +7,8 @@ import Components, { Components_Query } from '@/components/_global/Components';
 
 const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) => {
   const { content }: PageQueryProps = await query(slug);
-  return content.map((content, i) => (
+
+  return content?.map((content, i) => (
     <Components
       key={i}
       data={content}
