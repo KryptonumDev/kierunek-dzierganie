@@ -1,7 +1,7 @@
 import styles from './Benefits.module.scss';
 import Markdown from '@/components/ui/markdown';
 import Button from '@/components/ui/Button';
-import Item from './Benefits_Item';
+import Item from './_Item';
 import type { Props } from './Benefits.types';
 
 const Benefits = ({ benefits, claim, cta, cta_Annotation }: Props) => {

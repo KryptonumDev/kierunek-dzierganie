@@ -1,3 +1,6 @@
+import type { ComponentProps } from '@/components/_global/Components';
+
+
 export type CtaType = {
   href: string;
   text: string | React.ReactNode;
@@ -24,3 +27,9 @@ export type generateMetadataProps = {
     description: string;
   };
 };
+
+export type PageQueryProps = {
+  name: string;
+  slug?: string;
+  content: ComponentProps[];
+} & generateMetadataProps;

@@ -1,6 +1,6 @@
 import Markdown from '@/components/ui/markdown';
 import styles from './Faq.module.scss';
-import List from './list';
+import List from './_List';
 import type { Props } from './Faq.types';
 
 const Faq = ({ heading, list }: Props) => {

@@ -1,5 +1,5 @@
-import GridImageShowcase from './ImageShowcase_Grid';
-import ParallaxImageShowcase from './ImageShowcase_Parallax';
+import GridImageShowcase from './_Grid';
+import ParallaxImageShowcase from './_Parallax';
 import Markdown from '@/components/ui/markdown';
 import styles from './ImageShowcase.module.scss';
 import Button from '@/components/ui/Button';
