@@ -107,7 +107,7 @@ const Authorization = ({ registerTitle, loginTitle, registerText, loginText }: P
               errors={errors}
             />
           )}
-          <Button theme='primary'>{isRegister ? 'Zaloguj się' : 'Zaloguj się'}</Button>
+          <Button>{isRegister ? 'Zarejestruj się' : 'Zaloguj się'}</Button>
           {isRegister ? (
             <p>
               Masz już konto?{' '}

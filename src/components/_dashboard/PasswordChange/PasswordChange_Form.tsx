@@ -62,7 +62,7 @@ const PasswordChangeForm = () => {
       />
       <Button
         disabled={fetching}
-        theme='primary'
+        
       >
         Ustawiam nowe hasło
       </Button>

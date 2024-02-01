@@ -8,7 +8,6 @@ const SuccessPasswordChange = () => {
       <Markdown.h1>**Sukces!** Poprawnie zmieniliśmy Twoje hasło</Markdown.h1>
       <Button
         href='/moje-konto'
-        theme='primary'
       >
         Moje konto
       </Button>

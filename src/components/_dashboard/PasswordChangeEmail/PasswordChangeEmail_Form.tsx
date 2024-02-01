@@ -30,7 +30,7 @@ const PasswordChangeEmailForm = () => {
         redirectTo: `${location.origin}/api/auth/callback?backUrl=/moje-konto/ustaw-haslo`,
       });
       if (res.error) throw new Error(res.error.message);
-      
+
       toast('Link do zmiany hasła został wysłany na podany adres e-mail');
       setFetching(false);
     } catch (err) {
@@ -60,7 +60,6 @@ const PasswordChangeEmailForm = () => {
       />
       <Button
         disabled={fetching}
-        theme='primary'
       >
         Wyślij link do zmiany hasła
       </Button>

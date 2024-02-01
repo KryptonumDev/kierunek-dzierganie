@@ -32,11 +32,11 @@ const Button = ({ data, children, href, className, ...props }: ButtonProps) => {
       href={href || ''}
       {...(href
         ? {
-            ...(isExternal && { target: '_blank', rel: 'noopener' }),
-          }
+          ...(isExternal && { target: '_blank', rel: 'noopener' }),
+        }
         : {
-            type: 'submit',
-          })}
+          type: 'submit',
+        })}
       className={`${styles.wrapper}${className ? ` ${className}` : ''}`}
       {...props}
     >

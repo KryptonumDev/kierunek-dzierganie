@@ -10,7 +10,6 @@ const SuccessRegistration = ({ provider }: { provider?: string }) => {
       {provider && (
         <Button
           href={`https://${provider}`}
-          theme='primary'
         >
           Przechodzę do poczty
         </Button>
