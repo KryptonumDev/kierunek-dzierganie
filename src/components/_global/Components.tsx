@@ -14,6 +14,7 @@ import Benefits, { Benefits_Query, type BenefitsProps } from '@/components/_glob
 import CourseModules, { CourseModules_Query, type CourseModulesProps } from '@/components/_global/CourseModules';
 import ImageShowcase, { ImageShowcase_Query, type ImageShowcaseProps } from '@/components/_global/ImageShowcase';
 import Bonuses, { Bonuses_Query, type BonusesProps } from '@/components/_global/Bonuses';
+import TilesGrid, { TilesGrid_Query, type TilesGridProps } from '@/components/_global/TilesGrid';
 
 type ComponentMap = {
   HeroBackgroundImg: HeroBackgroundImgProps;
@@ -26,6 +27,7 @@ type ComponentMap = {
   ImageShowcase: ImageShowcaseProps;
   Bonuses: BonusesProps;
   TileList: TileListProps;
+  TilesGrid: TilesGridProps;
 };
 
 export type ComponentProps = ComponentMap[keyof ComponentMap] & { _type: string };
@@ -49,6 +51,7 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
       ImageShowcase: <ImageShowcase {...(item as ImageShowcaseProps)} />,
       Bonuses: <Bonuses {...(item as BonusesProps)} />,
       TileList: <TileList {...(item as TileListProps)} />,
+      TilesGrid: <TilesGrid {...(item as TilesGridProps)} />,
     };
     const DynamicComponent = componentMap[componentType];
     if (!DynamicComponent) {
@@ -72,6 +75,7 @@ const Components_Query = /* groq */ `
     ${CourseModules_Query}
     ${ImageShowcase_Query}
     ${Bonuses_Query}
+    ${TilesGrid_Query}
   },
 `;
 

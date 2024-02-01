@@ -1,0 +1,36 @@
+.TilesGrid {
+  header {
+    max-width: calc(587rem/16);
+    margin: 0 auto clamp(20px, calc(48vw/7.68), 64px);
+    text-align: center;
+    h2 {
+      margin-bottom: clamp(16px, calc(28vw/7.68), 28px);
+    }
+  }
+  .wrapper {
+    max-width: calc(834rem/16);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(24px, calc(32vw/7.68), 48px) clamp(16px, calc(24vw/7.68), 32px);
+    .item {
+      .img {
+        margin-bottom: 24px;
+        border-radius: 6px;
+        overflow: hidden;
+        img {
+          border-radius: inherit;
+          transition: transform .5s var(--easing);
+        }
+      }
+      a {
+        margin: 0 auto;
+      }
+      &:has(a:hover){
+        img {
+          transform: scale(1.05);
+        }
+      }
+    }
+  }
+}
