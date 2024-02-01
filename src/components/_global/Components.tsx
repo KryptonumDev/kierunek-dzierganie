@@ -30,27 +30,32 @@ type ComponentMap = {
 
 export type ComponentProps = ComponentMap[keyof ComponentMap] & { _type: string };
 
-const Components = ({ data, index }: { data: ComponentProps; index: number }) => {
-  const componentType = data._type as keyof ComponentMap;
-  const Component = {
-    HeroBackgroundImg: (
-      <HeroBackgroundImg
-        {...(data as HeroBackgroundImgProps)}
-        aboveTheFold={Boolean(index === 0)}
-      />
-    ),
-    Benefits: <Benefits {...(data as BenefitsProps)} />,
-    Faq: <Faq {...(data as FaqProps)} />,
-    Opinions: <Opinions {...(data as OpinionsProps)} />,
-    CtaSection: <CtaSection {...(data as CtaSectionProps)} />,
-    SimpleCtaSection: <SimpleCtaSection {...(data as SimpleCtaSectionProps)} />,
-    CourseModules: <CourseModules {...(data as CourseModulesProps)} />,
-    ImageShowcase: <ImageShowcase {...(data as ImageShowcaseProps)} />,
-    Bonuses: <Bonuses {...(data as BonusesProps)} />,
-    TileList: <TileList {...(data as TileListProps)} />,
-  }[componentType] as React.ReactNode;
-
-  return Component;
+const Components = ({ data }: { data: ComponentProps[] }) => {
+  return data?.map((item, index) => {
+    const componentType = item._type as keyof ComponentMap;
+    const componentMap: Record<string, React.ReactNode> = {
+      HeroBackgroundImg: (
+        <HeroBackgroundImg
+          {...(item as HeroBackgroundImgProps)}
+          aboveTheFold={Boolean(index === 0)}
+        />
+      ),
+      Benefits: <Benefits {...(item as BenefitsProps)} />,
+      Faq: <Faq {...(item as FaqProps)} />,
+      Opinions: <Opinions {...(item as OpinionsProps)} />,
+      CtaSection: <CtaSection {...(item as CtaSectionProps)} />,
+      SimpleCtaSection: <SimpleCtaSection {...(item as SimpleCtaSectionProps)} />,
+      CourseModules: <CourseModules {...(item as CourseModulesProps)} />,
+      ImageShowcase: <ImageShowcase {...(item as ImageShowcaseProps)} />,
+      Bonuses: <Bonuses {...(item as BonusesProps)} />,
+      TileList: <TileList {...(item as TileListProps)} />,
+    };
+    const DynamicComponent = componentMap[componentType];
+    if (!DynamicComponent) {
+      return null;
+    }
+    return DynamicComponent;
+  });
 };
 
 export default Components;

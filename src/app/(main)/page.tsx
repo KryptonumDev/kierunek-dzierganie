@@ -8,15 +8,10 @@ import Components, { Components_Query } from '@/components/_global/Components';
 const IndexPage = async () => {
   const { content }: PageQueryProps = await query();
 
-  return content?.map((content, i) => (
-    <Components
-      key={i}
-      data={content}
-      index={i}
-    />
-  ));
+  return (
+    <Components data={content} />
+  );
 };
-
 export default IndexPage;
 
 export async function generateMetadata() {
