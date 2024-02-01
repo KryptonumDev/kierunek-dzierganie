@@ -13,6 +13,7 @@ type ButtonProps = (
       data?: never;
       href?: CtaType['href'];
       children: CtaType['text'];
+      disabled?: boolean;
     }
 ) &
   React.HTMLAttributes<HTMLAnchorElement | HTMLButtonElement>;
@@ -29,11 +30,13 @@ const Button = ({ data, children, href, className, ...props }: ButtonProps) => {
   return (
     <Element
       href={href || ''}
-      {...(href ? {
-        ...(isExternal && { target: '_blank', rel: 'noopener' }),
-      } : {
-        type: 'submit',
-      })}
+      {...(href
+        ? {
+          ...(isExternal && { target: '_blank', rel: 'noopener' }),
+        }
+        : {
+          type: 'submit',
+        })}
       className={`${styles.wrapper}${className ? ` ${className}` : ''}`}
       {...props}
     >
