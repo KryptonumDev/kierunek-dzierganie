@@ -1,4 +1,4 @@
-import SuccessRegistration from '@/components/_dashboard/success-registration';
+import SuccessRegistration from '@/components/_dashboard/SuccessRegistration';
 import { notFound } from 'next/navigation';
 
 const SuccessRegistrationPage = async ({

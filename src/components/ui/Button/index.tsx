@@ -13,7 +13,8 @@ type ButtonProps = (
     data?: never;
     theme: CtaType['theme'],
     href?: CtaType['href'],
-    children: CtaType['text']
+    children: CtaType['text'],
+    disabled?: boolean;
   }
 ) & React.HTMLAttributes<HTMLAnchorElement | HTMLButtonElement>;
 

@@ -76,7 +76,7 @@ const Input = ({ textarea, label, register, errors, password, isRegister }: Prop
           ) : password ? (
             <Link
               className={`${styles['input-info']}`}
-              href={'/moje-konto/autoryzacja/przypomnij-haslo'}
+              href={'/moje-konto/przypomnij-haslo'}
             >
               Przypomnij hasło
             </Link>
