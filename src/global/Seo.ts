@@ -75,3 +75,10 @@ const query = async (): Promise<QueryProps> => {
 };
 
 export default Seo;
+
+export const Seo_Query = `
+  seo {
+    title,
+    description,
+  },
+`;

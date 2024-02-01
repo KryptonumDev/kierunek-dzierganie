@@ -1,5 +1,7 @@
 .HeroBackgroundImg {
-  margin-top: calc(clamp(48px, calc(64vw/7.68), 96px) * -1);
+  &:first-of-type {
+    margin-top: calc(clamp(48px, calc(64vw/7.68), 96px) * -1);
+  }
   position: relative;
   img {
     position: absolute;
@@ -43,6 +45,15 @@
     .ctaAnnotation {
       font-size: calc(14rem/16);
       margin-top: 8px;
+    }
+  }
+  &[data-reversed='true']{
+    img {
+      object-position: 75% 30%;
+    }
+    header {
+      margin-left: 0;
+      margin-right: auto;
     }
   }
 }

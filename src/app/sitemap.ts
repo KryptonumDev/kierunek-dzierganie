@@ -21,12 +21,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 }
 
 const query = async (): Promise<FetchProps> => {
-  const data = await sanityFetch(/* groq */ `
-    {
-      'landings': *[_type == 'landingPage'] {
-        'slug': slug.current
+  const data = await sanityFetch({
+    query: /* groq */ `
+      {
+        'landings': *[_type == 'landingPage'] {
+          'slug': slug.current
+        }
       }
-    }
-  `);
+    `
+  });
   return data as FetchProps;
 };

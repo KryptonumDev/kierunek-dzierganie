@@ -1,16 +1,28 @@
 import { draftMode } from 'next/headers';
+import { notFound } from 'next/navigation';
 import sanityFetch from '@/utils/sanity.fetch';
-import Seo from '@/global/Seo';
-import type { generateMetadataProps } from '@/global/types';
+import Seo, { Seo_Query } from '@/global/Seo';
+import type { PageQueryProps } from '@/global/types';
+import Components, { Components_Query } from '@/components/_global/Components';
+import Breadcrumbs from '@/components/_global/Breadcrumbs';
 
-const LandingPage = async () => {
+const IndexPage = async () => {
+  const { content }: PageQueryProps = await query();
+  console.log(content);
+
   return (
-    <h1>Homepage</h1>
+    <>
+      <Breadcrumbs />
+      <Components data={content} />
+    </>
   );
 };
+export default IndexPage;
 
 export async function generateMetadata() {
-  const { seo: { title, description } } = (await query()) as generateMetadataProps;
+  const {
+    seo: { title, description },
+  } = await query();
   return Seo({
     title,
     description,
@@ -18,19 +30,17 @@ export async function generateMetadata() {
   });
 }
 
-const query = async () => {
+const query = async (): Promise<PageQueryProps> => {
   const data = await sanityFetch({
     query: /* groq */ `
-      *[_type == "landingPage"][0] {
+      *[_type == "homepage"][0] {
         name,
-        seo {
-          title,
-          description,
-        }
-      }`,
-    isDraftMode: draftMode().isEnabled
+        ${Components_Query}
+        ${Seo_Query}
+      }
+    `,
+    isDraftMode: draftMode().isEnabled,
   });
-  return data;
+  !data && notFound();
+  return data as PageQueryProps;
 };
-
-export default LandingPage;

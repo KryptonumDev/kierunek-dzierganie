@@ -2,14 +2,14 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 // imported renderToStaticMarkup from different location because of issue in Next.js 14. Learn more: https://github.com/vercel/next.js/discussions/58305
 import { renderToStaticMarkup } from 'next/dist/compiled/react-dom/cjs/react-dom-server-legacy.browser.development';
 
-const SchemaFaq = async ({ list }) => {
+const FaqSchema = async ({ list }) => {
   list = await Promise.all(
     list.map(async ({ question, answer }) => ({
       question: await MDXRemote({ source: question }),
       answer: await MDXRemote({ source: answer }),
     }))
   );
-  
+
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -24,7 +24,7 @@ const SchemaFaq = async ({ list }) => {
       };
     }),
   };
-  
+
   return (
     <script
       type='application/ld+json'
@@ -33,4 +33,4 @@ const SchemaFaq = async ({ list }) => {
   );
 };
 
-export default SchemaFaq;
+export default FaqSchema;

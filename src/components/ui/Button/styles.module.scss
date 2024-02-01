@@ -1,5 +1,6 @@
 .wrapper {
-  display: inline-flex;
+  display: flex;
+  width: fit-content;
   align-items: center;
   gap: 8px;
   overflow: hidden;
@@ -11,16 +12,18 @@
     margin: 1px 0;
   }
   .arrow, span {
-    transition: transform .4s;
+    transition: transform .3s var(--easing);
   }
   .arrow {
+    flex-shrink: 0;
     &:nth-child(1){
       position: absolute;
       left: 0;
       transform: translateX(-100%);
     }
   }
-  &:hover {
+  &:hover,
+  &:focus-visible {
     .arrow:first-child {
       transform: translateX(13px);
       transition-delay: .3s;
@@ -31,6 +34,23 @@
     }
     .arrow:last-child {
       transform: translateX(100%);
+    }
+  }
+  @media (max-width: 549px){
+    .ellipse {
+      display: none;
+    }
+    > span {
+      margin-left: 0;
+    }
+    &:hover,
+    &:focus-visible {
+      .arrow:first-child {
+        transform: translateX(0);
+      }
+      span {
+        transform: translateX(31px);
+      }
     }
   }
 }
