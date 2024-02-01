@@ -7,12 +7,21 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import toast from 'react-hot-toast';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import type { FormValues, Props } from './authorization.types';
+import Input from '@/components/ui/Input';
+import { regex } from '@/global/constants';
+import Checkbox from '@/components/ui/Checkbox';
 
 const Authorization = ({ registerTitle, loginTitle, registerText, loginText }: Props) => {
   const supabase = createClientComponentClient();
   const [isRegister, setRegister] = useState(false);
   const router = useRouter();
-  const { register, handleSubmit } = useForm<FormValues>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
+    mode: 'all',
+  });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (isRegister) {
@@ -26,7 +35,7 @@ const Authorization = ({ registerTitle, loginTitle, registerText, loginText }: P
         })
         .then((res) => {
           if (res.error) throw res.error;
-          router.push('/moje-konto/autoryzacja/potwierdzenie-rejestracji');
+          router.push(`/moje-konto/autoryzacja/potwierdzenie-rejestracji?provider=${data.email.split('@')[1]}`);
         })
         .catch((error) => {
           toast(error.message);
@@ -54,22 +63,50 @@ const Authorization = ({ registerTitle, loginTitle, registerText, loginText }: P
       {isRegister ? registerTitle : loginTitle}
       {isRegister ? registerText : loginText}
       <div className={styles['grid']}>
-        <div className={styles['providers']}></div>
+        <div className={styles['providers']}>TUTAJ BĘDĄ OAUTH PROWIDERY</div>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <label>
-            E-mail
-            <input
-              {...register('email')}
-              type='text'
+          <Input
+            label='E-mail'
+            register={register('email', {
+              required: {
+                value: true,
+                message: 'Pole wymagane',
+              },
+              pattern: {
+                value: regex.email,
+                message: 'Proszę wpisać poprawny e-mail',
+              },
+            })}
+            errors={errors}
+          />
+          <Input
+            isRegister={isRegister}
+            password={true}
+            label='Password'
+            register={register('password', {
+              required: {
+                value: true,
+                message: 'Pole wymagane',
+              },
+              minLength: {
+                value: 12,
+                message: 'Co najmniej 12 znaków',
+              },
+            })}
+            errors={errors}
+          />
+          {isRegister && (
+            <Checkbox
+              register={register('accept', {
+                required: {
+                  value: true,
+                  message: 'Zgoda jest wymagana',
+                },
+              })}
+              label='Akceptuję warunki polityki prywatności i regulaminu'
+              errors={errors}
             />
-          </label>
-          <label>
-            Hasło
-            <input
-              {...register('password')}
-              type='password'
-            />
-          </label>
+          )}
           <Button theme='primary'>{isRegister ? 'Zaloguj się' : 'Zaloguj się'}</Button>
           {isRegister ? (
             <p>

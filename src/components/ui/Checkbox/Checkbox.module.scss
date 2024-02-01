@@ -1,0 +1,95 @@
+.Checkbox {
+  cursor: pointer;
+  width: fit-content;
+  display: flex;
+  text-align: left;
+  padding: 4px 10px 4px 4px;
+  border: transparent 1px solid;
+  background-color: transparent;
+  transition:
+    background-color 0.5s var(--easing),
+    border 0.5s var(--easing),
+    color 0.5s var(--easing);
+
+  .label {
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 300;
+  }
+
+  .icon {
+    position: relative;
+    padding: 6px;
+    margin-right: 8px;
+
+    input {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .box {
+      display: block;
+      width: 36px;
+      height: 36px;
+      border: var(--primary-400) 1px solid;
+      background-color: transparent;
+      border-radius: 2px;
+      position: relative;
+      transition:
+        background-color 0.5s var(--easing),
+        border 0.5s var(--easing),
+        color 0.5s var(--easing);
+
+      svg {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        transition: opacity 0.5s;
+      }
+    }
+
+    input:checked ~ .box {
+      svg {
+        opacity: 1;
+      }
+    }
+
+    &:hover .box {
+      border: var(--primary-600) 1px solid;
+      background-color: var(--primary-200);
+    }
+  }
+
+  &:has(:focus-visible) {
+    border: var(--primary-600) 1px solid;
+    background-color: var(--primary-200);
+
+    .box {
+      border: var(--primary-600) 1px solid;
+      background-color: var(--primary-200);
+    }
+  }
+
+  &.errored {
+    .box{
+      border: 1px solid var(--error-600);
+    }
+  }
+
+  .error {
+    justify-content: flex-end;
+    color: var(--error-800);
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 14px;
+    font-weight: 300;
+  }
+}

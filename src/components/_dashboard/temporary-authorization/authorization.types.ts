@@ -8,4 +8,5 @@ export type Props = {
 export type FormValues = {
   email: string;
   password: string;
+  accept: boolean;
 };

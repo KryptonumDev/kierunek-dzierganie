@@ -1,4 +1,8 @@
 .Authorization {
+  max-width: 795px;
+  margin: 0 auto;
+  width: 100%;
+
   h1{
     text-align: center;
     margin-bottom: 36px;
@@ -11,7 +15,26 @@
   }
 
   .grid{
+    margin-top: 48px;
+    display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 32px;
+  }
+
+  form{
+    text-align: center;
+
+    label{
+      margin-top: 24px;
+
+      &:first-child{
+        margin-top: 0;
+      }
+    }
+
+    >button{
+      text-align: center;
+      margin: 36px 0;
+    }
   }
 }
