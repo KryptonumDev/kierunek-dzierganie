@@ -10,3 +10,8 @@ export type FormValues = {
   password: string;
   accept: boolean;
 };
+
+export type FormProps = {
+  isRegister: boolean;
+  setRegister: (value: boolean) => void;
+}
