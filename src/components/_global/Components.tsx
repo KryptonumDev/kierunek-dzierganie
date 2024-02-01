@@ -15,6 +15,7 @@ import CourseModules, { CourseModules_Query, type CourseModulesProps } from '@/c
 import ImageShowcase, { ImageShowcase_Query, type ImageShowcaseProps } from '@/components/_global/ImageShowcase';
 import Bonuses, { Bonuses_Query, type BonusesProps } from '@/components/_global/Bonuses';
 import TilesGrid, { TilesGrid_Query, type TilesGridProps } from '@/components/_global/TilesGrid';
+import TilesSticky, { TilesSticky_Query, type TilesStickyProps } from '@/components/_global/TilesSticky';
 
 type ComponentMap = {
   HeroBackgroundImg: HeroBackgroundImgProps;
@@ -28,6 +29,7 @@ type ComponentMap = {
   Bonuses: BonusesProps;
   TileList: TileListProps;
   TilesGrid: TilesGridProps;
+  TilesSticky: TilesStickyProps;
 };
 
 export type ComponentProps = ComponentMap[keyof ComponentMap] & { _type: string };
@@ -52,6 +54,7 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
       Bonuses: <Bonuses {...(item as BonusesProps)} />,
       TileList: <TileList {...(item as TileListProps)} />,
       TilesGrid: <TilesGrid {...(item as TilesGridProps)} />,
+      TilesSticky: <TilesSticky {...(item as TilesStickyProps)} />,
     };
     const DynamicComponent = componentMap[componentType];
     if (!DynamicComponent) {
@@ -76,6 +79,7 @@ const Components_Query = /* groq */ `
     ${ImageShowcase_Query}
     ${Bonuses_Query}
     ${TilesGrid_Query}
+    ${TilesSticky_Query}
   },
 `;
 

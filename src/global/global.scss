@@ -134,15 +134,17 @@ h1, h2, h3, h4, h5, h6 {
   strong {
     font-family: var(--font-city-streetwear);
     font-weight: inherit;
-  }
-}
-h1, h2 {
-  font-size: clamp(calc(24rem/16), calc(26vw/7.68), calc(36rem/16));
-  strong {
     font-size: 1.6em;
     line-height: .62;
     margin: -.15em 4px;
   }
+}
+h1, h2 {
+  font-size: clamp(calc(24rem/16), calc(26vw/7.68), calc(36rem/16));
+
+}
+h3 {
+  font-size: calc(25rem/16);
 }
 
 .link {
