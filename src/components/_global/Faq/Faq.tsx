@@ -16,7 +16,7 @@ const Faq = ({ heading, list }: Props) => {
         list={formattedList}
         Indicator={Indicator}
       />
-      {/* <SchemaFaq list={list} /> */}
+      {/* <FaqSchema list={list} /> */}
     </section>
   );
 };

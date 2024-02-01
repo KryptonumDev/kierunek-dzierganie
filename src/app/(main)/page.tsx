@@ -4,12 +4,16 @@ import sanityFetch from '@/utils/sanity.fetch';
 import Seo, { Seo_Query } from '@/global/Seo';
 import type { PageQueryProps } from '@/global/types';
 import Components, { Components_Query } from '@/components/_global/Components';
+import Breadcrumbs from '@/components/_global/Breadcrumbs';
 
 const IndexPage = async () => {
   const { content }: PageQueryProps = await query();
 
   return (
-    <Components data={content} />
+    <>
+      <Breadcrumbs />
+      <Components data={content} />
+    </>
   );
 };
 export default IndexPage;

@@ -4,9 +4,12 @@ import styles from './HeroBackgroundImg.module.scss';
 import Button from '@/components/ui/Button';
 import type { Props } from './HeroBackgroundImg.types';
 
-const HeroBackgroundImg = ({ heading, paragraph, cta, cta_Annotation, img, aboveTheFold }: Props) => {
+const HeroBackgroundImg = ({ isReversed, heading, paragraph, cta, cta_Annotation, img, aboveTheFold }: Props) => {
   return (
-    <section className={`${styles.HeroBackgroundImg}`}>
+    <section
+      className={`${styles.HeroBackgroundImg}`}
+      data-reversed={isReversed}
+    >
       <Img
         data={img}
         className={styles.img}
