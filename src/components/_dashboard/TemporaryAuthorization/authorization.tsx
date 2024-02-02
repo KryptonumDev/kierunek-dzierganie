@@ -14,7 +14,7 @@ const Authorization = ({ registerTitle, loginTitle, registerText, loginText }: P
       {isRegister ? registerText : loginText}
       <div className={styles['grid']}>
         <div className={styles['providers']}>TUTAJ BĘDĄ OAUTH PROWIDERY</div>
-        <AuthorizationForm isRegister={isRegister} setRegister={setRegister} supabase={supabase}/>
+        <AuthorizationForm isRegister={isRegister} setRegister={setRegister} />
       </div>
     </section>
   );
