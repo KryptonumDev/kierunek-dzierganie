@@ -34,7 +34,7 @@
     font-family: var(--font-city-streetwear);
   }
   .cta {
-    margin-top: clamp(16px, calc(28vw / 7.68), 36px);
+    margin: clamp(16px, calc(28vw / 7.68), 36px) auto 0;
   }
   .ctaAnnotation {
     font-size: calc(14rem / 16);
