@@ -12,15 +12,15 @@ const nextConfig = {
       },
     ],
   },
-  // async redirects() {
-  //   return [
-  //     {
-  //       source: '/',
-  //       destination: '/landing/program-rozwojowy-dziergania-na-drutach',
-  //       permanent: false,
-  //     },
-  //   ];
-  // },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/landing/program-rozwojowy-dziergania-na-drutach',
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
