@@ -23,7 +23,7 @@ type ImgProps = (
 } & React.HTMLAttributes<HTMLImageElement | null>;
 
 const Img = ({ data, src, width, height, alt, sizes, priority, ...props }: ImgProps) => {
-  const placeholder = data?.asset.metadata.lqip || defaultPlaceholder;
+  const placeholder = data?.asset.metadata?.lqip || defaultPlaceholder;
   if (data) {
     src = data.asset.url;
     width = data.asset.metadata.dimensions.width;
