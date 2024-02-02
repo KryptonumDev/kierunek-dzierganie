@@ -38,13 +38,14 @@ export const Youtube = () => (
   </svg>
 );
 
-export const Decoration1 = () => (
+export const Decoration1 = ({ ...props }) => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
     width='93'
     height='97'
     fill='none'
     viewBox='0 0 93 97'
+    {...props}
   >
     <path
       stroke='#B4A29C'
@@ -55,13 +56,14 @@ export const Decoration1 = () => (
   </svg>
 );
 
-export const Decoration2 = () => (
+export const Decoration2 = ({ ...props }) => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
     width='85'
     height='105'
     fill='none'
     viewBox='0 0 85 105'
+    {...props}
   >
     <path
       fill='#B4A29C'
@@ -70,13 +72,14 @@ export const Decoration2 = () => (
   </svg>
 );
 
-export const Decoration3 = () => (
+export const Decoration3 = ({ ...props }) => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
     width='79'
     height='80'
     fill='none'
     viewBox='0 0 79 80'
+    {...props}
   >
     <ellipse
       cx='70.249'
@@ -190,13 +193,14 @@ export const Decoration3 = () => (
   </svg>
 );
 
-export const Decoration4 = () => (
+export const Decoration4 = ({ ...props }) => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
     width='87'
     height='90'
     fill='none'
     viewBox='0 0 87 90'
+    {...props}
   >
     <path
       stroke='#B4A29C'
@@ -207,13 +211,14 @@ export const Decoration4 = () => (
   </svg>
 );
 
-export const Decoration5 = () => (
+export const Decoration5 = ({ ...props }) => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
     width='145'
     height='100'
     fill='none'
     viewBox='0 0 145 100'
+    {...props}
   >
     <path
       stroke='#B4A29C'
@@ -258,13 +263,14 @@ export const Decoration5 = () => (
   </svg>
 );
 
-export const Decoration6 = () => (
+export const Decoration6 = ({ ...props }) => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
     width='145'
     height='100'
     fill='none'
     viewBox='0 0 145 100'
+    {...props}
   >
     <path
       stroke='#B4A29C'
@@ -309,13 +315,14 @@ export const Decoration6 = () => (
   </svg>
 );
 
-export const Decoration7 = () => (
+export const Decoration7 = ({ ...props }) => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
     width='144'
     height='143'
     fill='none'
     viewBox='0 0 144 143'
+    {...props}
   >
     <path
       stroke='#B4A29C'
@@ -346,13 +353,14 @@ export const Decoration7 = () => (
   </svg>
 );
 
-export const Decoration8 = () => (
+export const Decoration8 = ({ ...props }) => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
     width='97'
     height='92'
     fill='none'
     viewBox='0 0 97 92'
+    {...props}
   >
     <path
       fill='#B4A29C'
@@ -361,13 +369,14 @@ export const Decoration8 = () => (
   </svg>
 );
 
-export const Decoration9 = () => (
+export const Decoration9 = ({ ...props }) => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
     width='116'
     height='88'
     fill='none'
     viewBox='0 0 116 88'
+    {...props}
   >
     <path
       stroke='#B4A29C'
@@ -378,13 +387,14 @@ export const Decoration9 = () => (
   </svg>
 );
 
-export const Decoration10 = () => (
+export const Decoration10 = ({ ...props }) => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
     width='98'
     height='101'
     fill='none'
     viewBox='0 0 98 101'
+    {...props}
   >
     <path
       stroke='#B4A29C'

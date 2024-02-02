@@ -8,7 +8,6 @@ import Breadcrumbs from '@/components/_global/Breadcrumbs';
 
 const IndexPage = async () => {
   const { content }: PageQueryProps = await query();
-  console.log(content);
 
   return (
     <>
