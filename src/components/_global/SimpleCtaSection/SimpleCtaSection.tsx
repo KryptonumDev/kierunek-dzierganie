@@ -11,7 +11,7 @@ const SimpleCtaSection = ({ heading, paragraph, cta, cta_Annotation }: Props) =>
         {paragraph && (
           <Markdown className={styles.paragraph}>{paragraph}</Markdown>
         )}
-        {cta?.href && (
+        {cta && (
           <>
             <Button
               data={cta}

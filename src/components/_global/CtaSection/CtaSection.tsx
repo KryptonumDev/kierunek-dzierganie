@@ -23,7 +23,7 @@ const CtaSection = ({
       <header>
         <Markdown.h2>{heading}</Markdown.h2>
         <Markdown className={styles.paragraph}>{paragraph}</Markdown>
-        {cta.href && (
+        {cta && (
           <>
             <Button
               data={cta}
