@@ -8,7 +8,9 @@ const SimpleCtaSection = ({ heading, paragraph, cta, cta_Annotation }: Props) =>
     <section className={`${styles.SimpleCtaSection}`}>
       <header>
         <Markdown.h2>{heading}</Markdown.h2>
-        <Markdown className={styles.paragraph}>{paragraph}</Markdown>
+        {paragraph && (
+          <Markdown className={styles.paragraph}>{paragraph}</Markdown>
+        )}
         {cta?.href && (
           <>
             <Button
