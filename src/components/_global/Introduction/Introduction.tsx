@@ -17,7 +17,12 @@ const Introduction = ({ isReversed, heading, paragraph, cta, img }: Props) => {
       <header>
         <Markdown.h2>{heading}</Markdown.h2>
         <Markdown className={styles.paragraph}>{paragraph}</Markdown>
-        {cta && <Button data={cta} className={styles.cta} />}
+        {cta && (
+          <Button
+            data={cta}
+            className={styles.cta}
+          />
+        )}
       </header>
     </section>
   );

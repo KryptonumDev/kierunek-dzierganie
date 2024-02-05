@@ -1,10 +1,11 @@
 import { draftMode } from 'next/headers';
-import { notFound } from 'next/navigation';
 import sanityFetch from '@/utils/sanity.fetch';
 import Seo, { Seo_Query } from '@/global/Seo';
 import type { PageQueryProps } from '@/global/types';
 import Components, { Components_Query } from '@/components/_global/Components';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
+
+const page = { name: 'Strona główna', path: '/o-mnie' };
 
 const IndexPage = async () => {
   const { content }: PageQueryProps = await query();
@@ -25,7 +26,7 @@ export async function generateMetadata() {
   return Seo({
     title,
     description,
-    path: '/',
+    path: page.path,
   });
 }
 
@@ -40,6 +41,5 @@ const query = async (): Promise<PageQueryProps> => {
     `,
     isDraftMode: draftMode().isEnabled,
   });
-  !data && notFound();
   return data as PageQueryProps;
 };
