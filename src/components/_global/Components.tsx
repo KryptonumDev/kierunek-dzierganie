@@ -18,7 +18,8 @@ import TilesGrid, { TilesGrid_Query, type TilesGridProps } from '@/components/_g
 import TilesSticky, { TilesSticky_Query, type TilesStickyProps } from '@/components/_global/TilesSticky';
 import TilesFeatures, { TilesFeatures_Query, type TilesFeaturesProps } from '@/components/_global/TilesFeatures';
 import Community, { Community_Query, type CommunityProps } from '@/components/_global/Community';
-import Reviews, { Reviews_Query, type ReviewsProps } from './Reviews';
+import Reviews, { Reviews_Query, type ReviewsProps } from '@/components/_global/Reviews';
+import Introduction, { Introduction_Query, type IntroductionProps } from '@/components/_global/Introduction';
 
 type ComponentMap = {
   HeroBackgroundImg: HeroBackgroundImgProps;
@@ -36,6 +37,7 @@ type ComponentMap = {
   TilesFeatures: TilesFeaturesProps;
   Community: CommunityProps;
   Reviews: ReviewsProps;
+  Introduction: IntroductionProps;
 };
 
 export type ComponentProps = ComponentMap[keyof ComponentMap] & { _type: string };
@@ -64,6 +66,7 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
       TilesFeatures: <TilesFeatures {...(item as TilesFeaturesProps)} />,
       Community: <Community {...(item as CommunityProps)} />,
       Reviews: <Reviews {...(item as ReviewsProps)} />,
+      Introduction: <Introduction {...(item as IntroductionProps)} />,
     };
     const DynamicComponent = componentMap[componentType];
     if (!DynamicComponent) {
@@ -92,6 +95,7 @@ const Components_Query = /* groq */ `
     ${TilesFeatures_Query}
     ${Community_Query}
     ${Reviews_Query}
+    ${Introduction_Query}
   },
 `;
 
