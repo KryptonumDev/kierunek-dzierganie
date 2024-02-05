@@ -41,6 +41,9 @@ dependencies:
   sass:
     specifier: ^1.70.0
     version: 1.70.0
+  swiper:
+    specifier: ^11.0.6
+    version: 11.0.6
 
 devDependencies:
   '@types/node':
@@ -7149,6 +7152,11 @@ packages:
       react: '>=17.0'
     dependencies:
       react: 18.2.0
+    dev: false
+
+  /swiper@11.0.6:
+    resolution: {integrity: sha512-W/Me7MQl5rNgdM5x9i3Gll76WsyVpnHn91GhBOyL7RCFUeg62aVnflzlVfIpXzZ/87FtJOfAoDH79ZH2Yq76zA==}
+    engines: {node: '>= 4.7.0'}
     dev: false
 
   /symbol-tree@3.2.4:
