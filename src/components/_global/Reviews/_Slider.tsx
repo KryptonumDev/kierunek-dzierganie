@@ -68,15 +68,17 @@ const Slider = ({ list, LeftIcon, RightIcon, QuoteIcon, RatingIcon }: SliderProp
         >
           {LeftIcon}
         </button>
-        {Array.from({ length: listLength }).map((_, i) => (
-          <button
-            key={i}
-            aria-label={`Przejdź do ${i + 1} opinii`}
-            className={styles.pagination}
-            data-active={activeIndex === i}
-            onClick={() => slideTo(i)}
-          />
-        ))}
+        <div>
+          {Array.from({ length: listLength }).map((_, i) => (
+            <button
+              key={i}
+              aria-label={`Przejdź do ${i + 1} opinii`}
+              className={styles.pagination}
+              data-active={activeIndex === i}
+              onClick={() => slideTo(i)}
+            />
+          ))}
+        </div>
         <button
           onClick={handleNext}
           disabled={activeIndex === listLength - 1}
