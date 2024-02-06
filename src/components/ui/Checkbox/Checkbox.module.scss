@@ -1,95 +1,57 @@
 .Checkbox {
   cursor: pointer;
-  width: fit-content;
-  display: flex;
-  text-align: left;
-  padding: 4px 10px 4px 4px;
-  border: transparent 1px solid;
-  background-color: transparent;
-  transition:
-    background-color 0.5s var(--easing),
-    border 0.5s var(--easing),
-    color 0.5s var(--easing);
-
-  .label {
-    margin-top: 10px;
-    font-size: 14px;
-    font-weight: 300;
-  }
-
+  display: inline-grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  border-radius: 2px;
+  font-size: calc(14rem/16);
+  padding: 6px;
   .icon {
-    position: relative;
-    padding: 6px;
-    margin-right: 8px;
-
+    width: 36px;
+    height: 36px;
+    border-radius: 2px;
+    border: 1px solid var(--primary-400);
+    display: grid;
+    place-items: center;
+    transition: background-color .5s, border-color .5s;
     input {
       position: absolute;
-      left: 0;
-      top: 0;
-      width: 0;
-      height: 0;
-      pointer-events: none;
       opacity: 0;
     }
-
-    .box {
-      display: block;
-      width: 36px;
-      height: 36px;
-      border: var(--primary-400) 1px solid;
-      background-color: transparent;
-      border-radius: 2px;
-      position: relative;
-      transition:
-        background-color 0.5s var(--easing),
-        border 0.5s var(--easing),
-        color 0.5s var(--easing);
-
-      svg {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        opacity: 0;
-        transition: opacity 0.5s;
-      }
-    }
-
-    input:checked ~ .box {
-      svg {
-        opacity: 1;
-      }
-    }
-
-    &:hover .box {
-      border: var(--primary-600) 1px solid;
-      background-color: var(--primary-200);
+    svg {
+      stroke-dasharray: 19;
+      stroke-dashoffset: 19;
+      transition: stroke-dashoffset .5s var(--easing);
     }
   }
-
-  &:has(:focus-visible) {
-    border: var(--primary-600) 1px solid;
+  p {
+    margin-top: 4px;
+    > span[data-error] {
+      margin-left: auto;
+      margin-top: 4px;
+    }
+  }
+  &:has(input:checked) {
+    .icon {
+      border-color: var(--primary-600);
+      svg {
+        stroke-dashoffset: 0;
+      }
+    }
+  }
+  &:has(input:focus-visible) {
+    outline: 1px solid var(--primary-400);
     background-color: var(--primary-200);
-
-    .box {
-      border: var(--primary-600) 1px solid;
+  }
+  &:hover {
+    .icon {
+      border-color: var(--primary-600);
       background-color: var(--primary-200);
     }
   }
-
-  &.errored {
-    .box{
-      border: 1px solid var(--error-600);
+  &[aria-invalid="true"]{
+    .icon {
+      border-color: var(--error-500);
     }
-  }
-
-  .error {
-    justify-content: flex-end;
-    color: var(--error-800);
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    font-size: 14px;
-    font-weight: 300;
   }
 }

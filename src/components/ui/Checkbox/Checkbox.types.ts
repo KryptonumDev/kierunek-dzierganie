@@ -1,9 +1,9 @@
-import { FieldErrors } from 'react-hook-form';
+import { FieldError } from 'react-hook-form';
 
 export type Props = {
   label: string;
   register: {
     name: string;
   };
-  errors: FieldErrors;
+  error: string | undefined | FieldError;
 };
