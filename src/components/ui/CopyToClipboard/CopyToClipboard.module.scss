@@ -1,0 +1,44 @@
+.CopyToClipboard {
+  border-radius: 4px;
+  background-color: var(--primary-300);
+  padding: 6px 8px;
+  font-size: calc(14rem/16);
+  transition: background-color .5s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  &:not(:has(svg)):hover {
+    background-color: var(--primary-200);
+  }
+  svg {
+    path {
+      &:first-child {
+        stroke-dasharray: 38;
+        stroke-dashoffset: 38;
+        transform: rotate(-45deg);
+        transform-origin: center;
+      }
+      &:last-child {
+        stroke-dasharray: 10;
+        stroke-dashoffset: 10;
+      }
+    }
+  }
+  &:has(svg) {
+    background-color: var(--primary-400);
+    svg {
+      path {
+        animation: icon .8s var(--easing) forwards;
+        &:last-child {
+          animation-delay: .5s;
+        }
+      }
+    }
+  }
+}
+
+@keyframes icon {
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
