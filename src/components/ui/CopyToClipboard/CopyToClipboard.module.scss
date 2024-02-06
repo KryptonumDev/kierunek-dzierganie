@@ -7,11 +7,15 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  &:disabled {
+    pointer-events: none;
+  }
   &:not(:has(svg)):hover {
     background-color: var(--primary-200);
   }
   svg {
     path {
+      animation: icon .8s var(--easing) forwards;
       &:first-child {
         stroke-dasharray: 38;
         stroke-dashoffset: 38;
@@ -21,24 +25,18 @@
       &:last-child {
         stroke-dasharray: 10;
         stroke-dashoffset: 10;
+        animation-delay: .5s;
       }
     }
   }
   &:has(svg) {
     background-color: var(--primary-400);
-    svg {
-      path {
-        animation: icon .8s var(--easing) forwards;
-        &:last-child {
-          animation-delay: .5s;
-        }
-      }
-    }
   }
 }
 
 @keyframes icon {
-  100% {
+  // 100% target doesn't work on Safari
+  99%, 100% {
     stroke-dashoffset: 0;
   }
 }

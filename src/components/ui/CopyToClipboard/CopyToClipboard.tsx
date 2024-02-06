@@ -16,6 +16,7 @@ const CopyToClipboard = ({ copy }: Props) => {
     <button
       className={styles['CopyToClipboard']}
       onClick={() => handleCopy()}
+      disabled={copied}
     >
       {copied ? (
         <>
