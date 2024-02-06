@@ -6,3 +6,11 @@ export type Props = {
     answer: string;
   }[];
 };
+
+export type ListProps = {
+  Indicator: JSX.Element;
+  list: {
+    question: JSX.Element;
+    answer: JSX.Element;
+  }[];
+}
