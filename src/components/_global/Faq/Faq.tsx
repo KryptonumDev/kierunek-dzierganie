@@ -3,7 +3,7 @@ import styles from './Faq.module.scss';
 import List from './_List';
 import type { Props } from './Faq.types';
 
-const Faq = ({ heading, list }: Props) => {
+const Faq = ({ heading, paragraph, list }: Props) => {
   const formattedList = list.map(({ question, answer }) => ({
     question: <Markdown.span>{question}</Markdown.span>,
     answer: <Markdown>{answer}</Markdown>,
@@ -11,7 +11,10 @@ const Faq = ({ heading, list }: Props) => {
 
   return (
     <section className={styles.Faq}>
-      <Markdown.h2>{heading}</Markdown.h2>
+      <header>
+        <Markdown.h2>{heading}</Markdown.h2>
+        {paragraph && <Markdown className={styles.paragraph}>{paragraph}</Markdown>}
+      </header>
       <List
         list={formattedList}
         Indicator={Indicator}

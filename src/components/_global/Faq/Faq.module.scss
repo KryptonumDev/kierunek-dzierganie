@@ -1,8 +1,11 @@
 .Faq {
-  h2 {
+  header {
     max-width: calc(584rem/16);
-    margin: 0 auto clamp(48px, calc(64vw/7.68), 80px);
+    margin: 0 auto clamp(28px, calc(48vw/7.68), 80px);
     text-align: center;
+    .paragraph {
+      margin-top: clamp(16px, calc(28vw/7.68), 36px);
+    }
   }
   .list {
     counter-reset: counter;
@@ -12,7 +15,7 @@
         border-bottom: 1px solid var(--primary-300);
       }
       .indicator {
-        transition: transform .4s;
+        transition: transform .5s var(--easing);
       }
       summary {
         &:hover:not(:active) {
@@ -26,15 +29,15 @@
         padding: clamp(28px, calc(36vw/7.68), 36px) 0 clamp(16px, calc(24vw/7.68), 28px);
         &::before {
           content: counter(counter);
-          width: clamp(40px, calc(50vw/7.68), 60px);
-          height: clamp(40px, calc(50vw/7.68), 60px);
+          width: clamp(48px, calc(60vw/7.68), 60px);
+          height: clamp(48px, calc(60vw/7.68), 60px);
           text-align: center;
-          font-size: clamp(32px, calc(36vw/7.68), 42px);
+          font-size: clamp(32px, calc(36vw/7.68), 48px);
           font-family: var(--font-city-streetwear);
           border-radius: 50%;
           background-color: var(--primary-200);
-          line-height: calc(clamp(40px, calc(50vw/7.68), 60px) * 1.3);
-          transition: transform .4s;
+          line-height: calc(clamp(48px, calc(60vw/7.68), 60px) * 1.3);
+          transition: transform .5s var(--easing);
         }
         display: grid;
         align-items: baseline;
