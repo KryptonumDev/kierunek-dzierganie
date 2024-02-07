@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import styles from './TabSection.module.scss';
 import { easing } from '@/global/constants';
 
@@ -45,22 +45,20 @@ const Tabs = ({ list, icons }: Props) => {
           </button>
         ))}
       </div>
-      <AnimatePresence>
-        {list.map(({ description }, i) => (
-          <motion.div
-            style={{
-              display: tab === i ? 'block' : 'none',
-              opacity: tab === i ? 1 : 0,
-            }}
-            animate={{ opacity: tab === i ? 1 : 0 }}
-            transition={{ duration: 0.5 }}
-            className={styles.item}
-            key={i}
-          >
-            {description}
-          </motion.div>
-        ))}
-      </AnimatePresence>
+      {list.map(({ description }, i) => (
+        <motion.div
+          style={{
+            display: tab === i ? 'block' : 'none',
+            opacity: tab === i ? 1 : 0,
+          }}
+          animate={{ opacity: tab === i ? 1 : 0 }}
+          transition={{ duration: 0.5 }}
+          className={styles.item}
+          key={i}
+        >
+          {description}
+        </motion.div>
+      ))}
     </div>
   );
 };
