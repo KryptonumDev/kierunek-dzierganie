@@ -20,6 +20,7 @@ import TilesFeatures, { TilesFeatures_Query, type TilesFeaturesProps } from '@/c
 import Community, { Community_Query, type CommunityProps } from '@/components/_global/Community';
 import Reviews, { Reviews_Query, type ReviewsProps } from '@/components/_global/Reviews';
 import Introduction, { Introduction_Query, type IntroductionProps } from '@/components/_global/Introduction';
+import ContactForm, { ContactForm_Query, type ContactFormProps } from '@/components/_global/ContactForm';
 
 type ComponentMap = {
   HeroBackgroundImg: HeroBackgroundImgProps;
@@ -38,6 +39,7 @@ type ComponentMap = {
   Community: CommunityProps;
   Reviews: ReviewsProps;
   Introduction: IntroductionProps;
+  ContactForm: ContactFormProps;
 };
 
 export type ComponentProps = ComponentMap[keyof ComponentMap] & { _type: string };
@@ -67,6 +69,7 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
       Community: <Community {...(item as CommunityProps)} />,
       Reviews: <Reviews {...(item as ReviewsProps)} />,
       Introduction: <Introduction {...(item as IntroductionProps)} />,
+      ContactForm: <ContactForm {...(item as ContactFormProps)} />,
     };
     const DynamicComponent = componentMap[componentType];
     if (!DynamicComponent) {
@@ -96,6 +99,7 @@ const Components_Query = /* groq */ `
     ${Community_Query}
     ${Reviews_Query}
     ${Introduction_Query}
+    ${ContactForm_Query}
   },
 `;
 

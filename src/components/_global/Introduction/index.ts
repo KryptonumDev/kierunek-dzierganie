@@ -24,6 +24,6 @@ export const Introduction_Query = `
           },
         },
       },
-    }
-  }
+    },
+  },
 `;

@@ -2,11 +2,11 @@ import Error from '@/components/ui/Error';
 import styles from './Checkbox.module.scss';
 import type { Props } from './Checkbox.types';
 
-const Checkbox = ({ register, label, error, ...props }: Props) => {
+const Checkbox = ({ register, label, errors, ...props }: Props) => {
   return (
     <label
       className={styles['Checkbox']}
-      aria-invalid={!!error}
+      aria-invalid={!!errors[register.name]}
     >
       <div className={styles.icon}>
         <input
@@ -19,7 +19,7 @@ const Checkbox = ({ register, label, error, ...props }: Props) => {
       </div>
       <p>
         {label}
-        <Error error={error} />
+        <Error error={errors[register.name]?.message?.toString()} />
       </p>
     </label>
   );

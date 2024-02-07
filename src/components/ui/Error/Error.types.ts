@@ -1,3 +1,3 @@
 export type Props = {
-  error: string | undefined;
+  error?: string;
 };
