@@ -47,6 +47,13 @@
       font-size: clamp(calc(26rem/16), calc(40vw/7.68), calc(40rem/16));
       transition: color .5s;
       position: relative;
+      display: grid;
+      align-items: center;
+      grid-template-columns: auto 1fr;
+      gap: 4px;
+      svg {
+        max-width: unset;
+      }
       &::after {
         content: '';
         width: 100%;
