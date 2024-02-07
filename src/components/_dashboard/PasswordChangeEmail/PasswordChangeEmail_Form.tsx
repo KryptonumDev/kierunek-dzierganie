@@ -3,7 +3,7 @@
 import styles from './PasswordChangeEmail.module.scss';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { FormTypes } from './PasswordChangeEmail.types';
-import Input from '@/components/ui/Input';
+import Input from '@/components/ui/PasswordInput';
 import Button from '@/components/ui/Button';
 import { regex } from '@/global/constants';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
@@ -58,11 +58,7 @@ const PasswordChangeEmailForm = () => {
         })}
         errors={errors}
       />
-      <Button
-        disabled={fetching}
-      >
-        Wyślij link do zmiany hasła
-      </Button>
+      <Button disabled={fetching}>Wyślij link do zmiany hasła</Button>
     </form>
   );
 };
