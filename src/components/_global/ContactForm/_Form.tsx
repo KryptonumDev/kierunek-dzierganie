@@ -1,15 +1,18 @@
 'use client';
-import styles from './ContactForm.module.scss';
 import { useState } from 'react';
-import { regex } from '@/global/constants';
-import Checkbox from '@/components/ui/Checkbox';
-import { type FieldValues, useForm } from 'react-hook-form';
 import Link from 'next/link';
-import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import Checkbox from '@/components/ui/Checkbox';
+import Button from '@/components/ui/Button';
+import styles from './ContactForm.module.scss';
+import { useForm, type FieldValues } from 'react-hook-form';
+import type { StatusProps } from './ContactForm.types';
+import { regex } from '@/global/constants';
+import State from './_State';
+import Loading from './_Loading';
 
 const Form = () => {
-  const [status, setStatus] = useState({ sending: false });
+  const [status, setStatus] = useState<StatusProps>({ sending: false });
   const {
     register,
     handleSubmit,
@@ -20,7 +23,7 @@ const Form = () => {
   const onSubmit = async (data: FieldValues) => {
     setStatus({ sending: true });
     try {
-      const response = await fetch('/api/contact', {
+      const response = await fetch('/api/cont', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -97,7 +100,17 @@ const Form = () => {
         })}
         errors={errors}
       />
-      <Button disabled={status?.sending}>Wyślij wiadomość</Button>
+      <Button
+        disabled={status?.sending}
+        type='submit'
+      >
+        Wyślij wiadomość
+      </Button>
+      <State
+        success={status?.success}
+        setStatus={setStatus}
+      />
+      <Loading loading={status?.sending} />
     </form>
   );
 };

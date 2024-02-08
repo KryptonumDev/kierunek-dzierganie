@@ -8,3 +8,8 @@ export type QueryProps = {
   tel: string;
   messenger: string;
 }
+
+export type StatusProps = {
+  sending: boolean;
+  success?: boolean;
+}

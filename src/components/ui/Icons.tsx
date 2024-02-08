@@ -410,3 +410,81 @@ export const Decoration10 = ({ ...props }) => (
     ></path>
   </svg>
 );
+
+export const ErrorIcon = ({ ...props }) => (
+  <svg
+    xmlns='http://www.w3.org/2000/svg'
+    width='36'
+    height='28'
+    fill='none'
+    stroke='#CB6767'
+    viewBox='0 0 36 28'
+    strokeLinecap='round'
+    strokeWidth='0.75'
+    {...props}
+  >
+    <style>{`
+      @keyframes ErrorIcon {
+        100% {
+          stroke-dashoffset: 0;
+        }
+      }
+    `}</style>
+    <path
+      style={{
+        strokeDasharray: 62,
+        strokeDashoffset: 62,
+        animation: 'ErrorIcon 1.3s var(--easing) forwards',
+      }}
+      strokeLinejoin='round'
+      d='M26.477 6.018c0-2.813-1.777-6.861-6.844-5.241-2.264.913-7.795 3.574-6.035 10.59.08.322.617 1.662 1.587 1.662.701.107 2.167-.258 2.426-2.58.189-2.149-.598-6.77-5.256-8.06-2.21-.43-7.331.18-5.611 7.142.942 3.813 1.764 5.063 3.576 7.813'
+    />
+    <path
+      style={{
+        strokeDasharray: 39,
+        strokeDashoffset: 39,
+        animation: 'ErrorIcon 1.3s .5s var(--easing) forwards',
+      }}
+      d='M2.073 25.155L33.071 2.53'
+    />
+    <path
+      style={{
+        strokeDasharray: 29,
+        strokeDashoffset: 29,
+        animation: 'ErrorIcon 1.3s var(--easing) forwards',
+      }}
+      d='M26.383 8.594c-.48 4.979-4.863 15.725-18.563 18.875M11.945 19.469a904.71 904.71 0 002.313 2.437'
+    />
+  </svg>
+);
+
+export const SuccessIcon = ({ ...props }) => (
+  <svg
+    xmlns='http://www.w3.org/2000/svg'
+    width='24'
+    height='31'
+    fill='none'
+    viewBox='0 0 24 31'
+    {...props}
+  >
+    <style>{`
+      @keyframes SuccessIcon {
+        100% {
+          stroke-dashoffset: 0;
+        }
+      }
+    `}</style>
+    <path
+      style={{
+        strokeDasharray: 109,
+        strokeDashoffset: 109,
+        animation: 'SuccessIcon 1.3s var(--easing) forwards',
+      }}
+      stroke='#5C7360'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      strokeWidth='0.75'
+      d='M1 30c7.994-2.103 22.572-9.232 21.983-23.388 0-2.813-1.777-6.862-6.844-5.241-2.264.913-7.795 3.574-6.035 10.59.08.322.617 1.662 1.587 1.662.701.107 2.167-.258 2.426-2.58.189-2.15-.598-6.77-5.256-8.06-2.21-.43-6.275.467-4.852 7.496 1.133 4.38 5.402 13.767 13.424 16.282'
+    />
+  </svg>
+);
