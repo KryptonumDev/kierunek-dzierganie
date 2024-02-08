@@ -16,7 +16,8 @@ type ButtonProps = (
       disabled?: boolean;
     }
 ) &
-  React.HTMLAttributes<HTMLAnchorElement | HTMLButtonElement>;
+  React.ButtonHTMLAttributes<HTMLButtonElement> &
+  React.AnchorHTMLAttributes<HTMLAnchorElement>;
 
 const Button = ({ data, children, href, className, ...props }: ButtonProps) => {
   if (data) {
@@ -30,13 +31,7 @@ const Button = ({ data, children, href, className, ...props }: ButtonProps) => {
   return (
     <Element
       href={href || ''}
-      {...(href
-        ? {
-          ...(isExternal && { target: '_blank', rel: 'noopener' }),
-        }
-        : {
-          type: 'submit',
-        })}
+      {...(href && isExternal && { target: '_blank', rel: 'noopener' })}
       className={`${styles.wrapper}${className ? ` ${className}` : ''}`}
       {...props}
     >
