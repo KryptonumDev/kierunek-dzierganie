@@ -7,5 +7,6 @@
   "tabWidth": 2,
   "jsxSingleQuote": true,
   "bracketSameLine": false,
-  "arrowParens": "always"
+  "arrowParens": "always",
+  "braceStyle": "stroustrup"
 }
