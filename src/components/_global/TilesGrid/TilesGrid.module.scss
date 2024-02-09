@@ -26,7 +26,8 @@
       a {
         margin: 0 auto;
       }
-      &:has(a:hover){
+      &:has(a:hover),
+      &:has(a:focus-visible) {
         img {
           transform: scale(1.05);
         }

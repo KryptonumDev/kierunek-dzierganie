@@ -3,7 +3,7 @@
 import styles from './PasswordChange.module.scss';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import type { FormTypes } from './PasswordChange.types';
-import Input from '@/components/ui/Input';
+import Input from '@/components/ui/PasswordInput';
 import Button from '@/components/ui/Button';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -60,12 +60,7 @@ const PasswordChangeForm = () => {
         })}
         errors={errors}
       />
-      <Button
-        disabled={fetching}
-        
-      >
-        Ustawiam nowe hasło
-      </Button>
+      <Button disabled={fetching}>Ustawiam nowe hasło</Button>
     </form>
   );
 };

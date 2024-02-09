@@ -1,0 +1,37 @@
+.TilesFeatures {
+  header {
+    max-width: calc(587rem/16);
+    margin: 0 auto clamp(48px, calc(64vw/7.68), 64px);
+    text-align: center;
+    .paragraph {
+      margin-top: clamp(20px, calc(28vw/7.68), 28px);
+    }
+  }
+  .wrapper {
+    max-width: calc(1000rem/16);
+    margin: 0 auto;
+    display: grid;
+    gap: clamp(16px, calc(28vw/7.68), 28px);
+    .item {
+      display: grid;
+      align-items: center;
+      gap: clamp(32px, calc(48vw/7.68), 48px) clamp(48px, calc(82vw/7.68), 96px);
+      @media (min-width: 900px){
+        grid-template-columns: 1fr 2fr;
+      }
+      background-color: var(--primary-200);
+      border-radius: 6px;
+      padding: clamp(16px, calc(28vw/7.68), 28px) clamp(16px, calc(36vw/7.68), 36px) clamp(24px, calc(36vw/7.68), 36px);
+      img {
+        max-width: 274px;
+        @media (max-width: 499px){
+          margin: 0 auto;
+        }
+      }
+      h3 {
+        margin-bottom: clamp(20px, calc(28vw/7.68), 28px);
+        font-size: clamp(calc(24rem/16), calc(36vw/7.68), calc(36rem/16));
+      }
+    }
+  }
+}

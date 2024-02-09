@@ -1,7 +1,7 @@
 .Breadcrumbs {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: clamp(4px, calc(8vw/7.68), 8px);
   overflow: hidden;
   padding: 6px;
   margin: -6px;
@@ -13,32 +13,36 @@
     flex-shrink: 0;
   }
   a {
-    transition: opacity .5s;
+    color: var(--primary-600);
+    font-size: calc(14rem/16);
+    transition: color .5s;
     &:hover {
-      opacity: .8;
+      color: var(--primary-800);
+    }
+    &:last-of-type {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      svg {
+        display: none;
+        transform: rotate(180deg);
+      }
     }
   }
   > span {
-    color: var(--primary-500);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-  a:last-of-type {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    svg {
-      display: none;
-      transform: rotate(180deg);
-    }
   }
   @media (max-width: 599px){
     > *:not(a:last-of-type){
       display: none;
     }
     a:last-of-type{
-      color: var(--primary-500);
+      color: var(--primary-800);
+      &:hover {
+        color: var(--primary-600);
+      }
       svg {
         display: block;
       }

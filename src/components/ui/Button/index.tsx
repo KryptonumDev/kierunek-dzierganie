@@ -16,7 +16,8 @@ type ButtonProps = (
       disabled?: boolean;
     }
 ) &
-  React.HTMLAttributes<HTMLAnchorElement | HTMLButtonElement>;
+  React.ButtonHTMLAttributes<HTMLButtonElement> &
+  React.AnchorHTMLAttributes<HTMLAnchorElement>;
 
 const Button = ({ data, children, href, className, ...props }: ButtonProps) => {
   if (data) {
@@ -30,13 +31,7 @@ const Button = ({ data, children, href, className, ...props }: ButtonProps) => {
   return (
     <Element
       href={href || ''}
-      {...(href
-        ? {
-          ...(isExternal && { target: '_blank', rel: 'noopener' }),
-        }
-        : {
-          type: 'submit',
-        })}
+      {...(href && isExternal && { target: '_blank', rel: 'noopener' })}
       className={`${styles.wrapper}${className ? ` ${className}` : ''}`}
       {...props}
     >
@@ -48,28 +43,31 @@ const Button = ({ data, children, href, className, ...props }: ButtonProps) => {
   );
 };
 
-const Ellipse = () => (
-  <svg
-    xmlns='http://www.w3.org/2000/svg'
-    width='51'
-    height='54'
-    fill='none'
-    className={styles.ellipse}
-  >
-    <mask
-      id='ellipse'
-      fill='#fff'
+const Ellipse = () => {
+  const id = 'ellipse-' + Math.random().toString(36).substring(2, 11);
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      width='51'
+      height='54'
+      fill='none'
+      className={styles.ellipse}
     >
-      <path d='M47.78 45.124a27 27 0 112.706-32.714l-.383.246a26.545 26.545 0 10-2.66 32.162l.337.306z'></path>
-    </mask>
-    <path
-      stroke='#53423C'
-      strokeWidth='1.5'
-      d='M47.78 45.124a27 27 0 112.706-32.714l-.383.246a26.545 26.545 0 10-2.66 32.162l.337.306z'
-      mask='url(#ellipse)'
-    ></path>
-  </svg>
-);
+      <mask
+        id={id}
+        fill='#fff'
+      >
+        <path d='M47.78 45.124a27 27 0 112.706-32.714l-.383.246a26.545 26.545 0 10-2.66 32.162l.337.306z'></path>
+      </mask>
+      <path
+        stroke='#53423C'
+        strokeWidth='1.5'
+        d='M47.78 45.124a27 27 0 112.706-32.714l-.383.246a26.545 26.545 0 10-2.66 32.162l.337.306z'
+        mask={`url(#${id})`}
+      ></path>
+    </svg>
+  );
+};
 
 const Arrow = () => (
   <svg

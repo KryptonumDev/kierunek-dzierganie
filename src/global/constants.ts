@@ -30,3 +30,9 @@ export const regex: { email: RegExp; phone: RegExp } = {
   email: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
   phone: /^(?:\+(?:\d{1,3}))?(?:[ -]?\(?\d{1,4}\)?[ -]?\d{1,5}[ -]?\d{1,5}[ -]?\d{1,6})$/,
 };
+
+/**
+ * Global declaration of easing.
+ * @constant
+ */
+export const easing = [0.46, 0.03, 0.52, 0.96];

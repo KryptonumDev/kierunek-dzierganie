@@ -15,7 +15,6 @@
     transition: transform .3s var(--easing);
   }
   .arrow {
-    flex-shrink: 0;
     &:nth-child(1){
       position: absolute;
       left: 0;
@@ -34,23 +33,6 @@
     }
     .arrow:last-child {
       transform: translateX(100%);
-    }
-  }
-  @media (max-width: 549px){
-    .ellipse {
-      display: none;
-    }
-    > span {
-      margin-left: 0;
-    }
-    &:hover,
-    &:focus-visible {
-      .arrow:first-child {
-        transform: translateX(0);
-      }
-      span {
-        transform: translateX(31px);
-      }
     }
   }
 }

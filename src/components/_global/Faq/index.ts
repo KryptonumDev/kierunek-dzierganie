@@ -6,9 +6,10 @@ export const Faq_Query = `
   _type == 'Faq' => {
     _type,
     heading,
-    list[] {
-      'question': title,
-      'answer': description,
+    paragraph,
+    list[] -> {
+      question,
+      answer,
     }
   },
 `;

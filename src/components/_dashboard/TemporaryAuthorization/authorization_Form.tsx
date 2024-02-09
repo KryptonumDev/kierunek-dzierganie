@@ -5,11 +5,11 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import toast from 'react-hot-toast';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import type { FormValues, FormProps } from './authorization.types';
-import Input from '@/components/ui/Input';
+import Input from '@/components/ui/PasswordInput';
 import { regex } from '@/global/constants';
 import Checkbox from '@/components/ui/Checkbox';
 
-const AuthorizationForm = ({ isRegister, setRegister } : FormProps) => {
+const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
   const supabase = createClientComponentClient();
   const router = useRouter();
   const {

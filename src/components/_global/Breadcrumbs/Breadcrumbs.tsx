@@ -22,7 +22,7 @@ const Breadcrumbs = ({ data = [], visible = true }: Props) => {
             const Item = i !== data.length - 1 ? Link : 'span';
             return (
               <Fragment key={i}>
-                <Item href={path || ''}>
+                <Item href={i !== data.length - 1 ? path : ''}>
                   {i === data.length - 2 && <Chevron />}
                   <span>{name}</span>
                 </Item>

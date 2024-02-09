@@ -1,0 +1,105 @@
+.ContactForm {
+  display: grid;
+  justify-content: space-between;
+  gap: clamp(24px, calc(36px / 7.68), 36px);
+  @media (min-width: 900px) {
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (max-width: 899px) {
+    header {
+      text-align: center;
+      p {
+        justify-content: center;
+      }
+    }
+    .Form {
+      margin-right: auto;
+      button {
+        margin: 0 auto;
+      }
+    }
+  }
+  header {
+    .paragraph {
+      margin-top: clamp(12px, calc(28vw / 7.68), 36px);
+    }
+    .links {
+      margin-top: clamp(24px, calc(28vw / 7.68), 36px);
+      p {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: clamp(4px, calc(8vw / 7.68), 8px);
+        &:not(:last-child) {
+          margin-bottom: clamp(12px, calc(16vw / 7.68), 16px);
+        }
+      }
+    }
+  }
+}
+
+.Form {
+  width: 100%;
+  max-width: 381px;
+  margin-left: auto;
+  display: grid;
+  gap: clamp(12px, calc(16vw / 7.68), 24px);
+  position: relative;
+  &:has(.State) {
+    > *:not(.State) {
+      visibility: hidden;
+    }
+  }
+}
+
+.State {
+  position: absolute;
+  left: -5px;
+  top: -5px;
+  right: -5px;
+  bottom: -5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: var(--primary-100);
+  h3 {
+    color: var(--success-800, #2d4031);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 8px;
+  }
+  &[data-success='false'] {
+    h3 {
+      color: var(--error-900);
+    }
+  }
+  p {
+    margin-top: 16px;
+  }
+  button {
+    margin-top: 48px;
+  }
+  animation: Status 0.5s forwards;
+  @keyframes Status {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+}
+
+.Loading {
+  position: absolute;
+  left: -5px;
+  top: -5px;
+  right: -5px;
+  bottom: -5px;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+  background-color: rgba(253, 251, 248, 0.42);
+  backdrop-filter: blur(4px);
+}

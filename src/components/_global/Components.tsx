@@ -16,6 +16,12 @@ import ImageShowcase, { ImageShowcase_Query, type ImageShowcaseProps } from '@/c
 import Bonuses, { Bonuses_Query, type BonusesProps } from '@/components/_global/Bonuses';
 import TilesGrid, { TilesGrid_Query, type TilesGridProps } from '@/components/_global/TilesGrid';
 import TilesSticky, { TilesSticky_Query, type TilesStickyProps } from '@/components/_global/TilesSticky';
+import TilesFeatures, { TilesFeatures_Query, type TilesFeaturesProps } from '@/components/_global/TilesFeatures';
+import Community, { Community_Query, type CommunityProps } from '@/components/_global/Community';
+import Reviews, { Reviews_Query, type ReviewsProps } from '@/components/_global/Reviews';
+import Introduction, { Introduction_Query, type IntroductionProps } from '@/components/_global/Introduction';
+import ContactForm, { ContactForm_Query, type ContactFormProps } from '@/components/_global/ContactForm';
+import TabSection, { TabSection_Query, type TabSectionProps } from '@/components/_global/TabSection';
 
 type ComponentMap = {
   HeroBackgroundImg: HeroBackgroundImgProps;
@@ -30,6 +36,12 @@ type ComponentMap = {
   TileList: TileListProps;
   TilesGrid: TilesGridProps;
   TilesSticky: TilesStickyProps;
+  TilesFeatures: TilesFeaturesProps;
+  Community: CommunityProps;
+  Reviews: ReviewsProps;
+  Introduction: IntroductionProps;
+  ContactForm: ContactFormProps;
+  TabSection: TabSectionProps;
 };
 
 export type ComponentProps = ComponentMap[keyof ComponentMap] & { _type: string };
@@ -55,6 +67,12 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
       TileList: <TileList {...(item as TileListProps)} />,
       TilesGrid: <TilesGrid {...(item as TilesGridProps)} />,
       TilesSticky: <TilesSticky {...(item as TilesStickyProps)} />,
+      TilesFeatures: <TilesFeatures {...(item as TilesFeaturesProps)} />,
+      Community: <Community {...(item as CommunityProps)} />,
+      Reviews: <Reviews {...(item as ReviewsProps)} />,
+      Introduction: <Introduction {...(item as IntroductionProps)} />,
+      ContactForm: <ContactForm {...(item as ContactFormProps)} />,
+      TabSection: <TabSection {...(item as TabSectionProps)} />,
     };
     const DynamicComponent = componentMap[componentType];
     if (!DynamicComponent) {
@@ -80,6 +98,12 @@ const Components_Query = /* groq */ `
     ${Bonuses_Query}
     ${TilesGrid_Query}
     ${TilesSticky_Query}
+    ${TilesFeatures_Query}
+    ${Community_Query}
+    ${Reviews_Query}
+    ${Introduction_Query}
+    ${ContactForm_Query}
+    ${TabSection_Query}
   },
 `;
 
