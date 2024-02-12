@@ -1,22 +1,24 @@
 import Image from 'next/image';
 import type { ImgType } from '@/global/types';
 
-const defaultPlaceholder = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP89eVDPQAJLQNfkP/zaAAAAABJRU5ErkJggg==';
+const defaultPlaceholder =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP89eVDPQAJLQNfkP/zaAAAAABJRU5ErkJggg==';
 
 type ImgProps = (
   | {
-    data: ImgType;
-    src?: never;
-    width?: never;
-    height?: never;
-    alt?: never;
-  } | {
-    data?: never;
-    src: string;
-    width: number;
-    height: number;
-    alt: string;
-  }
+      data: ImgType;
+      src?: never;
+      width?: number;
+      height?: number;
+      alt?: string;
+    }
+  | {
+      data?: never;
+      src: string;
+      width: number;
+      height: number;
+      alt: string;
+    }
 ) & {
   sizes: string;
   priority?: boolean;
@@ -26,9 +28,9 @@ const Img = ({ data, src, width, height, alt, sizes, priority, ...props }: ImgPr
   const placeholder = data?.asset.metadata?.lqip || defaultPlaceholder;
   if (data) {
     src = data.asset.url;
-    width = data.asset.metadata.dimensions.width;
-    height = data.asset.metadata.dimensions.height;
-    alt = data.asset.altText;
+    width = width || data.asset.metadata.dimensions.width;
+    height = width || data.asset.metadata.dimensions.height;
+    alt = alt || data.asset.altText;
   }
 
   return (
@@ -49,3 +51,17 @@ const Img = ({ data, src, width, height, alt, sizes, priority, ...props }: ImgPr
 };
 
 export default Img;
+
+export const Img_Query = `
+  asset -> {
+    url,
+    altText,
+    metadata {
+      lqip,
+      dimensions {
+        width,
+        height,
+      },
+    },
+  },
+`;
