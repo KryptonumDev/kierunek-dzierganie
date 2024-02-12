@@ -11,7 +11,7 @@ import { regex } from '@/global/constants';
 import State from './_State';
 import Loading from './_Loading';
 
-const Form = () => {
+const Form = ({ aboveTheFold }: { aboveTheFold: boolean }) => {
   const [status, setStatus] = useState<StatusProps>({ sending: false });
   const {
     register,
@@ -23,7 +23,7 @@ const Form = () => {
   const onSubmit = async (data: FieldValues) => {
     setStatus({ sending: true });
     try {
-      const response = await fetch('/api/cont', {
+      const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -47,7 +47,7 @@ const Form = () => {
     >
       <Input
         label='Imię'
-        autoFocus={true}
+        autoFocus={aboveTheFold}
         register={register('name', {
           required: { value: true, message: 'Imię jest wymagane' },
           minLength: { value: 2, message: 'Imię jest za krótkie' },
