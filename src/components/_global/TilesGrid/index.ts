@@ -1,3 +1,4 @@
+import { Img_Query } from '@/components/ui/image';
 import TilesGrid from './TilesGrid';
 export type { Props as TilesGridProps } from './TilesGrid.types';
 export default TilesGrid;
@@ -9,17 +10,7 @@ export const TilesGrid_Query = `
     paragraph,
     list[]{
       img {
-        asset -> {
-          url,
-          altText,
-          metadata {
-            lqip,
-            dimensions {
-              width,
-              height,
-            }
-          }
-        }
+        ${Img_Query}
       },
       cta {
         text,

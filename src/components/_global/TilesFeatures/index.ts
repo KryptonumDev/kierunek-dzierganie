@@ -1,3 +1,4 @@
+import { Img_Query } from '@/components/ui/image';
 import TilesFeatures from './TilesFeatures';
 export type { Props as TilesFeaturesProps } from './TilesFeatures.types';
 export default TilesFeatures;
@@ -9,17 +10,7 @@ export const TilesFeatures_Query = `
     paragraph,
     list[]{
       img {
-        asset -> {
-          url,
-          altText,
-          metadata {
-            lqip,
-            dimensions {
-              width,
-              height,
-            }
-          }
-        }
+        ${Img_Query}
       },
       heading,
       paragraph,

@@ -23,6 +23,7 @@ import Introduction, { Introduction_Query, type IntroductionProps } from '@/comp
 import ContactForm, { ContactForm_Query, type ContactFormProps } from '@/components/_global/ContactForm';
 import TabSection, { TabSection_Query, type TabSectionProps } from '@/components/_global/TabSection';
 import TilesIndicated, { TilesIndicated_Query, type TilesIndicatedProps } from './TilesIndicated';
+import TilesIcon, { TilesIcon_Query, type TilesIconProps } from './TilesIcon';
 
 type ComponentMap = {
   HeroBackgroundImg: HeroBackgroundImgProps;
@@ -43,7 +44,8 @@ type ComponentMap = {
   Introduction: IntroductionProps;
   ContactForm: ContactFormProps;
   TabSection: TabSectionProps;
-  TabSectTilesIndicatedion: TilesIndicatedProps;
+  TilesIndicated: TilesIndicatedProps;
+  TilesIcon: TilesIconProps;
 };
 
 export type ComponentProps = ComponentMap[keyof ComponentMap] & { _type: string };
@@ -73,9 +75,15 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
       Community: <Community {...(item as CommunityProps)} />,
       Reviews: <Reviews {...(item as ReviewsProps)} />,
       Introduction: <Introduction {...(item as IntroductionProps)} />,
-      ContactForm: <ContactForm {...(item as ContactFormProps)} aboveTheFold={index === 0} />,
+      ContactForm: (
+        <ContactForm
+          {...(item as ContactFormProps)}
+          aboveTheFold={index === 0}
+        />
+      ),
       TabSection: <TabSection {...(item as TabSectionProps)} />,
       TilesIndicated: <TilesIndicated {...(item as TilesIndicatedProps)} />,
+      TilesIcon: <TilesIcon {...(item as TilesIconProps)} />,
     };
     const DynamicComponent = componentMap[componentType];
     if (!DynamicComponent) {
@@ -108,6 +116,7 @@ const Components_Query = /* groq */ `
     ${ContactForm_Query}
     ${TabSection_Query}
     ${TilesIndicated_Query}
+    ${TilesIcon_Query}
   },
 `;
 
