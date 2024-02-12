@@ -22,13 +22,14 @@ const gallerySwitch = (data: ImgType | string) => ({
   ),
 });
 
-const HeroPhysical = ({ name, id, type, variants }: Props) => {
+const HeroPhysical = ({ name, id, type, variants, physical }: Props) => {
   const attributes = useMemo(() => {
+    if(!variants) return [];
     const arr = [] as AttributesTypes;
 
     // get all unique attributes from all variants
     variants.forEach((v) => {
-      v.attributes.forEach((a) => {
+      v.attributes!.forEach((a) => {
         const index = arr.findIndex((x) => x.name === a.name.toLocaleLowerCase());
 
         if (index === -1) {
@@ -49,7 +50,7 @@ const HeroPhysical = ({ name, id, type, variants }: Props) => {
   }, [variants]);
 
   const [count, setCount] = useState(1);
-  const [chosenVariant, setChosenVariant] = useState(variants[0]);
+  const [chosenVariant, setChosenVariant] = useState(variants ? variants[0] : physical);
   const [selectedImage, setSelectedImage] = useState(0);
   const [chosenAttributes, setChosenAttributes] = useState(() => {
     const obj = {} as SelectedAttributesTypes;
@@ -63,7 +64,7 @@ const HeroPhysical = ({ name, id, type, variants }: Props) => {
     const images = [];
     // add video as first element if exists
     if (chosenVariant?.featuredVideo) images.push({ type: 'video', data: chosenVariant?.featuredVideo });
-    chosenVariant?.gallery.forEach((el) => images.push({ type: 'image', data: el }));
+    chosenVariant?.gallery!.forEach((el) => images.push({ type: 'image', data: el }));
     return images;
   }, [chosenVariant]);
 
@@ -75,7 +76,7 @@ const HeroPhysical = ({ name, id, type, variants }: Props) => {
       // find variant with all the same attributes
       const filteredVariant = variants.find((el) => {
         let all = true;
-        el.attributes.every((attr) => {
+        el.attributes!.every((attr) => {
           if (filteredAttributes[attr.name.toLocaleLowerCase()] !== attr.value) all = false;
 
           return all;
@@ -110,7 +111,7 @@ const HeroPhysical = ({ name, id, type, variants }: Props) => {
         </div>
       </div>
       <div className={styles['info']}>
-        <p>reviews</p>
+        {/* <p>reviews</p> TODO: add reviews */}
         <h1>{name}</h1>
         <div className={styles.attributes}>
           {attributes.map((el) => (
@@ -143,12 +144,12 @@ const HeroPhysical = ({ name, id, type, variants }: Props) => {
                 onChange={(e) => {
                   // check if input is not higher than countInStock and not lower than 1
                   if (Number(e.target.value) <= 1) setCount(1);
-                  else if (Number(e.target.value) >= chosenVariant!.countInStock) setCount(chosenVariant!.countInStock);
+                  else if (Number(e.target.value) >= chosenVariant!.countInStock!) setCount(chosenVariant!.countInStock!);
                   else setCount(Number(e.target.value));
                 }}
               />
               <button
-                disabled={count >= chosenVariant!.countInStock}
+                disabled={count >= chosenVariant!.countInStock!}
                 onClick={() => {
                   setCount(count + 1);
                 }}
@@ -161,7 +162,7 @@ const HeroPhysical = ({ name, id, type, variants }: Props) => {
           <div className={styles['price']}>
             <p>
               <span className={chosenVariant!.discount ? styles['discount'] : ''}>
-                {(chosenVariant!.price / 100).toFixed(2).replace('.', ',')}&nbsp;zł
+                {(chosenVariant!.price! / 100).toFixed(2).replace('.', ',')}&nbsp;zł
               </span>{' '}
               {chosenVariant!.discount && <span>{chosenVariant!.discount / 100}&nbsp;zł</span>}
             </p>

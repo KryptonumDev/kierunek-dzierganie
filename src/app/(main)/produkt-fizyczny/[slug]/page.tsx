@@ -1,13 +1,13 @@
 import { draftMode } from 'next/headers';
 import { notFound } from 'next/navigation';
 import sanityFetch from '@/utils/sanity.fetch';
-import Seo, { Seo_Query } from '@/global/Seo';
+import { Seo_Query } from '@/global/Seo';
 import type { ProductPageQueryProps, generateStaticParamsProps } from '@/global/types';
 // import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import HeroPhysical from '@/components/_product/HeroPhysical';
 
 const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) => {
-  const { name, _id, type, variants } = await query(slug);
+  const { name, _id, type, variants, price, discount, featuredVideo, countInStock, gallery } = await query(slug);
 
   return (
     <>
@@ -25,6 +25,14 @@ const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) =
         id={_id}
         type={type}
         variants={variants}
+        physical={{
+          name,
+          price,
+          discount,
+          countInStock,
+          featuredVideo,
+          gallery,
+        }}
       />
     </>
   );
@@ -32,15 +40,15 @@ const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) =
 
 export default LandingPage;
 
-// export async function generateMetadata({ params: { slug: paramsSlug } }: { params: { slug: string } }) {
+// export async function generateMetadata({ params: { slug } }: { params: { slug: string } }) {
 //   const {
-//     slug,
 //     seo: { title, description },
-//   } = await query(paramsSlug);
+//   } = await query(slug);
+
 //   return Seo({
 //     title,
 //     description,
-//     path: `/landing/${slug}`,
+//     path: `/landing/${slug}`, // TODO: change to proper path
 //   });
 // }
 
@@ -51,7 +59,26 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
         name,
         'slug': slug.current,
         _id,
+
         type,
+        price,
+        discount,
+        featuredVideo,
+        countInStock,
+        gallery[]{
+          asset -> {
+            url,
+            altText,
+            metadata {
+              lqip,
+              dimensions {
+                width,
+                height,
+              }
+            }
+          }
+        },
+        
         variants[]{
           name,
           price,

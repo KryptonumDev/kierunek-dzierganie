@@ -24,25 +24,22 @@ export type ProductVariant = {
   price: number;
   discount: number;
   countInStock: number;
-  attributes: Array<{
+  attributes?: Array<{
     type: string;
     name: string;
     value: string;
   }>;
   featuredVideo: string;
-  gallery: Array<{
-    asset: {
-      url: string;
-      altText: string;
-      metadata: {
-        dimensions: {
-          width: number;
-          height: number;
-        };
-        lqip: string;
-      };
-    };
-  }>;
+  gallery: Array<ImgType>;
+};
+
+export type ProductPhysical = {
+  name: string;
+  price?: number;
+  discount?: number;
+  countInStock?: number;
+  featuredVideo?: string;
+  gallery?: Array<ImgType>;
 };
 
 export type generateMetadataProps = {
@@ -64,30 +61,12 @@ export type ProductPageQueryProps = {
   slug: string;
   _id: string;
   type: string;
-  variants: Array<{
-    name: string;
-    price: number;
-    discount: number;
-    countInStock: number;
-    attributes: Array<{
-      type: string;
-      name: string;
-      value: string;
-    }>;
-    featuredImage: {
-      asset: {
-        url: string;
-        altText: string;
-        metadata: {
-          dimensions: {
-            width: number;
-            height: number;
-          };
-          lqip: string;
-        };
-      };
-    };
-  }>;
+  variants: Array<ProductVariant>;
+  gallery?: Array<ImgType>;
+  featuredVideo?: string;
+  price?: number;
+  discount?: number;
+  countInStock?: number;
 } & generateMetadataProps;
 
 export type generateStaticParamsProps = {

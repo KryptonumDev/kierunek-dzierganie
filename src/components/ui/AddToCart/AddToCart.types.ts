@@ -1,8 +1,8 @@
-import { ProductVariant } from '@/global/types';
+import type { ProductPhysical, ProductVariant } from '@/global/types';
 
 export type Props = {
   id: string;
   type: string;
   disabled: boolean;
-  variant?: ProductVariant;
+  variant?: ProductVariant | ProductPhysical;
 };
