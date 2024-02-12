@@ -24,6 +24,7 @@ import ContactForm, { ContactForm_Query, type ContactFormProps } from '@/compone
 import TabSection, { TabSection_Query, type TabSectionProps } from '@/components/_global/TabSection';
 import TilesIndicated, { TilesIndicated_Query, type TilesIndicatedProps } from './TilesIndicated';
 import TilesIcon, { TilesIcon_Query, type TilesIconProps } from './TilesIcon';
+import Divider, { Divider_Query } from './Divider';
 
 type ComponentMap = {
   HeroBackgroundImg: HeroBackgroundImgProps;
@@ -84,6 +85,7 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
       TabSection: <TabSection {...(item as TabSectionProps)} />,
       TilesIndicated: <TilesIndicated {...(item as TilesIndicatedProps)} />,
       TilesIcon: <TilesIcon {...(item as TilesIconProps)} />,
+      Divider: <Divider />,
     };
     const DynamicComponent = componentMap[componentType];
     if (!DynamicComponent) {
@@ -117,6 +119,7 @@ const Components_Query = /* groq */ `
     ${TabSection_Query}
     ${TilesIndicated_Query}
     ${TilesIcon_Query}
+    ${Divider_Query}
   },
 `;
 
