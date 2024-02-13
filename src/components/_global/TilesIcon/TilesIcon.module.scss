@@ -16,6 +16,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: flex-start;
     gap: clamp(16px, calc(24vw / 7.68), 32px);
     .item {
       width: calc(100% / 3 - (clamp(16px, calc(24vw / 7.68), 32px) / 3 * 2));
