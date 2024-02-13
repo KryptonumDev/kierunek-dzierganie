@@ -88,7 +88,7 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
       ),
       TabSection: <TabSection {...(item as TabSectionProps)} />,
       TilesIndicated: <TilesIndicated {...(item as TilesIndicatedProps)} />,
-      TilesIcon: <TilesIcon {...(item as TilesIconProps)} />,
+      TilesIcon: <TilesIcon {...(item as TilesIconProps)} index={index} />,
       Divider: <Divider />,
       StepList: <StepList {...(item as StepListProps)} />,
       HeroColumn: (

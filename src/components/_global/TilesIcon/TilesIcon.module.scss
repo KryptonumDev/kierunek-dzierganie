@@ -3,10 +3,8 @@
     max-width: calc(584rem / 16);
     margin: 0 auto clamp(28px, calc(36vw / 7.68), 64px);
     text-align: center;
-    h2 {
-      margin-bottom: clamp(16px, calc(28vw / 7.68), 36px);
-    }
     .paragraph {
+      margin-top: clamp(16px, calc(28vw / 7.68), 36px);
       > *:not(:last-child) {
         margin-bottom: 12px;
       }

@@ -3,11 +3,13 @@ import Img from '@/components/ui/image';
 import styles from './TilesIcon.module.scss';
 import type { Props } from './TilesIcon.types';
 
-const TilesIcon = ({ heading, paragraph, list }: Props) => {
+const TilesIcon = ({ heading, paragraph, list, index }: Props) => {
+  const HeadingComponent = index === 0 ? Markdown.h1 : Markdown.h2;
+
   return (
     <section className={styles['TilesIcon']}>
       <header>
-        <Markdown.h2>{heading}</Markdown.h2>
+        <HeadingComponent>{heading}</HeadingComponent>
         <Markdown className={styles.paragraph}>{paragraph}</Markdown>
       </header>
       <div className={styles.list}>
