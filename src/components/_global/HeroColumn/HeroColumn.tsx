@@ -15,6 +15,7 @@ const HeroColumn = ({ heading, paragraph, img, index }: Props) => {
       <Img
         data={img}
         sizes='(max-width: 999px) 100vw, (min-width: 1280px) 50vw, 600px'
+        priority={index === 0}
       />
     </section>
   );
