@@ -1,11 +1,6 @@
 .Input {
   font-size: calc(14rem/16);
   color: var(--primary-900);
-  &[aria-invalid='true']{
-    input, textarea {
-      border-color: var(--error-600);
-    }
-  }
   p {
     margin-bottom: 8px;
     display: flex;
@@ -37,6 +32,11 @@
     &:focus-visible {
       outline: none;
       border-color: var(--primary-600);
+    }
+  }
+  &[aria-invalid='true']{
+    input, textarea {
+      border-color: var(--error-600);
     }
   }
 }

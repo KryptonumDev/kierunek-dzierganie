@@ -1,5 +1,4 @@
-import type { ComponentProps } from '@/components/_global/Components';
-
+import type { ComponentProps } from '@/components/Components';
 
 export type CtaType = {
   href: string;
@@ -8,16 +7,16 @@ export type CtaType = {
 
 export type ImgType = {
   asset: {
-    url: string,
-    altText: string,
+    url: string;
+    altText: string;
     metadata: {
       dimensions: {
-        width: number,
-        height: number,
-      },
-      lqip: string,
-    },
-  },
+        width: number;
+        height: number;
+      };
+      lqip: string;
+    };
+  };
 };
 
 export type generateMetadataProps = {
@@ -36,4 +35,4 @@ export type PageQueryProps = {
 
 export type generateStaticParamsProps = {
   slug: string;
-}
+};

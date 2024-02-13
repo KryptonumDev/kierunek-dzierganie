@@ -1,4 +1,4 @@
-import Markdown from '../ui/markdown';
+import Markdown from '@/components/ui/markdown';
 import styles from './StepList.module.scss';
 import type { Props } from './StepList.types';
 

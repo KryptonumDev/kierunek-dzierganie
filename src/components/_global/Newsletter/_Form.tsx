@@ -1,17 +1,17 @@
 'use client';
 import { useState } from 'react';
-import Link from 'next/link';
 import Input from '@/components/ui/Input';
-import Checkbox from '@/components/ui/Checkbox';
+import { type FieldValues, useForm } from 'react-hook-form';
+import styles from './Newsletter.module.scss';
 import Button from '@/components/ui/Button';
-import styles from './ContactForm.module.scss';
-import { useForm, type FieldValues } from 'react-hook-form';
-import type { StatusProps } from './ContactForm.types';
+import Checkbox from '@/components/ui/Checkbox';
+import { StatusProps } from './Newsletter.types';
 import { regex } from '@/global/constants';
+import Link from 'next/link';
 import State from './_State';
 import Loading from './_Loading';
 
-const Form = ({ aboveTheFold }: { aboveTheFold: boolean }) => {
+const Form = ({ Heading }: { Heading: React.ReactNode }) => {
   const [status, setStatus] = useState<StatusProps>({ sending: false });
   const {
     register,
@@ -23,7 +23,7 @@ const Form = ({ aboveTheFold }: { aboveTheFold: boolean }) => {
   const onSubmit = async (data: FieldValues) => {
     setStatus({ sending: true });
     try {
-      const response = await fetch('/api/contact', {
+      const response = await fetch('/api/newsletter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -45,54 +45,47 @@ const Form = ({ aboveTheFold }: { aboveTheFold: boolean }) => {
       className={styles['Form']}
       onSubmit={handleSubmit(onSubmit)}
     >
-      <Input
-        label='Imię'
-        autoFocus={aboveTheFold}
-        register={register('name', {
-          required: { value: true, message: 'Imię jest wymagane' },
-          minLength: { value: 2, message: 'Imię jest za krótkie' },
-          pattern: { value: regex.string, message: 'Imię jest za krótkie' },
-        })}
-        errors={errors}
-      />
-      <Input
-        label='E-mail'
-        type='email'
-        register={register('email', {
-          required: { value: true, message: 'E-mail jest wymagany' },
-          pattern: { value: regex.email, message: 'Niepoprawny adres e-mail' },
-        })}
-        errors={errors}
-      />
-      <Input
-        label='Nr. telefonu (opcjonalnie)'
-        type='tel'
-        placeholder='_ _ _ - _ _ _ - _ _ _'
-        register={register('tel', {
-          pattern: { value: regex.phone, message: 'Niepoprawny numer telefonu' },
-        })}
-        errors={errors}
-      />
-      <Input
-        label='Temat wiadomości'
-        placeholder='Napisz co siedzi Ci w głowie'
-        textarea={true}
-        register={register('message', {
-          required: { value: true, message: 'Temat wiadomości jest wymagany' },
-        })}
-        errors={errors}
-      />
+      {Heading}
+      <div className={styles.column}>
+        <Input
+          label='Imię'
+          register={register('name', {
+            required: { value: true, message: 'Imię jest wymagane' },
+            minLength: { value: 2, message: 'Imię jest za krótkie' },
+            pattern: { value: regex.string, message: 'Imię jest za krótkie' },
+          })}
+          errors={errors}
+        />
+        <Input
+          label='E-mail'
+          type='email'
+          register={register('email', {
+            required: { value: true, message: 'E-mail jest wymagany' },
+            pattern: { value: regex.email, message: 'Niepoprawny adres e-mail' },
+          })}
+          errors={errors}
+        />
+      </div>
       <Checkbox
         label={
           <>
-            Zgadzam się na{' '}
+            Akceptuję warunki{' '}
             <Link
               className='link'
               href='/polityka-prywatnosci'
               target='_blank'
               rel='noopener'
             >
-              przetwarzanie moich danych
+              polityki prywatności
+            </Link>{' '}
+            i&nbsp;
+            <Link
+              className='link'
+              href='/regulamin'
+              target='_blank'
+              rel='noopener'
+            >
+              regulaminu
             </Link>
           </>
         }
@@ -102,10 +95,11 @@ const Form = ({ aboveTheFold }: { aboveTheFold: boolean }) => {
         errors={errors}
       />
       <Button
-        disabled={status?.sending}
         type='submit'
+        className={styles.cta}
+        disabled={status?.sending}
       >
-        Wyślij wiadomość
+        Zapisuje się
       </Button>
       <State
         success={status?.success}

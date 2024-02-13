@@ -2,7 +2,7 @@ import { draftMode } from 'next/headers';
 import sanityFetch from '@/utils/sanity.fetch';
 import Seo, { Seo_Query } from '@/global/Seo';
 import type { PageQueryProps } from '@/global/types';
-import Components, { Components_Query } from '@/components/_global/Components';
+import Components, { Components_Query } from '@/components/Components';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 
 const page = { name: 'Program partnerski', path: '/program-partnerski' };
