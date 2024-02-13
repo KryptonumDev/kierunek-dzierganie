@@ -26,6 +26,7 @@ import TilesIndicated, { TilesIndicated_Query, type TilesIndicatedProps } from '
 import TilesIcon, { TilesIcon_Query, type TilesIconProps } from './TilesIcon';
 import Divider, { Divider_Query } from './Divider';
 import StepList, { StepList_Query, type StepListProps } from '../StepList';
+import HeroColumn, { HeroColumn_Query, type HeroColumnProps } from './HeroColumn';
 
 type ComponentMap = {
   HeroBackgroundImg: HeroBackgroundImgProps;
@@ -49,6 +50,7 @@ type ComponentMap = {
   TilesIndicated: TilesIndicatedProps;
   TilesIcon: TilesIconProps;
   StepList: StepListProps;
+  HeroColumn: HeroColumnProps;
 };
 
 export type ComponentProps = ComponentMap[keyof ComponentMap] & { _type: string };
@@ -89,6 +91,12 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
       TilesIcon: <TilesIcon {...(item as TilesIconProps)} />,
       Divider: <Divider />,
       StepList: <StepList {...(item as StepListProps)} />,
+      HeroColumn: (
+        <HeroColumn
+          {...(item as HeroColumnProps)}
+          index={index}
+        />
+      ),
     };
     const DynamicComponent = componentMap[componentType];
     if (!DynamicComponent) {
@@ -124,6 +132,7 @@ const Components_Query = /* groq */ `
     ${TilesIcon_Query}
     ${Divider_Query}
     ${StepList_Query}
+    ${HeroColumn_Query}
   },
 `;
 
