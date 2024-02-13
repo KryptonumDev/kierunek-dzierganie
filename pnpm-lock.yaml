@@ -41,6 +41,9 @@ dependencies:
   react-select:
     specifier: ^5.8.0
     version: 5.8.0(@types/react@18.2.48)(react-dom@18.2.0)(react@18.2.0)
+  react-use-cart:
+    specifier: ^1.13.0
+    version: 1.13.0(react@18.2.0)
   resend:
     specifier: ^3.1.0
     version: 3.1.0
@@ -6596,6 +6599,15 @@ packages:
       prop-types: 15.8.1
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /react-use-cart@1.13.0(react@18.2.0):
+    resolution: {integrity: sha512-V3jrNOgBXxTn/RWh1HCEdrQk/jx2xCixdkX1c7Vyl4zxEf9jOuniUnjZSTALO7rQ5226onqmvXxKz1eu0Yz6Iw==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16'
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /react@18.2.0:

@@ -5,4 +5,5 @@ export type Props = {
   type: string;
   disabled: boolean;
   variant?: ProductVariant | ProductPhysical;
+  quantity?: number;
 };

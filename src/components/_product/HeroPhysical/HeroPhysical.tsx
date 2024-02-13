@@ -200,6 +200,7 @@ const HeroPhysical = ({ name, id, type, variants, physical }: Props) => {
           type={type}
           variant={chosenVariant}
           disabled={!count}
+          quantity={count}
         />
         <div className={styles['divider']} />
         <div className={styles['annotations']}>
