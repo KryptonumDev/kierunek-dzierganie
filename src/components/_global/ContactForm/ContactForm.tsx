@@ -8,7 +8,7 @@ import { urlWithoutProtocol } from '@/utils/url-without-protocool';
 import CopyToClipboard from '@/components/ui/CopyToClipboard';
 import Form from './_Form';
 
-const ContactForm = async ({ heading, paragraph }: Props) => {
+const ContactForm = async ({ heading, paragraph, aboveTheFold }: Props) => {
   const { email, tel, messenger } = await query();
 
   return (
@@ -49,7 +49,7 @@ const ContactForm = async ({ heading, paragraph }: Props) => {
           </p>
         </div>
       </header>
-      <Form />
+      <Form aboveTheFold={aboveTheFold} />
     </section>
   );
 };

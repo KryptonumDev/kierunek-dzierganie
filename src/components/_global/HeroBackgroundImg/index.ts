@@ -1,3 +1,4 @@
+import { Img_Query } from '@/components/ui/image';
 import HeroBackgroundImg from './HeroBackgroundImg';
 export type { Props as HeroBackgroundImgProps } from './HeroBackgroundImg.types';
 export default HeroBackgroundImg;
@@ -14,17 +15,7 @@ export const HeroBackgroundImg_Query = `
     },
     cta_Annotation,
     img {
-      asset -> {
-        url,
-        altText,
-        metadata {
-          lqip,
-          dimensions {
-            width,
-            height,
-          }
-        }
-      }
+      ${Img_Query}
     }
   },
 `;

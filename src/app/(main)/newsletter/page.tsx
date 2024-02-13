@@ -5,10 +5,12 @@ import type { PageQueryProps } from '@/global/types';
 import Components, { Components_Query } from '@/components/Components';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 
-const page = { name: 'O mnie', path: '/o-mnie' };
+const page = { name: 'Newsletter', path: '/newsletter' };
 
-const AboutMePage = async () => {
+const PartnersPage = async () => {
   const { content }: PageQueryProps = await query();
+
+  console.log(content);
 
   return (
     <>
@@ -17,7 +19,7 @@ const AboutMePage = async () => {
     </>
   );
 };
-export default AboutMePage;
+export default PartnersPage;
 
 export async function generateMetadata() {
   const {
@@ -33,7 +35,7 @@ export async function generateMetadata() {
 const query = async (): Promise<PageQueryProps> => {
   const data = await sanityFetch({
     query: /* groq */ `
-      *[_type == "AboutMe_Page"][0] {
+      *[_type == "Newsletter_Page"][0] {
         ${Components_Query}
         ${Seo_Query}
       }

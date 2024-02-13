@@ -2,9 +2,10 @@
   cursor: pointer;
   display: inline-grid;
   grid-template-columns: auto 1fr;
+  width: fit-content;
   gap: 8px;
   border-radius: 2px;
-  font-size: calc(14rem/16);
+  font-size: calc(14rem / 16);
   padding: 6px;
   .icon {
     width: 36px;
@@ -13,7 +14,9 @@
     border: 1px solid var(--primary-400);
     display: grid;
     place-items: center;
-    transition: background-color .5s, border-color .5s;
+    transition:
+      background-color 0.5s,
+      border-color 0.5s;
     input {
       position: absolute;
       opacity: 0;
@@ -21,7 +24,7 @@
     svg {
       stroke-dasharray: 19;
       stroke-dashoffset: 19;
-      transition: stroke-dashoffset .5s var(--easing);
+      transition: stroke-dashoffset 0.5s var(--easing);
     }
   }
   p {
@@ -49,7 +52,7 @@
       background-color: var(--primary-200);
     }
   }
-  &[aria-invalid="true"]{
+  &[aria-invalid='true'] {
     .icon {
       border-color: var(--error-500);
     }

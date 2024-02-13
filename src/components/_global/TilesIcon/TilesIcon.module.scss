@@ -1,0 +1,47 @@
+.TilesIcon {
+  header {
+    max-width: calc(584rem / 16);
+    margin: 0 auto clamp(28px, calc(36vw / 7.68), 64px);
+    text-align: center;
+    .paragraph {
+      margin-top: clamp(16px, calc(28vw / 7.68), 36px);
+      > *:not(:last-child) {
+        margin-bottom: 12px;
+      }
+    }
+  }
+  .list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: clamp(16px, calc(24vw / 7.68), 32px);
+    .item {
+      width: calc(100% / 3 - (clamp(16px, calc(24vw / 7.68), 32px) / 3 * 2));
+      @media (max-width: 1049px) {
+        width: calc(100% / 2 - clamp(16px, calc(24vw / 7.68), 32px) / 2);
+      }
+      @media (max-width: 599px) {
+        width: 100%;
+      }
+      margin-top: calc(clamp(52px, calc(70vw / 7.68), 70px) / 2);
+      padding: clamp(24px, calc(36vw / 7.68), 44px) clamp(16px, calc(24vw / 7.68), 36px)
+        clamp(16px, calc(24vw / 7.68), 36px);
+      border-radius: 4px;
+      background: var(--primary-200);
+      .icon {
+        margin: calc(clamp(24px, calc(36vw / 7.68), 44px) * -1 - clamp(52px, calc(70vw / 7.68), 70px) / 2) auto 0;
+        border-radius: 50%;
+        background: var(--primary-400);
+        width: clamp(52px, calc(70vw / 7.68), 70px);
+        height: clamp(52px, calc(70vw / 7.68), 70px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      h3 {
+        margin: clamp(4px, calc(8vw / 7.68), 16px) 0 clamp(8px, calc(16vw / 7.68), 24px);
+      }
+    }
+  }
+}
