@@ -25,6 +25,7 @@ import TabSection, { TabSection_Query, type TabSectionProps } from '@/components
 import TilesIndicated, { TilesIndicated_Query, type TilesIndicatedProps } from './TilesIndicated';
 import TilesIcon, { TilesIcon_Query, type TilesIconProps } from './TilesIcon';
 import Divider, { Divider_Query } from './Divider';
+import StepList, { StepList_Query, type StepListProps } from '../StepList';
 
 type ComponentMap = {
   HeroBackgroundImg: HeroBackgroundImgProps;
@@ -47,6 +48,7 @@ type ComponentMap = {
   TabSection: TabSectionProps;
   TilesIndicated: TilesIndicatedProps;
   TilesIcon: TilesIconProps;
+  StepList: StepListProps;
 };
 
 export type ComponentProps = ComponentMap[keyof ComponentMap] & { _type: string };
@@ -86,6 +88,7 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
       TilesIndicated: <TilesIndicated {...(item as TilesIndicatedProps)} />,
       TilesIcon: <TilesIcon {...(item as TilesIconProps)} />,
       Divider: <Divider />,
+      StepList: <StepList {...(item as StepListProps)} />,
     };
     const DynamicComponent = componentMap[componentType];
     if (!DynamicComponent) {
@@ -120,6 +123,7 @@ const Components_Query = /* groq */ `
     ${TilesIndicated_Query}
     ${TilesIcon_Query}
     ${Divider_Query}
+    ${StepList_Query}
   },
 `;
 
