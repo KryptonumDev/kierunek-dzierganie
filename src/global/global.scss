@@ -7,41 +7,41 @@
 }
 
 :root {
-  --primary-100: #FDFBF8;
-  --primary-200: #FAF4F0;
-  --primary-300: #EFE8E7;
-  --primary-400: #E5D8D4;
-  --primary-500: #B4A29C;
-  --primary-600: #9A827A;
+  --primary-100: #fdfbf8;
+  --primary-200: #faf4f0;
+  --primary-300: #efe8e7;
+  --primary-400: #e5d8d4;
+  --primary-500: #b4a29c;
+  --primary-600: #9a827a;
   --primary-700: #766965;
-  --primary-800: #53423C;
+  --primary-800: #53423c;
   --primary-900: #332621;
 
-  --success-100: #EDFAF8;
-  --success-200: #C8F1EA;
-  --success-300: #88E0D1;
-  --success-400: #71DAC8;
-  --success-500: #4ED1BA;
-  --success-600: #47BEA9;
+  --success-100: #edfaf8;
+  --success-200: #c8f1ea;
+  --success-300: #88e0d1;
+  --success-400: #71dac8;
+  --success-500: #4ed1ba;
+  --success-600: #47bea9;
   --success-700: #379484;
-  --success-800: #2B7366;
-  --success-900: #21584E;
+  --success-800: #2b7366;
+  --success-900: #21584e;
 
-  --error-100: #FBF1F1;
-  --error-200: #EDBDBD;
-  --error-300: #E49F9F;
-  --error-400: #DF8D8D;
-  --error-500: #D77070;
-  --error-600: #BC4B4B;
+  --error-100: #fbf1f1;
+  --error-200: #edbdbd;
+  --error-300: #e49f9f;
+  --error-400: #df8d8d;
+  --error-500: #d77070;
+  --error-600: #bc4b4b;
   --error-700: #995050;
-  --error-800: #882F2F;
-  --error-900: #5A2F2F;
+  --error-800: #882f2f;
+  --error-900: #5a2f2f;
 
-  --pageMargin: clamp(16px, calc(40vw/7.68), 40px);
+  --pageMargin: clamp(16px, calc(40vw / 7.68), 40px);
   @media (max-width: 899px) and (min-width: 649px) {
-    --pageMargin: clamp(40px, calc(80vw/7.68), 80px);
+    --pageMargin: clamp(40px, calc(80vw / 7.68), 80px);
   }
-  --easing: cubic-bezier(0.46,0.03,0.52,0.96);
+  --easing: cubic-bezier(0.46, 0.03, 0.52, 0.96);
 }
 body.scrollLock {
   overflow: hidden;
@@ -55,7 +55,7 @@ body {
   background-color: var(--primary-100);
   color: var(--primary-800);
   line-height: 150%;
-  font-size: clamp(1rem, calc(18vw/7.68), calc(18rem/16));
+  font-size: clamp(1rem, calc(18vw / 7.68), calc(18rem / 16));
 }
 :focus {
   outline: none;
@@ -88,7 +88,7 @@ button {
   cursor: pointer;
 }
 sup {
-  font-size: .6em;
+  font-size: 0.6em;
   vertical-align: top;
 }
 input,
@@ -121,30 +121,41 @@ img {
 
 p {
   strong {
-    background: linear-gradient(rgba(255,255,255,0) 50%, var(--primary-300) 50%);
+    background: linear-gradient(rgba(255, 255, 255, 0) 50%, var(--primary-300) 50%);
     font-weight: inherit;
   }
 }
-p, h1, h2, h3, h4, h5, h6 {
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   overflow-wrap: break-word;
 }
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-weight: 400;
   line-height: 133%;
   strong {
     font-family: var(--font-city-streetwear);
     font-weight: inherit;
     font-size: 1.6em;
-    line-height: .62;
-    margin: -.15em 4px;
+    line-height: 0.62;
+    margin: -0.15em 4px;
   }
 }
-h1, h2 {
-  font-size: clamp(calc(24rem/16), calc(26vw/7.68), calc(36rem/16));
-
+h1,
+h2 {
+  font-size: clamp(calc(24rem / 16), calc(26vw / 7.68), calc(36rem / 16));
 }
 h3 {
-  font-size: calc(24rem/16);
+  font-size: calc(24rem / 16);
 }
 
 .link {
@@ -160,24 +171,27 @@ h3 {
     bottom: -3px;
   }
   @keyframes link {
-    0%, 100% {
+    0%,
+    100% {
       transform: scaleX(1);
     }
     50% {
       transform: scaleX(0);
       transform-origin: right;
     }
-    0%, 50% {
+    0%,
+    50% {
       transform-origin: right;
     }
-    51%, 100% {
+    51%,
+    100% {
       transform-origin: left;
     }
   }
   &:hover,
   &:focus-visible {
     &::after {
-      animation: link .8s var(--easing);
+      animation: link 0.8s var(--easing);
     }
   }
 }
@@ -206,8 +220,8 @@ h3 {
 main {
   display: grid;
   grid-template-columns: 1fr;
-  row-gap: clamp(96px, calc(144vw/7.68), 240px);
-  margin: clamp(48px, calc(64vw/7.68), 96px) auto clamp(96px, calc(144vw/7.68), 240px);
+  row-gap: clamp(96px, calc(144vw / 7.68), 240px);
+  margin: clamp(48px, calc(64vw / 7.68), 96px) auto clamp(96px, calc(144vw / 7.68), 240px);
 }
 
 .unorderedList {
@@ -218,6 +232,9 @@ main {
     gap: 8px;
     svg {
       height: 1.5em;
+    }
+    &:not(:last-child) {
+      margin-bottom: 12px;
     }
   }
 }

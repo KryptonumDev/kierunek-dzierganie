@@ -3,21 +3,23 @@ import { notFound } from 'next/navigation';
 import sanityFetch from '@/utils/sanity.fetch';
 import Seo, { Seo_Query } from '@/global/Seo';
 import type { PageQueryProps, generateStaticParamsProps } from '@/global/types';
-import Components, { Components_Query } from '@/components/_global/Components';
+import Components, { Components_Query } from '@/components/Components';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
-
 
 const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) => {
   const { content, name }: PageQueryProps = await query(slug);
 
   return (
     <>
-      <Breadcrumbs data={[
-        {
-          name,
-          path: `/landing/${slug}`,
-        },
-      ]} visible={false} />
+      <Breadcrumbs
+        data={[
+          {
+            name,
+            path: `/landing/${slug}`,
+          },
+        ]}
+        visible={false}
+      />
       <Components data={content} />
     </>
   );

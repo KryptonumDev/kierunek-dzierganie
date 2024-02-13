@@ -1,0 +1,26 @@
+.HeroColumn {
+  display: grid;
+  align-items: center;
+  gap: clamp(24px, calc(32vw / 7.68), 32px);
+  @media (min-width: 1000px) {
+    grid-template-columns: 1fr 1fr;
+  }
+  header {
+    .paragraph {
+      margin-top: clamp(16px, calc(28vw / 7.68), 36px);
+      > *:not(:last-child) {
+        margin-bottom: 12px;
+      }
+    }
+  }
+  img {
+    width: 100%;
+    max-width: 600px;
+    border-radius: 4px;
+  }
+  @media (min-width: 600px) {
+    img {
+      order: -1;
+    }
+  }
+}

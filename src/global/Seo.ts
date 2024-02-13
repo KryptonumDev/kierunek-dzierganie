@@ -69,7 +69,7 @@ const query = async (): Promise<QueryProps> => {
           'og_Img': og_Img.asset -> url+"?w=1200"
         }
       }
-    `
+    `,
   });
   return data as QueryProps;
 };

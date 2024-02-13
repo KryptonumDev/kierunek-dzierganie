@@ -25,7 +25,6 @@ const headers = {
 
 export async function POST(request: Request) {
   const req = await request.json();
-  console.log('test');
   const { name, email, tel, message, legal }: RequestProps = req;
 
   if (!name || (!email && !regex.email.test(email)) || (tel && !regex.phone.test(tel)) || !message || !legal) {
@@ -51,7 +50,7 @@ export async function POST(request: Request) {
       text: removeHtmlTags(body),
     });
     return NextResponse.json({ success: true }, { headers });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ success: false }, { headers });
   }
 }

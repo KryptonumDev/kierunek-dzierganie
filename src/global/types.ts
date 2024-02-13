@@ -1,4 +1,4 @@
-import type { ComponentProps } from '@/components/_global/Components';
+import type { ComponentProps } from '@/components/Components';
 
 export type CtaType = {
   href: string;

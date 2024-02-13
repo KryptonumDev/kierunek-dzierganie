@@ -1,3 +1,4 @@
+import { Img_Query } from '@/components/ui/image';
 import Introduction from './Introduction';
 export type { Props as IntroductionProps } from './Introduction.types';
 export default Introduction;
@@ -13,17 +14,7 @@ export const Introduction_Query = `
       href,
     },
     img {
-      asset -> {
-        url,
-        altText,
-        metadata {
-          lqip,
-          dimensions {
-            width,
-            height,
-          },
-        },
-      },
+      ${Img_Query}
     },
   },
 `;

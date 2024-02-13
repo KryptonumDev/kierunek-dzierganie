@@ -22,6 +22,12 @@ import Reviews, { Reviews_Query, type ReviewsProps } from '@/components/_global/
 import Introduction, { Introduction_Query, type IntroductionProps } from '@/components/_global/Introduction';
 import ContactForm, { ContactForm_Query, type ContactFormProps } from '@/components/_global/ContactForm';
 import TabSection, { TabSection_Query, type TabSectionProps } from '@/components/_global/TabSection';
+import TilesIndicated, { TilesIndicated_Query, type TilesIndicatedProps } from '@/components/_global/TilesIndicated';
+import TilesIcon, { TilesIcon_Query, type TilesIconProps } from '@/components/_global/TilesIcon';
+import Divider, { Divider_Query } from '@/components/_global/Divider';
+import StepList, { StepList_Query, type StepListProps } from '@/components/_global/StepList';
+import HeroColumn, { HeroColumn_Query, type HeroColumnProps } from '@/components/_global/HeroColumn';
+import Newsletter, { Newsletter_Query, type NewsletterProps } from '@/components/_global/Newsletter';
 
 type ComponentMap = {
   HeroBackgroundImg: HeroBackgroundImgProps;
@@ -42,6 +48,11 @@ type ComponentMap = {
   Introduction: IntroductionProps;
   ContactForm: ContactFormProps;
   TabSection: TabSectionProps;
+  TilesIndicated: TilesIndicatedProps;
+  TilesIcon: TilesIconProps;
+  StepList: StepListProps;
+  HeroColumn: HeroColumnProps;
+  Newsletter: NewsletterProps;
 };
 
 export type ComponentProps = ComponentMap[keyof ComponentMap] & { _type: string };
@@ -71,8 +82,34 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
       Community: <Community {...(item as CommunityProps)} />,
       Reviews: <Reviews {...(item as ReviewsProps)} />,
       Introduction: <Introduction {...(item as IntroductionProps)} />,
-      ContactForm: <ContactForm {...(item as ContactFormProps)} />,
+      ContactForm: (
+        <ContactForm
+          {...(item as ContactFormProps)}
+          aboveTheFold={index === 0}
+        />
+      ),
       TabSection: <TabSection {...(item as TabSectionProps)} />,
+      TilesIndicated: <TilesIndicated {...(item as TilesIndicatedProps)} />,
+      TilesIcon: (
+        <TilesIcon
+          {...(item as TilesIconProps)}
+          index={index}
+        />
+      ),
+      Divider: <Divider />,
+      StepList: <StepList {...(item as StepListProps)} />,
+      HeroColumn: (
+        <HeroColumn
+          {...(item as HeroColumnProps)}
+          index={index}
+        />
+      ),
+      Newsletter: (
+        <Newsletter
+          {...(item as NewsletterProps)}
+          index={index}
+        />
+      ),
     };
     const DynamicComponent = componentMap[componentType];
     if (!DynamicComponent) {
@@ -84,7 +121,7 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
 
 export default Components;
 
-const Components_Query = /* groq */ `
+export const Components_Query = /* groq */ `
   content[] {
     ${HeroBackgroundImg_Query}
     ${Benefits_Query}
@@ -104,7 +141,11 @@ const Components_Query = /* groq */ `
     ${Introduction_Query}
     ${ContactForm_Query}
     ${TabSection_Query}
+    ${TilesIndicated_Query}
+    ${TilesIcon_Query}
+    ${Divider_Query}
+    ${StepList_Query}
+    ${HeroColumn_Query}
+    ${Newsletter_Query}
   },
 `;
-
-export { Components_Query };
