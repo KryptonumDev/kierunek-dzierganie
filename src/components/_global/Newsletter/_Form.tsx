@@ -6,7 +6,7 @@ import styles from './Newsletter.module.scss';
 import Button from '@/components/ui/Button';
 import Checkbox from '@/components/ui/Checkbox';
 import { StatusProps } from './Newsletter.types';
-import { regex } from '@/global/constants';
+import { mailerLiteGroup, regex } from '@/global/constants';
 import Link from 'next/link';
 import State from './_State';
 import Loading from './_Loading';
@@ -22,8 +22,9 @@ const Form = ({ Heading }: { Heading: React.ReactNode }) => {
 
   const onSubmit = async (data: FieldValues) => {
     setStatus({ sending: true });
+    data.groupID = mailerLiteGroup.newsletter;
     try {
-      const response = await fetch('/api/newsletter', {
+      const response = await fetch('/api/mailerlite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
