@@ -11,13 +11,13 @@
     height: 1px;
     background-color: var(--primary-400);
     transform: scaleX(0);
-    transition: transform 0.8s 1.4s var(--easing);
+    transition: transform .8s var(--easing);
   }
   &::before {
-    transform-origin: right;
+    transform-origin: left;
   }
   &::after {
-    transform-origin: left;
+    transform-origin: right;
   }
   &:has(svg[data-visible='true']) {
     &::before,

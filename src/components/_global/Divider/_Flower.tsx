@@ -11,7 +11,7 @@ const animate = (isInView: boolean, delay?: number, duration?: number) => ({
     pathLength: isInView ? 1 : 0,
   },
   transition: {
-    duration: duration || 2,
+    duration: duration || 1.6,
     delay: delay,
     ease: easing,
   },
