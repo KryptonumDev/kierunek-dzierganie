@@ -67,6 +67,10 @@ export type ProductPageQueryProps = {
   price?: number;
   discount?: number;
   countInStock?: number;
+  parameters: Array<{
+    name: string;
+    value: string;
+  }>;
 } & generateMetadataProps;
 
 export type generateStaticParamsProps = {

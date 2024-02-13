@@ -1,0 +1,44 @@
+.Parameters {
+  margin: clamp(0px, calc(16vw/7.68), 28px);
+
+  @media (max-width: 480px) {
+    margin: 0px;
+  }
+
+  ul {
+    display: grid;
+    gap: 12px;
+
+    @media (max-width: 480px) {
+      gap: 4px;
+    }
+
+    li {
+      display: grid;
+      grid-template-columns: clamp(135px, calc(235vw/7.68), 350px) 1fr;
+
+      strong {
+        background-color: var(--primary-200);
+        font-weight: 300;
+        padding: 10px 20px 12px 20px;
+        display: flex;
+        align-items: center;
+
+        @media (max-width: 480px) {
+          padding: 8px 8px 10px 8px;
+        }
+      }
+
+      span{
+        border-bottom: 1px solid var(--primary-300);
+        padding: 10px 20px 12px 20px;
+        display: flex;
+        align-items: center;
+
+        @media (max-width: 480px) {
+          padding: 8px 8px 10px 8px;
+        }
+      }
+    }
+  }
+}

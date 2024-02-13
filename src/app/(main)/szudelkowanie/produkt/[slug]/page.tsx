@@ -1,25 +1,32 @@
 import { draftMode } from 'next/headers';
 import { notFound } from 'next/navigation';
 import sanityFetch from '@/utils/sanity.fetch';
-import { Seo_Query } from '@/global/Seo';
+import Seo, { Seo_Query } from '@/global/Seo';
 import type { ProductPageQueryProps, generateStaticParamsProps } from '@/global/types';
-// import Breadcrumbs from '@/components/_global/Breadcrumbs';
+import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import HeroPhysical from '@/components/_product/HeroPhysical';
+import Parameters from '@/components/_product/Parameters';
+import Description from '@/components/_product/Description';
+import Flex from '@/components/_product/Flex';
 
 const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) => {
-  const { name, _id, type, variants, price, discount, featuredVideo, countInStock, gallery } = await query(slug);
-
+  const { name, _id, type, variants, price, discount, featuredVideo, countInStock, gallery, parameters } =
+    await query(slug);
   return (
     <>
-      {/* <Breadcrumbs
+      <Breadcrumbs
         data={[
           {
+            name: 'Szydełkowanie',
+            path: '/szydelkowanie/',
+          },
+          {
             name,
-            path: `/landing/${slug}`,
+            path: `/szydelkowanie/produkt/${slug}`,
           },
         ]}
-        visible={false}
-      /> */}
+        visible={true}
+      />
       <HeroPhysical
         name={name}
         id={_id}
@@ -34,33 +41,41 @@ const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) =
           gallery,
         }}
       />
+      {/* TODO: Check is there parameters and description sections, if no disable tabs system and show only needed */}
+      <Description>
+        {/* TODO: Add product description */}
+        <Flex />
+        <Parameters parameters={parameters} />
+      </Description>
     </>
   );
 };
 
 export default LandingPage;
 
-// export async function generateMetadata({ params: { slug } }: { params: { slug: string } }) {
-//   const {
-//     seo: { title, description },
-//   } = await query(slug);
+export async function generateMetadata({ params: { slug } }: { params: { slug: string } }) {
+  const { seo } = await query(slug);
 
-//   return Seo({
-//     title,
-//     description,
-//     path: `/landing/${slug}`, // TODO: change to proper path
-//   });
-// }
+  const { title, description } = seo || {};
+
+  return Seo({
+    title,
+    description,
+    path: `/szydelkowanie/produkt/${slug}`,
+  });
+}
 
 const query = async (slug: string): Promise<ProductPageQueryProps> => {
   const data = await sanityFetch({
     query: /* groq */ `
-      *[_type == "product" && slug.current == $slug][0] {
+      *[_type == "product" && slug.current == $slug && basis == 'crocheting' && type in ["physical", "variable"]][0] {
         name,
         'slug': slug.current,
         _id,
 
+        basis,
         type,
+
         price,
         discount,
         featuredVideo,
@@ -77,6 +92,10 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
               }
             }
           }
+        },
+        parameters[]{
+          name,
+          value,
         },
         
         variants[]{
@@ -117,7 +136,7 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
 export async function generateStaticParams(): Promise<generateStaticParamsProps[]> {
   const data: generateStaticParamsProps[] = await sanityFetch({
     query: /* groq */ `
-      *[_type == "product" && (type == 'variable' || type=='physical')] {
+      *[_type == "product" && basis == 'crocheting' && type in ["physical", "variable"]] {
         'slug': slug.current,
       }
     `,
