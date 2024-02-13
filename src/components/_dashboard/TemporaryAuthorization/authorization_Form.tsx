@@ -20,7 +20,7 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
     mode: 'all',
   });
 
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+  const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
     if (isRegister) {
       await supabase.auth
         .signUp({
