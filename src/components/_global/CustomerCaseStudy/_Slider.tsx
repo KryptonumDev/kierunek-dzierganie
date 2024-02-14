@@ -1,14 +1,13 @@
 'use client';
-import { Fragment, useRef, useState } from 'react';
-import Link from 'next/link';
-import styles from './Reviews.module.scss';
+import { useRef, useState } from 'react';
+import styles from './CustomerCaseStudy.module.scss';
 import 'swiper/css';
 import { Swiper, SwiperSlide, type SwiperRef } from 'swiper/react';
 import { A11y } from 'swiper/modules';
-import type { SliderProps } from './Reviews.types';
+import type { SliderProps } from './CustomerCaseStudy.types';
 import SliderControls from '@/components/ui/SliderControls';
 
-const Slider = ({ list, QuoteIcon, RatingIcon }: SliderProps) => {
+const Slider = ({ list }: SliderProps) => {
   const listLength = list.length;
   const ref = useRef<SwiperRef | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -25,50 +24,29 @@ const Slider = ({ list, QuoteIcon, RatingIcon }: SliderProps) => {
         slidesPerView={1}
         breakpoints={{
           0: { slidesPerView: 1 },
-          768: { slidesPerView: 1.3 },
-          1024: { slidesPerView: 2 },
+          768: { slidesPerView: 2 },
+          1024: { slidesPerView: 3 },
         }}
         modules={[A11y]}
         onSlideChange={(slider: { realIndex: number; isEnd: boolean }) =>
           setActiveIndex(slider.isEnd ? listLength - 1 : slider.realIndex)
         }
       >
-        {list.map(({ rating, name, review, images }, i) => (
+        {list.map(({ name, excerpt, img, cta }, i) => (
           <SwiperSlide
             className={styles.item}
             key={i}
           >
-            {QuoteIcon}
-            <div className={styles.info}>
-              <h3>{name}</h3>
-              <div className={styles.rating}>
-                {RatingIcon}
-                <p>
-                  <strong>{rating}</strong>/5
-                </p>
-              </div>
+            <div className={styles.author}>
+              <>{img}</>
+              <p>{name}</p>
             </div>
-            <p>{review}</p>
-            {/* TODO: Add CTA to history of this person in Sanity and Next.js */}
-            {images && (
-              <div className={styles.images}>
-                {images.map((img, i) => (
-                  <Fragment key={i}>{img}</Fragment>
-                ))}
-              </div>
-            )}
+            <p className={styles.excerpt}>{excerpt}</p>
+            {cta}
           </SwiperSlide>
         ))}
       </Swiper>
       <SliderControls {...{ activeIndex, handlePrev, handleNext, slideTo, length: listLength }} />
-      <p className={styles.login}>
-        <Link
-          href='/moje-konto/autoryzacja'
-          className='link'
-        >
-          Zaloguj się, aby dodać opinię
-        </Link>
-      </p>
     </>
   );
 };

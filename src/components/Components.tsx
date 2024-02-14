@@ -28,6 +28,10 @@ import Divider, { Divider_Query } from '@/components/_global/Divider';
 import StepList, { StepList_Query, type StepListProps } from '@/components/_global/StepList';
 import HeroColumn, { HeroColumn_Query, type HeroColumnProps } from '@/components/_global/HeroColumn';
 import Newsletter, { Newsletter_Query, type NewsletterProps } from '@/components/_global/Newsletter';
+import CustomerCaseStudy, {
+  CustomerCaseStudy_Query,
+  type CustomerCaseStudyProps,
+} from '@/components/_global/CustomerCaseStudy';
 
 type ComponentMap = {
   HeroBackgroundImg: HeroBackgroundImgProps;
@@ -53,6 +57,7 @@ type ComponentMap = {
   StepList: StepListProps;
   HeroColumn: HeroColumnProps;
   Newsletter: NewsletterProps;
+  CustomerCaseStudy: CustomerCaseStudyProps;
 };
 
 export type ComponentProps = ComponentMap[keyof ComponentMap] & { _type: string };
@@ -110,6 +115,12 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
           index={index}
         />
       ),
+      CustomerCaseStudy: (
+        <CustomerCaseStudy
+          {...(item as CustomerCaseStudyProps)}
+          index={index}
+        />
+      ),
     };
     const DynamicComponent = componentMap[componentType];
     if (!DynamicComponent) {
@@ -147,5 +158,6 @@ export const Components_Query = /* groq */ `
     ${StepList_Query}
     ${HeroColumn_Query}
     ${Newsletter_Query}
+    ${CustomerCaseStudy_Query}
   },
 `;

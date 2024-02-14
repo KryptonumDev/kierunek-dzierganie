@@ -15,43 +15,13 @@ const Reviews = ({ heading, list }: Props) => {
       <header>
         <Markdown.h2>{heading}</Markdown.h2>
       </header>
-      <Slider list={renderedList} LeftIcon={LeftIcon} RightIcon={RightIcon} QuoteIcon={QuoteIcon} RatingIcon={RatingIcon} />
+      <Slider list={renderedList} QuoteIcon={QuoteIcon} RatingIcon={RatingIcon} />
     </section>
   );
 };
 
 export default Reviews;
 
-const LeftIcon = (
-  <svg
-    xmlns='http://www.w3.org/2000/svg'
-    width='23'
-    height='9'
-    fill='none'
-    viewBox='0 0 23 9'
-  >
-    <path
-      stroke='#53423C'
-      strokeWidth='0.75'
-      d='M22.906 4.858H1.094m0 0l3.75-3.75m-3.75 3.75l3.75 3.75'
-    ></path>
-  </svg>
-);
-const RightIcon = (
-  <svg
-    xmlns='http://www.w3.org/2000/svg'
-    width='23'
-    height='9'
-    fill='none'
-    viewBox='0 0 23 9'
-  >
-    <path
-      stroke='#53423C'
-      strokeWidth='0.75'
-      d='M.094 4.858h21.812m0 0l-3.75-3.75m3.75 3.75l-3.75 3.75'
-    ></path>
-  </svg>
-);
 const QuoteIcon = (
   <svg
     xmlns='http://www.w3.org/2000/svg'
