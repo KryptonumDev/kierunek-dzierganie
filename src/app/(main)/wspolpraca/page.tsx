@@ -12,7 +12,7 @@ const PartnersPage = async () => {
 
   return (
     <>
-      <Breadcrumbs data={[{ name: page.name, path: page.path }]} />
+      <Breadcrumbs data={[page]} />
       <Components data={content} />
     </>
   );

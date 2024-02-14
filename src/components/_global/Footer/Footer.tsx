@@ -26,7 +26,7 @@ const Footer = async () => {
   ];
 
   return (
-    <section className={styles['Footer']}>
+    <footer className={styles['Footer']}>
       <div className="max-width">
         <Link href='/' aria-label='Strona główna' className={styles.logo}>
           <Logo />
@@ -52,7 +52,7 @@ const Footer = async () => {
           <Link href='/zarzadzaj-ciasteczkami'>Zarządzaj ciasteczkami</Link>
         </div>
       </div>
-    </section>
+    </footer>
   );
 };
 

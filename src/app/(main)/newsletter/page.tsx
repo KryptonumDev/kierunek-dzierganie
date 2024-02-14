@@ -10,11 +10,9 @@ const page = { name: 'Newsletter', path: '/newsletter' };
 const PartnersPage = async () => {
   const { content }: PageQueryProps = await query();
 
-  console.log(content);
-
   return (
     <>
-      <Breadcrumbs data={[{ name: page.name, path: page.path }]} />
+      <Breadcrumbs data={[page]} />
       <Components data={content} />
     </>
   );
