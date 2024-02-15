@@ -33,6 +33,7 @@ import CustomerCaseStudy, {
   type CustomerCaseStudyProps,
 } from '@/components/_global/CustomerCaseStudy';
 import WordsCollection, { WordsCollection_Query, type WordsCollectionProps } from './_global/WordsCollection';
+import Partners, { Partners_Query, type PartnersProps } from './_global/Partners';
 
 type ComponentMap = {
   HeroBackgroundImg: HeroBackgroundImgProps;
@@ -60,6 +61,7 @@ type ComponentMap = {
   Newsletter: NewsletterProps;
   CustomerCaseStudy: CustomerCaseStudyProps;
   WordsCollection: WordsCollectionProps;
+  Partners: PartnersProps;
 };
 
 export type ComponentProps = ComponentMap[keyof ComponentMap] & { _type: string };
@@ -129,6 +131,12 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
           index={index}
         />
       ),
+      Partners: (
+        <Partners
+          {...(item as PartnersProps)}
+          index={index}
+        />
+      ),
     };
     const DynamicComponent = componentMap[componentType];
     if (!DynamicComponent) {
@@ -168,5 +176,6 @@ export const Components_Query = /* groq */ `
     ${Newsletter_Query}
     ${CustomerCaseStudy_Query}
     ${WordsCollection_Query}
+    ${Partners_Query}
   },
 `;

@@ -1,0 +1,36 @@
+.Partners {
+  min-width: 0;
+  header {
+    max-width: calc(584rem / 16);
+    margin: 0 auto;
+    text-align: center;
+    margin-bottom: clamp(36px, calc(36px / 7.68), 64px);
+    .paragraph {
+      margin: clamp(20px, calc(28vw / 7.68), 36px) 0 clamp(28px, calc(28vw / 7.68), 36px);
+    }
+    .cta {
+      margin: 0 auto;
+    }
+  }
+  .slider {
+    @media (max-width: 1279px) {
+      margin-left: calc(var(--pageMargin) * -1);
+      margin-right: calc(var(--pageMargin) * -1);
+      padding: 0 var(--pageMargin);
+    }
+    .item {
+      padding: clamp(8px, calc(16vw / 7.68), 32px);
+      img {
+        width: auto;
+        max-width: 100%;
+        height: clamp(60px, calc(90vw / 7.68), 90px);
+        object-fit: contain;
+        margin: 0 auto;
+      }
+      h3 {
+        font-size: clamp(calc(18rem / 16), calc(24vw / 7.68), calc(24rem / 16));
+        margin: clamp(12px, calc(32vw / 7.68), 36px) auto clamp(12px, calc(20vw / 7.68), 20px);
+      }
+    }
+  }
+}
