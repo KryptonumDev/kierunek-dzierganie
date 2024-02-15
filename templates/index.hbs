@@ -1,2 +1,9 @@
 import {{name}} from './{{name}}';
+export type { Props as {{name}} } from './{{name}}.types';
 export default {{name}};
+
+export const {{name}}_Query = `
+  _type == "{{name}}" => {
+    _type,
+  },
+`;
