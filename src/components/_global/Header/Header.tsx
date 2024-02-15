@@ -7,12 +7,15 @@ import Annotation from './_Annotation';
 import Nav from './_Nav';
 import Markdown from '@/components/ui/markdown';
 import type { QueryProps } from './Header.types';
+import dynamic from 'next/dynamic';
+const Cart = dynamic(() => import('./_Cart'), { ssr: false });
 
 const Header = async () => {
   const { nav_Annotation, nav_Links }: QueryProps = await query();
-  
+
   return (
     <>
+      <Cart />
       <a
         href='#main'
         className={styles.skipToMainContent}

@@ -1,3 +1,4 @@
+'use server';
 import { createClient } from 'next-sanity';
 import type { QueryParams } from '@sanity/client';
 
@@ -6,7 +7,7 @@ const dataset = process.env.SANITY_DATASET || 'production';
 const token = process.env.SANITY_API_TOKEN;
 const apiVersion = '2024-01-27';
 
-export const client = createClient({
+const client = createClient({
   projectId,
   dataset,
   apiVersion,
