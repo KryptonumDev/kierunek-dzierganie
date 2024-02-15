@@ -9,7 +9,7 @@ const WordsCollection = ({ heading, list, cta, index }: Props) => {
   const renderedList = list.map((item) => ({
     text: item,
     marginLeft: `${Math.floor(Math.random() * 39)}%`,
-    y: Math.random() * -150,
+    y: Math.random() * -96,
   }));
 
   return (
