@@ -7,7 +7,7 @@ import Breadcrumbs from '@/components/_global/Breadcrumbs';
 
 const page = { name: 'Newsletter', path: '/newsletter' };
 
-const PartnersPage = async () => {
+const NewsletterPage = async () => {
   const { content }: PageQueryProps = await query();
 
   return (
@@ -17,7 +17,7 @@ const PartnersPage = async () => {
     </>
   );
 };
-export default PartnersPage;
+export default NewsletterPage;
 
 export async function generateMetadata() {
   const {

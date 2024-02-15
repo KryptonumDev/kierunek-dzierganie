@@ -34,7 +34,6 @@ const query = async (): Promise<PageQueryProps> => {
   const data = await sanityFetch({
     query: /* groq */ `
       *[_type == "homepage"][0] {
-        name,
         ${Components_Query}
         ${Seo_Query}
       }

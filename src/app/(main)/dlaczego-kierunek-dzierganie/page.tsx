@@ -7,7 +7,7 @@ import Breadcrumbs from '@/components/_global/Breadcrumbs';
 
 const page = { name: 'Dlaczego powstała marka?', path: '/dlaczego-kierunek-dzierganie' };
 
-const ContactPage = async () => {
+const WhyBrandPage = async () => {
   const { content }: PageQueryProps = await query();
 
   return (
@@ -17,7 +17,7 @@ const ContactPage = async () => {
     </>
   );
 };
-export default ContactPage;
+export default WhyBrandPage;
 
 export async function generateMetadata() {
   const {

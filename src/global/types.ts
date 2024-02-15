@@ -51,7 +51,7 @@ export type generateMetadataProps = {
 };
 
 export type PageQueryProps = {
-  name: string;
+  name?: string;
   slug?: string;
   content: ComponentProps[];
 } & generateMetadataProps;

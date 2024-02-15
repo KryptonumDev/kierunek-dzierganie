@@ -7,7 +7,7 @@ import Breadcrumbs from '@/components/_global/Breadcrumbs';
 
 const page = { name: 'Program partnerski', path: '/program-partnerski' };
 
-const PartnersPage = async () => {
+const AffiliatePage = async () => {
   const { content }: PageQueryProps = await query();
 
   return (
@@ -17,7 +17,7 @@ const PartnersPage = async () => {
     </>
   );
 };
-export default PartnersPage;
+export default AffiliatePage;
 
 export async function generateMetadata() {
   const {
