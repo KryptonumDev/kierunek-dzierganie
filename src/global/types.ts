@@ -19,6 +19,26 @@ export type ImgType = {
   };
 };
 
+export type ProductCard = {
+  _id: string;
+  basis: 'crocheting' | 'knitting';
+  slug: string;
+  name: string;
+  price?: number;
+  discount?: number;
+  countInStock?: number;
+  featuredVideo?: string;
+  gallery?: ImgType;
+  variants: Array<{
+    name: string;
+    price: number;
+    discount: number;
+    countInStock: number;
+    featuredVideo: string;
+    gallery: ImgType;
+  }>;
+};
+
 export type ProductVariant = {
   name: string;
   price: number;

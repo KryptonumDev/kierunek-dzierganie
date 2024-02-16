@@ -11,11 +11,17 @@ import dynamic from 'next/dynamic';
 const Cart = dynamic(() => import('./_Cart'), { ssr: false });
 
 const Header = async () => {
-  const { nav_Annotation, nav_Links }: QueryProps = await query();
-
+  const {
+    global: { nav_Annotation, nav_Links },
+    cart: { image_crochet, image_knitting, highlighted_products },
+  }: QueryProps = await query();
   return (
     <>
-      <Cart />
+      <Cart
+        image_knitting={image_knitting}
+        image_crochet={image_crochet}
+        highlighted_products={highlighted_products}
+      />
       <a
         href='#main'
         className={styles.skipToMainContent}
@@ -78,7 +84,77 @@ export default Header;
 const query = async (): Promise<QueryProps> => {
   const data = await sanityFetch({
     query: /* groq */ `
-      *[_id == 'global'][0] {
+    {
+    "cart": *[_id== 'cart'][0]{
+      image_crochet{
+        asset -> {
+          url,
+          altText,
+          metadata {
+            lqip,
+            dimensions {
+              width,
+              height,
+            }
+          }
+        }
+      },
+      image_knitting{
+        asset -> {
+          url,
+          altText,
+          metadata {
+            lqip,
+            dimensions {
+              width,
+              height,
+            }
+          }
+        }
+      },
+      highlighted_products[]->{
+        _id,
+        type,
+        basis,
+        name,
+        price,
+        discount,
+        countInStock,
+        'slug': slug.current,
+        gallery[0]{
+          asset -> {
+            url,
+            altText,
+            metadata {
+              lqip,
+              dimensions {
+                width,
+                height,
+              }
+            }
+          }
+        },
+        variants[]{
+          price,
+          discount,
+          countInStock,
+          gallery[0]{
+            asset -> {
+              url,
+              altText,
+              metadata {
+                lqip,
+                dimensions {
+                  width,
+                  height,
+                }
+              }
+            }
+          }
+        }
+      },
+    },
+    "global":  *[_id == 'global'][0] {
         nav_Annotation,
         nav_Links {
           name,
@@ -101,7 +177,8 @@ const query = async (): Promise<QueryProps> => {
             href,
           }[]
         }[]
-      }`,
+      }
+    }`,
     isDraftMode: draftMode().isEnabled,
   });
   return data as QueryProps;

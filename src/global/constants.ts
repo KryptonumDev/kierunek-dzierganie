@@ -45,3 +45,12 @@ export const easing = [0.46, 0.03, 0.52, 0.96];
 export const mailerLiteGroup: { newsletter: string } = {
   newsletter: '112582388',
 };
+
+/**
+ * Global declaration of page URLs.
+ * @constant
+ */
+export const pageUrls: { knitting: string; crocheting: string } = {
+  knitting: '/dzierganie-na-drutach',
+  crocheting: '/szydelkowanie',
+};

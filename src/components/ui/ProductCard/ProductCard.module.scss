@@ -1,0 +1,19 @@
+.productCard {
+  img{
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 24px;
+    border-radius: 4px;
+  }
+
+  .names{
+    margin-bottom: 8px;
+  }
+
+  img{
+    aspect-ratio: 380/280;
+    width: 100%;
+    object-fit: cover;
+    border-bottom: 4px;
+  }
+}

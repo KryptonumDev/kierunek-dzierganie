@@ -15,7 +15,7 @@ const client = createClient({
 });
 
 const DEFAULT_PARAMS = {} as QueryParams;
-const NEXT_REVALIDATE = 900;
+const NEXT_REVALIDATE = 0;
 
 export default async function sanityFetch<QueryResponse>({
   query,

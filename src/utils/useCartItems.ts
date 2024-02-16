@@ -30,11 +30,9 @@ export const useCartItems = () => {
   const [cart, setCart] = useState<Item[] | null>(null);
   const [fetchedItems, setFetchedItems] = useState<Product[] | null>(null);
   const [sum, setSum] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!rawCart) return;
-
     const fetchCartItems = async () => {
       setLoading(true);
       setCart(rawCart);
@@ -102,6 +100,8 @@ export const useCartItems = () => {
 
       setFetchedItems(newArr);
       setSum(newSum);
+      setLoading(false);
+    } else{
       setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
