@@ -1,9 +1,9 @@
 export type Props = {
-  data: Array<{
+  data: {
     asset: {
       url: string;
       originalFilename: string;
       size: number;
     }
-  }>;
+  }[];
 };

@@ -3,7 +3,7 @@ export type { Props as ContentsProps } from './Contents.types';
 export default Contents;
 
 export const Contents_Query = `
-  Content[] {
+  content[] {
     title,
     description,
   },

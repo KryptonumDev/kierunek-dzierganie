@@ -61,23 +61,23 @@ export type StatutePageQueryProps = {
     tel: string;
     email: string;
   };
-  statute_page: StatutePage;
+  page: StatutePage;
 };
 
 export type StatutePage = {
-  Header_Heading: string;
-  Header_Description: string;
-  Content: Array<{
+  header_Heading: string;
+  header_Description: string;
+  content: {
     title: string;
     description: string;
-  }>;
-  Files: Array<{
+  }[];
+  files: {
     asset: {
       url: string;
       originalFilename: string;
       size: number;
     };
-  }>;
+  }[];
 } & generateMetadataProps;
 
 export type ProductPageQueryProps = {

@@ -1,7 +1,7 @@
 .Header {
   display: grid;
   justify-content: center;
-  max-width: 690px;
+  max-width: calc(690rem/16);
   justify-self: center;
   align-items: center;
   justify-items: center;

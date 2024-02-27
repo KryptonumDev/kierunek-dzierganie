@@ -3,7 +3,7 @@ export type { Props as FilesComponentProps } from './FilesComponent.types';
 export default FilesComponent;
 
 export const FilesComponent_Query = `
-    Files[] {
+    files[] {
       asset -> {
         url,
         originalFilename,

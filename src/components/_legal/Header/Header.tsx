@@ -3,11 +3,11 @@ import styles from './Header.module.scss';
 import type { Props } from './Header.types';
 import CopyToClipboard from '@/components/ui/CopyToClipboard';
 
-const Header = ({ data: { Header_Heading, Header_Description, tel, email } }: Props) => {
+const Header = ({ data: { header_Heading, header_Description, tel, email } }: Props) => {
   return (
     <section className={styles['Header']}>
-      <Markdown.h2>{Header_Heading}</Markdown.h2>
-      <Markdown className={styles.description}>{Header_Description}</Markdown>
+      <Markdown.h2>{header_Heading}</Markdown.h2>
+      <Markdown className={styles.description}>{header_Description}</Markdown>
       <div className={styles.information}>
         <span className={styles.emailInformation}>
           {email}
