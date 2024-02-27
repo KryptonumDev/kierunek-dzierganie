@@ -56,6 +56,30 @@ export type PageQueryProps = {
   content: ComponentProps[];
 } & generateMetadataProps;
 
+export type StatutePageQueryProps = {
+  global: {
+    tel: string;
+    email: string;
+  };
+  statute_page: StatutePage;
+};
+
+export type StatutePage = {
+  Header_Heading: string;
+  Header_Description: string;
+  Content: Array<{
+    title: string;
+    description: string;
+  }>;
+  Files: Array<{
+    asset: {
+      url: string;
+      originalFilename: string;
+      size: number;
+    };
+  }>;
+} & generateMetadataProps;
+
 export type ProductPageQueryProps = {
   name: string;
   slug: string;
