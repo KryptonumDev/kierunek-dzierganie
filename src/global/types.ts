@@ -64,6 +64,15 @@ export type StatutePageQueryProps = {
   page: StatutePage;
 };
 
+export type PrivacyPolicyPage = {
+  header_Heading: string;
+  header_Description: string;
+  content: {
+    title: string;
+    description: string;
+  }[];
+} & generateMetadataProps;
+
 export type StatutePage = {
   header_Heading: string;
   header_Description: string;

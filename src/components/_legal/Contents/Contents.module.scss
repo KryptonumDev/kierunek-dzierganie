@@ -31,6 +31,14 @@
       }
     }
 
+    &[data-isPrivacyPolicy="true"] {
+      .title {
+        &::before {
+          content: counter(section);
+        }
+      }
+    }
+
     .description {
       display: grid;
       gap: clamp(16px, calc(20vw/7.68), 20px);
