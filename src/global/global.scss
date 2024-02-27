@@ -38,15 +38,19 @@
   --error-900: #5a2f2f;
 
   --pageMargin: clamp(16px, calc(40vw / 7.68), 40px);
+
   @media (max-width: 899px) and (min-width: 649px) {
     --pageMargin: clamp(40px, calc(80vw / 7.68), 80px);
   }
+
   --easing: cubic-bezier(0.46, 0.03, 0.52, 0.96);
 }
+
 body.scrollLock {
   overflow: hidden;
   touch-action: none;
 }
+
 body {
   min-width: 320px;
   overflow-x: hidden;
@@ -57,13 +61,16 @@ body {
   line-height: 150%;
   font-size: clamp(1rem, calc(18vw / 7.68), calc(18rem / 16));
 }
+
 :focus {
   outline: none;
 }
+
 :focus-visible {
   outline: 1px solid var(--primary-900);
   outline-offset: 5px;
 }
+
 main,
 .max-width {
   max-width: 1200px;
@@ -71,26 +78,32 @@ main,
   margin: 0 auto;
   height: 100%;
 }
+
 svg {
   display: block;
   max-width: 100%;
 }
+
 a {
   text-decoration: none;
   color: inherit;
 }
+
 label {
   display: block;
 }
+
 button {
   border: none;
   background-color: transparent;
   cursor: pointer;
 }
+
 sup {
   font-size: 0.6em;
   vertical-align: top;
 }
+
 input,
 textarea,
 button,
@@ -101,18 +114,22 @@ select {
   appearance: none;
   border: none;
 }
+
 summary {
   cursor: pointer;
   list-style: none;
+
   &::marker,
   &::-webkit-details-marker {
     display: none;
   }
 }
+
 iframe {
   border: none;
   display: block;
 }
+
 img {
   max-width: 100%;
   height: auto;
@@ -125,6 +142,7 @@ p {
     font-weight: inherit;
   }
 }
+
 p,
 h1,
 h2,
@@ -134,6 +152,7 @@ h5,
 h6 {
   overflow-wrap: break-word;
 }
+
 h1,
 h2,
 h3,
@@ -142,6 +161,7 @@ h5,
 h6 {
   font-weight: 400;
   line-height: 133%;
+
   strong {
     font-family: var(--font-city-streetwear);
     font-weight: inherit;
@@ -150,10 +170,12 @@ h6 {
     margin: -0.15em 4px;
   }
 }
+
 h1,
 h2 {
   font-size: clamp(calc(24rem / 16), calc(26vw / 7.68), calc(36rem / 16));
 }
+
 h3 {
   font-size: calc(24rem / 16);
 }
@@ -161,6 +183,7 @@ h3 {
 .link {
   position: relative;
   font-style: italic;
+
   &::after {
     content: '';
     width: 100%;
@@ -170,24 +193,30 @@ h3 {
     left: 0;
     bottom: -3px;
   }
+
   @keyframes link {
+
     0%,
     100% {
       transform: scaleX(1);
     }
+
     50% {
       transform: scaleX(0);
       transform-origin: right;
     }
+
     0%,
     50% {
       transform-origin: right;
     }
+
     51%,
     100% {
       transform-origin: left;
     }
   }
+
   &:hover,
   &:focus-visible {
     &::after {
@@ -198,6 +227,7 @@ h3 {
 
 .sec-wo-margin {
   position: relative;
+
   &::before {
     content: '';
     width: 100vw;
@@ -226,15 +256,35 @@ main {
 
 .unorderedList {
   list-style-type: none;
+
   li {
     display: grid;
     grid-template-columns: auto 1fr;
     gap: 8px;
+
     svg {
       height: 1.5em;
     }
+
     &:not(:last-child) {
       margin-bottom: 12px;
+    }
+  }
+}
+
+.orderedList {
+  display: grid;
+  row-gap: clamp(12px, calc(16vw/7.68), 16px);
+  padding-left: 20px;
+
+  li {
+    h3 {
+      margin-left: -20px;
+      padding-top: clamp(36px, calc(48vw/7.68), 48px);
+    }
+
+    svg {
+      display: none;
     }
   }
 }
