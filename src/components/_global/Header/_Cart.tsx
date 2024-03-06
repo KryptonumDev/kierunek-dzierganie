@@ -159,28 +159,35 @@ const CartGrid = ({ cart, fetchedItems, removeItem, updateItemQuantity }: Grid) 
           <div>
             <h3>{item.name}</h3>
             <div>
-              <div>
-                <span>Ilość</span>
+              <div className={styles['calculator']}>
+                <span className={styles['title']}>Ilość</span>
+                {/* TODO: remove if course */}
                 <input
                   type='number'
-                  value={cart!.find((cartItem) => cartItem.id === item._id)?.quantity}
+                  defaultValue={cart!.find((cartItem) => cartItem.id === item._id)?.quantity}
                   onChange={(e) => updateItemQuantity(item._id, Number(e.target.value))}
                 />
               </div>
-              <div>Attr</div>
+              {/* TODO: add attributes */}
+              <div></div>
             </div>
           </div>
-          <div>
+          <div className={styles['right-column']}>
             <div>
-              {item.discount ? <span dangerouslySetInnerHTML={{ __html: formatPrice(item.discount) }} /> : null}
-              <span dangerouslySetInnerHTML={{ __html: formatPrice(item.price) }} />
+              <div className={styles['price']}>
+                <span
+                  className={item.discount ? styles['discount'] : ''}
+                  dangerouslySetInnerHTML={{ __html: formatPrice(item.price) }}
+                />
+                {item.discount ? <span dangerouslySetInnerHTML={{ __html: formatPrice(item.discount) }} /> : null}
+              </div>
+              <span className={styles['omnibus']}>
+                Najniższa cena z 30 dni przed obniżką:{' '}
+                <span dangerouslySetInnerHTML={{ __html: formatPrice(item.discount ?? item.price) }} />
+              </span>
             </div>
-            <span>
-              Najniższa cena z 30 dni przed obniżką:{' '}
-              <span dangerouslySetInnerHTML={{ __html: formatPrice(item.discount ?? item.price) }} />
-            </span>
             <button
-              className='link'
+              className={`link ${styles['remove']}`}
               onClick={() => removeItem(item._id)}
             >
               Usuń
