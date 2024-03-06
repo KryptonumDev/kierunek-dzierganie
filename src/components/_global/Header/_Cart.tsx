@@ -80,6 +80,7 @@ export default function Cart({ setShowCart, showCart, image_crochet, image_knitt
             />
             <div className={styles['flex']}>
               <button
+                onClick={setShowCart}
                 type='button'
                 className='link'
               >

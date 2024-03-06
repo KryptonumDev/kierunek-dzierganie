@@ -18,6 +18,7 @@ export const useCartItems = () => {
         const res = await sanityFetch<Product[]>({
           query: `
             *[_type== 'product' && _id in $id]{
+              _id,
               price,
               discount,
               name,
@@ -75,6 +76,12 @@ export const useCartItems = () => {
             };
           });
 
+        rawCart.forEach((el) => {
+          if (!res.find((item) => item._id === el.id)) {
+            removeItem(el.id);
+          }
+        });
+
         setFetchedItems(newArr);
         setSum(newSum);
       } catch (error) {
@@ -104,7 +111,7 @@ export const useCartItems = () => {
       setFetchedItems(newArr);
       setSum(newSum);
       setLoading(false);
-    } else{
+    } else {
       setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
