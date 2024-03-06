@@ -52,18 +52,20 @@ const ProductCard = ({ data: { variants }, data, inCart = false }: Props) => {
 
   return (
     <div className={styles['productCard']}>
-      {mainVariant.image && (
-        <Img
-          data={mainVariant.image}
-          sizes='380px'
+      <div>
+        {mainVariant.image && (
+          <Img
+            data={mainVariant.image}
+            sizes='380px'
+          />
+        )}
+        <span>rating</span>
+        <h3 className={styles['names']}>{mainVariant.name}</h3>
+        <p
+          className={styles['price']}
+          dangerouslySetInnerHTML={{ __html: mainVariant.price }}
         />
-      )}
-      <span>rating</span>
-      <p className={styles['names']}>{mainVariant.name}</p>
-      <p
-        className={styles['price']}
-        dangerouslySetInnerHTML={{ __html: mainVariant.price }}
-      />
+      </div>
       {mainVariant.type === 'variable' ? (
         <Button href={`${pageUrls[data.basis]}/produkt/${data.slug}`}>Wybierz wariant</Button>
       ) : (

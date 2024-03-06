@@ -96,3 +96,21 @@ export type ProductPageQueryProps = {
 export type generateStaticParamsProps = {
   slug: string;
 };
+
+export type Product = {
+  _id: string;
+  price: number;
+  discount: number;
+  name: string;
+  slug: {
+    current: string;
+  };
+  variants: Array<{
+    _key: number;
+    name: string;
+    price: number;
+    discount: number;
+    gallery: Array<ImgType>;
+  }>;
+  gallery: ImgType;
+};

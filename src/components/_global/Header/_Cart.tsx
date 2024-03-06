@@ -1,62 +1,120 @@
 'use client';
 import { useCartItems } from '@/utils/useCartItems';
 import styles from './Header.module.scss';
-import { Cart } from './Header.types';
+import type { EmptyCart, Grid, Cart, CartForm } from './Header.types';
 import Img from '@/components/ui/image';
 import Button from '@/components/ui/Button';
 import ProductCard from '@/components/ui/ProductCard';
+import Checkbox from '@/components/ui/Checkbox';
+import { useForm } from 'react-hook-form';
+import { formatPrice } from '@/utils/price-formatter';
+import { useEffect } from 'react';
 
-export default function Cart({ image_crochet, image_knitting, highlighted_products }: Cart) {
-  const { sum, cart, fetchedItems, updateItemQuantity, updateItem, removeItem, loading } = useCartItems();
-  debugger
+export default function Cart({ setShowCart, showCart, image_crochet, image_knitting, highlighted_products }: Cart) {
+  const { cart, fetchedItems, updateItemQuantity, removeItem } = useCartItems();
+  const {
+    register,
+    formState: { errors },
+  } = useForm<CartForm>();
+
+  useEffect(() => {
+    addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') setShowCart();
+    });
+
+    return () => removeEventListener('keydown', () => setShowCart());
+  }, [setShowCart]);
 
   return (
-    <div className={styles['cart']}>
-      <div className={styles['flex']}>
-        <h3>Twoje produkty</h3>
-        <button>
-          <svg
-            width='24'
-            height='25'
-            viewBox='0 0 24 25'
-            fill='none'
-            xmlns='http://www.w3.org/2000/svg'
-          >
-            <path
-              d='M17.25 17.5171L6.75 7.01709M17.25 7.01709L6.75 17.5171'
-              stroke='#9A827A'
-              strokeLinecap='round'
-              strokeLinejoin='round'
-            />
-          </svg>
-        </button>
-      </div>
-      <EmptyLayout
-        image_crochet={image_crochet}
-        image_knitting={image_knitting}
+    <>
+      <div
+        onClick={setShowCart}
+        className={`${styles['overlay']} ${showCart ? styles['active'] : ''}`}
       />
-
-      {highlighted_products && (
-        <div>
-          <h3>
-            Te produkty mogą Ci się <strong>spodobać</strong>
-          </h3>
-          <div className={styles['grid']}>
-            {highlighted_products.map((product, i) => (
-              <ProductCard
-                data={product}
-                key={i}
-                inCart={cart?.some((item) => item.id === product._id)}
+      <div className={`${styles['cart']} ${showCart ? styles['active'] : ''}`}>
+        <div className={styles['flex']}>
+          <h3>Twoje produkty</h3>
+          <button onClick={setShowCart}>
+            <svg
+              width='24'
+              height='25'
+              viewBox='0 0 24 25'
+              fill='none'
+              xmlns='http://www.w3.org/2000/svg'
+            >
+              <path
+                d='M17.25 17.5171L6.75 7.01709M17.25 7.01709L6.75 17.5171'
+                stroke='#9A827A'
+                strokeLinecap='round'
+                strokeLinejoin='round'
               />
-            ))}
-          </div>
+            </svg>
+          </button>
         </div>
-      )}
-    </div>
+
+        <div>
+          {cart?.length ? (
+            <CartGrid
+              updateItemQuantity={updateItemQuantity}
+              removeItem={removeItem}
+              cart={cart}
+              fetchedItems={fetchedItems}
+            />
+          ) : (
+            <EmptyLayout
+              image_crochet={image_crochet}
+              image_knitting={image_knitting}
+            />
+          )}
+          <form className={cart?.length ? '' : styles['empty']}>
+            <div className={styles['line']} />
+            <Checkbox
+              register={register('isDiscount')}
+              label='Posiadam kod rabatowy'
+              errors={errors}
+            />
+            <Checkbox
+              register={register('isVirtual')}
+              label='Chcę wykorzystać wirtualne złotówki'
+              errors={errors}
+            />
+            <div className={styles['flex']}>
+              <button
+                type='button'
+                className='link'
+              >
+                Kontynuuj zakupy
+              </button>
+              <Button href=''>Zamawiam</Button>
+            </div>
+          </form>
+        </div>
+
+        {highlighted_products && (
+          <div className={styles['highlighted']}>
+            <h3>
+              Te produkty mogą Ci się <strong>spodobać</strong>
+            </h3>
+            <p>
+              Sprawdź, <strong>co dla Ciebie przygotowaliśmy</strong>
+            </p>
+            <div className={styles['grid']}>
+              {highlighted_products.map((product, i) => (
+                <ProductCard
+                  data={product}
+                  key={i}
+                  inCart={cart?.some((item) => item.id === product._id)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 
-const EmptyLayout = ({ image_crochet, image_knitting }: Cart) => {
+const EmptyLayout = ({ image_crochet, image_knitting }: EmptyCart) => {
   return (
     <div className={styles['empty']}>
       <h2 className='h1'>
@@ -79,6 +137,56 @@ const EmptyLayout = ({ image_crochet, image_knitting }: Cart) => {
           <Button href='/szydelkowanie'>Szydełkowanie</Button>
         </div>
       </div>
+    </div>
+  );
+};
+
+const CartGrid = ({ cart, fetchedItems, removeItem, updateItemQuantity }: Grid) => {
+  if (!fetchedItems) return;
+
+  return (
+    <div>
+      {fetchedItems.map((item, i) => (
+        <div
+          className={styles['product']}
+          key={item._id + i}
+        >
+          <Img
+            data={item.gallery}
+            sizes='175px'
+          />
+          <div>
+            <h3>{item.name}</h3>
+            <div>
+              <div>
+                <span>Ilość</span>
+                <input
+                  type='number'
+                  value={cart!.find((cartItem) => cartItem.id === item._id)?.quantity}
+                  onChange={(e) => updateItemQuantity(item._id, Number(e.target.value))}
+                />
+              </div>
+              <div>Attr</div>
+            </div>
+          </div>
+          <div>
+            <div>
+              {item.discount ? <span dangerouslySetInnerHTML={{ __html: formatPrice(item.discount) }} /> : null}
+              <span dangerouslySetInnerHTML={{ __html: formatPrice(item.price) }} />
+            </div>
+            <span>
+              Najniższa cena z 30 dni przed obniżką:{' '}
+              <span dangerouslySetInnerHTML={{ __html: formatPrice(item.discount ?? item.price) }} />
+            </span>
+            <button
+              className='link'
+              onClick={() => removeItem(item._id)}
+            >
+              Usuń
+            </button>
+          </div>
+        </div>
+      ))}
     </div>
   );
 };

@@ -7,7 +7,7 @@ const Annotation = ({
   children,
   rawContent,
 }: {
-  CloseIcon: JSX.Element;
+  CloseIcon: React.ReactNode;
   children: React.ReactNode;
   rawContent: string;
 }) => {

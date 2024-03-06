@@ -1,19 +1,24 @@
 .productCard {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
   img{
     max-width: 100%;
+    width: 100%;
     height: auto;
-    margin-bottom: 24px;
+    object-fit: cover;
+    aspect-ratio: 380/280;
     border-radius: 4px;
+    margin-bottom: 24px;
   }
 
   .names{
     margin-bottom: 8px;
   }
 
-  img{
-    aspect-ratio: 380/280;
-    width: 100%;
-    object-fit: cover;
-    border-bottom: 4px;
+  a, button{
+    margin: 36px auto 0 auto;
   }
 }

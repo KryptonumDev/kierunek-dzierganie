@@ -1,29 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Item, useCart } from 'react-use-cart';
+import { type Item, useCart } from 'react-use-cart';
 import sanityFetch from './sanity.fetch';
-
-type Product = {
-  _id: string;
-  price: number;
-  discount: number;
-  name: string;
-  slug: {
-    current: string;
-  };
-  image: {
-    asset: {
-      altText: string;
-      url: string;
-      metadata: {
-        lqip: string;
-        dimensions: {
-          width: number;
-          height: number;
-        };
-      };
-    };
-  };
-};
+import type { Product } from '@/global/types';
 
 export const useCartItems = () => {
   const { items: rawCart, updateItemQuantity, updateItem, removeItem } = useCart();
@@ -39,7 +17,7 @@ export const useCartItems = () => {
       try {
         const res = await sanityFetch<Product[]>({
           query: `
-            *[_type== 'product']{
+            *[_type== 'product' && _id in $id]{
               price,
               discount,
               name,
@@ -47,12 +25,37 @@ export const useCartItems = () => {
               basis,
               type,
               _type,
-              gallery[0],
+              gallery[0]{
+                asset -> {
+                  url,
+                  altText,
+                  metadata {
+                    lqip,
+                    dimensions {
+                      width,
+                      height,
+                    }
+                  }
+                }
+              },
               variants{
+                _key,
                 name,
                 price,
                 discount,
-                gallery[0]
+                gallery[0]{
+                  asset -> {
+                    url,
+                    altText,
+                    metadata {
+                      lqip,
+                      dimensions {
+                        width,
+                        height,
+                      }
+                    }
+                  }
+                }
               }
             }
           `,
