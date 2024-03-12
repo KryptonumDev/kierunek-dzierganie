@@ -7,6 +7,8 @@ import Nav from './_Nav';
 import type { QueryProps } from './Header.types';
 import { useState } from 'react';
 import Cart from './_Cart';
+import Checkout from './Checkout';
+import { useCartItems } from '@/utils/useCartItems';
 
 const Content = ({
   markdownNavAnnotation,
@@ -17,17 +19,44 @@ const Content = ({
   ChevronBackIcon,
   SearchIcon,
   CloseIcon,
+  CrossIcon,
 }: QueryProps) => {
   const [showCart, setShowCart] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(true);
+
+  const { cart, fetchedItems, updateItemQuantity, removeItem } = useCartItems();
 
   return (
     <>
+      <div
+        onClick={() => {
+          setShowCart(false);
+          setShowCheckout(false);
+        }}
+        className={`${styles['overlay']} ${showCart || showCheckout ? styles['active'] : ''}`}
+      />
+      <Checkout
+        CrossIcon={CrossIcon}
+        setShowCheckout={() => setShowCheckout(false)}
+        showCheckout={showCheckout}
+        cart={cart}
+        fetchedItems={fetchedItems}
+      />
       <Cart
+        goToCheckout={() => {
+          setShowCheckout(true);
+          setShowCart(false);
+        }}
         setShowCart={() => setShowCart(false)}
         showCart={showCart}
         image_knitting={image_knitting}
         image_crochet={image_crochet}
         highlighted_products={highlighted_products}
+        CrossIcon={CrossIcon}
+        cart={cart}
+        fetchedItems={fetchedItems}
+        updateItemQuantity={updateItemQuantity}
+        removeItem={removeItem}
       />
       <a
         href='#main'

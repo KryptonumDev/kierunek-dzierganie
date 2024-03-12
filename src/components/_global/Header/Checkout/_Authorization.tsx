@@ -1,15 +1,25 @@
-'use client';
 import { useRouter } from 'next/navigation';
-import Button from '@/components/ui/Button';
+import styles from './Checkout.module.scss';
+import type { MappingProps } from './Checkout.types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import type { FormValues, FormProps } from './authorization.types';
-import Input from '@/components/ui/PasswordInput';
-import { regex } from '@/global/constants';
 import Checkbox from '@/components/ui/Checkbox';
+import Button from '@/components/ui/Button';
+import { regex } from '@/global/constants';
+import PasswordInput from '@/components/ui/PasswordInput';
+import { useState } from 'react';
+import Input from '@/components/ui/Input';
+// import OAuthMethods from "@/components/organisms/oAuth-methods";
 
-const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
+type FormValues = {
+  email: string;
+  password: string;
+  accept: boolean;
+};
+
+export default function Authorization({ nextStep }: MappingProps) {
+  const [isRegister, setRegister] = useState(true);
   const supabase = createClientComponentClient();
   const router = useRouter();
   const {
@@ -32,7 +42,7 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
         })
         .then((res) => {
           if (res.error) throw res.error;
-          router.push('/moje-konto/potwierdzenie-rejestracji');
+          nextStep();
         })
         .catch((error) => {
           toast(error.message);
@@ -56,7 +66,11 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form
+      className={styles.authorization}
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <legend>Zaloguj się, aby mieć dostęp do swoich kursów</legend>
       <Input
         label='E-mail'
         register={register('email', {
@@ -71,7 +85,7 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
         })}
         errors={errors}
       />
-      <Input
+      <PasswordInput
         isRegister={isRegister}
         password={true}
         label='Password'
@@ -127,8 +141,14 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
           </button>
         </p>
       )}
+      <div className={styles.buttons}>
+        <button
+          className={`link ${styles['return']}`}
+          type='button'
+        >
+          Wróć do poprzedniego kroku
+        </button>
+      </div>
     </form>
   );
-};
-
-export default AuthorizationForm;
+}

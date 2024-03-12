@@ -1,5 +1,4 @@
 'use client';
-import { useCartItems } from '@/utils/useCartItems';
 import styles from './Header.module.scss';
 import type { EmptyCart, Grid, Cart, CartForm } from './Header.types';
 import Img from '@/components/ui/image';
@@ -10,8 +9,19 @@ import { useForm } from 'react-hook-form';
 import { formatPrice } from '@/utils/price-formatter';
 import { useEffect } from 'react';
 
-export default function Cart({ setShowCart, showCart, image_crochet, image_knitting, highlighted_products }: Cart) {
-  const { cart, fetchedItems, updateItemQuantity, removeItem } = useCartItems();
+export default function Cart({
+  goToCheckout,
+  setShowCart,
+  showCart,
+  image_crochet,
+  image_knitting,
+  highlighted_products,
+  CrossIcon,
+  cart,
+  fetchedItems,
+  updateItemQuantity,
+  removeItem,
+}: Cart) {
   const {
     register,
     formState: { errors },
@@ -27,31 +37,11 @@ export default function Cart({ setShowCart, showCart, image_crochet, image_knitt
 
   return (
     <>
-      <div
-        onClick={setShowCart}
-        className={`${styles['overlay']} ${showCart ? styles['active'] : ''}`}
-      />
       <div className={`${styles['cart']} ${showCart ? styles['active'] : ''}`}>
         <div className={styles['flex']}>
           <h3>Twoje produkty</h3>
-          <button onClick={setShowCart}>
-            <svg
-              width='24'
-              height='25'
-              viewBox='0 0 24 25'
-              fill='none'
-              xmlns='http://www.w3.org/2000/svg'
-            >
-              <path
-                d='M17.25 17.5171L6.75 7.01709M17.25 7.01709L6.75 17.5171'
-                stroke='#9A827A'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-              />
-            </svg>
-          </button>
+          <button onClick={setShowCart}>{CrossIcon}</button>
         </div>
-
         <div>
           {cart?.length ? (
             <CartGrid
@@ -86,7 +76,12 @@ export default function Cart({ setShowCart, showCart, image_crochet, image_knitt
               >
                 Kontynuuj zakupy
               </button>
-              <Button href=''>Zamawiam</Button>
+              <Button
+                type='button'
+                onClick={goToCheckout}
+              >
+                Zamawiam
+              </Button>
             </div>
           </form>
         </div>

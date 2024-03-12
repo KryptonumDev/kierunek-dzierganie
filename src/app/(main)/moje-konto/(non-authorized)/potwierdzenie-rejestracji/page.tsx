@@ -1,14 +1,8 @@
 import SuccessRegistration from '@/components/_dashboard/SuccessRegistration';
-import { notFound } from 'next/navigation';
 
-const SuccessRegistrationPage = async ({
-  searchParams: { provider },
-}: {
-  searchParams: { provider: string | undefined };
-}) => {
-  if (!provider) notFound();
+const SuccessRegistrationPage = async () => {
 
-  return <SuccessRegistration provider={provider} />;
+  return <SuccessRegistration />;
 };
 
 export default SuccessRegistrationPage;

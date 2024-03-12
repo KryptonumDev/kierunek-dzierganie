@@ -17,6 +17,7 @@ const Header = async () => {
       CloseIcon={CloseIcon}
       ChevronDownIcon={ChevronDownIcon}
       ChevronBackIcon={ChevronBackIcon}
+      CrossIcon={CrossIcon}
     />
   );
 };
@@ -207,5 +208,21 @@ const ChevronBackIcon = (
       strokeWidth='0.75'
       d='M13 4H1m0 0L3.063.875M1 4l2.063 3.125'
     ></path>
+  </svg>
+);
+const CrossIcon = (
+  <svg
+    width='24'
+    height='25'
+    viewBox='0 0 24 25'
+    fill='none'
+    xmlns='http://www.w3.org/2000/svg'
+  >
+    <path
+      d='M17.25 17.5171L6.75 7.01709M17.25 7.01709L6.75 17.5171'
+      stroke='#9A827A'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    />
   </svg>
 );

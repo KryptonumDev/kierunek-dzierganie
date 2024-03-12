@@ -1,6 +1,13 @@
 import type { ImgType, Product, ProductCard } from '@/global/types';
 import type { Item } from 'react-use-cart';
 
+export type useCartItems = {
+  cart?: Item[] | null;
+  fetchedItems?: Product[] | null;
+  updateItemQuantity?: (id: string, quantity: number) => void;
+  removeItem?: (id: string) => void;
+};
+
 export type QueryProps = {
   markdownNavAnnotation: JSX.Element;
   global: {
@@ -21,6 +28,7 @@ export type QueryProps = {
   SearchIcon: React.ReactNode;
   CloseIcon: React.ReactNode;
   Logo: React.ReactNode;
+  CrossIcon: React.ReactNode;
 };
 
 export type EmptyCart = {
@@ -29,12 +37,14 @@ export type EmptyCart = {
 };
 
 export type Cart = {
+  goToCheckout: () => void;
   setShowCart: () => void;
   showCart?: boolean;
   image_knitting: ImgType;
   image_crochet: ImgType;
   highlighted_products?: Array<ProductCard>;
-};
+  CrossIcon: React.ReactNode;
+} & useCartItems;
 
 export type Grid = {
   updateItemQuantity: (id: string, quantity: number) => void;

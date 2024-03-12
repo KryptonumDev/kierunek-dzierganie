@@ -33,6 +33,10 @@
       outline: none;
       border-color: var(--primary-600);
     }
+    &:read-only{
+      pointer-events: none;
+      opacity: 0.5;
+    }
   }
   &[aria-invalid='true']{
     input, textarea {
