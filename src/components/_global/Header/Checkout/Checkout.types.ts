@@ -4,11 +4,13 @@ export type Props = {
   setShowCheckout: () => void;
   showCheckout: boolean;
   CrossIcon: React.ReactNode;
-} & useCartItems;
+  cart: useCartItems['cart'];
+  fetchedItems: useCartItems['fetchedItems'];
+};
 
 export type InputState = {
   firmOrder: boolean;
-  billingDifferentThanShipping: boolean;
+  shippingSameAsBilling: boolean;
   shipping: {
     firstName: string;
     address1: string;
@@ -30,10 +32,20 @@ export type InputState = {
     phone: string;
     company: string;
   };
-  paymentMethod: {
-    name: string;
-    title: string;
+  products?: {
+    array: {
+      id: string;
+      name: string;
+      price: number;
+      quantity: number;
+    }[];
   };
+  user_id?: string;
+  amount: number;
+  paid_at?: string;
+  usedDiscount?: string;
+  payment_id?: string;
+  paymentMethod?: string;
 };
 
 export type MappingProps = {

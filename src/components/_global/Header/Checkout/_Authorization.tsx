@@ -42,6 +42,8 @@ export default function Authorization({ nextStep }: MappingProps) {
         })
         .then((res) => {
           if (res.error) throw res.error;
+          // TODO: check is account created before activation
+          toast('Na podany adres e-mail został wysłany link aktywacyjny');
           nextStep();
         })
         .catch((error) => {
@@ -55,6 +57,7 @@ export default function Authorization({ nextStep }: MappingProps) {
           password: data.password,
         })
         .then((res) => {
+          nextStep();
           if (res.error) throw res.error;
           router.refresh();
         })

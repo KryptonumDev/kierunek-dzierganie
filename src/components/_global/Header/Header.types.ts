@@ -2,10 +2,10 @@ import type { ImgType, Product, ProductCard } from '@/global/types';
 import type { Item } from 'react-use-cart';
 
 export type useCartItems = {
-  cart?: Item[] | null;
-  fetchedItems?: Product[] | null;
-  updateItemQuantity?: (id: string, quantity: number) => void;
-  removeItem?: (id: string) => void;
+  cart: Item[] | null;
+  fetchedItems: Array<Product> | null;
+  updateItemQuantity: (id: string, quantity: number) => void;
+  removeItem: (id: string) => void;
 };
 
 export type QueryProps = {

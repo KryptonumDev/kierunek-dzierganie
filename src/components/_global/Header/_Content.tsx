@@ -22,7 +22,7 @@ const Content = ({
   CrossIcon,
 }: QueryProps) => {
   const [showCart, setShowCart] = useState(false);
-  const [showCheckout, setShowCheckout] = useState(true);
+  const [showCheckout, setShowCheckout] = useState(false);
 
   const { cart, fetchedItems, updateItemQuantity, removeItem } = useCartItems();
 

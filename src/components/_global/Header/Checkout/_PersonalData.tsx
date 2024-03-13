@@ -78,7 +78,7 @@ const generateDefaults = (input: InputState) => {
     nip: input.billing.nip,
     companyName: input.billing.company,
 
-    shippingSameAsBilling: input.billingDifferentThanShipping,
+    shippingSameAsBilling: input.shippingSameAsBilling,
 
     firmOrder: input.firmOrder ? 'Firma' : 'Osoba prywatna',
   };

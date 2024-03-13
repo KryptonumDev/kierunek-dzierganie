@@ -15,11 +15,12 @@ const stepContent = (props: MappingProps) => ({
 
 export default function Checkout({ cart, fetchedItems, showCheckout, setShowCheckout, CrossIcon }: Props) {
   const supabase = createClientComponentClient();
-  const [step, setStep] = useState(3);
+  const [step, setStep] = useState(1);
 
   const [input, setInput] = useState<InputState>({
     firmOrder: false,
-    billingDifferentThanShipping: true,
+    shippingSameAsBilling: true,
+    amount: 0,
     shipping: {
       firstName: 'Tets ',
       address1: 'test',
@@ -41,8 +42,33 @@ export default function Checkout({ cart, fetchedItems, showCheckout, setShowChec
       phone: '123123123',
       company: '',
     },
-    paymentMethod: { name: 'card', title: 'Кредитная карта' },
   });
+
+  useEffect(() => {
+    if (!fetchedItems?.length) {
+      if (input.amount > 0)
+        setInput((prev) => ({
+          ...prev,
+          products: undefined,
+          amount: 0,
+        }));
+
+      return;
+    }
+    
+    setInput((prev) => ({
+      ...prev,
+      amount: fetchedItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
+      products: {
+        array: fetchedItems.map((item) => ({
+          id: item._id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+        })),
+      },
+    }));
+  }, [fetchedItems, setInput]);
 
   useEffect(() => {
     addEventListener('keydown', (e) => {
@@ -54,11 +80,15 @@ export default function Checkout({ cart, fetchedItems, showCheckout, setShowChec
 
   const nextStep = async () => {
     const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user && (!input.user_id || input.user_id !== user.id)) {
+      setInput({ ...input, user_id: user.id });
+    }
 
     let nextStep = step + 1;
-    if (nextStep === 2 && session) nextStep++;
+    if (nextStep === 2 && user) nextStep++;
 
     setStep(nextStep);
   };

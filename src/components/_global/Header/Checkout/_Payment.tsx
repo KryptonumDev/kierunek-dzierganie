@@ -2,13 +2,14 @@ import Button from '@/components/ui/Button';
 import Checkbox from '@/components/ui/Checkbox';
 import { useForm } from 'react-hook-form';
 import styles from './Checkout.module.scss';
+import type { MappingProps } from './Checkout.types';
 
 type FormValues = {
   privacyPolicy: boolean;
   newsletter: boolean;
 };
 
-export default function Payment({ nextStep, setInput, input }: MappingProps) {
+export default function Payment({ input }: MappingProps) {
   const {
     register,
     handleSubmit,
@@ -17,7 +18,25 @@ export default function Payment({ nextStep, setInput, input }: MappingProps) {
     mode: 'all',
   });
 
-  const onSubmit = handleSubmit(() => {});
+  const onSubmit = handleSubmit(async () => {
+    await fetch('/api/payment/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        input: input,
+        description: 'Example description',
+      }),
+    })
+      .then((res) => res.json())
+      .then(({ link }) => {
+        window.location.href = link;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
 
   return (
     <form onSubmit={onSubmit}>

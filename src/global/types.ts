@@ -102,6 +102,7 @@ export type Product = {
   price: number;
   discount: number;
   name: string;
+  quantity: number;
   slug: {
     current: string;
   };
