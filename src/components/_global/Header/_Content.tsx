@@ -41,6 +41,10 @@ const Content = ({
         showCheckout={showCheckout}
         cart={cart}
         fetchedItems={fetchedItems}
+        goToCart={() => {
+          setShowCart(true);
+          setShowCheckout(false);
+        }}
       />
       <Cart
         goToCheckout={() => {

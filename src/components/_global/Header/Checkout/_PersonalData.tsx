@@ -84,7 +84,7 @@ const generateDefaults = (input: InputState) => {
   };
 };
 
-export default function PersonalData({ nextStep, setInput, input }: MappingProps) {
+export default function PersonalData({ goToCart, nextStep, setInput, input }: MappingProps) {
   const {
     register,
     handleSubmit,
@@ -233,6 +233,7 @@ export default function PersonalData({ nextStep, setInput, input }: MappingProps
         <button
           className={`link ${styles['return']}`}
           type='button'
+          onClick={goToCart}
         >
           Wróć do koszyka
         </button>

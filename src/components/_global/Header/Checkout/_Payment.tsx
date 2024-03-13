@@ -9,7 +9,7 @@ type FormValues = {
   newsletter: boolean;
 };
 
-export default function Payment({ input }: MappingProps) {
+export default function Payment({ input, prevStep }: MappingProps) {
   const {
     register,
     handleSubmit,
@@ -64,8 +64,9 @@ export default function Payment({ input }: MappingProps) {
         <button
           className={`link ${styles['return']}`}
           type='button'
+          onClick={prevStep}
         >
-          Wróć do koszyka
+          Wróć do poprzedniego kroku
         </button>
         <Button>Przechodzę do płatności</Button>
       </div>

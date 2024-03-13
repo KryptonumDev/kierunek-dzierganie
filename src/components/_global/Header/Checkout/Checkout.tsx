@@ -13,7 +13,7 @@ const stepContent = (props: MappingProps) => ({
   3: <Payment {...props} />,
 });
 
-export default function Checkout({ cart, fetchedItems, showCheckout, setShowCheckout, CrossIcon }: Props) {
+export default function Checkout({ goToCart, cart, fetchedItems, showCheckout, setShowCheckout, CrossIcon }: Props) {
   const supabase = createClientComponentClient();
   const [step, setStep] = useState(1);
 
@@ -93,6 +93,21 @@ export default function Checkout({ cart, fetchedItems, showCheckout, setShowChec
     setStep(nextStep);
   };
 
+  const prevStep = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user && (!input.user_id || input.user_id !== user.id)) {
+      setInput({ ...input, user_id: user.id });
+    }
+
+    let nextStep = step - 1;
+    if (nextStep === 2 && user) nextStep--;
+
+    setStep(nextStep);
+  };
+
   return (
     <>
       <div className={`${styles['checkout']} ${showCheckout ? styles['active'] : ''}`}>
@@ -104,7 +119,7 @@ export default function Checkout({ cart, fetchedItems, showCheckout, setShowChec
         </button>
         <div className={styles['content']}>
           <div className={styles['main']}>
-            {stepContent({ nextStep, setStep, input, setInput, cart, fetchedItems })[step as keyof typeof stepContent]}
+            {stepContent({ goToCart, nextStep, setStep, prevStep, input, setInput, cart, fetchedItems })[step as keyof typeof stepContent]}
           </div>
           <SummaryAside />
         </div>

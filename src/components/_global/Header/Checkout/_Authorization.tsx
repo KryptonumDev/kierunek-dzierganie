@@ -18,7 +18,7 @@ type FormValues = {
   accept: boolean;
 };
 
-export default function Authorization({ nextStep }: MappingProps) {
+export default function Authorization({ nextStep, prevStep }: MappingProps) {
   const [isRegister, setRegister] = useState(true);
   const supabase = createClientComponentClient();
   const router = useRouter();
@@ -148,6 +148,7 @@ export default function Authorization({ nextStep }: MappingProps) {
         <button
           className={`link ${styles['return']}`}
           type='button'
+          onClick={prevStep}
         >
           Wróć do poprzedniego kroku
         </button>

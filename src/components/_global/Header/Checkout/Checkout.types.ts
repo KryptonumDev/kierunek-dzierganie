@@ -6,6 +6,7 @@ export type Props = {
   CrossIcon: React.ReactNode;
   cart: useCartItems['cart'];
   fetchedItems: useCartItems['fetchedItems'];
+  goToCart: () => void;
 };
 
 export type InputState = {
@@ -50,6 +51,8 @@ export type InputState = {
 
 export type MappingProps = {
   nextStep: () => Promise<void>;
+  prevStep: () => Promise<void>;
+  goToCart: () => void;
   setStep: (step: number) => void;
   input: InputState;
   setInput: (input: InputState) => void;
