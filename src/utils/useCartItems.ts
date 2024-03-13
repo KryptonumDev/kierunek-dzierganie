@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { type Item, useCart } from 'react-use-cart';
+import { useCart } from 'react-use-cart';
 import sanityFetch from './sanity.fetch';
 import type { Product } from '@/global/types';
 
 export const useCartItems = () => {
   const { items: rawCart, updateItemQuantity, updateItem, removeItem } = useCart();
-  const [cart, setCart] = useState<Item[] | null>(null);
   const [fetchedItems, setFetchedItems] = useState<Product[] | null>(null);
   const [sum, setSum] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
@@ -13,7 +12,6 @@ export const useCartItems = () => {
   useEffect(() => {
     const fetchCartItems = async () => {
       setLoading(true);
-      setCart(rawCart);
       try {
         const res = await sanityFetch<Product[]>({
           query: `
@@ -114,8 +112,9 @@ export const useCartItems = () => {
     } else {
       setLoading(false);
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rawCart]);
 
-  return { sum, cart, fetchedItems, updateItemQuantity, updateItem, removeItem, loading };
+  return { sum, cart: rawCart, fetchedItems, updateItemQuantity, updateItem, removeItem, loading };
 };
