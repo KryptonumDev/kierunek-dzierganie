@@ -238,3 +238,9 @@ main {
     }
   }
 }
+
+.dashboard-wrapper{
+  display: grid;
+  grid-template-columns: 277px 1fr;
+  gap: 32px;
+}

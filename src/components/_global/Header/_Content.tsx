@@ -96,7 +96,7 @@ const Content = ({
               <Link href='/kontakt'>Kontakt</Link>
             </li>
             <li>
-              <Link href='/profil'>Mój profil</Link>
+              <Link href='/moje-konto'>Mój profil</Link>
             </li>
             <li>
               <button
