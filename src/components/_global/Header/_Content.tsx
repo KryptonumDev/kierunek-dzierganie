@@ -39,7 +39,6 @@ const Content = ({
         CrossIcon={CrossIcon}
         setShowCheckout={() => setShowCheckout(false)}
         showCheckout={showCheckout}
-        cart={cart}
         fetchedItems={fetchedItems}
         goToCart={() => {
           setShowCart(true);

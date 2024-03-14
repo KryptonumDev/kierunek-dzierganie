@@ -1,10 +1,10 @@
+import type { ImgType } from '@/global/types';
 import type { useCartItems } from '../Header.types';
 
 export type Props = {
   setShowCheckout: () => void;
   showCheckout: boolean;
   CrossIcon: React.ReactNode;
-  cart: useCartItems['cart'];
   fetchedItems: useCartItems['fetchedItems'];
   goToCart: () => void;
 };
@@ -39,6 +39,7 @@ export type InputState = {
       name: string;
       price: number;
       quantity: number;
+      image: ImgType;
     }[];
   };
   user_id?: string;
@@ -56,6 +57,8 @@ export type MappingProps = {
   setStep: (step: number) => void;
   input: InputState;
   setInput: (input: InputState) => void;
-  cart: useCartItems['cart'];
-  fetchedItems: useCartItems['fetchedItems'];
+};
+
+export type AsideProps = {
+  input: InputState;
 };

@@ -13,7 +13,7 @@ const stepContent = (props: MappingProps) => ({
   3: <Payment {...props} />,
 });
 
-export default function Checkout({ goToCart, cart, fetchedItems, showCheckout, setShowCheckout, CrossIcon }: Props) {
+export default function Checkout({ goToCart, fetchedItems, showCheckout, setShowCheckout, CrossIcon }: Props) {
   const supabase = createClientComponentClient();
   const [step, setStep] = useState(1);
 
@@ -65,6 +65,7 @@ export default function Checkout({ goToCart, cart, fetchedItems, showCheckout, s
           name: item.name,
           price: item.price,
           quantity: item.quantity,
+          image: (item.variants?.[0]?.gallery?.[0]) ? item.variants[0].gallery[0] : item.gallery,
         })),
       },
     }));
@@ -119,9 +120,9 @@ export default function Checkout({ goToCart, cart, fetchedItems, showCheckout, s
         </button>
         <div className={styles['content']}>
           <div className={styles['main']}>
-            {stepContent({ goToCart, nextStep, setStep, prevStep, input, setInput, cart, fetchedItems })[step as keyof typeof stepContent]}
+            {stepContent({ goToCart, nextStep, setStep, prevStep, input, setInput })[step as keyof typeof stepContent]}
           </div>
-          <SummaryAside />
+          <SummaryAside input={input} />
         </div>
       </div>
     </>
