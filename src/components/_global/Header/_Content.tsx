@@ -6,9 +6,11 @@ import Annotation from './_Annotation';
 import Nav from './_Nav';
 import type { QueryProps } from './Header.types';
 import { useState } from 'react';
-import Cart from './_Cart';
-import Checkout from './Checkout';
 import { useCartItems } from '@/utils/useCartItems';
+import dynamic from 'next/dynamic';
+
+const Cart = dynamic(() => import('./_Cart'), { ssr: false });
+const Checkout = dynamic(() => import('./Checkout'), { ssr: false });
 
 const Content = ({
   markdownNavAnnotation,
