@@ -14,8 +14,7 @@ const Checkout = dynamic(() => import('./Checkout'), { ssr: false });
 
 const Content = ({
   markdownNavAnnotation,
-  global: { nav_Annotation, nav_Links },
-  cart: { image_crochet, image_knitting, highlighted_products },
+  global: { image_crochet, image_knitting, nav_Annotation, nav_Links },
   Logo,
   ChevronDownIcon,
   ChevronBackIcon,
@@ -56,7 +55,6 @@ const Content = ({
         showCart={showCart}
         image_knitting={image_knitting}
         image_crochet={image_crochet}
-        highlighted_products={highlighted_products}
         CrossIcon={CrossIcon}
         cart={cart}
         fetchedItems={fetchedItems}

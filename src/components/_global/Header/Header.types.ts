@@ -11,6 +11,8 @@ export type useCartItems = {
 export type QueryProps = {
   markdownNavAnnotation: JSX.Element;
   global: {
+    image_knitting: ImgType;
+    image_crochet: ImgType;
     nav_Annotation?: string;
     nav_Links: {
       name: string;
@@ -22,7 +24,6 @@ export type QueryProps = {
       }[];
     }[];
   };
-  cart: Cart;
   ChevronDownIcon: React.ReactNode;
   ChevronBackIcon: React.ReactNode;
   SearchIcon: React.ReactNode;

@@ -5,13 +5,12 @@ import Content from './_Content';
 import Markdown from '@/components/ui/markdown';
 
 const Header = async () => {
-  const { global, cart }: QueryProps = await query();
+  const { global }: QueryProps = await query();
   const nav_annotation = <Markdown>{global.nav_Annotation ?? ''}</Markdown>;
   return (
     <Content
       global={global}
       markdownNavAnnotation={nav_annotation}
-      cart={cart}
       Logo={Logo}
       SearchIcon={SearchIcon}
       CloseIcon={CloseIcon}
@@ -28,43 +27,8 @@ const query = async (): Promise<QueryProps> => {
   const data = await sanityFetch({
     query: /* groq */ `
     {
-    "cart": *[_id== 'cart'][0]{
-      image_crochet{
-        asset -> {
-          url,
-          altText,
-          metadata {
-            lqip,
-            dimensions {
-              width,
-              height,
-            }
-          }
-        }
-      },
-      image_knitting{
-        asset -> {
-          url,
-          altText,
-          metadata {
-            lqip,
-            dimensions {
-              width,
-              height,
-            }
-          }
-        }
-      },
-      highlighted_products[]->{
-        _id,
-        type,
-        basis,
-        name,
-        price,
-        discount,
-        countInStock,
-        'slug': slug.current,
-        gallery[0]{
+    "global":  *[_id == 'global'][0] {
+        image_crochet{
           asset -> {
             url,
             altText,
@@ -77,27 +41,19 @@ const query = async (): Promise<QueryProps> => {
             }
           }
         },
-        variants[]{
-          price,
-          discount,
-          countInStock,
-          gallery[0]{
-            asset -> {
-              url,
-              altText,
-              metadata {
-                lqip,
-                dimensions {
-                  width,
-                  height,
-                }
+        image_knitting{
+          asset -> {
+            url,
+            altText,
+            metadata {
+              lqip,
+              dimensions {
+                width,
+                height,
               }
             }
           }
-        }
-      },
-    },
-    "global":  *[_id == 'global'][0] {
+        },
         nav_Annotation,
         nav_Links {
           name,
