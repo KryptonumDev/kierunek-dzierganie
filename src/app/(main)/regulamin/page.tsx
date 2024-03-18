@@ -1,4 +1,3 @@
-import { draftMode } from 'next/headers';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import Contents from '@/components/_legal/Contents';
 import FilesComponent, { FilesComponent_Query } from '@/components/_legal/FilesComponent';
@@ -6,8 +5,8 @@ import Header from '@/components/_legal/Header';
 import sanityFetch from '@/utils/sanity.fetch';
 import { Header_Query } from '@/components/_legal/Header';
 import { Contents_Query } from '@/components/_legal/Contents';
-import Seo, { Seo_Query } from '@/global/Seo';
 import { type StatutePageQueryProps } from '@/global/types';
+import { QueryMetadata } from '@/global/query-metadata';
 
 const page = { name: 'Regulamin', path: '/regulamin' };
 
@@ -28,16 +27,7 @@ export default async function StatutePage() {
 }
 
 export async function generateMetadata() {
-  const {
-    page: {
-      seo: { title, description },
-    },
-  } = await getData();
-  return Seo({
-    title,
-    description,
-    path: page.path,
-  });
+  return await QueryMetadata('Statute_Page', `${page.path}`);
 }
 
 async function getData() {
@@ -52,11 +42,10 @@ async function getData() {
           ${Header_Query}
           ${Contents_Query}
           ${FilesComponent_Query}
-          ${Seo_Query}
         }
       }
     `,
-    isDraftMode: draftMode().isEnabled,
+    tags: ['Statute_Page'],
   });
   return data;
 }

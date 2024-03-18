@@ -1,4 +1,3 @@
-import { draftMode } from 'next/headers';
 import sanityFetch from '@/utils/sanity.fetch';
 import Markdown from '@/components/ui/markdown';
 import Button from '@/components/ui/Button';
@@ -69,7 +68,7 @@ const query = async (): Promise<QueryProps> => {
         instagram,
         youtube,
       }`,
-    isDraftMode: draftMode().isEnabled,
+    tags: ['global'],
   });
   return data as QueryProps;
 };

@@ -1,6 +1,6 @@
 export type Props = {
   data?: {
-    name: string;
+    name?: string;
     path: string;
   }[];
   visible?: boolean;

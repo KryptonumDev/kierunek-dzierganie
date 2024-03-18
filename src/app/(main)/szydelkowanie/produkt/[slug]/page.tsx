@@ -1,13 +1,12 @@
-import { draftMode } from 'next/headers';
 import { notFound } from 'next/navigation';
 import sanityFetch from '@/utils/sanity.fetch';
-import Seo, { Seo_Query } from '@/global/Seo';
 import type { ProductPageQueryProps, generateStaticParamsProps } from '@/global/types';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import HeroPhysical from '@/components/_product/HeroPhysical';
 import Parameters from '@/components/_product/Parameters';
 import Description from '@/components/_product/Description';
 import Flex from '@/components/_product/Flex';
+import { QueryMetadata } from '@/global/query-metadata';
 
 const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) => {
   const { name, _id, type, variants, price, discount, featuredVideo, countInStock, gallery, parameters } =
@@ -54,15 +53,7 @@ const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) =
 export default LandingPage;
 
 export async function generateMetadata({ params: { slug } }: { params: { slug: string } }) {
-  const { seo } = await query(slug);
-
-  const { title, description } = seo || {};
-
-  return Seo({
-    title,
-    description,
-    path: `/szydelkowanie/produkt/${slug}`,
-  });
+  return await QueryMetadata('product', `/szydelkowanie/produkt/${slug}`, slug);
 }
 
 const query = async (slug: string): Promise<ProductPageQueryProps> => {
@@ -122,12 +113,11 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
             name,
             value
           }
-        },
-        ${Seo_Query}
+        }
       }
     `,
     params: { slug },
-    isDraftMode: draftMode().isEnabled,
+    tags: ['product'],
   });
   !data && notFound();
   return data as ProductPageQueryProps;

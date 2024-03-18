@@ -1,5 +1,6 @@
 import { createClient } from 'next-sanity';
 import type { QueryParams } from '@sanity/client';
+import { requestAsyncStorage } from 'next/dist/client/components/request-async-storage.external';
 
 const projectId = process.env.SANITY_PROJECT_ID;
 const dataset = process.env.SANITY_DATASET || 'production';
@@ -11,20 +12,19 @@ export const client = createClient({
   dataset,
   apiVersion,
   perspective: 'published',
+  useCdn: false,
 });
-
-const DEFAULT_PARAMS = {} as QueryParams;
-const NEXT_REVALIDATE = 900;
 
 export default async function sanityFetch<QueryResponse>({
   query,
-  params = DEFAULT_PARAMS,
-  isDraftMode = false,
+  tags,
+  params = {},
 }: {
   query: string;
+  tags?: string[];
   params?: QueryParams;
-  isDraftMode?: boolean;
 }): Promise<QueryResponse> {
+  const isDraftMode = !!requestAsyncStorage.getStore()?.draftMode.isEnabled;
   if (isDraftMode && !token) {
     throw new Error('The `SANITY_API_TOKEN` environment variable is required.');
   }
@@ -33,8 +33,9 @@ export default async function sanityFetch<QueryResponse>({
       token: token,
       perspective: 'previewDrafts',
     }),
+    cache: isDraftMode || !tags ? 'no-cache' : 'default',
     next: {
-      revalidate: isDraftMode ? 0 : NEXT_REVALIDATE,
+      tags: tags,
     },
   });
 }

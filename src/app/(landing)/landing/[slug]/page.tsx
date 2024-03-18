@@ -1,10 +1,9 @@
-import { draftMode } from 'next/headers';
 import { notFound } from 'next/navigation';
 import sanityFetch from '@/utils/sanity.fetch';
-import Seo, { Seo_Query } from '@/global/Seo';
 import type { PageQueryProps, generateStaticParamsProps } from '@/global/types';
 import Components, { Components_Query } from '@/components/Components';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
+import { QueryMetadata } from '@/global/query-metadata';
 
 const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) => {
   const { content, name }: PageQueryProps = await query(slug);
@@ -28,15 +27,7 @@ const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) =
 export default LandingPage;
 
 export async function generateMetadata({ params: { slug: paramsSlug } }: { params: { slug: string } }) {
-  const {
-    slug,
-    seo: { title, description },
-  } = await query(paramsSlug);
-  return Seo({
-    title,
-    description,
-    path: `/landing/${slug}`,
-  });
+  return await QueryMetadata('landingPage', `/landing/${paramsSlug}`, paramsSlug);
 }
 
 const query = async (slug: string): Promise<PageQueryProps> => {
@@ -46,11 +37,10 @@ const query = async (slug: string): Promise<PageQueryProps> => {
         name,
         'slug': slug.current,
         ${Components_Query}
-        ${Seo_Query}
       }
     `,
     params: { slug },
-    isDraftMode: draftMode().isEnabled,
+    tags: ['landingPage'],
   });
   !data && notFound();
   return data as PageQueryProps;
