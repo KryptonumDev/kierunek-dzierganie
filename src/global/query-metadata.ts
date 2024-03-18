@@ -6,7 +6,6 @@ import type { Metadata } from 'next';
 type QueryType = {
   title: string;
   description: string;
-  img?: string;
 };
 
 /**
@@ -19,9 +18,7 @@ type QueryType = {
 export const QueryMetadata = async (name: string, path: string, dynamicSlug?: string): Promise<Metadata> => {
   const customQuery = dynamicSlug ? `*[_type == '${name}' && slug.current == $slug][0]` : `*[_id == "${name}"][0]`;
 
-  const { title, description, img } = await query(customQuery, name, dynamicSlug);
-
-  console.log(img);
+  const { title, description } = await query(customQuery, name, dynamicSlug);
 
   return Seo({
     title,
