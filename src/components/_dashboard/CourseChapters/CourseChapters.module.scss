@@ -1,0 +1,21 @@
+.CourseChapters {
+  .title{
+    margin-bottom: 48px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+
+    p{
+      color: var(--primary-800, #53423C);
+      font-size: 18px;
+      font-weight: 300;
+      line-height: 150%;
+    }
+  }
+
+  .grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 48px 32px;
+  }  
+}

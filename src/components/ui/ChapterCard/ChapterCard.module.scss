@@ -1,0 +1,60 @@
+.chapterCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 36px;
+
+  .image-wrap {
+    position: relative;
+
+    .badge {
+      position: absolute;
+      display: block;
+      bottom: 0;
+      left: 0;
+      padding: 8px 16px 8px 20px;
+      border-radius: 0px 4px 0px 0px;
+      background: var(--primary-300, #efe8e7);
+    }
+
+    img {
+      border-radius: 4px;
+      aspect-ratio: 381/276;
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+    }
+  }
+
+  h2 {
+    margin-top: 24px;
+    margin-bottom: 8px;
+
+    color: var(--primary-800, #53423c);
+    font-size: 24px;
+    font-weight: 300;
+    line-height: 130%;
+
+    span {
+      color: var(--primary-700, #766965);
+      font-size: 18px;
+      font-weight: 300;
+      line-height: 150%;
+    }
+  }
+
+  p {
+    color: var(--primary-800, #53423c);
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 150%;
+  }
+
+  .flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+}
