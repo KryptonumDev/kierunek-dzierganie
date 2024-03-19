@@ -1,3 +1,28 @@
 .CategoriesSection {
-  
+  display: grid;
+  justify-items: center;
+  align-self: center;
+
+  >h2 {
+    margin-bottom: clamp(16px, calc(16vw/7.68), 28px);
+  }
+
+  .categories {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-top: clamp(28px, calc(36vw/7.68), 48px);
+    column-gap: clamp(8px, calc(16vw/7.68), 16px);
+    row-gap: clamp(8px, calc(12vw/7.68), 12px);
+
+    .category {
+      padding: 10px 14px 10px 16px;
+      border: 1px solid var(--primary-400);
+      border-radius: 4px;
+
+      >span {
+        color: var(--primary-600);
+      }
+    }
+  }
 }
