@@ -23,7 +23,7 @@ const ChapterCard = ({ name, image, description, lessons, courseSlug, number }: 
       </div>
       <div className={styles['flex']}>
         <span>Ukończono 0%</span>
-        <Button href={`/moje-konto/kursy/${courseSlug}/${number}`}>Oglądaj</Button>
+        <Button href={`/moje-konto/kursy/${courseSlug}/${lessons[0]?.slug}`}>Oglądaj</Button>
       </div>
     </div>
   );

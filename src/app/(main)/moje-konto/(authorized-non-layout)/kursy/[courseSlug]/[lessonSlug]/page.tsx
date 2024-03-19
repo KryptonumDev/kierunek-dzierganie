@@ -1,4 +1,4 @@
-import CourseChapters from '@/components/_dashboard/CourseChapters';
+import LessonHero from '@/components/_dashboard/LessonHero';
 import type { ImgType } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
@@ -15,12 +15,20 @@ interface QueryProps {
       chapterName: string;
       chapterImage: ImgType;
       lessons: {
+        _id: string;
         name: string;
         video: string;
         lengthInMinutes: number;
         slug: string;
       }[];
     }[];
+  };
+  lesson: {
+    _id: string;
+    name: string;
+    slug: string;
+    video: string;
+    lengthInMinutes: number;
   };
 }
 
@@ -33,16 +41,24 @@ type SupabaseData = {
   };
 };
 
-export default async function Course({ params: { slug } }: { params: { slug: string } }) {
-  const { course }: QueryProps = await query(slug);
+export default async function Course({
+  params: { lessonSlug, courseSlug },
+}: {
+  params: { courseSlug: string; lessonSlug: string };
+}) {
+  const { course, lesson, courses_progress }: QueryProps & SupabaseData['data'] = await query(courseSlug, lessonSlug);
   return (
     <div>
-      <CourseChapters course={course} />
+      <LessonHero
+        course={course}
+        lesson={lesson}
+        progress={courses_progress.find((el) => el.course_id === course._id)!}
+      />
     </div>
   );
 }
 
-const query = async (slug: string): Promise<QueryProps> => {
+const query = async (courseSlug: string, lessonSlug: string) => {
   const supabase = createServerActionClient({ cookies });
   const {
     data: { user },
@@ -65,7 +81,14 @@ const query = async (slug: string): Promise<QueryProps> => {
   const data: QueryProps = await sanityFetch({
     query: /* groq */ `
     {
-    "course": *[_type == "course" && slug.current == $slug][0]{
+    "lesson": *[_type == "lesson" && slug.current == $lessonSlug][0]{
+      _id,
+      name,
+      "slug": slug.current,
+      video,
+      lengthInMinutes,
+    },
+    "course": *[_type == "course" && slug.current == $courseSlug][0]{
       _id,
       name,
       "slug": slug.current,
@@ -86,6 +109,7 @@ const query = async (slug: string): Promise<QueryProps> => {
         chapterDescription,
         chapterName,
         lessons[]->{
+          _id,  
           name,
           video,
           lengthInMinutes,
@@ -108,12 +132,15 @@ const query = async (slug: string): Promise<QueryProps> => {
     }
     }`,
     params: {
-      slug: slug,
+      lessonSlug: lessonSlug,
+      courseSlug: courseSlug,
     },
     isDraftMode: draftMode().isEnabled,
   });
 
-  if (!(res as SupabaseData).data.courses_progress.some((el) => el.course_id === data.course._id)) return notFound();
+  if (!(res as SupabaseData).data.courses_progress.some((el) => el.course_id === data?.course._id)) return notFound();
 
-  return data;
+  if (!data.lesson) return notFound();
+
+  return { ...data, ...(res as SupabaseData).data };
 };

@@ -1,0 +1,155 @@
+import { useMemo } from 'react';
+import styles from './LessonHero.module.scss';
+import type { Props } from './LessonHero.types';
+import Link from 'next/link';
+import Button from '@/components/ui/Button';
+import { updateElement } from '@/utils/update-progress';
+
+const LessonHero = ({ progress, lesson, course }: Props) => {
+  const currentChapter: Props['course']['chapters'][0] = useMemo(() => {
+    let curr = course.chapters[0]!;
+
+    course.chapters.every((chapter) => {
+      chapter.lessons.forEach((currLesson) => {
+        if (currLesson._id === lesson._id) curr = chapter;
+      });
+      return !curr;
+    });
+
+    return curr;
+  }, [course, lesson]);
+
+  const currChapterIndex = useMemo(() => {
+    let currIndex = 0;
+
+    course.chapters.every((chapter, i) => {
+      if (chapter.chapterName === currentChapter.chapterName) currIndex = i;
+      return !currIndex;
+    });
+
+    return currIndex;
+  }, [course, currentChapter]);
+
+  const currentLessonIndex = useMemo(() => {
+    let currIndex = 0;
+
+    currentChapter.lessons.every((currLesson, i) => {
+      if (currLesson._id === lesson._id) currIndex = i;
+      return !currIndex;
+    });
+
+    return currIndex;
+  }, [currentChapter, lesson]);
+
+  const updateProgress = () => {
+    updateElement({
+      ...progress,
+      chapters: ...course.chapters.map((chapter) => {
+        if (chapter.chapterName === currentChapter.chapterName) {
+          return {
+            ...chapter,
+            lessons: ...chapter.lessons.map((currLesson) => {
+              if (currLesson._id === lesson._id) {
+                return {
+                  _id: currLesson._id,
+                  name: currLesson.name,
+                  isCompleted: true,
+                };
+              }
+              return currLesson;
+            }),
+          };
+        }
+        return chapter;
+      })
+    });
+  };
+
+  return (
+    <section className={styles['LessonHero']}>
+      <div className={styles['grid']}>
+        <div className={styles['content']}>
+          <div className={styles.video}>
+            <iframe
+              style={{ width: '100%', height: '100%' }}
+              src={lesson.video}
+              title={lesson.name}
+              allow='fullscreen; picture-in-picture'
+            />
+          </div>
+          <nav className={styles.nav}>
+            {currentLessonIndex === 0 ? (
+              <>
+                {currChapterIndex === 0 ? (
+                  <div />
+                ) : (
+                  <Link
+                    className={`${styles['prev']} link`}
+                    href={`/moje-konto/kursy/${course.slug}/${
+                      course.chapters[currChapterIndex - 1]!.lessons[
+                        course.chapters[currChapterIndex - 1]!.lessons.length - 1
+                      ]!.slug
+                    }`}
+                  >
+                    Poprzedni rozdział
+                  </Link>
+                )}
+              </>
+            ) : (
+              <Link
+                className={`${styles['prev']} link`}
+                href={`/moje-konto/kursy/${course.slug}/${currentChapter.lessons[currentLessonIndex - 1]!.slug}`}
+              >
+                Poprzednia lekcja
+              </Link>
+            )}
+            <Button>Oznacz jako ukończoną</Button>
+            {currentChapter.lessons.length > currentLessonIndex + 1 ? (
+              <Link
+                className={`${styles['next']} link`}
+                href={`/moje-konto/kursy/${course.slug}/${currentChapter.lessons[currentLessonIndex + 1]!.slug}`}
+              >
+                Następna lekcja
+              </Link>
+            ) : (
+              <>
+                {currChapterIndex === course.chapters.length - 1 ? (
+                  <div />
+                ) : (
+                  <Link
+                    className={`${styles['next']} link`}
+                    href={`/moje-konto/kursy/${course.slug}/${course.chapters[currChapterIndex + 1]!.lessons[0]!.slug}`}
+                  >
+                    Następny rozdział
+                  </Link>
+                )}
+              </>
+            )}
+          </nav>
+        </div>
+        <div>
+          <div className={styles.progress}>
+            <h1>{course.name}</h1>
+            <p>Ukończono 0%</p>
+          </div>
+          <p className={styles['chapter']}>
+            <span>Moduł {currChapterIndex + 1}:</span> {currentChapter.chapterName}
+          </p>
+          <div className={styles.lessons}>
+            {currentChapter.lessons.map((el, i) => (
+              <Link
+                href={`/moje-konto/kursy/${course.slug}/${el.slug}`}
+                key={i}
+                aria-current={el.slug === lesson.slug}
+              >
+                <small>Lekcja {i + 1}</small> {el.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default LessonHero;
