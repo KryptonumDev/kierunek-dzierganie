@@ -4,15 +4,24 @@ export type BlogSectionTypes = {
   data: {
     blog_Heading: string;
     blog_Paragraph: string;
-    blog_HighlightedPost: {
-      hero_Heading: string;
-      hero_Paragraph: string;
-      hero_Author: {
-        slug: string;
-        heading: string;
-        paragraph: string;
-        img: ImgType;
-      };
-    };
+    blog_HighlightedPost: HighlightedPostType;
   };
+};
+
+export type HighlightedPostType = {
+  hero_Heading: string;
+  hero_Img: ImgType;
+  hero_Paragraph: string;
+  hero_Author: {
+    heading: string;
+    paragraph: string;
+    img: ImgType;
+  };
+};
+
+export type BlogPostsType = {
+  hero_Img: ImgType;
+  hero_Heading: string;
+  hero_Paragraph: string;
+  slug: string;
 };

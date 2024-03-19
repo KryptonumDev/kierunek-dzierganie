@@ -7,10 +7,12 @@ export const BlogSection_Query = `
   blog_Heading,
   blog_Paragraph,
   blog_HighlightedPost-> {
+    hero_Img {
+      ${Img_Query}
+    },
     hero_Heading,
     hero_Paragraph,
     hero_Author-> {
-      slug,
       heading,
       paragraph,
       img {
