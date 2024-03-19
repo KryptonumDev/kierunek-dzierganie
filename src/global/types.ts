@@ -67,6 +67,12 @@ export type StatutePageQueryProps = {
 export type BlogPageQueryProps = {
   hero_Heading: string;
   hero_Paragraph: string;
+  categories_Heading: string;
+  categories_Paragraph: string;
+  categories: {
+    name: string;
+    slug: string;
+  }[];
 };
 
 export type StatutePage = {
