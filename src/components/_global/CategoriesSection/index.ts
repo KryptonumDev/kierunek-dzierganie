@@ -8,5 +8,5 @@ export const CategoriesSection_Query = `
   "categories": *[_type=="BlogCategory_Collection"][] {
     name,
     "slug": slug.current,
-  }
+  },
 `;

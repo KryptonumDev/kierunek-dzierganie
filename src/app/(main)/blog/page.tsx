@@ -1,3 +1,4 @@
+import BlogSection, { BlogSection_Query } from '@/components/_global/BlogSection';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import CategoriesSection, { CategoriesSection_Query } from '@/components/_global/CategoriesSection';
 import HeroBackground, { HeroBackground_Query } from '@/components/_global/HeroBackground';
@@ -8,12 +9,22 @@ import sanityFetch from '@/utils/sanity.fetch';
 const page = { name: 'Blog', path: '/blog' };
 
 export default async function BlogPage() {
-  const { hero_Heading, hero_Paragraph, categories, categories_Heading, categories_Paragraph } = await getData();
+  const {
+    hero_Heading,
+    hero_Paragraph,
+    categories,
+    categories_Heading,
+    categories_Paragraph,
+    blog_Heading,
+    blog_Paragraph,
+    blog_HighlightedPost,
+  } = await getData();
   return (
     <>
       <Breadcrumbs data={[page]} />
       <HeroBackground data={{ hero_Heading, hero_Paragraph }} />
       <CategoriesSection data={{ categories, categories_Heading, categories_Paragraph }} />
+      <BlogSection data={{ blog_Heading, blog_Paragraph, blog_HighlightedPost }} />
     </>
   );
 }
@@ -24,6 +35,7 @@ async function getData() {
       *[_id =="Blog_Page"][0] {
       ${HeroBackground_Query}
       ${CategoriesSection_Query}
+      ${BlogSection_Query}
       }
     `,
   });
