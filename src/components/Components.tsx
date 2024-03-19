@@ -1,4 +1,4 @@
-import Faq, { Faq_Query, type FaqProps } from '@/components/_global/Faq';
+// import Faq, { Faq_Query, type FaqProps } from '@/components/_global/Faq';
 import Opinions, { Opinions_Query, type OpinionsProps } from '@/components/_global/Opinions';
 import TileList, { TileList_Query, type TileListProps } from '@/components/_global/TileList';
 import CtaSection, { CtaSection_Query, type CtaSectionProps } from '@/components/_global/CtaSection';
@@ -38,7 +38,7 @@ import Partners, { Partners_Query, type PartnersProps } from './_global/Partners
 type ComponentMap = {
   HeroBackgroundImg: HeroBackgroundImgProps;
   Benefits: BenefitsProps;
-  Faq: FaqProps;
+  // Faq: FaqProps;
   Opinions: OpinionsProps;
   CtaSection: CtaSectionProps;
   SimpleCtaSection: SimpleCtaSectionProps;
@@ -77,7 +77,7 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
         />
       ),
       Benefits: <Benefits {...(item as BenefitsProps)} />,
-      Faq: <Faq {...(item as FaqProps)} />,
+      // Faq: <Faq {...(item as FaqProps)} />,
       Opinions: <Opinions {...(item as OpinionsProps)} />,
       CtaSection: <CtaSection {...(item as CtaSectionProps)} />,
       SimpleCtaSection: <SimpleCtaSection {...(item as SimpleCtaSectionProps)} />,
@@ -152,7 +152,6 @@ export const Components_Query = /* groq */ `
   content[] {
     ${HeroBackgroundImg_Query}
     ${Benefits_Query}
-    ${Faq_Query}
     ${Opinions_Query}
     ${TileList_Query}
     ${CtaSection_Query}
