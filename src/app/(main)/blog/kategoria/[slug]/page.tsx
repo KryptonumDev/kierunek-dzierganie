@@ -9,6 +9,7 @@ import {
   type BlogCategoryPageQueryProps,
 } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
+import { notFound } from 'next/navigation';
 
 export default async function CategoryBlogPage({ params: { slug } }: { params: { slug: string } }) {
   const {
@@ -31,8 +32,8 @@ export default async function CategoryBlogPage({ params: { slug } }: { params: {
     <>
       <Breadcrumbs data={page} />
       <HeroBackground data={{ hero_Heading, hero_Paragraph }} />
-      <CategoriesSection data={{ blogPosts, categories_Heading, categories_Paragraph }} />
-      <BlogSection data={{ blog_Heading, blog_Paragraph, blog_HighlightedPost }} />
+      <CategoriesSection data={{ blogPosts, categories_Heading, categories_Paragraph, highlightedCategory: slug }} />
+      <BlogSection data={{ blog_Heading, blog_Paragraph, blog_HighlightedPost, slug }} />
     </>
   );
 }
@@ -50,6 +51,7 @@ async function getData(slug: string) {
     params: { slug },
     tags: ['Blog_Page'],
   });
+  data?.hero_Heading || notFound();
   return data;
 }
 

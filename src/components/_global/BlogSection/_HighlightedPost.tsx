@@ -4,9 +4,17 @@ import { type HighlightedPostType } from './BlogSection.types';
 import Markdown from '@/components/ui/markdown';
 import sanityFetch from '@/utils/sanity.fetch';
 
-export default async function HighlightedPost({ blog_HighlightedPost }: { blog_HighlightedPost: HighlightedPostType }) {
+export default async function HighlightedPost({
+  blog_HighlightedPost,
+  slug,
+}: {
+  blog_HighlightedPost: HighlightedPostType;
+  slug?: string;
+}) {
   if (!blog_HighlightedPost) {
-    blog_HighlightedPost = await getNewestBlogData();
+    slug
+      ? (blog_HighlightedPost = await getNewestCategoryBlogData(slug))
+      : (blog_HighlightedPost = await getNewestBlogData());
   }
   const {
     hero_Img,
@@ -58,7 +66,31 @@ async function getNewestBlogData() {
         },
       }
     `,
-    tags: ['BlogPost_Collection']
+    tags: ['BlogPost_Collection'],
+  });
+  return data;
+}
+
+async function getNewestCategoryBlogData(slug: string) {
+  const data = await sanityFetch<HighlightedPostType>({
+    query: /* groq */ `
+      *[_type == "BlogPost_Collection" && $slug in category[]->slug.current] | order(publishedAt desc) [0] {
+        hero_Img {
+          ${Img_Query}
+        },
+        hero_Heading,
+        hero_Paragraph,
+        hero_Author-> {
+          heading,
+          paragraph,
+          img {
+            ${Img_Query}
+          },
+        },
+      }
+    `,
+    params: { slug },
+    tags: ['BlogPost_Collection'],
   });
   return data;
 }

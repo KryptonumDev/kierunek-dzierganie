@@ -8,5 +8,6 @@ export type CategoriesSectionTypes = {
         slug: string;
       }[];
     }[];
+    highlightedCategory?: string;
   };
 };

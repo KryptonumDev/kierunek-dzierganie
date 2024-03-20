@@ -4,7 +4,7 @@ import type { CategoriesSectionTypes } from './CategoriesSection.types';
 import Link from 'next/link';
 
 const CategoriesSection = ({
-  data: { categories_Heading, categories_Paragraph, blogPosts },
+  data: { categories_Heading, categories_Paragraph, blogPosts, highlightedCategory },
 }: CategoriesSectionTypes) => {
   const categoryNames = blogPosts.flatMap((post) => post.categories?.map((category) => category.name) || []);
 
@@ -32,6 +32,7 @@ const CategoriesSection = ({
             href={`/blog/kategoria/${slug}`}
             key={name}
             className={styles.category}
+            data-highlighted={slug == highlightedCategory}
           >
             {name} <span>({categoryCounts[name]})</span>
           </Link>
