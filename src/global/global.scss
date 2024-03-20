@@ -248,8 +248,8 @@ h3 {
 main {
   display: grid;
   grid-template-columns: 1fr;
-  row-gap: clamp(96px, calc(144vw / 7.68), 240px);
-  margin: clamp(48px, calc(64vw / 7.68), 96px) auto clamp(96px, calc(144vw / 7.68), 240px);
+  row-gap: clamp(96px, calc(148vw / 7.68), 200px);
+  margin: clamp(48px, calc(64vw / 7.68), 96px) auto clamp(96px, calc(148vw / 7.68), 200px);
 }
 
 .unorderedList {
