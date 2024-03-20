@@ -3,10 +3,18 @@ import Markdown from '@/components/ui/markdown';
 import sanityFetch from '@/utils/sanity.fetch';
 import styles from './BlogSection.module.scss';
 import { type BlogPostsType } from './BlogSection.types';
+import { blogsPerPage } from 'app-config';
+import { notFound, redirect } from 'next/navigation';
 
-export default async function BlogPosts({ slug }: { slug?: string }) {
+export default async function BlogPosts({ slug, number }: { slug?: string; number?: number }) {
+  if (number == 1) {
+    return redirect('/blog');
+  }
   let blogPosts: BlogPostsType[] = [];
-  slug ? (blogPosts = await getCategoryBlogPostData(slug)) : (blogPosts = await getBlogPostData());
+  const selectedPage = number ? number : 1;
+  slug
+    ? (blogPosts = await getCategoryBlogPostData(selectedPage, slug))
+    : (blogPosts = await getBlogPostData(selectedPage));
   return (
     <div className={styles.blogPosts}>
       {blogPosts.map(({ hero_Heading, hero_Paragraph, hero_Img }, i) => (
@@ -28,10 +36,13 @@ export default async function BlogPosts({ slug }: { slug?: string }) {
   );
 }
 
-async function getBlogPostData() {
+async function getBlogPostData(selectedPage?: number) {
   const data = await sanityFetch<BlogPostsType[]>({
     query: /* groq */ `
-      *[_type == "BlogPost_Collection"] {
+      *[_type == "BlogPost_Collection"]
+      [$blogsPerPage * ($selectedPage-1) 
+      ...
+      $blogsPerPage+ ($blogsPerPage * ($selectedPage-1))] {
         hero_Img {
           ${Img_Query}
         },
@@ -40,15 +51,23 @@ async function getBlogPostData() {
         "slug": slug.current
       }
     `,
+    params: { selectedPage, blogsPerPage },
     tags: ['BlogPost_Collection'],
   });
+  if (data.length == 0) {
+    return notFound();
+  }
   return data;
 }
 
-async function getCategoryBlogPostData(slug?: string) {
+async function getCategoryBlogPostData(selectedPage?: number, slug?: string) {
   const data = await sanityFetch<BlogPostsType[]>({
     query: /* groq */ `
-      *[_type == "BlogPost_Collection" && $slug in category[]->slug.current] {
+      *[_type == "BlogPost_Collection" && $slug in category[]->slug.current]
+      [$blogsPerPage * ($selectedPage-1) 
+      ...
+      $blogsPerPage+ ($blogsPerPage * ($selectedPage-1))]
+       {
         hero_Img {
           ${Img_Query}
         },
@@ -57,8 +76,11 @@ async function getCategoryBlogPostData(slug?: string) {
         "slug": slug.current
       }
     `,
-    params: { slug },
+    params: { slug, selectedPage, blogsPerPage },
     tags: ['BlogPost_Collection'],
   });
+  if (data.length == 0) {
+    return notFound();
+  }
   return data;
 }

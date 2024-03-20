@@ -6,6 +6,7 @@ export type BlogSectionTypes = {
     blog_Paragraph: string;
     blog_HighlightedPost: HighlightedPostType;
     slug?: string;
+    number?: number;
   };
 };
 
@@ -25,4 +26,5 @@ export type BlogPostsType = {
   hero_Heading: string;
   hero_Paragraph: string;
   slug: string;
+  number: number;
 };
