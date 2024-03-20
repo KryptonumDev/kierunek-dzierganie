@@ -7,13 +7,27 @@ const dataset = process.env.SANITY_DATASET || 'production';
 const token = process.env.SANITY_API_TOKEN;
 const apiVersion = '2024-01-27';
 
+const isDraftMode = !!requestAsyncStorage.getStore()?.draftMode.isEnabled;
+
+if (isDraftMode && !token) {
+  throw new Error('The `SANITY_API_TOKEN` environment variable is required.');
+}
+
 export const client = createClient({
   projectId,
   dataset,
   apiVersion,
-  perspective: 'published',
-  useCdn: false,
+  perspective: isDraftMode ? 'previewDrafts' : 'published',
+  ...(isDraftMode && { token }),
 });
+
+/**
+ * Performs a Sanity query in GROQ for fetching data.
+ * @param {string} query - The GROQ query.
+ * @param {string[]} [tags] - Recommended. The tags for Next Caching.
+ * @param {QueryParams} [params={}] - Optional. Used to query dynamic pages, like blog posts.
+ * @returns {Promise<QueryResponse>} Returns a promise of the SEO object.
+ */
 
 export default async function sanityFetch<QueryResponse>({
   query,
@@ -24,10 +38,6 @@ export default async function sanityFetch<QueryResponse>({
   tags?: string[];
   params?: QueryParams;
 }): Promise<QueryResponse> {
-  const isDraftMode = !!requestAsyncStorage.getStore()?.draftMode.isEnabled;
-  if (isDraftMode && !token) {
-    throw new Error('The `SANITY_API_TOKEN` environment variable is required.');
-  }
   return await client.fetch<QueryResponse>(query, params, {
     ...(isDraftMode && {
       token: token,
