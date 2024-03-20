@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { backgroundColor, themeColor } from '@/global/constants';
+import { BACKGROUND_COLOR, THEME_COLOR } from '@/global/constants';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
@@ -8,8 +8,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'Kierunek Dzierganie',
     start_url: '/',
     display: 'standalone',
-    background_color: backgroundColor,
-    theme_color: themeColor,
+    background_color: BACKGROUND_COLOR,
+    theme_color: THEME_COLOR,
     icons: [
       {
         src: '/kierunek-dzierganie-logo.png',

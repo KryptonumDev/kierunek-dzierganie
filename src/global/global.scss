@@ -195,7 +195,6 @@ h3 {
   }
 
   @keyframes link {
-
     0%,
     100% {
       transform: scaleX(1);
@@ -227,7 +226,6 @@ h3 {
 
 .sec-wo-margin {
   position: relative;
-
   &::before {
     content: '';
     width: 100vw;
@@ -274,13 +272,13 @@ main {
 
 .orderedList {
   display: grid;
-  row-gap: clamp(12px, calc(16vw/7.68), 16px);
+  row-gap: clamp(12px, calc(16vw / 7.68), 16px);
   padding-left: 20px;
 
   li {
     h3 {
       margin-left: -20px;
-      padding-top: clamp(36px, calc(48vw/7.68), 48px);
+      padding-top: clamp(36px, calc(48vw / 7.68), 48px);
     }
 
     svg {

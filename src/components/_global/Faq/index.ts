@@ -1,6 +1,6 @@
 import Faq from './Faq';
-export type { Props as FaqProps } from './Faq.types';
 export default Faq;
+export type { Props as FaqProps } from './Faq.types';
 
 export const Faq_Query = `
   _type == 'Faq' => {

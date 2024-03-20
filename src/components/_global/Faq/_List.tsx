@@ -1,14 +1,11 @@
 'use client';
 import { useState } from 'react';
-import styles from './Faq.module.scss';
 import { motion } from 'framer-motion';
+import styles from './Faq.module.scss';
 import type { ListProps } from './Faq.types';
 
-const List = ({
-  Indicator,
-  list
-}: ListProps) => {
-  const [ opened, setOpened ] = useState(0);
+const List = ({ Indicator, list }: ListProps) => {
+  const [opened, setOpened] = useState(0);
   const handleClick = (e: React.MouseEvent<HTMLElement>, i: number) => {
     e.preventDefault();
     setOpened(i);

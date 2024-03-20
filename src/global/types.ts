@@ -64,6 +64,35 @@ export type StatutePageQueryProps = {
   page: StatutePage;
 };
 
+export type BlogPageQueryProps = {
+  hero_Heading: string;
+  hero_Paragraph: string;
+  categories_Heading: string;
+  categories_Paragraph: string;
+  blogPosts: {
+    categories: {
+      name: string;
+      slug: string;
+    }[];
+  }[];
+  blog_Heading: string;
+  blog_Paragraph: string;
+  blog_HighlightedPost: {
+    hero_Heading: string;
+    hero_Img: ImgType;
+    hero_Paragraph: string;
+    hero_Author: {
+      heading: string;
+      paragraph: string;
+      img: ImgType;
+    };
+  };
+};
+
+export type BlogCategoryPageQueryProps = {
+  name: string;
+} & BlogPageQueryProps;
+
 export type StatutePage = {
   header_Heading: string;
   header_Description: string;
@@ -99,4 +128,11 @@ export type ProductPageQueryProps = {
 
 export type generateStaticParamsProps = {
   slug: string;
+};
+
+export type BlogsCategoryStaticParamsType = {
+  categories: {
+    name: string;
+    slug: string;
+  }[];
 };
