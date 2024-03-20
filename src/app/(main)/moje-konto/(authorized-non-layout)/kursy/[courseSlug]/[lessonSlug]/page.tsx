@@ -11,6 +11,7 @@ interface QueryProps {
     name: string;
     slug: string;
     chapters: {
+      _id: string;
       chapterDescription: string;
       chapterName: string;
       chapterImage: ImgType;
@@ -37,6 +38,14 @@ type SupabaseData = {
     courses_progress: {
       course_id: string;
       owner_id: string;
+      progress: {
+        [key: string]: {
+          [key: string]: {
+            ended: boolean;
+            notes: string;
+          };
+        };
+      };
     }[];
   };
 };
@@ -70,8 +79,10 @@ const query = async (courseSlug: string, lessonSlug: string) => {
       `
         id, 
         courses_progress (
+          id,
           course_id,
-          owner_id
+          owner_id,
+          progress
         )
       `
     )
@@ -93,6 +104,7 @@ const query = async (courseSlug: string, lessonSlug: string) => {
       name,
       "slug": slug.current,
       chapters {
+        "_id": _key,
         chapterImage {
           asset -> {
             url,

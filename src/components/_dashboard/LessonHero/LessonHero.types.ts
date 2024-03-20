@@ -6,6 +6,7 @@ export type Props = {
     name: string;
     slug: string;
     chapters: {
+      _id: string;
       chapterDescription: string;
       chapterName: string;
       chapterImage: ImgType;
@@ -28,5 +29,13 @@ export type Props = {
   progress: {
     course_id: string;
     owner_id: string;
+    progress: {
+      [key: string]: {
+        [key: string]: {
+          ended: boolean;
+          notes: string;
+        };
+      };
+    };
   };
 };

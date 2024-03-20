@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+'use client';
+import { useEffect, useMemo } from 'react';
 import styles from './LessonHero.module.scss';
 import type { Props } from './LessonHero.types';
 import Link from 'next/link';
@@ -41,29 +42,84 @@ const LessonHero = ({ progress, lesson, course }: Props) => {
     return currIndex;
   }, [currentChapter, lesson]);
 
-  const updateProgress = () => {
-    updateElement({
+  const updateProgress = async () => {
+    const currentChapterId = course.chapters[currChapterIndex]!._id;
+    const currentLessonId = currentChapter.lessons[currentLessonIndex]!._id;
+
+    await updateElement({
       ...progress,
-      chapters: ...course.chapters.map((chapter) => {
-        if (chapter.chapterName === currentChapter.chapterName) {
-          return {
-            ...chapter,
-            lessons: ...chapter.lessons.map((currLesson) => {
-              if (currLesson._id === lesson._id) {
-                return {
-                  _id: currLesson._id,
-                  name: currLesson.name,
-                  isCompleted: true,
-                };
-              }
-              return currLesson;
-            }),
-          };
-        }
-        return chapter;
+      progress: {
+        chapters: {
+          ...progress.progress.chapters,
+          [currentChapterId]: {
+            ...progress.progress.chapters[currentChapterId],
+            lessons: {
+              ...progress.progress.chapters[currentChapterId]!.lessons,
+              [currentLessonId]: true,
+            },
+          },
+        },
+      },
+    })
+      .then(() => {
+        // TODO: check if autoplay enabled
+        if (currentChapter.lessons.length > currentLessonIndex + 1)
+          window.location.href = `/moje-konto/kursy/${course.slug}/${currentChapter.lessons[currentLessonIndex + 1]!.slug}`;
+        else
+          window.location.href = `/moje-konto/kursy/${course.slug}/${course.chapters[currChapterIndex + 1]!.lessons[0]!.slug}`;
       })
-    });
+      .catch(() => {});
   };
+
+  useEffect(() => {
+    // rework to creating an object with all lessons and chapters and then update progress
+    const newObj = {
+      ...progress,
+      progress: course.chapters.reduce(
+        (acc, el) => {
+          acc[el._id] = el.lessons.reduce(
+            (acc, el) => {
+              acc[el._id] = {
+                ended: false,
+                notes: null,
+              };
+              return acc;
+            },
+            {} as Record<string, { ended: boolean; notes: null }>
+          );
+          return acc;
+        },
+        {} as Record<string, Record<string, { ended: boolean; notes: null }>>
+      ),
+    };
+
+    updateElement(newObj);
+
+    // check if there is new lessons/chapters or some lessons/chapters were removed and update progress
+    // const progressChapters = Object.keys(progress.progress.chapters);
+    // const courseChapters = course.chapters.map((el) => el._id);
+    // const currentChapterId = course.chapters[currChapterIndex]!._id;
+    // const currentLessonId = currentChapter.lessons[currentLessonIndex]!._id;
+
+    // const progressLessons = Object.keys(progress.progress.chapters[currentChapterId]!.lessons);
+    // const chapterLessons = currentChapter.lessons.map((el) => el._id);
+    // debugger
+    // if (progressChapters.length !== courseChapters.length) {
+    //   const newChapters = courseChapters.filter((el) => !progressChapters.includes(el));
+    //   newChapters.forEach((el) => {
+    //     progress.progress.chapters[el] = {
+    //       lessons: {},
+    //     };
+    //   });
+    // }
+
+    // if (progressLessons.length !== chapterLessons.length) {
+    //   const newLessons = chapterLessons.filter((el) => !progressLessons.includes(el));
+    //   newLessons.forEach((el) => {
+    //     progress.progress.chapters[courseChapters[currChapterIndex]]!.lessons[el] = false;
+    //   });
+    // }
+  });
 
   return (
     <section className={styles['LessonHero']}>
