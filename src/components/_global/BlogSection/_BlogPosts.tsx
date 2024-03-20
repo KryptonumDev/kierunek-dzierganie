@@ -39,6 +39,7 @@ async function getBlogPostsData() {
         "slug": slug.current
       }
     `,
+    tags: ['BlogPost_Collection'],
   });
   return data;
 }

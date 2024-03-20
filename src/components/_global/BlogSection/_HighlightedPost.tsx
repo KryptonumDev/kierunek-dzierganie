@@ -58,6 +58,7 @@ async function getNewestBlogData() {
         },
       }
     `,
+    tags: ['BlogPost_Collection']
   });
   return data;
 }

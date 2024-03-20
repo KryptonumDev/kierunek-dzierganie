@@ -38,6 +38,7 @@ async function getData() {
       ${BlogSection_Query}
       }
     `,
+    tags: ['Blog_Page'],
   });
   return data;
 }

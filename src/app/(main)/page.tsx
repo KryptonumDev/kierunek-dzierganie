@@ -29,6 +29,7 @@ const query = async (): Promise<PageQueryProps> => {
         ${Components_Query}
       }
     `,
+    tags: ['homepage'],
   });
   return data as PageQueryProps;
 };
