@@ -3,7 +3,6 @@ import styles from './BlogSection.module.scss';
 import HighlightedPost from './_HighlightedPost';
 import BlogPosts from './_BlogPosts';
 import { type BlogSectionTypes } from './BlogSection.types';
-import Pagination from '@/components/ui/Pagination';
 
 const BlogSection = async ({
   data: { blog_Heading, blog_Paragraph, blog_HighlightedPost, slug, number },
@@ -22,7 +21,8 @@ const BlogSection = async ({
         slug={slug}
         number={number}
       />
-      <Pagination
+      {/* <Pagination */}
+
     </section>
   );
 };
