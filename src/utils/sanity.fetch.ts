@@ -18,6 +18,7 @@ export const client = createClient({
   dataset,
   apiVersion,
   perspective: isDraftMode ? 'previewDrafts' : 'published',
+  useCdn: false,
   ...(isDraftMode && { token }),
 });
 
