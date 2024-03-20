@@ -89,6 +89,10 @@ export type BlogPageQueryProps = {
   };
 };
 
+export type BlogCategoryPageQueryProps = {
+  name: string;
+} & BlogPageQueryProps;
+
 export type StatutePage = {
   header_Heading: string;
   header_Description: string;
@@ -124,4 +128,11 @@ export type ProductPageQueryProps = {
 
 export type generateStaticParamsProps = {
   slug: string;
+};
+
+export type BlogsCategoryStaticParamsType = {
+  categories: {
+    name: string;
+    slug: string;
+  }[];
 };
