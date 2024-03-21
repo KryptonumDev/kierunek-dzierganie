@@ -5,6 +5,7 @@ import type { Props } from './LessonHero.types';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import { updateElement } from '@/utils/update-progress';
+import Vimeo from '@u-wave/react-vimeo';
 
 const LessonHero = ({ progress, lesson, course }: Props) => {
   const currentChapter: Props['course']['chapters'][0] = useMemo(() => {
@@ -45,7 +46,6 @@ const LessonHero = ({ progress, lesson, course }: Props) => {
   const updateProgress = async () => {
     const currentChapterId = course.chapters[currChapterIndex]!._id;
     const currentLessonId = currentChapter.lessons[currentLessonIndex]!._id;
-
     await updateElement({
       ...progress,
       progress: {
@@ -66,7 +66,9 @@ const LessonHero = ({ progress, lesson, course }: Props) => {
         else
           window.location.href = `/moje-konto/kursy/${course.slug}/${course.chapters[currChapterIndex + 1]!.lessons[0]!.slug}`;
       })
-      .catch(() => {});
+      .catch(() => {
+
+      });
   };
 
   useEffect(() => {
@@ -119,11 +121,11 @@ const LessonHero = ({ progress, lesson, course }: Props) => {
       <div className={styles['grid']}>
         <div className={styles['content']}>
           <div className={styles.video}>
-            <iframe
-              style={{ width: '100%', height: '100%' }}
-              src={lesson.video}
-              title={lesson.name}
-              allow='fullscreen; picture-in-picture'
+            <Vimeo
+              video='779213971'
+              loop={false}
+              onEnd={updateProgress}
+              className={styles['vimeo']}
             />
           </div>
           <nav className={styles.nav}>

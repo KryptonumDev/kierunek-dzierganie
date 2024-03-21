@@ -5,7 +5,7 @@ import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
-interface QueryProps {
+type QueryProps = {
   course: {
     _id: string;
     name: string;
