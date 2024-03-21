@@ -1,11 +1,8 @@
-import { draftMode } from 'next/headers';
+import { isPreviewDeployment } from '@/utils/is-preview-deployment';
 import styles from './PreviewDeploymentInfo.module.scss';
 
-const isPreview = process.env.VERCEL_ENV === 'preview' || process.env.NODE_ENV !== 'production';
-
 const PreviewDeploymentInfo = () => {
-  if (!isPreview) return;
-  draftMode().enable();
+  if (!isPreviewDeployment) return;
 
   return (
     <p className={styles['PreviewDeploymentInfo']}>
