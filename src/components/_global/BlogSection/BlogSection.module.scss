@@ -2,52 +2,42 @@
   display: grid;
   justify-items: center;
   gap: 64px;
-
   header {
     max-width: 584px;
     text-align: center;
-
-    >h2 {
-      margin-bottom: clamp(16px, calc(28vw/7.68), 38px);
+    > h2 {
+      margin-bottom: clamp(16px, calc(28vw / 7.68), 38px);
     }
   }
-
   .highlightedPost {
     display: grid;
-    gap: clamp(20px, calc(28vw/7.68), 32px);
+    gap: clamp(20px, calc(28vw / 7.68), 32px);
     grid-template-columns: 7fr 5fr;
     border-radius: 4px;
-
     @media (max-width: 999px) {
       grid-template-columns: 1fr;
       background: var(--primary-200);
       width: 100%;
     }
-
-    >img {
+    > img {
       width: 100%;
       height: auto;
       object-fit: contain;
     }
-
     .highlightedPostContent {
       display: grid;
       align-content: space-between;
       gap: 16px;
-
-      >div {
+      > div {
         display: grid;
         gap: 24px;
-
-        >h3 {
-          font-size: clamp(calc(18rem/16), calc(28vw/7.68), calc(28rem/16));
+        > h3 {
+          font-size: clamp(calc(18rem / 16), calc(28vw / 7.68), calc(28rem / 16));
         }
-
-        @media(max-width: 999px) {
+        @media (max-width: 999px) {
           padding: 0px 20px;
         }
       }
-
       .author {
         display: grid;
         grid-template-columns: auto 1fr;
@@ -56,62 +46,52 @@
         padding: 20px 20px 22px 20px;
         background: var(--primary-200);
         align-items: flex-start;
-
-        >img {
+        > img {
           width: 60px;
           height: 60px;
         }
       }
     }
   }
-
   .blogPosts {
     display: grid;
     column-gap: 32px;
-    row-gap: clamp(28px, calc(24vw/7.68), 48px);
+    row-gap: clamp(28px, calc(24vw / 7.68), 48px);
     grid-template-columns: 1fr 1fr 1fr;
-
-    @media(max-width: 999px) {
+    @media (max-width: 999px) {
       grid-template-columns: 1fr;
     }
-
     .item {
       display: grid;
       width: 100%;
       gap: 16px;
       align-items: flex-start;
-
-      @media(max-width: 999px) {
+      @media (max-width: 999px) {
         grid-template-columns: 1fr 0.8fr;
       }
-
-      @media(max-width: 499px) {
+      @media (max-width: 499px) {
         grid-template-columns: 1fr;
       }
-
-      >h3 {
+      > h3 {
         display: -webkit-box;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
       }
-
       p {
         display: -webkit-box;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
         color: var(--primary-700);
-        font-size: calc(14/16)rem;
+        font-size: calc(14 / 16) rem;
       }
-
-      >img {
+      > img {
         width: 100%;
         height: auto;
         object-fit: cover;
       }
-
-      >div {
+      > div {
         display: grid;
         gap: 16px;
       }
