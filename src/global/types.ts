@@ -201,6 +201,7 @@ export type generateBlogPaginationStaticParamsProps = {
 };
 
 export type CoursesProgress = {
+  id: number;
   course_id: string;
   owner_id: string;
   progress: {
@@ -216,3 +217,17 @@ export type CoursesProgress = {
 export type generateStaticParamsBlogPagination = {
   number: string;
 }[];
+
+export type Chapter = {
+  _id: string;
+  chapterDescription: string;
+  chapterName: string;
+  chapterImage: ImgType;
+  lessons: {
+    _id: string;
+    name: string;
+    video: string;
+    lengthInMinutes: number;
+    slug: string;
+  }[];
+};

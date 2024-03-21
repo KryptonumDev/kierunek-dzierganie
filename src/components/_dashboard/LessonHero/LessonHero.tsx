@@ -11,48 +11,13 @@ import { formatBytes } from '@/utils/format-bytes';
 import Switch from '@/components/ui/Switch';
 import { useRouter } from 'next/navigation';
 
-const LessonHero = ({ progress, lesson, course }: Props) => {
+const LessonHero = ({ progress, lesson, course, currentChapter, currentChapterIndex, currentLessonIndex }: Props) => {
   const router = useRouter();
   const [leftHanded, setLeftHanded] = useState(false);
   const [autoplay, setAutoplay] = useState(false);
   const [isCompleted, setIsCompleted] = useState(
     () => progress.progress[course.chapters[0]!._id]![lesson._id]?.ended ?? false
   );
-
-  const currentChapter: Props['course']['chapters'][0] = useMemo(() => {
-    let curr = course.chapters[0]!;
-
-    course.chapters.every((chapter) => {
-      chapter.lessons.forEach((currLesson) => {
-        if (currLesson._id === lesson._id) curr = chapter;
-      });
-      return !curr;
-    });
-
-    return curr;
-  }, [course, lesson]);
-
-  const currChapterIndex = useMemo(() => {
-    let currIndex = 0;
-
-    course.chapters.every((chapter, i) => {
-      if (chapter.chapterName === currentChapter.chapterName) currIndex = i;
-      return !currIndex;
-    });
-
-    return currIndex;
-  }, [course, currentChapter]);
-
-  const currentLessonIndex = useMemo(() => {
-    let currIndex = 0;
-
-    currentChapter.lessons.every((currLesson, i) => {
-      if (currLesson._id === lesson._id) currIndex = i;
-      return !currIndex;
-    });
-
-    return currIndex;
-  }, [currentChapter, lesson]);
 
   const completePercentage = useMemo(() => {
     const totalLessons = currentChapter.lessons.length;
@@ -66,7 +31,7 @@ const LessonHero = ({ progress, lesson, course }: Props) => {
   }, [currentChapter, progress]);
 
   const updateProgress = async (type: 'manual' | 'auto', ended: boolean) => {
-    const currentChapterId = course.chapters[currChapterIndex]!._id;
+    const currentChapterId = currentChapter._id;
     const currentLessonId = currentChapter.lessons[currentLessonIndex]!._id;
     await updateElement({
       ...progress,
@@ -85,7 +50,7 @@ const LessonHero = ({ progress, lesson, course }: Props) => {
         setIsCompleted(ended);
         if (!autoplay && type === 'auto') return;
 
-        if(type === 'manual'){
+        if (type === 'manual') {
           router.refresh();
           return;
         }
@@ -93,7 +58,7 @@ const LessonHero = ({ progress, lesson, course }: Props) => {
         if (currentChapter.lessons.length > currentLessonIndex + 1)
           window.location.href = `/moje-konto/kursy/${course.slug}/${currentChapter.lessons[currentLessonIndex + 1]!.slug}`;
         else
-          window.location.href = `/moje-konto/kursy/${course.slug}/${course.chapters[currChapterIndex + 1]!.lessons[0]!.slug}`;
+          window.location.href = `/moje-konto/kursy/${course.slug}/${course.chapters[currentChapterIndex + 1]!.lessons[0]!.slug}`;
       })
       .catch(() => {});
   };
@@ -137,14 +102,14 @@ const LessonHero = ({ progress, lesson, course }: Props) => {
           <nav className={styles.nav}>
             {currentLessonIndex === 0 ? (
               <>
-                {currChapterIndex === 0 ? (
+                {currentChapterIndex === 0 ? (
                   <div />
                 ) : (
                   <Link
                     className={`${styles['prev']} link`}
                     href={`/moje-konto/kursy/${course.slug}/${
-                      course.chapters[currChapterIndex - 1]!.lessons[
-                        course.chapters[currChapterIndex - 1]!.lessons.length - 1
+                      course.chapters[currentChapterIndex - 1]!.lessons[
+                        course.chapters[currentChapterIndex - 1]!.lessons.length - 1
                       ]!.slug
                     }`}
                   >
@@ -174,12 +139,12 @@ const LessonHero = ({ progress, lesson, course }: Props) => {
               </Link>
             ) : (
               <>
-                {currChapterIndex === course.chapters.length - 1 ? (
+                {currentChapterIndex === course.chapters.length - 1 ? (
                   <div />
                 ) : (
                   <Link
                     className={`${styles['next']} link`}
-                    href={`/moje-konto/kursy/${course.slug}/${course.chapters[currChapterIndex + 1]!.lessons[0]!.slug}`}
+                    href={`/moje-konto/kursy/${course.slug}/${course.chapters[currentChapterIndex + 1]!.lessons[0]!.slug}`}
                   >
                     Następny rozdział
                   </Link>
@@ -196,7 +161,7 @@ const LessonHero = ({ progress, lesson, course }: Props) => {
             </p>
           </div>
           <p className={styles['chapter']}>
-            <span>Moduł {currChapterIndex + 1}:</span> {currentChapter.chapterName}
+            <span>Moduł {currentChapterIndex + 1}:</span> {currentChapter.chapterName}
           </p>
           <div className={styles.lessons}>
             {currentChapter.lessons.map((el, i) => (

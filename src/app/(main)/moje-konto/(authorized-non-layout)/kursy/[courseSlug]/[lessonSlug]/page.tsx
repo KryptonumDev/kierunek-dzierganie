@@ -1,4 +1,5 @@
 import LessonHero from '@/components/_dashboard/LessonHero';
+import LessonNotes from '@/components/_dashboard/LessonNotes';
 import type { ImgType } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
@@ -39,7 +40,7 @@ type QueryProps = {
       };
     }[];
   };
-}
+};
 
 type SupabaseData = {
   data: {
@@ -64,13 +65,54 @@ export default async function Course({
 }: {
   params: { courseSlug: string; lessonSlug: string };
 }) {
-  const { course, lesson, courses_progress }: QueryProps & SupabaseData['data'] = await query(courseSlug, lessonSlug);
+  const {
+    course,
+    lesson,
+    courses_progress,
+  }: QueryProps & { courses_progress: SupabaseData['data']['courses_progress'][0] } = await query(
+    courseSlug,
+    lessonSlug
+  );
+
+  const currentChapterInfo = (() => {
+    let currentChapter = course.chapters[0]!;
+    let currentChapterIndex = 0;
+    let currentLessonIndex = 0;
+
+    course.chapters.every((chapter) => {
+      chapter.lessons.forEach((currentLesson) => {
+        if (currentLesson._id === lesson._id) currentChapter = chapter;
+      });
+      return !currentChapter;
+    });
+
+    course.chapters.every((chapter, i) => {
+      if (chapter.chapterName === currentChapter.chapterName) currentChapterIndex = i;
+      return !currentChapterIndex;
+    });
+
+    currentChapter.lessons.every((currentLesson, i) => {
+      if (currentLesson._id === lesson._id) currentLessonIndex = i;
+      return !currentLessonIndex;
+    });
+
+    return { currentChapter, currentChapterIndex, currentLessonIndex };
+  })();
+
   return (
     <div>
       <LessonHero
         course={course}
         lesson={lesson}
-        progress={courses_progress.find((el) => el.course_id === course._id)!}
+        currentChapter={currentChapterInfo.currentChapter}
+        currentChapterIndex={currentChapterInfo.currentChapterIndex}
+        currentLessonIndex={currentChapterInfo.currentLessonIndex}
+        progress={courses_progress}
+      />
+      <LessonNotes
+        progress={courses_progress}    
+        currentChapter={currentChapterInfo.currentChapter}
+        currentLessonIndex={currentChapterInfo.currentLessonIndex}
       />
     </div>
   );
@@ -170,5 +212,8 @@ const query = async (courseSlug: string, lessonSlug: string) => {
 
   if (!data.lesson) return notFound();
 
-  return { ...data, ...(res as SupabaseData).data };
+  return {
+    ...data,
+    courses_progress: (res as SupabaseData).data.courses_progress.find((el) => el.course_id === data.course._id)!,
+  };
 };

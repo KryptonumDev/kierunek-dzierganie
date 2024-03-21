@@ -1,4 +1,5 @@
 'use server';
+import { CoursesProgress } from '@/global/types';
 import type { QueryData } from '@supabase/supabase-js';
 import { createClient } from '@supabase/supabase-js';
 
@@ -11,19 +12,7 @@ const getServiceAccess = () =>
     },
   });
 
-export async function updateElement(progress: {
-  id: number;
-  course_id: string;
-  owner_id: string;
-  progress: {
-    [key: string]: {
-      [key: string]: {
-        ended: boolean;
-        notes: string;
-      };
-    };
-  };
-}) {
+export async function updateElement(progress: CoursesProgress) {
   const supabase = getServiceAccess();
 
   const updateDataQuery = supabase.from('courses_progress').update(progress).eq('id', progress.id);
