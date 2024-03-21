@@ -4,7 +4,6 @@ import Img, { Img_Query } from '@/components/ui/image';
 import Markdown from '@/components/ui/markdown';
 import styles from './BlogSection.module.scss';
 import { type BlogPostsType } from './BlogSection.types';
-import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 import { POSTS_PER_PAGE } from '@/global/constants';
 

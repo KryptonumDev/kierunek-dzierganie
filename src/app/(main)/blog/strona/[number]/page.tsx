@@ -8,8 +8,7 @@ import {
   type BlogPageQueryProps,
   type generateBlogPaginationStaticParamsProps,
 } from '@/global/types';
-import sanityFetch from '@/utils/sanity.fetch';
-import { blogsPerPage } from 'app-config';
+import { POSTS_PER_PAGE } from '@/global/constants';
 
 const page = { name: 'Blog', path: '/blog' };
 
@@ -36,7 +35,7 @@ export default async function BlogPageNumber({ params: { number } }: { params: {
           paragraph: blog_Paragraph,
           highlightedPost: blog_HighlightedPost,
           number: parseInt(number),
-          blogPosts: blogPosts
+          blogPosts: blogPosts,
         }}
       />
     </>
@@ -59,14 +58,11 @@ async function query(): Promise<BlogPageQueryProps> {
 export async function generateStaticParams(): Promise<generateBlogPaginationStaticParamsProps[]> {
   const data = await sanityFetch<BlogsCategoryStaticParamsType[]>({
     query: /* groq */ `
-      *[_type=="BlogPost_Collection"][] {
-        "categories": category[]-> {
-          name,
-          "slug": slug.current,
-        }
-      }`,
+      count(*[_type == "BlogPost_Collection"][])
+    `,
   });
-  return Array.from({ length: Math.ceil(data.length / blogsPerPage) }, (value, index) => ({
+  
+  return Array.from({ length: Math.ceil(data.length / POSTS_PER_PAGE) }, (value, index) => ({
     number: (index + 1).toString(),
   })).filter(({ number }) => number !== '1');
 }

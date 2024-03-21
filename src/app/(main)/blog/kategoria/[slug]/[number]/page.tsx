@@ -2,15 +2,15 @@ import BlogSection, { BlogSection_Query } from '@/components/_global/BlogSection
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import CategoriesSection, { CategoriesSection_Query } from '@/components/_global/CategoriesSection';
 import HeroBackground, { HeroBackground_Query } from '@/components/_global/HeroBackground';
-import { QueryMetadata } from '@/global/query-metadata';
 import {
   type BlogsCategoryStaticParamsType,
   type BlogCategoryPageQueryProps,
   type generateBlogCategoryPageStaticParamsProps,
 } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
-import { blogsPerPage } from 'app-config';
+import { POSTS_PER_PAGE } from '@/global/constants';
 import { notFound } from 'next/navigation';
+import { QueryMetadata } from '@/global/Seo/query-metadata';
 
 export default async function CategoryPaginationBlogPage({
   params: { slug, number },
@@ -40,11 +40,10 @@ export default async function CategoryPaginationBlogPage({
       <HeroBackground data={{ hero_Heading, hero_Paragraph }} />
       <CategoriesSection data={{ blogPosts, categories_Heading, categories_Paragraph, highlightedCategory: slug }} />
       <BlogSection
-        data={{
-          blog_Heading,
-          blog_Paragraph,
-          blog_HighlightedPost,
-          slug,
+        {...{
+          heading: blog_Heading,
+          paragraph: blog_Paragraph,
+          highlightedPost: blog_HighlightedPost,
           blogPosts: filteredBlogPosts,
           pathPrefix: `/blog/kategoria/${slug}`,
           number: parseInt(number),
@@ -74,7 +73,7 @@ async function getData(slug: string) {
 }
 
 export const generateMetadata = async ({ params: { slug, number } }: { params: { slug: string; number: string } }) => {
-  return await QueryMetadata('BlogCategory_Collection', `/blog/kategoria/${slug}/${number}`, `${slug}`);
+  return await QueryMetadata('BlogCategory_Collection', `/blog/kategoria/${slug}/${number}`, slug);
 };
 
 export async function generateStaticParams(): Promise<generateBlogCategoryPageStaticParamsProps[]> {
@@ -96,7 +95,7 @@ export async function generateStaticParams(): Promise<generateBlogCategoryPageSt
     )
     .map((obj, index, array) => ({
       ...obj,
-      number: Math.ceil((array.filter((o) => o.slug === obj.slug).indexOf(obj) + 1) / blogsPerPage).toString(),
+      number: Math.ceil((array.filter((o) => o.slug === obj.slug).indexOf(obj) + 1) / POSTS_PER_PAGE).toString(),
     }))
     .filter(
       (value, index, self) =>

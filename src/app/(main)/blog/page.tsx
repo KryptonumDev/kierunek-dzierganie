@@ -32,7 +32,7 @@ export default async function BlogPage() {
           highlightedPost: blog_HighlightedPost,
           blogPosts: blogPosts,
         }}
-      /
+      />
     </>
   );
 }

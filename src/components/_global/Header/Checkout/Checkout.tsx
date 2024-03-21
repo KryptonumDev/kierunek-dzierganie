@@ -55,7 +55,7 @@ export default function Checkout({ goToCart, fetchedItems, showCheckout, setShow
 
       return;
     }
-    
+
     setInput((prev) => ({
       ...prev,
       amount: fetchedItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
@@ -65,11 +65,11 @@ export default function Checkout({ goToCart, fetchedItems, showCheckout, setShow
           name: item.name,
           price: item.price,
           quantity: item.quantity,
-          image: (item.variants?.[0]?.gallery?.[0]) ? item.variants[0].gallery[0] : item.gallery,
+          image: item.variants?.[0]?.gallery?.[0] ? item.variants[0].gallery[0] : item.gallery,
         })),
       },
     }));
-  }, [fetchedItems, setInput]);
+  }, [fetchedItems, input.amount, setInput]);
 
   useEffect(() => {
     addEventListener('keydown', (e) => {

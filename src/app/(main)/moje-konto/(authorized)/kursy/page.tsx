@@ -1,5 +1,6 @@
 import EmptyCourses from '@/components/_dashboard/EmptyCourses';
 import ListingCourses from '@/components/_dashboard/ListingCourses';
+import { Img_Query } from '@/components/ui/image';
 import type { ImgType } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
@@ -15,7 +16,7 @@ type QueryProps = {
     name: string;
     slug: string;
     image: ImgType;
-    complexity:  1 | 2 | 3;
+    complexity: 1 | 2 | 3;
     courseLength: string;
   }[];
 };
@@ -47,7 +48,7 @@ const query = async (): Promise<QueryProps> => {
     .from('profiles')
     .select(
       `
-        id, 
+        id,
         courses_progress (
           course_id,
           owner_id
@@ -57,11 +58,10 @@ const query = async (): Promise<QueryProps> => {
     .eq('id', user!.id)
     .single();
 
-  const data = await sanityFetch({
-    query: /* groq */ `
-    {
-    "global":  *[_id == 'global'][0] {
-        image_crochet{
+  const data = await sanityFetch<QueryProps>({
+    query: /* groq */ ` {
+      "global":  *[_id == 'global'][0] {
+        image_crochet {
           asset -> {
             url,
             altText,
@@ -70,51 +70,28 @@ const query = async (): Promise<QueryProps> => {
               dimensions {
                 width,
                 height,
-              }
-            }
-          }
+              },
+            },
+          },
         },
-        image_knitting{
-          asset -> {
-            url,
-            altText,
-            metadata {
-              lqip,
-              dimensions {
-                width,
-                height,
-              }
-            }
-          }
+        image_knitting {
+          ${Img_Query}
         },
       },
-    "courses": *[_type == "course" && _id in $id] {
-      _id,
-      name,
-      // time
-      // level
-      "slug": slug.current,
-      complexity,
-      courseLength,
-      image {
-        asset -> {
-        url,
-        altText,
-        metadata {
-            lqip,
-            dimensions {
-              width,
-              height,
-            }
-          }
-        }
+      "courses": *[_type == "course" && _id in $id] {
+        _id,
+        name,
+        "slug": slug.current,
+        complexity,
+        courseLength,
+        image {
+          ${Img_Query}
+        },
       },
-    }
     }`,
     params: {
       id: res.data!.courses_progress.map((course) => course.course_id),
     },
   });
-
-  return data as QueryProps;
+  return data;
 };

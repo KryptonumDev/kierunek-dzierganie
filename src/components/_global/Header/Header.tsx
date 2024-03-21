@@ -2,11 +2,12 @@ import sanityFetch from '@/utils/sanity.fetch';
 import type { QueryProps } from './Header.types';
 import Content from './_Content';
 import Markdown from '@/components/ui/markdown';
+import { Img_Query } from '@/components/ui/image';
 
 const Header = async () => {
   const { global }: QueryProps = await query();
   const nav_annotation = <Markdown>{global.nav_Annotation ?? ''}</Markdown>;
-  
+
   return (
     <Content
       global={global}
@@ -24,62 +25,34 @@ const Header = async () => {
 export default Header;
 
 const query = async (): Promise<QueryProps> => {
-  const data = await sanityFetch({
+  const data = await sanityFetch<QueryProps>({
     query: /* groq */ `
-    {
-    "global":  *[_id == 'global'][0] {
-        image_crochet{
-          asset -> {
-            url,
-            altText,
-            metadata {
-              lqip,
-              dimensions {
-                width,
-                height,
-              }
-            }
-          }
-        },
-        image_knitting{
-          asset -> {
-            url,
-            altText,
-            metadata {
-              lqip,
-              dimensions {
-                width,
-                height,
-              }
-            }
-          }
-        },
-        nav_Annotation,
-        nav_Links {
-          name,
-          href,
-          sublinks {
-            img {
-              asset -> {
-                url,
-                altText,
-                metadata {
-                  lqip,
-                  dimensions {
-                    width,
-                    height,
-                  }
-                }
-              }
-            },
+      {
+        "global":  *[_id == 'global'][0] {
+          image_crochet {
+            ${Img_Query}
+          },
+          image_knitting {
+            ${Img_Query}
+          },
+          nav_Annotation,
+          nav_Links {
             name,
             href,
-          }[]
-        }[]
-      }`,
+            sublinks {
+              img {
+                ${Img_Query}
+              },
+              name,
+              href,
+            }[],
+          }[],
+        }
+      }
+    `,
     tags: ['global'],
   });
-  return data as QueryProps;
+  return data;
 };
 
 const Logo = (

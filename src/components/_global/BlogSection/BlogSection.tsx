@@ -4,17 +4,17 @@ import HighlightedPost from './_HighlightedPost';
 import BlogPosts from './_BlogPosts';
 import { type BlogSectionTypes } from './BlogSection.types';
 import Pagination from '@/components/ui/Pagination';
-import { blogsPerPage } from 'app-config';
+import { POSTS_PER_PAGE } from '@/global/constants';
 
 const BlogSection = async ({
-    heading,
-    paragraph,
-    highlightedPost,
-    blogPosts,
-    slug,
-    number,
-    pathPrefix = '/blog',
-    isCategoryPagination = false,
+  heading,
+  paragraph,
+  highlightedPost,
+  blogPosts,
+  slug,
+  number,
+  pathPrefix = '/blog',
+  isCategoryPagination = false,
 }: BlogSectionTypes) => {
   return (
     <section className={styles['BlogSection']}>
@@ -33,7 +33,7 @@ const BlogSection = async ({
       <Pagination
         selectedNumber={number}
         numberOfElements={blogPosts.length}
-        elementsDivider={blogsPerPage}
+        elementsDivider={POSTS_PER_PAGE}
         pathPrefix={pathPrefix}
         urlID='#wpisy'
         isCategoryPagination={isCategoryPagination}

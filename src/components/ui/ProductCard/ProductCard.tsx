@@ -48,7 +48,7 @@ const ProductCard = ({ data: { variants }, data, inCart = false }: Props) => {
 
   useEffect(() => {
     if (buttonText !== 'Dodano do koszyka') setButtonText(inCart ? 'Już w koszyku' : 'Dodaj do koszyka');
-  }, [inCart]);
+  }, [inCart, buttonText]);
 
   return (
     <div className={styles['productCard']}>

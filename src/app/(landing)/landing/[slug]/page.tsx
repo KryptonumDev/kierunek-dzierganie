@@ -55,7 +55,8 @@ export async function generateStaticParams(): Promise<generateStaticParamsProps[
     `,
   });
 
-  return data.map(({ slug }) => ({
+  const test = data.map(({ slug }) => ({
     slug,
   }));
+  return test;
 }
