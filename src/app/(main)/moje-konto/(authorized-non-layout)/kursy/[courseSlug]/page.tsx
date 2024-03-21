@@ -1,5 +1,5 @@
 import CourseChapters from '@/components/_dashboard/CourseChapters';
-import type { ImgType } from '@/global/types';
+import type { ImgType, CoursesProgress } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
@@ -11,10 +11,12 @@ interface QueryProps {
     name: string;
     slug: string;
     chapters: {
+      _id: string;
       chapterDescription: string;
       chapterName: string;
       chapterImage: ImgType;
       lessons: {
+        _id: string;
         name: string;
         video: string;
         lengthInMinutes: number;
@@ -26,23 +28,23 @@ interface QueryProps {
 
 type SupabaseData = {
   data: {
-    courses_progress: {
-      course_id: string;
-      owner_id: string;
-    }[];
+    courses_progress: CoursesProgress[];
   };
 };
 
 export default async function Course({ params: { courseSlug } }: { params: { courseSlug: string } }) {
-  const { course }: QueryProps = await query(courseSlug);
+  const { course, courses_progress }: QueryProps & { courses_progress: CoursesProgress } = await query(courseSlug);
   return (
     <div>
-      <CourseChapters course={course} />
+      <CourseChapters
+        courses_progress={courses_progress}
+        course={course}
+      />
     </div>
   );
 }
 
-const query = async (slug: string): Promise<QueryProps> => {
+const query = async (slug: string): Promise<QueryProps & { courses_progress: CoursesProgress }> => {
   const supabase = createServerActionClient({ cookies });
   const {
     data: { user },
@@ -55,7 +57,8 @@ const query = async (slug: string): Promise<QueryProps> => {
         id, 
         courses_progress (
           course_id,
-          owner_id
+          owner_id,
+          progress
         )
       `
     )
@@ -70,6 +73,7 @@ const query = async (slug: string): Promise<QueryProps> => {
       name,
       "slug": slug.current,
       chapters {
+        "_id": _key,
         chapterImage {
           asset -> {
             url,
@@ -114,5 +118,8 @@ const query = async (slug: string): Promise<QueryProps> => {
 
   if (!(res as SupabaseData).data.courses_progress.some((el) => el.course_id === data.course._id)) return notFound();
 
-  return data;
+  return {
+    course: data.course,
+    courses_progress: (res as SupabaseData).data.courses_progress.find((el) => el.course_id === data.course._id)!,
+  };
 };

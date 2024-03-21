@@ -195,6 +195,20 @@ export type BlogsCategoryStaticParamsType = {
     slug: string;
   }[];
 };
+
 export type generateBlogPaginationStaticParamsProps = {
   number: string;
+};
+
+export type CoursesProgress = {
+  course_id: string;
+  owner_id: string;
+  progress: {
+    [key: string]: {
+      [key: string]: {
+        ended: boolean;
+        notes: string;
+      };
+    };
+  };
 };

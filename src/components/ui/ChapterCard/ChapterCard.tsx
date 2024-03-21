@@ -1,9 +1,30 @@
+import { useMemo } from 'react';
 import Button from '../Button';
 import Img from '../image';
 import styles from './ChapterCard.module.scss';
 import type { Props } from './ChapterCard.types';
 
-const ChapterCard = ({ name, image, description, lessons, courseSlug, number }: Props) => {
+const ChapterCard = ({ name, image, description, lessons, courseSlug, number, progress }: Props) => {
+  const completionPercentage = useMemo(() => {
+    let totalLessons = 0;
+    let completedLessons = 0;
+
+    for (const lessonId in progress) {
+      totalLessons++;
+      if (progress[lessonId]!.ended) {
+        completedLessons++;
+      }
+    }
+
+    // if 0 lessons, return to avoid division by 0
+    if (totalLessons === 0) {
+      return 0;
+    }
+
+    const completionPercentage = (completedLessons / totalLessons) * 100;
+    return completionPercentage;
+  }, [progress]);
+
   return (
     <div className={styles['chapterCard']}>
       <div>
@@ -22,7 +43,7 @@ const ChapterCard = ({ name, image, description, lessons, courseSlug, number }: 
         <p>{description}</p>
       </div>
       <div className={styles['flex']}>
-        <span>Ukończono 0%</span>
+        <span>Ukończono {completionPercentage}%</span>
         <Button href={`/moje-konto/kursy/${courseSlug}/${lessons[0]?.slug}`}>Oglądaj</Button>
       </div>
     </div>
