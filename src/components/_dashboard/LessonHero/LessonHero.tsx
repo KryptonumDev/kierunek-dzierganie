@@ -1,5 +1,5 @@
 'use client';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import styles from './LessonHero.module.scss';
 import type { Props } from './LessonHero.types';
 import Link from 'next/link';
@@ -8,8 +8,17 @@ import { updateElement } from '@/utils/update-progress';
 import Vimeo from '@u-wave/react-vimeo';
 import PercentChart from '@/components/ui/PercentChart';
 import { formatBytes } from '@/utils/format-bytes';
+import Switch from '@/components/ui/Switch';
+import { useRouter } from 'next/navigation';
 
 const LessonHero = ({ progress, lesson, course }: Props) => {
+  const router = useRouter();
+  const [leftHanded, setLeftHanded] = useState(false);
+  const [autoplay, setAutoplay] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(
+    () => progress.progress[course.chapters[0]!._id]![lesson._id]?.ended ?? false
+  );
+
   const currentChapter: Props['course']['chapters'][0] = useMemo(() => {
     let curr = course.chapters[0]!;
 
@@ -56,7 +65,7 @@ const LessonHero = ({ progress, lesson, course }: Props) => {
     return Math.round((completedLessons / totalLessons) * 100);
   }, [currentChapter, progress]);
 
-  const updateProgress = async () => {
+  const updateProgress = async (type: 'manual' | 'auto', ended: boolean) => {
     const currentChapterId = course.chapters[currChapterIndex]!._id;
     const currentLessonId = currentChapter.lessons[currentLessonIndex]!._id;
     await updateElement({
@@ -67,13 +76,20 @@ const LessonHero = ({ progress, lesson, course }: Props) => {
           ...progress.progress[currentChapterId],
           [currentLessonId]: {
             notes: '',
-            ended: true,
+            ended: ended,
           },
         },
       },
     })
       .then(() => {
-        // TODO: check if autoplay enabled
+        setIsCompleted(ended);
+        if (!autoplay && type === 'auto') return;
+
+        if(type === 'manual'){
+          router.refresh();
+          return;
+        }
+
         if (currentChapter.lessons.length > currentLessonIndex + 1)
           window.location.href = `/moje-konto/kursy/${course.slug}/${currentChapter.lessons[currentLessonIndex + 1]!.slug}`;
         else
@@ -114,7 +130,7 @@ const LessonHero = ({ progress, lesson, course }: Props) => {
             <Vimeo
               video={lesson.video}
               loop={false}
-              onEnd={updateProgress}
+              onEnd={() => updateProgress('auto', true)}
               className={styles['vimeo']}
             />
           </div>
@@ -144,7 +160,11 @@ const LessonHero = ({ progress, lesson, course }: Props) => {
                 Poprzednia lekcja
               </Link>
             )}
-            <Button onClick={updateProgress}>Oznacz jako ukończoną</Button>
+            {isCompleted ? (
+              <Button onClick={() => updateProgress('manual', false)}>Oznacz jako nieukończoną</Button>
+            ) : (
+              <Button onClick={() => updateProgress('manual', true)}>Oznacz jako ukończoną</Button>
+            )}
             {currentChapter.lessons.length > currentLessonIndex + 1 ? (
               <Link
                 className={`${styles['next']} link`}
@@ -193,8 +213,8 @@ const LessonHero = ({ progress, lesson, course }: Props) => {
       </div>
       <div className={styles['columns']}>
         <div className={styles['column']}>
-          <button>Autoodtwarzanie</button>
-          <button>Jestem osobą leworęczną</button>
+          <Switch inputProps={{ onClick: () => setAutoplay(!autoplay) }}>Autoodtwarzanie</Switch>
+          <Switch inputProps={{ onClick: () => setLeftHanded(!leftHanded) }}>Jestem osobą leworęczną</Switch>
           <p>Ustawienie te dostosowuje w jaki sposób wyświetlają Ci się kursy i pliki do lekcji</p>
         </div>
         <div className={styles['column']}>

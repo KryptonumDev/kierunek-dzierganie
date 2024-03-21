@@ -1,8 +1,9 @@
 .LessonHero {
   .columns {
     display: flex;
-    gap: 80px;
-    margin-top: 80px;
+    gap: clamp(36px, calc(48vw/7.68), 80px);
+    margin-top: clamp(36px, calc(48vw/7.68), 80px);
+    flex-wrap: wrap;
 
     .column {
       max-width: 285px;
@@ -21,7 +22,7 @@
         margin-top: 8px;
       }
 
-      label+label{
+      label + label {
         margin-top: 20px;
       }
 
@@ -52,7 +53,12 @@
     display: grid;
     grid-template-columns: 1fr 380px;
     gap: 32px;
+
+    @media (max-width: 1080px) {
+      grid-template-columns: 1fr;
+    }
   }
+
   .video {
     aspect-ratio: 16/9;
     background-color: var(--background-300);
@@ -79,6 +85,9 @@
       font-size: 18px;
       font-weight: 300;
       line-height: 150%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
   }
   .chapter {
@@ -97,6 +106,8 @@
       button:nth-child(2) {
         order: 2;
         grid-column: 3/1;
+        grid-row: 1;
+        margin: 0 auto;
       }
     }
 
