@@ -29,7 +29,7 @@ const CategoriesSection = ({
       <div className={styles.categories}>
         {uniqueCategories.map(({ name, slug }) => (
           <Link
-            href={`/blog/kategoria/${slug}`}
+            href={slug == highlightedCategory ? '/blog' : `/blog/kategoria/${slug}`}
             key={name}
             className={styles.category}
             data-highlighted={slug == highlightedCategory}

@@ -1,5 +1,8 @@
 export type PaginationTypes = {
-  currentPage: number;
-  numPages: number;
-  pathPrefix: string;
-}
+  selectedNumber?: number;
+  numberOfElements: number;
+  elementsDivider: number;
+  pathPrefix?: string;
+  isCategoryPagination?: boolean;
+  urlID?: string;
+};

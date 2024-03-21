@@ -24,7 +24,7 @@ export default async function BlogPage() {
       <Breadcrumbs data={[page]} />
       <HeroBackground data={{ hero_Heading, hero_Paragraph }} />
       <CategoriesSection data={{ blogPosts, categories_Heading, categories_Paragraph }} />
-      <BlogSection data={{ blog_Heading, blog_Paragraph, blog_HighlightedPost }} />
+      <BlogSection data={{ blog_Heading, blog_Paragraph, blog_HighlightedPost, blogPosts }} />
     </>
   );
 }

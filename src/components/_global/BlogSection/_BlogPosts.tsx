@@ -5,6 +5,7 @@ import styles from './BlogSection.module.scss';
 import { type BlogPostsType } from './BlogSection.types';
 import { blogsPerPage } from 'app-config';
 import { notFound, redirect } from 'next/navigation';
+import Link from 'next/link';
 
 export default async function BlogPosts({ slug, number }: { slug?: string; number?: number }) {
   if (number == 1) {
@@ -16,11 +17,15 @@ export default async function BlogPosts({ slug, number }: { slug?: string; numbe
     ? (blogPosts = await getCategoryBlogPostData(selectedPage, slug))
     : (blogPosts = await getBlogPostData(selectedPage));
   return (
-    <div className={styles.blogPosts}>
-      {blogPosts.map(({ hero_Heading, hero_Paragraph, hero_Img }, i) => (
-        <div
+    <div
+      className={styles.blogPosts}
+      id='wpisy'
+    >
+      {blogPosts.map(({ hero_Heading, hero_Paragraph, hero_Img, slug }, i) => (
+        <Link
           key={i}
           className={styles.item}
+          href={`/blog/${slug}`}
         >
           <Img
             data={hero_Img}
@@ -30,7 +35,7 @@ export default async function BlogPosts({ slug, number }: { slug?: string; numbe
             <Markdown.h3>{hero_Heading}</Markdown.h3>
             <Markdown>{hero_Paragraph}</Markdown>
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   );

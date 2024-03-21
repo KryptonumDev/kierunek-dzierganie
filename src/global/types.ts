@@ -91,6 +91,12 @@ export type BlogPageQueryProps = {
 
 export type BlogCategoryPageQueryProps = {
   name: string;
+  filteredBlogPosts: {
+    categories: {
+      name: string;
+      slug: string;
+    }[];
+  }[];
 } & BlogPageQueryProps;
 
 export type StatutePage = {
@@ -130,9 +136,17 @@ export type generateStaticParamsProps = {
   slug: string;
 };
 
+export type generateBlogCategoryPageStaticParamsProps = {
+  slug: string;
+  number: string;
+};
+
 export type BlogsCategoryStaticParamsType = {
   categories: {
     name: string;
     slug: string;
   }[];
+};
+export type generateBlogPaginationStaticParamsProps = {
+  number: string;
 };

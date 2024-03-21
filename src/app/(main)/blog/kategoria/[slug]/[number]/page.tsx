@@ -4,14 +4,19 @@ import CategoriesSection, { CategoriesSection_Query } from '@/components/_global
 import HeroBackground, { HeroBackground_Query } from '@/components/_global/HeroBackground';
 import { QueryMetadata } from '@/global/query-metadata';
 import {
-  type generateStaticParamsProps,
   type BlogsCategoryStaticParamsType,
   type BlogCategoryPageQueryProps,
+  type generateBlogCategoryPageStaticParamsProps,
 } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
+import { blogsPerPage } from 'app-config';
 import { notFound } from 'next/navigation';
 
-export default async function CategoryBlogPage({ params: { slug } }: { params: { slug: string } }) {
+export default async function CategoryPaginationBlogPage({
+  params: { slug, number },
+}: {
+  params: { slug: string; number: string };
+}) {
   const {
     hero_Heading,
     hero_Paragraph,
@@ -42,6 +47,7 @@ export default async function CategoryBlogPage({ params: { slug } }: { params: {
           slug,
           blogPosts: filteredBlogPosts,
           pathPrefix: `/blog/kategoria/${slug}`,
+          number: parseInt(number),
           isCategoryPagination: true,
         }}
       />
@@ -67,11 +73,11 @@ async function getData(slug: string) {
   return data;
 }
 
-export const generateMetadata = async ({ params: { slug } }: { params: { slug: string } }) => {
-  return await QueryMetadata('BlogCategory_Collection', `/blog/kategoria/${slug}`, `${slug}`);
+export const generateMetadata = async ({ params: { slug, number } }: { params: { slug: string; number: string } }) => {
+  return await QueryMetadata('BlogCategory_Collection', `/blog/kategoria/${slug}/${number}`, `${slug}`);
 };
 
-export async function generateStaticParams(): Promise<generateStaticParamsProps[]> {
+export async function generateStaticParams(): Promise<generateBlogCategoryPageStaticParamsProps[]> {
   const data = await sanityFetch<BlogsCategoryStaticParamsType[]>({
     query: /* groq */ `
       *[_type=="BlogPost_Collection"][] {
@@ -81,11 +87,19 @@ export async function generateStaticParams(): Promise<generateStaticParamsProps[
         }
       }`,
   });
-  const allCategories = data.flatMap((post) => post.categories || []);
-  const uniqueCategories = allCategories.filter(
-    (category, index, self) => index === self.findIndex((c) => c.name === category.name)
-  );
-  return uniqueCategories.map(({ slug }) => ({
-    slug,
-  }));
+  return data
+    .flatMap((entry) =>
+      entry.categories.map((category) => {
+        const categorySlug = category.slug;
+        return { slug: categorySlug };
+      })
+    )
+    .map((obj, index, array) => ({
+      ...obj,
+      number: Math.ceil((array.filter((o) => o.slug === obj.slug).indexOf(obj) + 1) / blogsPerPage).toString(),
+    }))
+    .filter(
+      (value, index, self) =>
+        index === self.findIndex((v) => v.number === value.number && v.slug === value.slug) && value.number !== '1'
+    );
 }

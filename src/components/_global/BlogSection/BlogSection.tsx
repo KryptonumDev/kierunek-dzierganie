@@ -3,9 +3,20 @@ import styles from './BlogSection.module.scss';
 import HighlightedPost from './_HighlightedPost';
 import BlogPosts from './_BlogPosts';
 import { type BlogSectionTypes } from './BlogSection.types';
+import Pagination from '@/components/ui/Pagination';
+import { blogsPerPage } from 'app-config';
 
 const BlogSection = async ({
-  data: { blog_Heading, blog_Paragraph, blog_HighlightedPost, slug, number },
+  data: {
+    blog_Heading,
+    blog_Paragraph,
+    blog_HighlightedPost,
+    blogPosts,
+    slug,
+    number,
+    pathPrefix = '/blog',
+    isCategoryPagination = false,
+  },
 }: BlogSectionTypes) => {
   return (
     <section className={styles['BlogSection']}>
@@ -21,8 +32,14 @@ const BlogSection = async ({
         slug={slug}
         number={number}
       />
-      {/* <Pagination */}
-
+      <Pagination
+        selectedNumber={number}
+        numberOfElements={blogPosts.length}
+        elementsDivider={blogsPerPage}
+        pathPrefix={pathPrefix}
+        urlID='#wpisy'
+        isCategoryPagination={isCategoryPagination}
+      />
     </section>
   );
 };
