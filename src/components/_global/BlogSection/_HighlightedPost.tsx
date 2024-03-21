@@ -3,6 +3,7 @@ import styles from './BlogSection.module.scss';
 import { type HighlightedPostType } from './BlogSection.types';
 import Markdown from '@/components/ui/markdown';
 import sanityFetch from '@/utils/sanity.fetch';
+import Link from 'next/link';
 
 export default async function HighlightedPost({
   highlightedPost,
@@ -17,16 +18,19 @@ export default async function HighlightedPost({
   const {
     hero_Img,
     hero_Heading,
+    href,
     hero_Paragraph,
     hero_Author: { heading, img, paragraph },
   } = highlightedPost;
 
   return (
     <div className={styles.highlightedPost}>
-      <Img
-        data={hero_Img}
-        sizes=''
-      />
+      <Link href={`/blog/${href}`}>
+        <Img
+          data={hero_Img}
+          sizes=''
+        />
+      </Link>
       <div className={styles.highlightedPostContent}>
         <div>
           <Markdown.h3>{hero_Heading}</Markdown.h3>
@@ -35,7 +39,7 @@ export default async function HighlightedPost({
         <div className={styles.author}>
           <Img
             data={img}
-            sizes=''
+            sizes='(max-width: 999px) 100vw, 50vw'
           />
           <div>
             <Markdown.h3>{heading}</Markdown.h3>
@@ -54,6 +58,7 @@ async function getNewestBlogData() {
         hero_Img {
           ${Img_Query}
         },
+        "href": slug.current,
         hero_Heading,
         hero_Paragraph,
         hero_Author-> {
@@ -78,6 +83,7 @@ async function getNewestCategoryBlogData(slug: string) {
           ${Img_Query}
         },
         hero_Heading,
+        "href": slug.current,
         hero_Paragraph,
         hero_Author-> {
           heading,

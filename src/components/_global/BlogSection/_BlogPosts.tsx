@@ -3,8 +3,10 @@ import sanityFetch from '@/utils/sanity.fetch';
 import Img, { Img_Query } from '@/components/ui/image';
 import Markdown from '@/components/ui/markdown';
 import styles from './BlogSection.module.scss';
+import { type BlogPostsType } from './BlogSection.types';
+import { notFound, redirect } from 'next/navigation';
+import Link from 'next/link';
 import { POSTS_PER_PAGE } from '@/global/constants';
-import type { BlogPostsType } from './BlogSection.types';
 
 export default async function BlogPosts({ slug, number }: { slug?: string; number?: number }) {
   if (number == 1) {
@@ -17,21 +19,25 @@ export default async function BlogPosts({ slug, number }: { slug?: string; numbe
     : (blogPosts = await getBlogPostData(selectedPage));
 
   return (
-    <div className={styles.blogPosts}>
-      {blogPosts.map(({ hero_Heading, hero_Paragraph, hero_Img }, i) => (
-        <div
+    <div
+      className={styles.blogPosts}
+      id='wpisy'
+    >
+      {blogPosts.map(({ hero_Heading, hero_Paragraph, hero_Img, slug }, i) => (
+        <Link
           key={i}
           className={styles.item}
+          href={`/blog/${slug}`}
         >
           <Img
             data={hero_Img}
-            sizes=''
+            sizes='(max-width: 499px) 100vw, (max-width: 999px) 50vw, 33vw'
           />
           <div>
             <Markdown.h3>{hero_Heading}</Markdown.h3>
             <Markdown>{hero_Paragraph}</Markdown>
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   );

@@ -3,7 +3,13 @@ import BlogSection, { BlogSection_Query } from '@/components/_global/BlogSection
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import CategoriesSection, { CategoriesSection_Query } from '@/components/_global/CategoriesSection';
 import HeroBackground, { HeroBackground_Query } from '@/components/_global/HeroBackground';
-import { type BlogPageQueryProps } from '@/global/types';
+import {
+  type BlogsCategoryStaticParamsType,
+  type BlogPageQueryProps,
+  type generateBlogPaginationStaticParamsProps,
+} from '@/global/types';
+import sanityFetch from '@/utils/sanity.fetch';
+import { blogsPerPage } from 'app-config';
 
 const page = { name: 'Blog', path: '/blog' };
 
@@ -30,6 +36,7 @@ export default async function BlogPageNumber({ params: { number } }: { params: {
           paragraph: blog_Paragraph,
           highlightedPost: blog_HighlightedPost,
           number: parseInt(number),
+          blogPosts: blogPosts
         }}
       />
     </>
@@ -47,4 +54,19 @@ async function query(): Promise<BlogPageQueryProps> {
     `,
     tags: ['Blog_Page'],
   });
+}
+
+export async function generateStaticParams(): Promise<generateBlogPaginationStaticParamsProps[]> {
+  const data = await sanityFetch<BlogsCategoryStaticParamsType[]>({
+    query: /* groq */ `
+      *[_type=="BlogPost_Collection"][] {
+        "categories": category[]-> {
+          name,
+          "slug": slug.current,
+        }
+      }`,
+  });
+  return Array.from({ length: Math.ceil(data.length / blogsPerPage) }, (value, index) => ({
+    number: (index + 1).toString(),
+  })).filter(({ number }) => number !== '1');
 }
