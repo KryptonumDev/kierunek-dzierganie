@@ -1,3 +1,4 @@
+import { notFound } from 'next/navigation';
 import BlogSection, { BlogSection_Query } from '@/components/_global/BlogSection';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import CategoriesSection, { CategoriesSection_Query } from '@/components/_global/CategoriesSection';
@@ -9,7 +10,6 @@ import {
   type BlogCategoryPageQueryProps,
 } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
-import { notFound } from 'next/navigation';
 
 export default async function CategoryBlogPage({ params: { slug } }: { params: { slug: string } }) {
   const {
