@@ -3,6 +3,7 @@ import Button from '../Button';
 import Img from '../image';
 import styles from './ChapterCard.module.scss';
 import type { Props } from './ChapterCard.types';
+import PercentChart from '../PercentChart';
 
 const ChapterCard = ({ name, image, description, lessons, courseSlug, number, progress }: Props) => {
   const completionPercentage = useMemo(() => {
@@ -43,7 +44,9 @@ const ChapterCard = ({ name, image, description, lessons, courseSlug, number, pr
         <p>{description}</p>
       </div>
       <div className={styles['flex']}>
-        <span>Ukończono {completionPercentage}%</span>
+        <span>
+          Ukończono <PercentChart p={completionPercentage} />
+        </span>
         <Button href={`/moje-konto/kursy/${courseSlug}/${lessons[0]?.slug}`}>Oglądaj</Button>
       </div>
     </div>

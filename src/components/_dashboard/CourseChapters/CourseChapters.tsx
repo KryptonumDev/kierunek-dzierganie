@@ -2,6 +2,7 @@ import ChapterCard from '@/components/ui/ChapterCard';
 import styles from './CourseChapters.module.scss';
 import type { Props } from './CourseChapters.types';
 import { useMemo } from 'react';
+import PercentChart from '@/components/ui/PercentChart';
 
 function CourseChapters({ courses_progress, course }: Props) {
   const completionPercentage = useMemo(() => {
@@ -32,7 +33,7 @@ function CourseChapters({ courses_progress, course }: Props) {
       <div className={styles['title']}>
         <h1>{course.name}</h1>
         <p>
-          Ukończono <span>{completionPercentage}%</span>
+          Ukończono <PercentChart p={completionPercentage} />
         </p>
       </div>
       <div className={styles['grid']}>
