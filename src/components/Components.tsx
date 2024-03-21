@@ -31,14 +31,17 @@ import CustomerCaseStudy, {
   CustomerCaseStudy_Query,
   type CustomerCaseStudyProps,
 } from '@/components/_global/CustomerCaseStudy';
-import WordsCollection, { WordsCollection_Query, type WordsCollectionProps } from './_global/WordsCollection';
-import Partners, { Partners_Query, type PartnersProps } from './_global/Partners';
-import Faq, { Faq_Query, FaqProps } from './_global/Faq';
+import WordsCollection, {
+  WordsCollection_Query,
+  type WordsCollectionProps,
+} from '@/components/_global/WordsCollection';
+import Partners, { Partners_Query, type PartnersProps } from '@/components/_global/Partners';
+import Faq, { Faq_Query, type FaqTypes } from '@/components/_global/Faq';
 
 type ComponentMap = {
   HeroBackgroundImg: HeroBackgroundImgProps;
   Benefits: BenefitsProps;
-  Faq: FaqProps;
+  Faq: FaqTypes;
   Opinions: OpinionsProps;
   CtaSection: CtaSectionProps;
   SimpleCtaSection: SimpleCtaSectionProps;
@@ -77,7 +80,7 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
         />
       ),
       Benefits: <Benefits {...(item as BenefitsProps)} />,
-      Faq: <Faq {...(item as FaqProps)} />,
+      Faq: <Faq {...(item as FaqTypes)} />,
       Opinions: <Opinions {...(item as OpinionsProps)} />,
       CtaSection: <CtaSection {...(item as CtaSectionProps)} />,
       SimpleCtaSection: <SimpleCtaSection {...(item as SimpleCtaSectionProps)} />,
