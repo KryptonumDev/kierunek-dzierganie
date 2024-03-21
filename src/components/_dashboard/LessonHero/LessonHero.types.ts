@@ -25,6 +25,14 @@ export type Props = {
     slug: string;
     video: string;
     lengthInMinutes: number;
+    files: {
+      asset: {
+        url: string;
+        size: number;
+        originalFilename: string;
+        _id: string;
+      };
+    }[];
   };
   progress: {
     id: number;

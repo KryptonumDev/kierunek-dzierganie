@@ -30,6 +30,14 @@ type QueryProps = {
     slug: string;
     video: string;
     lengthInMinutes: number;
+    files: {
+      asset: {
+        url: string;
+        size: number;
+        originalFilename: string;
+        _id: string;
+      };
+    }[];
   };
 }
 
@@ -99,6 +107,14 @@ const query = async (courseSlug: string, lessonSlug: string) => {
       "slug": slug.current,
       video,
       lengthInMinutes,
+      files[]{
+        asset->{
+          url,
+          size,
+          originalFilename,
+          _id
+        }
+      }
     },
     "course": *[_type == "course" && slug.current == $courseSlug][0]{
       _id,
