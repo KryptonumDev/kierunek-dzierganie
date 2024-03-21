@@ -17,8 +17,6 @@ export type SliderProps = {
     review: string;
     images: React.ReactNode[];
   }[];
-  LeftIcon: React.ReactNode;
-  RightIcon: React.ReactNode;
   QuoteIcon: React.ReactNode;
   RatingIcon: React.ReactNode;
 };

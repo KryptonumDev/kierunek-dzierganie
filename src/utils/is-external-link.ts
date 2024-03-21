@@ -1,9 +1,7 @@
-import { domain } from '@/global/constants';
+import { DOMAIN } from '@/global/constants';
 
 const isExternalLink = (href?: string) =>
   href &&
-  ((href.startsWith('https://') && !href.startsWith(domain)) ||
-    href.startsWith('mailto:') ||
-    href.startsWith('tel:'));
+  ((href.startsWith('https://') && !href.startsWith(DOMAIN)) || href.startsWith('mailto:') || href.startsWith('tel:'));
 
 export default isExternalLink;

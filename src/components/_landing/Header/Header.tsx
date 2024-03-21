@@ -1,4 +1,3 @@
-import { draftMode } from 'next/headers';
 import sanityFetch from '@/utils/sanity.fetch';
 import styles from './Header.module.scss';
 import { Facebook, Instagram, Youtube } from '@/components/ui/Icons';
@@ -63,7 +62,7 @@ const query = async (): Promise<QueryProps> => {
         youtube,
       }
     `,
-    isDraftMode: draftMode().isEnabled,
+    tags: ['global'],
   });
   return data as QueryProps;
 };

@@ -1,0 +1,39 @@
+.Contents {
+  display: grid;
+  gap: clamp(96px, calc(144vw/7.68), 144px);
+  counter-reset: section;
+
+  .content {
+    display: grid;
+    gap: clamp(20px, calc(28vw/7.68), 36px);
+
+    .title {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+
+      &::before {
+        counter-increment: section;
+        content: '§' counter(section);
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: var(--primary-200);
+        color: var(--primary-700);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-city-streetwear);
+        font-size: clamp(calc(32rem/16), calc(48vw/7.68), calc(48rem/16));
+        font-weight: 400;
+        line-height: clamp(32px, calc(42vw/7.68), 42px);
+        padding-top: 12px;
+      }
+    }
+
+    .description {
+      display: grid;
+      gap: clamp(16px, calc(20vw/7.68), 20px);
+    }
+  }
+}

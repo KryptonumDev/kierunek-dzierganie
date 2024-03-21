@@ -1,35 +1,25 @@
-import { draftMode } from 'next/headers';
 import sanityFetch from '@/utils/sanity.fetch';
-import Seo, { Seo_Query } from '@/global/Seo';
 import type { PageQueryProps } from '@/global/types';
 import Components, { Components_Query } from '@/components/Components';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
+import { QueryMetadata } from '@/global/Seo/query-metadata';
 
 const page = { name: 'Newsletter', path: '/newsletter' };
 
-const PartnersPage = async () => {
+const NewsletterPage = async () => {
   const { content }: PageQueryProps = await query();
-
-  console.log(content);
 
   return (
     <>
-      <Breadcrumbs data={[{ name: page.name, path: page.path }]} />
+      <Breadcrumbs data={[page]} />
       <Components data={content} />
     </>
   );
 };
-export default PartnersPage;
+export default NewsletterPage;
 
 export async function generateMetadata() {
-  const {
-    seo: { title, description },
-  } = await query();
-  return Seo({
-    title,
-    description,
-    path: page.path,
-  });
+  return await QueryMetadata('Newsletter_Page', `${page.path}`);
 }
 
 const query = async (): Promise<PageQueryProps> => {
@@ -37,10 +27,9 @@ const query = async (): Promise<PageQueryProps> => {
     query: /* groq */ `
       *[_type == "Newsletter_Page"][0] {
         ${Components_Query}
-        ${Seo_Query}
       }
     `,
-    isDraftMode: draftMode().isEnabled,
+    tags: ['Newsletter_Page'],
   });
   return data as PageQueryProps;
 };

@@ -6,8 +6,9 @@ import 'swiper/css';
 import { Swiper, SwiperSlide, type SwiperRef } from 'swiper/react';
 import { A11y } from 'swiper/modules';
 import type { SliderProps } from './Reviews.types';
+import SliderControls from '@/components/ui/SliderControls';
 
-const Slider = ({ list, LeftIcon, RightIcon, QuoteIcon, RatingIcon }: SliderProps) => {
+const Slider = ({ list, QuoteIcon, RatingIcon }: SliderProps) => {
   const listLength = list.length;
   const ref = useRef<SwiperRef | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -59,35 +60,7 @@ const Slider = ({ list, LeftIcon, RightIcon, QuoteIcon, RatingIcon }: SliderProp
           </SwiperSlide>
         ))}
       </Swiper>
-      <div className={styles.controls}>
-        <button
-          onClick={handlePrev}
-          disabled={activeIndex === 0}
-          aria-label='Przejdź do poprzedniego elementu'
-          className={styles.button}
-        >
-          {LeftIcon}
-        </button>
-        <div>
-          {Array.from({ length: listLength }).map((_, i) => (
-            <button
-              key={i}
-              aria-label={`Przejdź do ${i + 1} opinii`}
-              className={styles.pagination}
-              data-active={activeIndex === i}
-              onClick={() => slideTo(i)}
-            />
-          ))}
-        </div>
-        <button
-          onClick={handleNext}
-          disabled={activeIndex === listLength - 1}
-          aria-label='Przejdź do następnego elementu'
-          className={styles.button}
-        >
-          {RightIcon}
-        </button>
-      </div>
+      <SliderControls {...{ activeIndex, handlePrev, handleNext, slideTo, length: listLength }} />
       <p className={styles.login}>
         <Link
           href='/moje-konto/autoryzacja'

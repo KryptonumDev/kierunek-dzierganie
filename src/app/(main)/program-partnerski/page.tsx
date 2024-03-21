@@ -1,33 +1,25 @@
-import { draftMode } from 'next/headers';
 import sanityFetch from '@/utils/sanity.fetch';
-import Seo, { Seo_Query } from '@/global/Seo';
 import type { PageQueryProps } from '@/global/types';
 import Components, { Components_Query } from '@/components/Components';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
+import { QueryMetadata } from '@/global/Seo/query-metadata';
 
 const page = { name: 'Program partnerski', path: '/program-partnerski' };
 
-const PartnersPage = async () => {
+const AffiliatePage = async () => {
   const { content }: PageQueryProps = await query();
 
   return (
     <>
-      <Breadcrumbs data={[{ name: page.name, path: page.path }]} />
+      <Breadcrumbs data={[page]} />
       <Components data={content} />
     </>
   );
 };
-export default PartnersPage;
+export default AffiliatePage;
 
 export async function generateMetadata() {
-  const {
-    seo: { title, description },
-  } = await query();
-  return Seo({
-    title,
-    description,
-    path: page.path,
-  });
+  return await QueryMetadata('Affiliate_Page', `${page.path}`);
 }
 
 const query = async (): Promise<PageQueryProps> => {
@@ -35,10 +27,9 @@ const query = async (): Promise<PageQueryProps> => {
     query: /* groq */ `
       *[_type == "Affiliate_Page"][0] {
         ${Components_Query}
-        ${Seo_Query}
       }
     `,
-    isDraftMode: draftMode().isEnabled,
+    tags: ['Affiliate_Page'],
   });
   return data as PageQueryProps;
 };

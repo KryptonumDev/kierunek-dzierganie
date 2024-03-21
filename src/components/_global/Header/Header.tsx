@@ -1,12 +1,11 @@
 import sanityFetch from '@/utils/sanity.fetch';
-import { draftMode } from 'next/headers';
 import type { QueryProps } from './Header.types';
 import Content from './_Content';
 import Markdown from '@/components/ui/markdown';
 
 const Header = async () => {
   const { global }: QueryProps = await query();
-  const nav_annotation = <Markdown>{global.nav_Annotation ?? ''}</Markdown>;
+const nav_annotation = <Markdown>{global.nav_Annotation ?? ''}</Markdown>;
   return (
     <Content
       global={global}
@@ -76,9 +75,8 @@ const query = async (): Promise<QueryProps> => {
             href,
           }[]
         }[]
-      }
-    }`,
-    isDraftMode: draftMode().isEnabled,
+      }`,
+    tags: ['global'],
   });
   return data as QueryProps;
 };
@@ -182,3 +180,4 @@ const CrossIcon = (
     />
   </svg>
 );
+

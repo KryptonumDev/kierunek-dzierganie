@@ -1,0 +1,47 @@
+.CustomerCaseStudy {
+  min-width: 0;
+  header {
+    max-width: calc(584rem / 16);
+    margin: 0 auto clamp(28px, calc(36vw / 7.68), 64px);
+    text-align: center;
+    .paragraph {
+      margin-top: clamp(12px, calc(20vw / 7.68), 36px);
+      > *:not(:last-child) {
+        margin-bottom: 12px;
+      }
+    }
+  }
+  .slider {
+    @media (max-width: 1279px) {
+      margin-left: calc(var(--pageMargin) * -1);
+      margin-right: calc(var(--pageMargin) * -1);
+      padding: 0 var(--pageMargin);
+    }
+    .item {
+      padding: clamp(8px, calc(16vw / 7.68), 32px);
+      .author {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        align-items: center;
+        gap: 16px;
+        img {
+          width: clamp(62px, calc(96vw / 7.68), 96px);
+          height: clamp(62px, calc(96vw / 7.68), 96px);
+        }
+        p {
+          font-size: clamp(calc(32rem / 16), calc(48vw / 7.68), calc(48rem / 16));
+          font-family: var(--font-city-streetwear);
+          line-height: 1;
+        }
+      }
+      .excerpt {
+        margin: clamp(28px, calc(36vw / 7.68), 36px) 0 36px;
+      }
+      @media (max-width: 599px) {
+        .cta {
+          margin: 0 auto;
+        }
+      }
+    }
+  }
+}

@@ -1,7 +1,7 @@
 'use client';
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { easing } from '@/global/constants';
+import { EASING } from '@/global/constants';
 
 const animate = (isInView: boolean, delay?: number) => ({
   initial: {
@@ -13,7 +13,7 @@ const animate = (isInView: boolean, delay?: number) => ({
   transition: {
     duration: 1.3,
     delay: delay,
-    ease: easing,
+    ease: EASING,
   },
 });
 

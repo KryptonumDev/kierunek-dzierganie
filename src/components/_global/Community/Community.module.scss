@@ -8,9 +8,12 @@
       padding-left: var(--pageMargin);
       padding-right: var(--pageMargin);
     }
+    header {
+      max-width: calc(584rem/16);
+    }
   }
   header {
-    max-width: calc(793rem/16);
+    max-width: calc(794rem/16);
     margin: 0 auto;
     text-align: center;
     h2 {

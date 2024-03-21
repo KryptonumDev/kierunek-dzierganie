@@ -1,21 +1,21 @@
 .Breadcrumbs {
   display: flex;
   align-items: center;
-  gap: clamp(4px, calc(8vw/7.68), 8px);
+  gap: clamp(4px, calc(8vw / 7.68), 8px);
   overflow: hidden;
   padding: 6px;
   margin: -6px;
-  margin-bottom: clamp(16px, calc(28vw/7.68), 28px);
+  margin-bottom: clamp(16px, calc(28vw / 7.68), 28px);
   + * {
-    margin-top: calc(clamp(96px, calc(144vw/7.68), 240px) * -1) !important;
+    margin-top: calc(var(--space-gap) * -1) !important;
   }
   > *:not(:last-child) {
     flex-shrink: 0;
   }
   a {
     color: var(--primary-600);
-    font-size: calc(14rem/16);
-    transition: color .5s;
+    font-size: calc(14rem / 16);
+    transition: color 0.5s;
     &:hover {
       color: var(--primary-800);
     }
@@ -34,11 +34,11 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  @media (max-width: 599px){
-    > *:not(a:last-of-type){
+  @media (max-width: 599px) {
+    > *:not(a:last-of-type) {
       display: none;
     }
-    a:last-of-type{
+    a:last-of-type {
       color: var(--primary-800);
       &:hover {
         color: var(--primary-600);

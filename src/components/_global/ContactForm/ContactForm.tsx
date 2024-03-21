@@ -1,4 +1,3 @@
-import { draftMode } from 'next/headers';
 import sanityFetch from '@/utils/sanity.fetch';
 import Markdown from '@/components/ui/markdown';
 import styles from './ContactForm.module.scss';
@@ -65,7 +64,7 @@ const query = async (): Promise<QueryProps> => {
         messenger,
       }
     `,
-    isDraftMode: draftMode().isEnabled,
+    tags: ['global'],
   });
   return data as QueryProps;
 };

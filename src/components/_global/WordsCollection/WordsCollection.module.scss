@@ -1,0 +1,32 @@
+.WordsCollection {
+  header {
+    max-width: calc(584rem / 16);
+    margin: 0 auto clamp(28px, calc(36vw / 7.68), 64px);
+    text-align: center;
+  }
+  header, .cta {
+    position: relative;
+    z-index: 2
+  }
+  .list {
+    list-style-type: none;
+    display: grid;
+    @media (min-width: 900px) {
+      grid-template-columns: 1fr 1fr;
+    }
+    align-items: center;
+    gap: clamp(24px, calc(32vw / 7.68), 48px);
+    .item {
+      font-size: clamp(calc(14rem / 16), calc(14vw / 7.68), calc(18rem / 16));
+      border-radius: 4px;
+      border: 1px solid var(--primary-400);
+      background-color: var(--primary-200);
+      padding: clamp(8px, calc(12vw / 7.68), 12px);
+      max-width: 62%;
+      text-align: center;
+    }
+  }
+  .cta {
+    margin: clamp(28px, calc(36vw / 7.68), 64px) auto 0;
+  }
+}

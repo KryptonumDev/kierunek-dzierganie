@@ -7,7 +7,7 @@ import Button from '@/components/ui/Button';
 import styles from './ContactForm.module.scss';
 import { useForm, type FieldValues } from 'react-hook-form';
 import type { StatusProps } from './ContactForm.types';
-import { regex } from '@/global/constants';
+import { REGEX } from '@/global/constants';
 import State from './_State';
 import Loading from './_Loading';
 
@@ -51,7 +51,7 @@ const Form = ({ aboveTheFold }: { aboveTheFold: boolean }) => {
         register={register('name', {
           required: { value: true, message: 'Imię jest wymagane' },
           minLength: { value: 2, message: 'Imię jest za krótkie' },
-          pattern: { value: regex.string, message: 'Imię jest za krótkie' },
+          pattern: { value: REGEX.string, message: 'Imię jest za krótkie' },
         })}
         errors={errors}
       />
@@ -60,7 +60,7 @@ const Form = ({ aboveTheFold }: { aboveTheFold: boolean }) => {
         type='email'
         register={register('email', {
           required: { value: true, message: 'E-mail jest wymagany' },
-          pattern: { value: regex.email, message: 'Niepoprawny adres e-mail' },
+          pattern: { value: REGEX.email, message: 'Niepoprawny adres e-mail' },
         })}
         errors={errors}
       />
@@ -69,7 +69,7 @@ const Form = ({ aboveTheFold }: { aboveTheFold: boolean }) => {
         type='tel'
         placeholder='_ _ _ - _ _ _ - _ _ _'
         register={register('tel', {
-          pattern: { value: regex.phone, message: 'Niepoprawny numer telefonu' },
+          pattern: { value: REGEX.phone, message: 'Niepoprawny numer telefonu' },
         })}
         errors={errors}
       />

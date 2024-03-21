@@ -8,11 +8,11 @@ import { ImgType } from '@/global/types';
 import AddToCart from '@/components/ui/AddToCart';
 import { formatPrice } from '@/utils/price-formatter';
 
-const gallerySwitch = (data: ImgType | string) => ({
+const gallerySwitch = (data: ImgType | string, size: 'big'|'small') => ({
   image: (
     <Img
       data={data as ImgType}
-      sizes=''
+      sizes={size === 'big' ? '(max-width: 840px) 100vw, 50vw' : '80px'}
     />
   ),
   video: (
@@ -96,7 +96,7 @@ const HeroPhysical = ({ name, id, type, variants, physical }: Props) => {
   return (
     <section className={styles['HeroPhysical']}>
       <div className={styles['gallery']}>
-        {gallerySwitch(images[selectedImage]!.data)[images[selectedImage]!.type as 'image' | 'video']}
+        {gallerySwitch(images[selectedImage]!.data, 'big')[images[selectedImage]!.type as 'image' | 'video']}
         <div className={styles['gallery-grid']}>
           {images.map((el, index) => {
             if (index === selectedImage) return null;
@@ -105,7 +105,7 @@ const HeroPhysical = ({ name, id, type, variants, physical }: Props) => {
                 onClick={() => setSelectedImage(index)}
                 key={index}
               >
-                {gallerySwitch(el.data)[el.type as 'image' | 'video']}
+                {gallerySwitch(el.data, 'small')[el.type as 'image' | 'video']}
               </button>
             );
           })}

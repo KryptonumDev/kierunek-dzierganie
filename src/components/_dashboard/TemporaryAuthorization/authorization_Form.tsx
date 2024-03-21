@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import type { FormValues, FormProps } from './authorization.types';
 import Input from '@/components/ui/PasswordInput';
-import { regex } from '@/global/constants';
+import { REGEX } from '@/global/constants';
 import Checkbox from '@/components/ui/Checkbox';
 
 const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
@@ -65,7 +65,7 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
             message: 'Pole wymagane',
           },
           pattern: {
-            value: regex.email,
+            value: REGEX.email,
             message: 'Proszę wpisać poprawny e-mail',
           },
         })}

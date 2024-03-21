@@ -1,4 +1,3 @@
-import Faq, { Faq_Query, type FaqProps } from '@/components/_global/Faq';
 import Opinions, { Opinions_Query, type OpinionsProps } from '@/components/_global/Opinions';
 import TileList, { TileList_Query, type TileListProps } from '@/components/_global/TileList';
 import CtaSection, { CtaSection_Query, type CtaSectionProps } from '@/components/_global/CtaSection';
@@ -28,11 +27,21 @@ import Divider, { Divider_Query } from '@/components/_global/Divider';
 import StepList, { StepList_Query, type StepListProps } from '@/components/_global/StepList';
 import HeroColumn, { HeroColumn_Query, type HeroColumnProps } from '@/components/_global/HeroColumn';
 import Newsletter, { Newsletter_Query, type NewsletterProps } from '@/components/_global/Newsletter';
+import CustomerCaseStudy, {
+  CustomerCaseStudy_Query,
+  type CustomerCaseStudyProps,
+} from '@/components/_global/CustomerCaseStudy';
+import WordsCollection, {
+  WordsCollection_Query,
+  type WordsCollectionProps,
+} from '@/components/_global/WordsCollection';
+import Partners, { Partners_Query, type PartnersProps } from '@/components/_global/Partners';
+import Faq, { Faq_Query, type FaqTypes } from '@/components/_global/Faq';
 
 type ComponentMap = {
   HeroBackgroundImg: HeroBackgroundImgProps;
   Benefits: BenefitsProps;
-  Faq: FaqProps;
+  Faq: FaqTypes;
   Opinions: OpinionsProps;
   CtaSection: CtaSectionProps;
   SimpleCtaSection: SimpleCtaSectionProps;
@@ -53,6 +62,9 @@ type ComponentMap = {
   StepList: StepListProps;
   HeroColumn: HeroColumnProps;
   Newsletter: NewsletterProps;
+  CustomerCaseStudy: CustomerCaseStudyProps;
+  WordsCollection: WordsCollectionProps;
+  Partners: PartnersProps;
 };
 
 export type ComponentProps = ComponentMap[keyof ComponentMap] & { _type: string };
@@ -68,7 +80,7 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
         />
       ),
       Benefits: <Benefits {...(item as BenefitsProps)} />,
-      Faq: <Faq {...(item as FaqProps)} />,
+      Faq: <Faq {...(item as FaqTypes)} />,
       Opinions: <Opinions {...(item as OpinionsProps)} />,
       CtaSection: <CtaSection {...(item as CtaSectionProps)} />,
       SimpleCtaSection: <SimpleCtaSection {...(item as SimpleCtaSectionProps)} />,
@@ -110,6 +122,24 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
           index={index}
         />
       ),
+      CustomerCaseStudy: (
+        <CustomerCaseStudy
+          {...(item as CustomerCaseStudyProps)}
+          index={index}
+        />
+      ),
+      WordsCollection: (
+        <WordsCollection
+          {...(item as WordsCollectionProps)}
+          index={index}
+        />
+      ),
+      Partners: (
+        <Partners
+          {...(item as PartnersProps)}
+          index={index}
+        />
+      ),
     };
     const DynamicComponent = componentMap[componentType];
     if (!DynamicComponent) {
@@ -125,7 +155,6 @@ export const Components_Query = /* groq */ `
   content[] {
     ${HeroBackgroundImg_Query}
     ${Benefits_Query}
-    ${Faq_Query}
     ${Opinions_Query}
     ${TileList_Query}
     ${CtaSection_Query}
@@ -147,5 +176,9 @@ export const Components_Query = /* groq */ `
     ${StepList_Query}
     ${HeroColumn_Query}
     ${Newsletter_Query}
+    ${CustomerCaseStudy_Query}
+    ${WordsCollection_Query}
+    ${Partners_Query}
+    ${Faq_Query}
   },
 `;

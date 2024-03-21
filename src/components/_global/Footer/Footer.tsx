@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { draftMode } from 'next/headers';
 import sanityFetch from '@/utils/sanity.fetch';
 import styles from './Footer.module.scss';
 import type { QueryProps } from './Footer.types';
@@ -26,9 +25,13 @@ const Footer = async () => {
   ];
 
   return (
-    <section className={styles['Footer']}>
-      <div className="max-width">
-        <Link href='/' aria-label='Strona główna' className={styles.logo}>
+    <footer className={styles['Footer']}>
+      <div className='max-width'>
+        <Link
+          href='/'
+          aria-label='Strona główna'
+          className={styles.logo}
+        >
           <Logo />
         </Link>
         <ul className={styles.socials}>
@@ -45,14 +48,22 @@ const Footer = async () => {
             </li>
           ))}
         </ul>
-        <p className={styles.copyrights}>Ⓒ Stworzone przez <a href='https://kryptonum.eu/pl' className='link'>Kryptonum</a></p>
+        <p className={styles.copyrights}>
+          Ⓒ Stworzone przez{' '}
+          <a
+            href='https://kryptonum.eu/pl'
+            className='link'
+          >
+            Kryptonum
+          </a>
+        </p>
         <div className={styles.legal}>
           <Link href='/polityka-prywatnosci'>Polityka prywatności</Link>
           <Link href='/regulamin'>Regulamin</Link>
           <Link href='/zarzadzaj-ciasteczkami'>Zarządzaj ciasteczkami</Link>
         </div>
       </div>
-    </section>
+    </footer>
   );
 };
 
@@ -66,7 +77,7 @@ const query = async (): Promise<QueryProps> => {
         instagram,
         youtube,
       }`,
-    isDraftMode: draftMode().isEnabled
+    tags: ['global'],
   });
   return data as QueryProps;
 };

@@ -1,6 +1,6 @@
 import sanityFetch from '@/utils/sanity.fetch';
+import { DOMAIN } from '@/global/constants';
 import type { MetadataRoute } from 'next';
-import { domain } from '@/global/constants';
 
 type FetchProps = {
   landings: {
@@ -11,8 +11,8 @@ type FetchProps = {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { landings } = await query();
   const sitemap = [
-    ...landings.map((route) => ({
-      url: `${domain}/landing/${route}`,
+    ...landings.map(({ slug }) => ({
+      url: `${DOMAIN}/landing/${slug}`,
       lastModified: new Date(),
     })),
   ];
@@ -21,14 +21,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 }
 
 const query = async (): Promise<FetchProps> => {
-  const data = await sanityFetch({
+  return await sanityFetch<FetchProps>({
     query: /* groq */ `
       {
         'landings': *[_type == 'landingPage'] {
           'slug': slug.current
         }
       }
-    `
+    `,
   });
-  return data as FetchProps;
 };

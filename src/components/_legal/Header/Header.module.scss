@@ -1,0 +1,35 @@
+.Header {
+  display: grid;
+  justify-content: center;
+  max-width: calc(690rem/16);
+  justify-self: center;
+  align-items: center;
+  justify-items: center;
+  text-align: center;
+  gap: clamp(20px, calc(28vw/7.68), 36px);
+
+  .description {
+    display: grid;
+    gap: clamp(12px, calc(20vw/7.68), 20px);
+  }
+
+  .information {
+    display: flex;
+    column-gap: 40px;
+    row-gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    .emailInformation {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .telInformation {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+  }
+}
