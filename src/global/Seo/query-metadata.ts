@@ -17,9 +17,9 @@ type QueryType = {
  * @returns {Promise<Metadata>} Returns a promise of the SEO object.
  */
 export const QueryMetadata = async (name: string, path: string, dynamicSlug?: string): Promise<Metadata> => {
-  const customQuery = dynamicSlug ? `*[_type == '${name}' && slug.current == $slug][0]` : `*[_id == "${name}"][0]`;
+  const customQuery = dynamicSlug ? `*[_type == '${name}' && slug.current == $slug][0]` : `*[_type == "${name}"][0]`;
 
-  const { title, description, img } = await query(customQuery, dynamicSlug, name);
+  const { title, description, img } = await query(customQuery, name, dynamicSlug);
 
   return Seo({
     title,
@@ -29,7 +29,7 @@ export const QueryMetadata = async (name: string, path: string, dynamicSlug?: st
   });
 };
 
-const query = async (customQuery: string, dynamicSlug: string, tag: string): Promise<QueryType> => {
+const query = async (customQuery: string, tag: string, dynamicSlug?: string): Promise<QueryType> => {
   const seo = await sanityFetch<QueryType>({
     query: /* groq */ `
       ${customQuery} {
