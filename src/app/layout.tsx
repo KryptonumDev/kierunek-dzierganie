@@ -1,7 +1,8 @@
 import '@/global/global.scss';
 import localFont from 'next/font/local';
 import Analitics from '@/global/Analitics';
-import { locale, themeColor } from '@/global/constants';
+import { LOCALE, THEME_COLOR } from '@/global/constants';
+import SchemaOrganization from '@/global/Schema/Ogranization';
 import type { Viewport } from 'next';
 
 const Lato = localFont({
@@ -35,12 +36,15 @@ const CityStreetWear = localFont({
 });
 
 export const viewport: Viewport = {
-  themeColor: themeColor,
+  themeColor: THEME_COLOR,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang={locale}>
+    <html lang={LOCALE}>
+      <head>
+        <SchemaOrganization />
+      </head>
       <body className={`${Lato.className} ${CityStreetWear.variable}`}>
         {children}
         <Analitics />

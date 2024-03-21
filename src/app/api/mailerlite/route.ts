@@ -1,4 +1,4 @@
-import { regex } from '@/global/constants';
+import { REGEX } from '@/global/constants';
 
 type RequestProps = {
   email: string;
@@ -11,7 +11,7 @@ export async function POST(request: Request) {
   const { email, name, groupID }: RequestProps = req;
   const time = new Date().toISOString();
 
-  if (!regex.email.test(email) || !regex.string.test(name)) {
+  if (!REGEX.email.test(email) || !REGEX.string.test(name)) {
     return Response.json({ success: false }, { status: 422 });
   }
 

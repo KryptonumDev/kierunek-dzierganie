@@ -1,5 +1,4 @@
 import sanityFetch from '@/utils/sanity.fetch';
-import { draftMode } from 'next/headers';
 import Link from 'next/link';
 import styles from './Header.module.scss';
 import Search from './_Search';
@@ -10,7 +9,7 @@ import type { QueryProps } from './Header.types';
 
 const Header = async () => {
   const { nav_Annotation, nav_Links }: QueryProps = await query();
-  
+
   return (
     <>
       <a
@@ -99,7 +98,7 @@ const query = async (): Promise<QueryProps> => {
           }[]
         }[]
       }`,
-    isDraftMode: draftMode().isEnabled,
+    tags: ['global'],
   });
   return data as QueryProps;
 };

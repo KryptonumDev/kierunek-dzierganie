@@ -1,4 +1,3 @@
-import { draftMode } from 'next/headers';
 import sanityFetch from '@/utils/sanity.fetch';
 import type { PageQueryProps } from '@/global/types';
 import Components, { Components_Query } from '@/components/Components';
@@ -22,7 +21,6 @@ const query = async (): Promise<PageQueryProps> => {
         ${Components_Query}
       }
     `,
-    isDraftMode: draftMode().isEnabled,
   });
   return data as PageQueryProps;
 };

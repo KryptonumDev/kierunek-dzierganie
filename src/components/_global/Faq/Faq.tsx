@@ -1,9 +1,9 @@
 import Markdown from '@/components/ui/markdown';
 import styles from './Faq.module.scss';
 import List from './_List';
-import type { Props } from './Faq.types';
+import type { FaqTypes } from './Faq.types';
 
-const Faq = ({ heading, paragraph, list }: Props) => {
+const Faq = ({ heading, paragraph, list }: FaqTypes) => {
   const formattedList = list.map(({ question, answer }) => ({
     question: <Markdown.span>{question}</Markdown.span>,
     answer: <Markdown>{answer}</Markdown>,
@@ -19,7 +19,6 @@ const Faq = ({ heading, paragraph, list }: Props) => {
         list={formattedList}
         Indicator={Indicator}
       />
-      {/* <FaqSchema list={list} /> */}
     </section>
   );
 };

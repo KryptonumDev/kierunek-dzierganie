@@ -1,4 +1,3 @@
-import Faq, { Faq_Query, type FaqProps } from '@/components/_global/Faq';
 import Opinions, { Opinions_Query, type OpinionsProps } from '@/components/_global/Opinions';
 import TileList, { TileList_Query, type TileListProps } from '@/components/_global/TileList';
 import CtaSection, { CtaSection_Query, type CtaSectionProps } from '@/components/_global/CtaSection';
@@ -32,13 +31,17 @@ import CustomerCaseStudy, {
   CustomerCaseStudy_Query,
   type CustomerCaseStudyProps,
 } from '@/components/_global/CustomerCaseStudy';
-import WordsCollection, { WordsCollection_Query, type WordsCollectionProps } from './_global/WordsCollection';
-import Partners, { Partners_Query, type PartnersProps } from './_global/Partners';
+import WordsCollection, {
+  WordsCollection_Query,
+  type WordsCollectionProps,
+} from '@/components/_global/WordsCollection';
+import Partners, { Partners_Query, type PartnersProps } from '@/components/_global/Partners';
+import Faq, { Faq_Query, type FaqTypes } from '@/components/_global/Faq';
 
 type ComponentMap = {
   HeroBackgroundImg: HeroBackgroundImgProps;
   Benefits: BenefitsProps;
-  Faq: FaqProps;
+  Faq: FaqTypes;
   Opinions: OpinionsProps;
   CtaSection: CtaSectionProps;
   SimpleCtaSection: SimpleCtaSectionProps;
@@ -77,7 +80,7 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
         />
       ),
       Benefits: <Benefits {...(item as BenefitsProps)} />,
-      Faq: <Faq {...(item as FaqProps)} />,
+      Faq: <Faq {...(item as FaqTypes)} />,
       Opinions: <Opinions {...(item as OpinionsProps)} />,
       CtaSection: <CtaSection {...(item as CtaSectionProps)} />,
       SimpleCtaSection: <SimpleCtaSection {...(item as SimpleCtaSectionProps)} />,
@@ -152,7 +155,6 @@ export const Components_Query = /* groq */ `
   content[] {
     ${HeroBackgroundImg_Query}
     ${Benefits_Query}
-    ${Faq_Query}
     ${Opinions_Query}
     ${TileList_Query}
     ${CtaSection_Query}
@@ -177,5 +179,6 @@ export const Components_Query = /* groq */ `
     ${CustomerCaseStudy_Query}
     ${WordsCollection_Query}
     ${Partners_Query}
+    ${Faq_Query}
   },
 `;

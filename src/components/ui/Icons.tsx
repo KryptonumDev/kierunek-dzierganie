@@ -434,7 +434,7 @@ export const ErrorIcon = ({ ...props }) => (
       style={{
         strokeDasharray: 62,
         strokeDashoffset: 62,
-        animation: 'ErrorIcon 1.3s var(--easing) forwards',
+        animation: 'ErrorIcon 1.3s var(--EASING) forwards',
       }}
       strokeLinejoin='round'
       d='M26.477 6.018c0-2.813-1.777-6.861-6.844-5.241-2.264.913-7.795 3.574-6.035 10.59.08.322.617 1.662 1.587 1.662.701.107 2.167-.258 2.426-2.58.189-2.149-.598-6.77-5.256-8.06-2.21-.43-7.331.18-5.611 7.142.942 3.813 1.764 5.063 3.576 7.813'
@@ -443,7 +443,7 @@ export const ErrorIcon = ({ ...props }) => (
       style={{
         strokeDasharray: 39,
         strokeDashoffset: 39,
-        animation: 'ErrorIcon 1.3s .5s var(--easing) forwards',
+        animation: 'ErrorIcon 1.3s .5s var(--EASING) forwards',
       }}
       d='M2.073 25.155L33.071 2.53'
     />
@@ -451,7 +451,7 @@ export const ErrorIcon = ({ ...props }) => (
       style={{
         strokeDasharray: 29,
         strokeDashoffset: 29,
-        animation: 'ErrorIcon 1.3s var(--easing) forwards',
+        animation: 'ErrorIcon 1.3s var(--EASING) forwards',
       }}
       d='M26.383 8.594c-.48 4.979-4.863 15.725-18.563 18.875M11.945 19.469a904.71 904.71 0 002.313 2.437'
     />
@@ -478,7 +478,7 @@ export const SuccessIcon = ({ ...props }) => (
       style={{
         strokeDasharray: 109,
         strokeDashoffset: 109,
-        animation: 'SuccessIcon 1.3s var(--easing) forwards',
+        animation: 'SuccessIcon 1.3s var(--EASING) forwards',
       }}
       stroke='#5C7360'
       strokeLinecap='round'

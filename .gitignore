@@ -45,7 +45,3 @@ package-lock.json
 
 # IDE specific
 .vscode/
-
-# SASS transpiled files
-*.css
-*.css.map

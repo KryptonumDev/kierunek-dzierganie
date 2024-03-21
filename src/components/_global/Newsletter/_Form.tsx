@@ -6,7 +6,7 @@ import styles from './Newsletter.module.scss';
 import Button from '@/components/ui/Button';
 import Checkbox from '@/components/ui/Checkbox';
 import { StatusProps } from './Newsletter.types';
-import { mailerLiteGroup, regex } from '@/global/constants';
+import { mailerLiteGroup, REGEX } from '@/global/constants';
 import Link from 'next/link';
 import State from './_State';
 import Loading from './_Loading';
@@ -53,7 +53,7 @@ const Form = ({ Heading }: { Heading: React.ReactNode }) => {
           register={register('name', {
             required: { value: true, message: 'Imię jest wymagane' },
             minLength: { value: 2, message: 'Imię jest za krótkie' },
-            pattern: { value: regex.string, message: 'Imię jest za krótkie' },
+            pattern: { value: REGEX.string, message: 'Imię jest za krótkie' },
           })}
           errors={errors}
         />
@@ -62,7 +62,7 @@ const Form = ({ Heading }: { Heading: React.ReactNode }) => {
           type='email'
           register={register('email', {
             required: { value: true, message: 'E-mail jest wymagany' },
-            pattern: { value: regex.email, message: 'Niepoprawny adres e-mail' },
+            pattern: { value: REGEX.email, message: 'Niepoprawny adres e-mail' },
           })}
           errors={errors}
         />
