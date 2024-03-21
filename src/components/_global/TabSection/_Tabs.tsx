@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import styles from './TabSection.module.scss';
-import { easing } from '@/global/constants';
+import { EASING } from '@/global/constants';
 
 type Props = {
   list: {
@@ -36,7 +36,7 @@ const Tabs = ({ list, icons }: Props) => {
               }}
               transition={{
                 duration: 0.5,
-                ease: easing,
+                ease: EASING,
               }}
             >
               {icons[i]}

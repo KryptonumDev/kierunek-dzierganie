@@ -1,5 +1,5 @@
 import sanityFetch from '@/utils/sanity.fetch';
-import { domain } from '@/global/constants';
+import { DOMAIN } from '@/global/constants';
 
 type QueryTypes = {
   OrganizationSchema: {
@@ -34,13 +34,13 @@ const SchemaOrganization = async () => {
         __html: JSON.stringify({
           '@context': 'https://schema.org',
           '@type': 'Organization',
-          url: `${domain}`,
+          url: `${DOMAIN}`,
           ...(email && { email: email }),
           ...(phone && { telephone: phone }),
           ...(OrganizationSchema_Name && { name: OrganizationSchema_Name }),
           ...(OrganizationSchema_Description && { description: OrganizationSchema_Description }),
-          logo: `${domain}/kierunek-dzierganie-logo.png`,
-          image: `${domain}/kierunek-dzierganie-logo.png`,
+          logo: `${DOMAIN}/kierunek-dzierganie-logo.png`,
+          image: `${DOMAIN}/kierunek-dzierganie-logo.png`,
           OpeningHoursSpecification: {
             '@type': 'OpeningHoursSpecification',
             dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],

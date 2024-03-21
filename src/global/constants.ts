@@ -29,7 +29,7 @@ export const DOMAIN: string = 'https://kierunekdzierganie.pl';
 export const DEFAULT_TITLE: string = 'Kierunek Dzierganie';
 
 /**
- * Global declaration of regex.
+ * Global declaration of REGEX.
  * @constant
  */
 export const REGEX: { email: RegExp; phone: RegExp; string: RegExp } = {

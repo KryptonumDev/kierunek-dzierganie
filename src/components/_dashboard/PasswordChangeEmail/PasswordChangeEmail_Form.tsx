@@ -5,7 +5,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { FormTypes } from './PasswordChangeEmail.types';
 import Input from '@/components/ui/PasswordInput';
 import Button from '@/components/ui/Button';
-import { regex } from '@/global/constants';
+import { REGEX } from '@/global/constants';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
@@ -52,7 +52,7 @@ const PasswordChangeEmailForm = () => {
             message: 'Pole wymagane',
           },
           pattern: {
-            value: regex.email,
+            value: REGEX.email,
             message: 'Proszę wpisać poprawny e-mail',
           },
         })}
