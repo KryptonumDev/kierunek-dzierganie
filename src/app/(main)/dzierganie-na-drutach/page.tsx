@@ -4,33 +4,31 @@ import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import Components, { Components_Query } from '@/components/Components';
 import type { PageQueryProps } from '@/global/types';
 
-const page = { name: 'Strona główna', path: '/o-mnie' };
+const page = { name: 'Dzierganie na drutach', path: '/dzierganie-na-drutach' };
 
-const IndexPage = async () => {
+const KnittingPage = async () => {
   const { content } = await query();
 
   return (
     <>
-      <Breadcrumbs />
+      <Breadcrumbs data={[page]} />
       <Components data={content} />
     </>
   );
 };
-
-export default IndexPage;
-
-export async function generateMetadata() {
-  return await QueryMetadata('homepage', page.path);
-}
+export default KnittingPage;
 
 const query = async (): Promise<PageQueryProps> => {
-  const data = await sanityFetch<PageQueryProps>({
+  return await sanityFetch<PageQueryProps>({
     query: /* groq */ `
-      *[_type == "homepage"][0] {
+      *[_type == "Knitting_Page"][0] {
         ${Components_Query}
       }
     `,
-    tags: ['homepage'],
+    tags: ['Knitting_Page'],
   });
-  return data;
 };
+
+export async function generateMetadata() {
+  return await QueryMetadata('Knitting_Page', page.path);
+}

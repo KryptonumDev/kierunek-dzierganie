@@ -212,3 +212,7 @@ export type CoursesProgress = {
     };
   };
 };
+
+export type generateStaticParamsBlogPagination = {
+  number: string;
+}[];

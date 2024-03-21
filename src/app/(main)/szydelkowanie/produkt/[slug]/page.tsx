@@ -11,6 +11,7 @@ import { QueryMetadata } from '@/global/Seo/query-metadata';
 const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) => {
   const { name, _id, type, variants, price, discount, featuredVideo, countInStock, gallery, parameters } =
     await query(slug);
+
   return (
     <>
       <Breadcrumbs

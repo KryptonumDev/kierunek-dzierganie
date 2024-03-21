@@ -3,11 +3,7 @@ import BlogSection, { BlogSection_Query } from '@/components/_global/BlogSection
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import CategoriesSection, { CategoriesSection_Query } from '@/components/_global/CategoriesSection';
 import HeroBackground, { HeroBackground_Query } from '@/components/_global/HeroBackground';
-import {
-  type BlogsCategoryStaticParamsType,
-  type BlogPageQueryProps,
-  type generateBlogPaginationStaticParamsProps,
-} from '@/global/types';
+import { type BlogPageQueryProps, generateStaticParamsBlogPagination } from '@/global/types';
 import { POSTS_PER_PAGE } from '@/global/constants';
 
 const page = { name: 'Blog', path: '/blog' };
@@ -55,14 +51,14 @@ async function query(): Promise<BlogPageQueryProps> {
   });
 }
 
-export async function generateStaticParams(): Promise<generateBlogPaginationStaticParamsProps[]> {
-  const data = await sanityFetch<BlogsCategoryStaticParamsType[]>({
+export async function generateStaticParams(): Promise<generateStaticParamsBlogPagination> {
+  const blogPostCollectionItems = await sanityFetch<number>({
     query: /* groq */ `
       count(*[_type == "BlogPost_Collection"][])
     `,
   });
-  
-  return Array.from({ length: Math.ceil(data.length / POSTS_PER_PAGE) }, (value, index) => ({
+  const totalPages = Math.ceil(blogPostCollectionItems / POSTS_PER_PAGE);
+  return Array.from({ length: totalPages }, (_, index) => ({
     number: (index + 1).toString(),
-  })).filter(({ number }) => number !== '1');
+  })).filter((_, index) => index !== 0);
 }
