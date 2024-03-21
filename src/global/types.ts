@@ -195,6 +195,7 @@ export type BlogsCategoryStaticParamsType = {
     slug: string;
   }[];
 };
-export type generateBlogPaginationStaticParamsProps = {
+
+export type generateStaticParamsBlogPagination = {
   number: string;
-};
+}[];
