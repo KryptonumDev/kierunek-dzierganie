@@ -6,7 +6,7 @@ import sanityFetch from '@/utils/sanity.fetch';
 import { Header_Query } from '@/components/_legal/Header';
 import { Contents_Query } from '@/components/_legal/Contents';
 import { type StatutePageQueryProps } from '@/global/types';
-import { QueryMetadata } from '@/global/query-metadata';
+import { QueryMetadata } from '@/global/Seo/query-metadata';
 
 const page = { name: 'Regulamin', path: '/regulamin' };
 

@@ -2,7 +2,7 @@ import sanityFetch from '@/utils/sanity.fetch';
 import type { PageQueryProps } from '@/global/types';
 import Components, { Components_Query } from '@/components/Components';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
-import { QueryMetadata } from '@/global/query-metadata';
+import { QueryMetadata } from '@/global/Seo/query-metadata';
 
 const page = { name: 'Strona główna', path: '/o-mnie' };
 

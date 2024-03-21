@@ -1,4 +1,4 @@
-import { domain } from '@/global/constants';
+import { DOMAIN } from '@/global/constants';
 import type { BreadcrumbsProps } from '@/components/_global/Breadcrumbs';
 
 const BreadcrumbsSchema = ({ data }: BreadcrumbsProps) => {
@@ -14,7 +14,7 @@ const BreadcrumbsSchema = ({ data }: BreadcrumbsProps) => {
               '@type': 'ListItem',
               position: ++i,
               name: name,
-              item: `${domain}${path}`,
+              item: `${DOMAIN}${path}`,
             })),
           ],
         }),

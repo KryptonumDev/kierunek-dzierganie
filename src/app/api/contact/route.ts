@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
-import { domain, regex } from '@/global/constants';
+import { DOMAIN, REGEX } from '@/global/constants';
 import { removeHtmlTags } from '@/utils/remove-html-tags';
 
 type RequestProps = {
@@ -19,7 +19,7 @@ const emailData = {
 };
 
 const headers = {
-  'Access-Control-Allow-Origin': domain,
+  'Access-Control-Allow-Origin': DOMAIN,
   'Access-Control-Allow-Methods': 'POST',
 };
 
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
   const req = await request.json();
   const { name, email, tel, message, legal }: RequestProps = req;
 
-  if (!name || (!email && !regex.email.test(email)) || (tel && !regex.phone.test(tel)) || !message || !legal) {
+  if (!name || (!email && !REGEX.email.test(email)) || (tel && !REGEX.phone.test(tel)) || !message || !legal) {
     return NextResponse.json({ success: false }, { status: 422, headers });
   }
 

@@ -3,7 +3,7 @@ import sanityFetch from '@/utils/sanity.fetch';
 import type { PageQueryProps, generateStaticParamsProps } from '@/global/types';
 import Components, { Components_Query } from '@/components/Components';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
-import { QueryMetadata } from '@/global/query-metadata';
+import { QueryMetadata } from '@/global/Seo/query-metadata';
 
 const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) => {
   const { content, name }: PageQueryProps = await query(slug);

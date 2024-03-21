@@ -6,7 +6,7 @@ import HeroPhysical from '@/components/_product/HeroPhysical';
 import Parameters from '@/components/_product/Parameters';
 import Description from '@/components/_product/Description';
 import Flex from '@/components/_product/Flex';
-import { QueryMetadata } from '@/global/query-metadata';
+import { QueryMetadata } from '@/global/Seo/query-metadata';
 
 const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) => {
   const { name, _id, type, variants, price, discount, featuredVideo, countInStock, gallery, parameters } =
@@ -88,7 +88,7 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
           name,
           value,
         },
-        
+
         variants[]{
           name,
           price,

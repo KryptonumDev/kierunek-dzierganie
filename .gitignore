@@ -42,11 +42,6 @@ Thumbs.db
 yarn.lock
 package-lock.json
 !/yarn.lock
-pnpm-lock.yaml
 
 # IDE specific
 .vscode/
-
-# SASS transpiled files
-*.css
-*.css.map

@@ -37,12 +37,12 @@
   --error-800: #882f2f;
   --error-900: #5a2f2f;
 
-  --pageMargin: clamp(16px, calc(40vw / 7.68), 40px);
+  --space-gap: clamp(96px, calc(148vw / 7.68), 200px);
 
+  --pageMargin: clamp(16px, calc(40vw / 7.68), 40px);
   @media (max-width: 899px) and (min-width: 649px) {
     --pageMargin: clamp(40px, calc(80vw / 7.68), 80px);
   }
-
   --easing: cubic-bezier(0.46, 0.03, 0.52, 0.96);
 }
 
@@ -195,7 +195,6 @@ h3 {
   }
 
   @keyframes link {
-
     0%,
     100% {
       transform: scaleX(1);
@@ -227,7 +226,6 @@ h3 {
 
 .sec-wo-margin {
   position: relative;
-
   &::before {
     content: '';
     width: 100vw;
@@ -250,8 +248,8 @@ h3 {
 main {
   display: grid;
   grid-template-columns: 1fr;
-  row-gap: clamp(96px, calc(144vw / 7.68), 240px);
-  margin: clamp(48px, calc(64vw / 7.68), 96px) auto clamp(96px, calc(144vw / 7.68), 240px);
+  row-gap: var(--space-gap);
+  margin: clamp(48px, calc(64vw / 7.68), 96px) auto var(--space-gap);
 }
 
 .unorderedList {
@@ -274,13 +272,13 @@ main {
 
 .orderedList {
   display: grid;
-  row-gap: clamp(12px, calc(16vw/7.68), 16px);
+  row-gap: clamp(12px, calc(16vw / 7.68), 16px);
   padding-left: 20px;
 
   li {
     h3 {
       margin-left: -20px;
-      padding-top: clamp(36px, calc(48vw/7.68), 48px);
+      padding-top: clamp(36px, calc(48vw / 7.68), 48px);
     }
 
     svg {

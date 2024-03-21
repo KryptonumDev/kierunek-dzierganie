@@ -1,21 +1,19 @@
-import { type ImgType } from '@/global/types';
+import type { ImgType } from '@/global/types';
 
 export type BlogSectionTypes = {
-  data: {
-    blog_Heading: string;
-    blog_Paragraph: string;
-    blog_HighlightedPost: HighlightedPostType;
-    blogPosts: {
-      categories: {
-        name: string;
-        slug: string;
-      }[];
+  heading: string;
+  paragraph: string;
+  highlightedPost: HighlightedPostType;
+  blogPosts: {
+    categories: {
+      name: string;
+      slug: string;
     }[];
-    slug?: string;
-    number?: number;
-    pathPrefix?: string;
-    isCategoryPagination?: boolean;
-  };
+  }[];
+  slug?: string;
+  number?: number;
+  pathPrefix?: string;
+  isCategoryPagination?: boolean;
 };
 
 export type HighlightedPostType = {

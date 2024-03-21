@@ -7,25 +7,23 @@ import Pagination from '@/components/ui/Pagination';
 import { blogsPerPage } from 'app-config';
 
 const BlogSection = async ({
-  data: {
-    blog_Heading,
-    blog_Paragraph,
-    blog_HighlightedPost,
+    heading,
+    paragraph,
+    highlightedPost,
     blogPosts,
     slug,
     number,
     pathPrefix = '/blog',
     isCategoryPagination = false,
-  },
 }: BlogSectionTypes) => {
   return (
     <section className={styles['BlogSection']}>
       <header>
-        <Markdown.h2>{blog_Heading}</Markdown.h2>
-        <Markdown>{blog_Paragraph}</Markdown>
+        <Markdown.h2>{heading}</Markdown.h2>
+        <Markdown>{paragraph}</Markdown>
       </header>
       <HighlightedPost
-        blog_HighlightedPost={blog_HighlightedPost}
+        highlightedPost={highlightedPost}
         slug={slug}
       />
       <BlogPosts

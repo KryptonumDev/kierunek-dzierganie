@@ -6,16 +6,14 @@ import sanityFetch from '@/utils/sanity.fetch';
 import Link from 'next/link';
 
 export default async function HighlightedPost({
-  blog_HighlightedPost,
+  highlightedPost,
   slug,
 }: {
-  blog_HighlightedPost: HighlightedPostType;
+  highlightedPost: HighlightedPostType;
   slug?: string;
 }) {
-  if (!blog_HighlightedPost) {
-    slug
-      ? (blog_HighlightedPost = await getNewestCategoryBlogData(slug))
-      : (blog_HighlightedPost = await getNewestBlogData());
+  if (!highlightedPost) {
+    slug ? (highlightedPost = await getNewestCategoryBlogData(slug)) : (highlightedPost = await getNewestBlogData());
   }
   const {
     hero_Img,
@@ -23,7 +21,8 @@ export default async function HighlightedPost({
     href,
     hero_Paragraph,
     hero_Author: { heading, img, paragraph },
-  } = blog_HighlightedPost;
+  } = highlightedPost;
+
   return (
     <div className={styles.highlightedPost}>
       <Link href={`/blog/${href}`}>

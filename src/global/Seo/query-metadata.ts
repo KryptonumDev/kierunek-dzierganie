@@ -6,6 +6,7 @@ import type { Metadata } from 'next';
 type QueryType = {
   title: string;
   description: string;
+  img?: string;
 };
 
 /**
@@ -16,14 +17,15 @@ type QueryType = {
  * @returns {Promise<Metadata>} Returns a promise of the SEO object.
  */
 export const QueryMetadata = async (name: string, path: string, dynamicSlug?: string): Promise<Metadata> => {
-  const customQuery = dynamicSlug ? `*[_type == '${name}' && slug.current == $slug][0]` : `*[_id == "${name}"][0]`;
+  const customQuery = dynamicSlug ? `*[_type == '${name}' && slug.current == $slug][0]` : `*[_type == "${name}"][0]`;
 
-  const { title, description } = await query(customQuery, name, dynamicSlug);
+  const { title, description, img } = await query(customQuery, name, dynamicSlug);
 
   return Seo({
     title,
     description,
     path: path,
+    img,
   });
 };
 
@@ -33,7 +35,7 @@ const query = async (customQuery: string, tag: string, dynamicSlug?: string): Pr
       ${customQuery} {
         "title": seo.title,
         "description": seo.description,
-        "img": seo.og_Img.asset -> url + "?w=1200"
+        "img": seo.img.asset -> url + "?w=1200"
       }
     `,
     tags: [tag],

@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { QueryMetadata } from '@/global/query-metadata';
+import { QueryMetadata } from '@/global/Seo/query-metadata';
 
 const NotFoundPage = () => {
   notFound();

@@ -1,15 +1,15 @@
+import { notFound } from 'next/navigation';
 import BlogSection, { BlogSection_Query } from '@/components/_global/BlogSection';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import CategoriesSection, { CategoriesSection_Query } from '@/components/_global/CategoriesSection';
 import HeroBackground, { HeroBackground_Query } from '@/components/_global/HeroBackground';
-import { QueryMetadata } from '@/global/query-metadata';
+import { QueryMetadata } from '@/global/Seo/query-metadata';
 import {
   type generateStaticParamsProps,
   type BlogsCategoryStaticParamsType,
   type BlogCategoryPageQueryProps,
 } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
-import { notFound } from 'next/navigation';
 
 export default async function CategoryBlogPage({ params: { slug } }: { params: { slug: string } }) {
   const {
@@ -35,10 +35,10 @@ export default async function CategoryBlogPage({ params: { slug } }: { params: {
       <HeroBackground data={{ hero_Heading, hero_Paragraph }} />
       <CategoriesSection data={{ blogPosts, categories_Heading, categories_Paragraph, highlightedCategory: slug }} />
       <BlogSection
-        data={{
-          blog_Heading,
-          blog_Paragraph,
-          blog_HighlightedPost,
+        {...{
+          heading: blog_Heading,
+          paragraph: blog_Paragraph,
+          highlightedPost: blog_HighlightedPost,
           slug,
           blogPosts: filteredBlogPosts,
           pathPrefix: `/blog/kategoria/${slug}`,
