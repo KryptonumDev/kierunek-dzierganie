@@ -2,9 +2,9 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import styles from './Faq.module.scss';
-import type { ListProps } from './Faq.types';
+import type { ListTypes } from './Faq.types';
 
-const List = ({ Indicator, list }: ListProps) => {
+const List = ({ Indicator, list }: ListTypes) => {
   const [opened, setOpened] = useState(0);
   const handleClick = (e: React.MouseEvent<HTMLElement>, i: number) => {
     e.preventDefault();

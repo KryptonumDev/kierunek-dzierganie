@@ -1,4 +1,4 @@
-export type Props = {
+export type FaqTypes = {
   heading: string;
   paragraph?: string;
   list: {
@@ -7,10 +7,10 @@ export type Props = {
   }[];
 };
 
-export type ListProps = {
+export type ListTypes = {
   Indicator: JSX.Element;
   list: {
     question: JSX.Element;
     answer: JSX.Element;
   }[];
-}
+};
