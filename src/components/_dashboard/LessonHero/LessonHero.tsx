@@ -52,10 +52,10 @@ const LessonHero = ({ progress, lesson, course }: Props) => {
         chapters: {
           ...progress.progress.chapters,
           [currentChapterId]: {
-            ...progress.progress.chapters[currentChapterId],
-            lessons: {
-              ...progress.progress.chapters[currentChapterId]!.lessons,
-              [currentLessonId]: true,
+            ...progress.progress[currentChapterId],
+            [currentLessonId]: {
+              notes: null,
+              ended: true,
             },
           },
         },
@@ -73,34 +73,30 @@ const LessonHero = ({ progress, lesson, course }: Props) => {
 
   useEffect(() => {
     // rework to creating an object with all lessons and chapters and then update progress
-    const newObj = {
-      ...progress,
-      progress: course.chapters.reduce(
-        (acc, el) => {
-          acc[el._id] = el.lessons.reduce(
-            (acc, el) => {
-              acc[el._id] = {
-                ended: false,
-                notes: null,
-              };
-              return acc;
-            },
-            {} as Record<string, { ended: boolean; notes: null }>
-          );
-          return acc;
-        },
-        {} as Record<string, Record<string, { ended: boolean; notes: null }>>
-      ),
-    };
-
-    updateElement(newObj);
-
+    // const newObj = {
+    //   ...progress,
+    //   progress: course.chapters.reduce(
+    //     (acc, el) => {
+    //       acc[el._id] = el.lessons.reduce(
+    //         (acc, el) => {
+    //           acc[el._id] = {
+    //             ended: false,
+    //             notes: null,
+    //           };
+    //           return acc;
+    //         },
+    //         {} as Record<string, { ended: boolean; notes: null }>
+    //       );
+    //       return acc;
+    //     },
+    //     {} as Record<string, Record<string, { ended: boolean; notes: null }>>
+    //   ),
+    // };
     // check if there is new lessons/chapters or some lessons/chapters were removed and update progress
     // const progressChapters = Object.keys(progress.progress.chapters);
     // const courseChapters = course.chapters.map((el) => el._id);
     // const currentChapterId = course.chapters[currChapterIndex]!._id;
     // const currentLessonId = currentChapter.lessons[currentLessonIndex]!._id;
-
     // const progressLessons = Object.keys(progress.progress.chapters[currentChapterId]!.lessons);
     // const chapterLessons = currentChapter.lessons.map((el) => el._id);
     // debugger
@@ -112,14 +108,13 @@ const LessonHero = ({ progress, lesson, course }: Props) => {
     //     };
     //   });
     // }
-
     // if (progressLessons.length !== chapterLessons.length) {
     //   const newLessons = chapterLessons.filter((el) => !progressLessons.includes(el));
     //   newLessons.forEach((el) => {
     //     progress.progress.chapters[courseChapters[currChapterIndex]]!.lessons[el] = false;
     //   });
     // }
-  });
+  }, []);
 
   return (
     <section className={styles['LessonHero']}>
@@ -159,7 +154,7 @@ const LessonHero = ({ progress, lesson, course }: Props) => {
                 Poprzednia lekcja
               </Link>
             )}
-            <Button>Oznacz jako ukończoną</Button>
+            <Button onClick={updateProgress}>Oznacz jako ukończoną</Button>
             {currentChapter.lessons.length > currentLessonIndex + 1 ? (
               <Link
                 className={`${styles['next']} link`}
