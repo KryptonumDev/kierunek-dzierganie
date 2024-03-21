@@ -5,7 +5,8 @@ import Markdown from '@/components/ui/markdown';
 
 const Header = async () => {
   const { global }: QueryProps = await query();
-const nav_annotation = <Markdown>{global.nav_Annotation ?? ''}</Markdown>;
+  const nav_annotation = <Markdown>{global.nav_Annotation ?? ''}</Markdown>;
+  
   return (
     <Content
       global={global}
@@ -180,4 +181,3 @@ const CrossIcon = (
     />
   </svg>
 );
-

@@ -27,6 +27,7 @@ export type Props = {
     lengthInMinutes: number;
   };
   progress: {
+    id: number;
     course_id: string;
     owner_id: string;
     progress: {

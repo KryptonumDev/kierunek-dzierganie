@@ -2,7 +2,7 @@ import LessonHero from '@/components/_dashboard/LessonHero';
 import type { ImgType } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
-import { draftMode, cookies } from 'next/headers';
+import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
 interface QueryProps {
@@ -36,6 +36,7 @@ interface QueryProps {
 type SupabaseData = {
   data: {
     courses_progress: {
+      id: number;
       course_id: string;
       owner_id: string;
       progress: {
@@ -147,7 +148,6 @@ const query = async (courseSlug: string, lessonSlug: string) => {
       lessonSlug: lessonSlug,
       courseSlug: courseSlug,
     },
-    isDraftMode: draftMode().isEnabled,
   });
 
   if (!(res as SupabaseData).data.courses_progress.some((el) => el.course_id === data?.course._id)) return notFound();

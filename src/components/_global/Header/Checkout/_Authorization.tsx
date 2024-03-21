@@ -6,7 +6,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import Checkbox from '@/components/ui/Checkbox';
 import Button from '@/components/ui/Button';
-import { regex } from '@/global/constants';
+import { REGEX } from '@/global/constants';
 import PasswordInput from '@/components/ui/PasswordInput';
 import { useState } from 'react';
 import Input from '@/components/ui/Input';
@@ -82,7 +82,7 @@ export default function Authorization({ nextStep, prevStep }: MappingProps) {
             message: 'Pole wymagane',
           },
           pattern: {
-            value: regex.email,
+            value: REGEX.email,
             message: 'Proszę wpisać poprawny e-mail',
           },
         })}

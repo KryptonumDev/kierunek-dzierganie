@@ -49,14 +49,12 @@ const LessonHero = ({ progress, lesson, course }: Props) => {
     await updateElement({
       ...progress,
       progress: {
-        chapters: {
-          ...progress.progress.chapters,
-          [currentChapterId]: {
-            ...progress.progress[currentChapterId],
-            [currentLessonId]: {
-              notes: null,
-              ended: true,
-            },
+        ...progress.progress,
+        [currentChapterId]: {
+          ...progress.progress[currentChapterId],
+          [currentLessonId]: {
+            notes: '',
+            ended: true,
           },
         },
       },

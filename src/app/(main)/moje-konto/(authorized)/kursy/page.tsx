@@ -3,7 +3,7 @@ import ListingCourses from '@/components/_dashboard/ListingCourses';
 import type { ImgType } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
-import { draftMode, cookies } from 'next/headers';
+import { cookies } from 'next/headers';
 
 type QueryProps = {
   global: {
@@ -114,7 +114,6 @@ const query = async (): Promise<QueryProps> => {
     params: {
       id: res.data!.courses_progress.map((course) => course.course_id),
     },
-    isDraftMode: draftMode().isEnabled,
   });
 
   return data as QueryProps;

@@ -2,7 +2,7 @@ import CourseChapters from '@/components/_dashboard/CourseChapters';
 import type { ImgType } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
-import { draftMode, cookies } from 'next/headers';
+import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
 interface QueryProps {
@@ -110,7 +110,6 @@ const query = async (slug: string): Promise<QueryProps> => {
     params: {
       slug: slug,
     },
-    isDraftMode: draftMode().isEnabled,
   });
 
   if (!(res as SupabaseData).data.courses_progress.some((el) => el.course_id === data.course._id)) return notFound();

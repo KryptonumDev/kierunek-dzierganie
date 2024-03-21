@@ -11,10 +11,22 @@ const getServiceAccess = () =>
     },
   });
 
-export async function updateElement(element: any) {
+export async function updateElement(progress: {
+  id: number;
+  course_id: string;
+  owner_id: string;
+  progress: {
+    [key: string]: {
+      [key: string]: {
+        ended: boolean;
+        notes: string;
+      };
+    };
+  };
+}) {
   const supabase = getServiceAccess();
 
-  const updateDataQuery = supabase.from('courses_progress').update(element).eq('id', element.id);
+  const updateDataQuery = supabase.from('courses_progress').update(progress).eq('id', progress.id);
 
   type UpdateData = QueryData<typeof updateDataQuery>;
 
