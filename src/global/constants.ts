@@ -65,4 +65,4 @@ export const pageUrls: { knitting: string; crocheting: string } = {
  * Declaration of how many posts per page should be visible.
  * @constant
  */
-export const POSTS_PER_PAGE = 6;
+export const POSTS_PER_PAGE = 12;

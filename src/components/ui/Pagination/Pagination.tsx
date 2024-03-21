@@ -40,7 +40,7 @@ const Pagination = ({
         <ArrowLeft />
       </Link>
       <div className={styles.center}>
-        {paginationCount < 6 ? (
+        {paginationCount < 2 ? (
           <>
             {buttons.map((el, i) => (
               <Link
@@ -58,7 +58,7 @@ const Pagination = ({
           </>
         ) : (
           <>
-            {selectedNumber > 3 && (
+            {selectedNumber > 2 && selectedNumber < 4 && (
               <Link
                 className={`${styles.link}`}
                 href={`${pathPrefix}${urlID}`}
@@ -66,10 +66,26 @@ const Pagination = ({
                 {1}
               </Link>
             )}
-            {selectedNumber > 4 && <a className={`${styles.link} ${styles.not}`}>...</a>}
+            {selectedNumber > 3 && (
+              <>
+                <Link
+                  className={`${styles.link}`}
+                  href={`${pathPrefix}${urlID}`}
+                >
+                  {1}
+                </Link>
+                <Link
+                  className={`${styles.link}`}
+                  href={`${pathPrefix}${urlID}`}
+                >
+                  {2}
+                </Link>
+              </>
+            )}
+            {selectedNumber > 2 && <a className={`${styles.link} ${styles.not}`}>...</a>}
 
             {buttons.map((el, index) => {
-              if (selectedNumber < 4 && index < 6) {
+              if (selectedNumber < 1 && index < 1) {
                 // first 4 pages
                 return (
                   <Link
@@ -85,7 +101,7 @@ const Pagination = ({
                   </Link>
                 );
               }
-              if (selectedNumber > paginationCount - 3 && index > paginationCount - 7) {
+              if (selectedNumber > 1 && index > paginationCount) {
                 // last 4 pages
                 return (
                   <Link
@@ -97,7 +113,7 @@ const Pagination = ({
                   </Link>
                 );
               }
-              if (index >= selectedNumber - 3 && index <= selectedNumber + 1) {
+              if (index >= selectedNumber - 2 && index <= selectedNumber) {
                 // all othher pages
                 return (
                   <Link
@@ -112,14 +128,34 @@ const Pagination = ({
               return null;
             })}
 
-            {(selectedNumber === 1 || paginationCount - selectedNumber > 3) && <a className={`${styles.not}`}>...</a>}
-            {(selectedNumber === 1 || paginationCount - selectedNumber > 2) && (
-              <Link
-                className={`${styles.link}`}
-                href={`${pathPrefix}${isCategoryPagination ? '' : '/strona'}/${paginationCount}${urlID}`}
-              >
-                {paginationCount}
-              </Link>
+            {paginationCount - selectedNumber == 2 && <a className={`${styles.not}`}>...</a>}
+            {paginationCount - selectedNumber == 2 && (
+              <>
+                <Link
+                  className={`${styles.link}`}
+                  href={`${pathPrefix}${isCategoryPagination ? '' : '/strona'}/${paginationCount}${urlID}`}
+                >
+                  {paginationCount}
+                </Link>
+              </>
+            )}
+
+            {(paginationCount - selectedNumber > 2) && <a className={`${styles.not}`}>...</a>}
+            {(paginationCount - selectedNumber > 2) && (
+              <>
+                <Link
+                  className={`${styles.link}`}
+                  href={`${pathPrefix}${isCategoryPagination ? '' : '/strona'}/${paginationCount}${urlID}`}
+                >
+                  {paginationCount - 1}
+                </Link>
+                <Link
+                  className={`${styles.link}`}
+                  href={`${pathPrefix}${isCategoryPagination ? '' : '/strona'}/${paginationCount}${urlID}`}
+                >
+                  {paginationCount}
+                </Link>
+              </>
             )}
           </>
         )}
