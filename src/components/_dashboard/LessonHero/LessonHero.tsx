@@ -122,7 +122,7 @@ const LessonHero = ({ progress, lesson, course }: Props) => {
         <div className={styles['content']}>
           <div className={styles.video}>
             <Vimeo
-              video='779213971'
+              video={lesson.video}
               loop={false}
               onEnd={updateProgress}
               className={styles['vimeo']}
