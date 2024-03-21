@@ -29,7 +29,7 @@ export default async function BlogPosts({ slug, number }: { slug?: string; numbe
         >
           <Img
             data={hero_Img}
-            sizes=''
+            sizes='(max-width: 499px) 100vw, (max-width: 999px) 50vw, 33vw'
           />
           <div>
             <Markdown.h3>{hero_Heading}</Markdown.h3>

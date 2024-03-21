@@ -40,7 +40,7 @@ export default async function HighlightedPost({
         <div className={styles.author}>
           <Img
             data={img}
-            sizes=''
+            sizes='(max-width: 999px) 100vw, 50vw'
           />
           <div>
             <Markdown.h3>{heading}</Markdown.h3>
