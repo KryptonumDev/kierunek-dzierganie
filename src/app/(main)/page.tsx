@@ -16,6 +16,7 @@ const IndexPage = async () => {
     </>
   );
 };
+
 export default IndexPage;
 
 export async function generateMetadata() {
