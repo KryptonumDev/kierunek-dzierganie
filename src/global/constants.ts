@@ -53,6 +53,15 @@ export const mailerLiteGroup: { newsletter: string } = {
 };
 
 /**
+ * Global declaration of page URLs.
+ * @constant
+ */
+export const pageUrls: { knitting: string; crocheting: string } = {
+  knitting: '/dzierganie-na-drutach',
+  crocheting: '/szydelkowanie',
+};
+
+/**
  * Declaration of how many posts per page should be visible.
  * @constant
  */

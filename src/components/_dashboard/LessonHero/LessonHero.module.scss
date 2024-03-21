@@ -1,0 +1,98 @@
+.LessonHero {
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 32px;
+  }
+  .video {
+    aspect-ratio: 16/9;
+    background-color: var(--background-300);
+    margin-bottom: clamp(16px, calc(16vw / 7.68), 24px);
+    iframe {
+      max-width: 100%;
+      max-height: 100%;
+    }
+  }
+  .progress {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+    h1 {
+      color: var(--primary-800, #53423c);
+      font-size: 28px;
+      font-weight: 300;
+      line-height: 150%;
+    }
+    p {
+      color: var(--primary-800, #53423c);
+      font-size: 18px;
+      font-weight: 300;
+      line-height: 150%;
+    }
+  }
+  .chapter {
+    margin-bottom: 24px;
+  }
+  .nav {
+    display: grid;
+    gap: 24px 16px;
+    justify-content: space-between;
+    align-items: center;
+    @media (min-width: 900px) {
+      grid-template-columns: 1fr auto 1fr;
+    }
+    @media (max-width: 899px) {
+      grid-template-columns: auto auto;
+      button:nth-child(2) {
+        order: 2;
+        grid-column: 3/1;
+      }
+    }
+
+    a.next{
+      display: block;
+      width: fit-content;
+      margin-left: auto;
+    }
+
+    a.prev{
+      display: block;
+      width: fit-content;
+      margin-right: auto;
+    }
+  }
+  .lessons {
+    a {
+      margin-top: 4px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 16px;
+      align-items: center;
+      padding: 10px 8px;
+      transition: background-color 0.3s var(--easing), color 0.3s var(--easing), font-size 0.3s var(--easing);
+
+      color: var(--primary-700, #766965);
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 27px;
+
+      small {
+        color: var(--primary-500, #b4a29c);
+        font-size: 14px;
+        font-weight: 300;
+      }
+
+      &:hover {
+        background: var(--primary-200, #faf4f0);
+        color: var(--primary-800, #53423c);
+      }
+
+      &[aria-current='true'] {
+        background: var(--primary-200, #faf4f0);
+        color: var(--primary-800, #53423c);
+        font-size: 18px;
+      }
+    }
+  }
+}

@@ -12,14 +12,14 @@ export async function middleware(req: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession();
 
-  if (!session && req.nextUrl.pathname.includes('/dashboard'))
-    return NextResponse.redirect(new URL('/authorization', req.url));
+  if (!session && req.nextUrl.pathname.includes('/moje-konto')  && !req.nextUrl.pathname.includes('autoryzacja'))
+    return NextResponse.redirect(new URL('/moje-konto/autoryzacja', req.url));
 
-  if (session && req.nextUrl.pathname.includes('/authorization'))
-    return NextResponse.redirect(new URL('/dashboard/my-courses', req.url));
+  if (session && req.nextUrl.pathname.includes('autoryzacja'))
+    return NextResponse.redirect(new URL('/moje-konto/kursy', req.url));
 
-  if (session && req.nextUrl.pathname === '/dashboard')
-    return NextResponse.redirect(new URL('/dashboard/my-courses', req.url));
+  if (session && req.nextUrl.pathname === '/moje-konto')
+    return NextResponse.redirect(new URL('/moje-konto/kursy', req.url));
 
   return res;
 }

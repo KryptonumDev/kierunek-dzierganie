@@ -6,6 +6,7 @@ import Select, { SingleValue } from 'react-select';
 import Img from '@/components/ui/image';
 import { ImgType } from '@/global/types';
 import AddToCart from '@/components/ui/AddToCart';
+import { formatPrice } from '@/utils/price-formatter';
 
 const gallerySwitch = (data: ImgType | string, size: 'big'|'small') => ({
   image: (
@@ -188,7 +189,7 @@ const HeroPhysical = ({ name, id, type, variants, physical }: Props) => {
           <div className={styles['price']}>
             <p>
               <span className={chosenVariant!.discount ? styles['discount'] : ''}>
-                {(chosenVariant!.price! / 100).toFixed(2).replace('.', ',')}&nbsp;zł
+                {formatPrice(chosenVariant!.price!)}
               </span>{' '}
               {chosenVariant!.discount && <span>{chosenVariant!.discount / 100}&nbsp;zł</span>}
             </p>

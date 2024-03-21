@@ -1,71 +1,23 @@
 import sanityFetch from '@/utils/sanity.fetch';
-import Link from 'next/link';
-import styles from './Header.module.scss';
-import Search from './_Search';
-import Annotation from './_Annotation';
-import Nav from './_Nav';
-import Markdown from '@/components/ui/markdown';
 import type { QueryProps } from './Header.types';
+import Content from './_Content';
+import Markdown from '@/components/ui/markdown';
 
 const Header = async () => {
-  const { nav_Annotation, nav_Links }: QueryProps = await query();
-
+  const { global }: QueryProps = await query();
+  const nav_annotation = <Markdown>{global.nav_Annotation ?? ''}</Markdown>;
+  
   return (
-    <>
-      <a
-        href='#main'
-        className={styles.skipToMainContent}
-      >
-        Przejdź do głównej treści
-      </a>
-      {nav_Annotation && (
-        <Annotation
-          CloseIcon={CloseIcon}
-          rawContent={nav_Annotation}
-        >
-          <Markdown>{nav_Annotation}</Markdown>
-        </Annotation>
-      )}
-      <header className={styles['Header']}>
-        <div className={`max-width ${styles['max-width']}`}>
-          <Link
-            href='/'
-            aria-label='Strona główna'
-            className={styles.logo}
-          >
-            <Logo />
-          </Link>
-          <Nav
-            links={nav_Links}
-            ChevronDownIcon={ChevronDownIcon}
-            ChevronBackIcon={ChevronBackIcon}
-            SearchIcon={SearchIcon}
-            CloseIcon={CloseIcon}
-          />
-          <ul className={styles.quickLinks}>
-            <li>
-              <Link href='/kontakt'>Kontakt</Link>
-            </li>
-            <li>
-              <Link href='/profil'>Mój profil</Link>
-            </li>
-            <li>
-              <Link
-                href='/koszyk'
-                className={styles.basket}
-                data-basket-items='2'
-              >
-                Koszyk
-              </Link>
-            </li>
-          </ul>
-        </div>
-        <Search
-          SearchIcon={SearchIcon}
-          CloseIcon={CloseIcon}
-        />
-      </header>
-    </>
+    <Content
+      global={global}
+      markdownNavAnnotation={nav_annotation}
+      Logo={Logo}
+      SearchIcon={SearchIcon}
+      CloseIcon={CloseIcon}
+      ChevronDownIcon={ChevronDownIcon}
+      ChevronBackIcon={ChevronBackIcon}
+      CrossIcon={CrossIcon}
+    />
   );
 };
 
@@ -74,7 +26,34 @@ export default Header;
 const query = async (): Promise<QueryProps> => {
   const data = await sanityFetch({
     query: /* groq */ `
-      *[_id == 'global'][0] {
+    {
+    "global":  *[_id == 'global'][0] {
+        image_crochet{
+          asset -> {
+            url,
+            altText,
+            metadata {
+              lqip,
+              dimensions {
+                width,
+                height,
+              }
+            }
+          }
+        },
+        image_knitting{
+          asset -> {
+            url,
+            altText,
+            metadata {
+              lqip,
+              dimensions {
+                width,
+                height,
+              }
+            }
+          }
+        },
         nav_Annotation,
         nav_Links {
           name,
@@ -103,7 +82,7 @@ const query = async (): Promise<QueryProps> => {
   return data as QueryProps;
 };
 
-const Logo = () => (
+const Logo = (
   <svg
     xmlns='http://www.w3.org/2000/svg'
     width='136'
@@ -184,5 +163,21 @@ const ChevronBackIcon = (
       strokeWidth='0.75'
       d='M13 4H1m0 0L3.063.875M1 4l2.063 3.125'
     ></path>
+  </svg>
+);
+const CrossIcon = (
+  <svg
+    width='24'
+    height='25'
+    viewBox='0 0 24 25'
+    fill='none'
+    xmlns='http://www.w3.org/2000/svg'
+  >
+    <path
+      d='M17.25 17.5171L6.75 7.01709M17.25 7.01709L6.75 17.5171'
+      stroke='#9A827A'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    />
   </svg>
 );

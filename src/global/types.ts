@@ -19,6 +19,26 @@ export type ImgType = {
   };
 };
 
+export type ProductCard = {
+  _id: string;
+  basis: 'crocheting' | 'knitting';
+  slug: string;
+  name: string;
+  price?: number;
+  discount?: number;
+  countInStock?: number;
+  featuredVideo?: string;
+  gallery?: ImgType;
+  variants: Array<{
+    name: string;
+    price: number;
+    discount: number;
+    countInStock: number;
+    featuredVideo: string;
+    gallery: ImgType;
+  }>;
+};
+
 export type ProductVariant = {
   name: string;
   price: number;
@@ -148,6 +168,25 @@ export type generateStaticParamsProps = {
 export type generateBlogCategoryPageStaticParamsProps = {
   slug: string;
   number: string;
+};
+
+export type Product = {
+  _id: string;
+  price: number;
+  discount: number;
+  name: string;
+  quantity: number;
+  slug: {
+    current: string;
+  };
+  variants: Array<{
+    _key: number;
+    name: string;
+    price: number;
+    discount: number;
+    gallery: Array<ImgType>;
+  }>;
+  gallery: ImgType;
 };
 
 export type BlogsCategoryStaticParamsType = {

@@ -270,6 +270,12 @@ main {
   }
 }
 
+.dashboard-wrapper{
+  display: grid;
+  grid-template-columns: 277px 1fr;
+  gap: 32px;
+}
+
 .orderedList {
   display: grid;
   row-gap: clamp(12px, calc(16vw / 7.68), 16px);

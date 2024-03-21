@@ -1,0 +1,56 @@
+.EmptyCourses {
+  > h2 {
+    margin-top: clamp(48px, calc(48vw / 7.68), 64px);
+    margin-bottom: clamp(16px, calc(16vw / 7.68), 28px);
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    position: relative;
+    width: fit-content;
+
+    .count {
+      position: absolute;
+      right: -4px;
+      transform: translateX(100%);
+      top: -6px;
+      border-radius: 200px;
+      background: var(--primary-300, #efe8e7);
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+  }
+  > p {
+    text-align: center;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(16px, calc(24vw / 7.68), 24px);
+    margin: 0 auto;
+    width: fit-content;
+    margin-top: clamp(20px, calc(48vw / 7.68), 48px);
+
+    > div {
+      max-width: 400px;
+      width: 100%;
+
+      img {
+        margin-bottom: 20px;
+        border-radius: 6px;
+      }
+
+      a {
+        margin: 0 auto;
+
+        @media (max-width: 480px) {
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}

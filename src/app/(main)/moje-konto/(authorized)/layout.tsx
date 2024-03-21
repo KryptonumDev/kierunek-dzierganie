@@ -1,3 +1,11 @@
+
+import ControlPanel from '@/components/_dashboard/ControlPanel';
+
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return (
+    <div className='dashboard-wrapper'>
+      <ControlPanel/>
+      {children}
+    </div>
+  );
 }

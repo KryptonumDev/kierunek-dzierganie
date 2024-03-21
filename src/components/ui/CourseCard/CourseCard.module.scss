@@ -1,0 +1,43 @@
+.CourseCard {
+  > p {
+  }
+
+  .image-wrap {
+    position: relative;
+
+    .badge {
+      position: absolute;
+      display: block;
+      top: 0;
+      left: 0;
+      padding: 8px 16px 8px 20px;
+      border-radius: 0px 0px 4px 0px;
+    }
+
+    img {
+      border-radius: 4px;
+      aspect-ratio: 381/276;
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+    }
+  }
+
+  .flex {
+    margin-top: 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  small {
+    display: block;
+    margin-bottom: 4px;
+    margin-top: 28px;
+    color: var(--primary-800, #53423c);
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 150%;
+  }
+}

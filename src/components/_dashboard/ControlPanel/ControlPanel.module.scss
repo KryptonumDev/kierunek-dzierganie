@@ -1,0 +1,40 @@
+.ControlPanel {
+  position: sticky;
+  top: 140px;
+  border-radius: 6px;
+  background: var(--primary-200, #faf4f0);
+  padding: 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: fit-content;
+
+  ul {
+    display: grid;
+    gap: 28px;
+
+    li {
+      display: block;
+
+      a {
+        display: block;
+        color: var(--primary-700, #766965);
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 150%;
+        transition: color .3s var(--easing), font-size .3s var(--easing);
+      }
+
+      &.active a{
+        color: var(--primary-800, #53423C);
+        font-size: 18px;
+      }
+    }
+  }
+
+  > *:last-child {
+    margin-top: 160px;
+    width: fit-content;
+    text-align: left;
+  }
+}

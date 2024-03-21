@@ -32,7 +32,7 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
         })
         .then((res) => {
           if (res.error) throw res.error;
-          router.push(`/moje-konto/autoryzacja/potwierdzenie-rejestracji?provider=${data.email.split('@')[1]}`);
+          router.push('/moje-konto/potwierdzenie-rejestracji');
         })
         .catch((error) => {
           toast(error.message);
