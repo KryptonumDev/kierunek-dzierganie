@@ -102,7 +102,9 @@ const Pagination = ({
                 className={currentPage === el ? `${styles.link} ${styles.active}` : `${styles.link}`}
                 key={i}
                 href={
-                  el >= 2 ? `${pathPrefix}${addPagePrefix ? '/strona' : ''}/${el}${scrollTo}` : `${pathPrefix}${scrollTo}`
+                  el >= 2
+                    ? `${pathPrefix}${addPagePrefix ? '/strona' : ''}/${el}${scrollTo}`
+                    : `${pathPrefix}${scrollTo}`
                 }
                 tabIndex={currentPage === el ? -1 : 0}
               >
@@ -128,7 +130,9 @@ const Pagination = ({
                     className={currentPage === el ? `${styles.link} ${styles.active}` : `${styles.link}`}
                     key={index}
                     href={
-                      el >= 2 ? `${pathPrefix}${addPagePrefix ? '/strona' : ''}/${el}${scrollTo}` : `${pathPrefix}${scrollTo}`
+                      el >= 2
+                        ? `${pathPrefix}${addPagePrefix ? '/strona' : ''}/${el}${scrollTo}`
+                        : `${pathPrefix}${scrollTo}`
                     }
                   >
                     {el}
@@ -136,13 +140,31 @@ const Pagination = ({
                 );
               }
               //logic for numbers between separators
-              if (index >= currentPage - 4 && index <= currentPage) {
+              if (index >= currentPage - 4 && index <= currentPage && currentPage < 5) {
                 return (
                   <Link
                     className={currentPage === el ? `${styles.link} ${styles.active}` : `${styles.link}`}
                     key={index}
                     href={
-                      el >= 2 ? `${pathPrefix}${addPagePrefix ? '/strona' : ''}/${el}${scrollTo}` : `${pathPrefix}${scrollTo}`
+                      el >= 2
+                        ? `${pathPrefix}${addPagePrefix ? '/strona' : ''}/${el}${scrollTo}`
+                        : `${pathPrefix}${scrollTo}`
+                    }
+                    tabIndex={currentPage === el ? -1 : 0}
+                  >
+                    {el}
+                  </Link>
+                );
+              }
+              if (index >= currentPage - 2 && index <= currentPage) {
+                return (
+                  <Link
+                    className={currentPage === el ? `${styles.link} ${styles.active}` : `${styles.link}`}
+                    key={index}
+                    href={
+                      el >= 2
+                        ? `${pathPrefix}${addPagePrefix ? '/strona' : ''}/${el}${scrollTo}`
+                        : `${pathPrefix}${scrollTo}`
                     }
                     tabIndex={currentPage === el ? -1 : 0}
                   >
