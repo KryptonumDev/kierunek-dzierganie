@@ -32,6 +32,7 @@ export default async function BlogPageNumber({ params: { number } }: { params: {
           highlightedPost: blog_HighlightedPost,
           number: parseInt(number),
           blogPosts: blogPosts,
+          pathPrefix: '/blog/strona',
         }}
       />
     </>

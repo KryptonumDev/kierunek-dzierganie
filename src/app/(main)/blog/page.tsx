@@ -31,6 +31,7 @@ export default async function BlogPage() {
           paragraph: blog_Paragraph,
           highlightedPost: blog_HighlightedPost,
           blogPosts: blogPosts,
+          pathPrefix: '/blog/strona',
         }}
       />
     </>

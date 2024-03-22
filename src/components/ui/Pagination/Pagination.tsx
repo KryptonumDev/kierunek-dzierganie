@@ -8,7 +8,6 @@ const Pagination = ({
   allElementsCount,
   elementsPerPage,
   pathPrefix,
-  addPagePrefix = false,
   scrollTo = '',
 }: PaginationTypes) => {
   const paginationCount = useMemo(() => {
@@ -30,7 +29,7 @@ const Pagination = ({
   const firstPaginationNumber = (
     <Link
       className={`${styles.link}`}
-      href={`${pathPrefix}${scrollTo}`}
+      href={`${pathPrefix.replace('/strona', '')}${scrollTo}`}
     >
       {1}
     </Link>
@@ -39,7 +38,7 @@ const Pagination = ({
   const secondPaginationNumber = (
     <Link
       className={`${styles.link}`}
-      href={addPagePrefix ? `${pathPrefix}/strona/2${scrollTo}` : `${pathPrefix}/2${scrollTo}`}
+      href={`${pathPrefix}/2${scrollTo}`}
     >
       {2}
     </Link>
@@ -48,7 +47,7 @@ const Pagination = ({
   const preLastPaginationNumber = (
     <Link
       className={`${styles.link}`}
-      href={`${pathPrefix}${addPagePrefix ? '/strona' : ''}/${paginationCount - 1}${scrollTo}`}
+      href={`${pathPrefix}/${paginationCount - 1}${scrollTo}`}
     >
       {paginationCount - 1}
     </Link>
@@ -57,7 +56,7 @@ const Pagination = ({
   const lastPaginationNumber = (
     <Link
       className={`${styles.link}`}
-      href={`${pathPrefix}${addPagePrefix ? '/strona' : ''}/${paginationCount}${scrollTo}`}
+      href={`${pathPrefix}/${paginationCount}${scrollTo}`}
     >
       {paginationCount}
     </Link>
@@ -68,8 +67,8 @@ const Pagination = ({
       className={currentPage == 1 ? `${styles.disabled} ${styles.arrow}` : `${styles.arrow}`}
       href={
         currentPage >= 3
-          ? `${pathPrefix}${addPagePrefix ? '/strona' : ''}/${currentPage - 1}${scrollTo}`
-          : `${pathPrefix}${scrollTo}`
+          ? `${pathPrefix}/${currentPage - 1}${scrollTo}`
+          : `${pathPrefix.replace('/strona', '')}${scrollTo}`
       }
       tabIndex={currentPage == 1 ? -1 : 0}
     >
@@ -82,8 +81,8 @@ const Pagination = ({
       className={currentPage >= paginationCount ? `${styles.disabled} ${styles.arrow}` : `${styles.arrow}`}
       href={
         currentPage < paginationCount
-          ? `${pathPrefix}${addPagePrefix ? '/strona' : ''}/${currentPage + 1}${scrollTo}`
-          : `${pathPrefix}${addPagePrefix ? '/strona' : ''}/${paginationCount}${scrollTo}`
+          ? `${pathPrefix}/${currentPage + 1}${scrollTo}`
+          : `${pathPrefix}/${paginationCount}${scrollTo}`
       }
       tabIndex={currentPage >= paginationCount ? -1 : 0}
     >
@@ -101,11 +100,7 @@ const Pagination = ({
               <Link
                 className={currentPage === el ? `${styles.link} ${styles.active}` : `${styles.link}`}
                 key={i}
-                href={
-                  el >= 2
-                    ? `${pathPrefix}${addPagePrefix ? '/strona' : ''}/${el}${scrollTo}`
-                    : `${pathPrefix}${scrollTo}`
-                }
+                href={el >= 2 ? `${pathPrefix}/${el}${scrollTo}` : `${pathPrefix.replace('/strona', '')}${scrollTo}`}
                 tabIndex={currentPage === el ? -1 : 0}
               >
                 {el}
@@ -130,9 +125,7 @@ const Pagination = ({
                     className={currentPage === el ? `${styles.link} ${styles.active}` : `${styles.link}`}
                     key={index}
                     href={
-                      el >= 2
-                        ? `${pathPrefix}${addPagePrefix ? '/strona' : ''}/${el}${scrollTo}`
-                        : `${pathPrefix}${scrollTo}`
+                      el >= 2 ? `${pathPrefix}/${el}${scrollTo}` : `${pathPrefix.replace('/strona', '')}${scrollTo}`
                     }
                   >
                     {el}
@@ -145,11 +138,7 @@ const Pagination = ({
                   <Link
                     className={currentPage === el ? `${styles.link} ${styles.active}` : `${styles.link}`}
                     key={index}
-                    href={
-                      el >= 2
-                        ? `${pathPrefix}${addPagePrefix ? '/strona' : ''}/${el}${scrollTo}`
-                        : `${pathPrefix}${scrollTo}`
-                    }
+                    href={el >= 2 ? `${pathPrefix}/${el}${scrollTo}` : `${pathPrefix.replace('/strona', '')}${scrollTo}`}
                     tabIndex={currentPage === el ? -1 : 0}
                   >
                     {el}
@@ -161,11 +150,7 @@ const Pagination = ({
                   <Link
                     className={currentPage === el ? `${styles.link} ${styles.active}` : `${styles.link}`}
                     key={index}
-                    href={
-                      el >= 2
-                        ? `${pathPrefix}${addPagePrefix ? '/strona' : ''}/${el}${scrollTo}`
-                        : `${pathPrefix}${scrollTo}`
-                    }
+                    href={el >= 2 ? `${pathPrefix}/${el}${scrollTo}` : `${pathPrefix}${scrollTo}`}
                     tabIndex={currentPage === el ? -1 : 0}
                   >
                     {el}

@@ -14,7 +14,6 @@ const BlogSection = async ({
   slug,
   number,
   pathPrefix = '/blog',
-  addPagePrefix = true,
 }: BlogSectionTypes) => {
   return (
     <section className={styles['BlogSection']}>
@@ -36,7 +35,6 @@ const BlogSection = async ({
         elementsPerPage={POSTS_PER_PAGE}
         pathPrefix={pathPrefix}
         scrollTo='#wpisy'
-        addPagePrefix={addPagePrefix}
       />
     </section>
   );
