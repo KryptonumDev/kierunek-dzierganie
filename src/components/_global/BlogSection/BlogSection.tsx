@@ -31,11 +31,11 @@ const BlogSection = async ({
         number={number}
       />
       <Pagination
-        selectedNumber={number}
-        numberOfElements={blogPosts.length}
-        elementsDivider={POSTS_PER_PAGE}
+        currentPage={number}
+        allElementsCount={blogPosts.length}
+        elementsPerPage={POSTS_PER_PAGE}
         pathPrefix={pathPrefix}
-        urlID='#wpisy'
+        scrollTo='#wpisy'
         addPagePrefix={addPagePrefix}
       />
     </section>

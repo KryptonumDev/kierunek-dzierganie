@@ -1,8 +1,8 @@
 export type PaginationTypes = {
-  selectedNumber?: number;
-  numberOfElements: number;
-  elementsDivider: number;
+  currentPage?: number;
+  allElementsCount: number;
+  elementsPerPage: number;
   pathPrefix?: string;
   addPagePrefix?: boolean;
-  urlID?: string;
+  scrollTo?: string;
 };
