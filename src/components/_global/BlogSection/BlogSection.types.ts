@@ -13,7 +13,7 @@ export type BlogSectionTypes = {
   slug?: string;
   number?: number;
   pathPrefix?: string;
-  isCategoryPagination?: boolean;
+  addPagePrefix?: boolean;
 };
 
 export type HighlightedPostType = {

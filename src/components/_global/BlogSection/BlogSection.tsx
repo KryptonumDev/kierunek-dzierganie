@@ -14,7 +14,7 @@ const BlogSection = async ({
   slug,
   number,
   pathPrefix = '/blog',
-  isCategoryPagination = false,
+  addPagePrefix = true,
 }: BlogSectionTypes) => {
   return (
     <section className={styles['BlogSection']}>
@@ -36,7 +36,7 @@ const BlogSection = async ({
         elementsDivider={POSTS_PER_PAGE}
         pathPrefix={pathPrefix}
         urlID='#wpisy'
-        isCategoryPagination={isCategoryPagination}
+        addPagePrefix={addPagePrefix}
       />
     </section>
   );

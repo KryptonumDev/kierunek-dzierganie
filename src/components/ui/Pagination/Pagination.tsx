@@ -8,7 +8,7 @@ const Pagination = ({
   numberOfElements,
   elementsDivider,
   pathPrefix,
-  isCategoryPagination,
+  addPagePrefix = false,
   urlID = '',
 }: PaginationTypes) => {
   const paginationCount = useMemo(() => {
@@ -27,18 +27,73 @@ const Pagination = ({
     return null;
   }
 
+  const firstPaginationNumber = (
+    <Link
+      className={`${styles.link}`}
+      href={`${pathPrefix}${urlID}`}
+    >
+      {1}
+    </Link>
+  );
+
+  const secondPaginationNumber = (
+    <Link
+      className={`${styles.link}`}
+      href={addPagePrefix ? `${pathPrefix}/strona/2${urlID}` : `${pathPrefix}/2${urlID}`}
+    >
+      {2}
+    </Link>
+  );
+
+  const preLastPaginationNumber = (
+    <Link
+      className={`${styles.link}`}
+      href={`${pathPrefix}${addPagePrefix ? '/strona' : ''}/${paginationCount - 1}${urlID}`}
+    >
+      {paginationCount - 1}
+    </Link>
+  );
+
+  const lastPaginationNumber = (
+    <Link
+      className={`${styles.link}`}
+      href={`${pathPrefix}${addPagePrefix ? '/strona' : ''}/${paginationCount}${urlID}`}
+    >
+      {paginationCount}
+    </Link>
+  );
+
+  const arrowLeft = (
+    <Link
+      className={selectedNumber == 1 ? `${styles.disabled} ${styles.arrow}` : `${styles.arrow}`}
+      href={
+        selectedNumber >= 3
+          ? `${pathPrefix}${addPagePrefix ? '/strona' : ''}/${selectedNumber - 1}${urlID}`
+          : `${pathPrefix}${urlID}`
+      }
+      tabIndex={selectedNumber == 1 ? -1 : 0}
+    >
+      <ArrowLeft />
+    </Link>
+  );
+
+  const arrowRight = (
+    <Link
+      className={selectedNumber >= paginationCount ? `${styles.disabled} ${styles.arrow}` : `${styles.arrow}`}
+      href={
+        selectedNumber < paginationCount
+          ? `${pathPrefix}${addPagePrefix ? '/strona' : ''}/${selectedNumber + 1}${urlID}`
+          : `${pathPrefix}${addPagePrefix ? '/strona' : ''}/${paginationCount}${urlID}`
+      }
+      tabIndex={selectedNumber >= paginationCount ? -1 : 0}
+    >
+      <ArrowRight />
+    </Link>
+  );
+
   return (
     <div className={styles['Pagination']}>
-      <Link
-        className={selectedNumber == 1 ? `${styles.disabled} ${styles.link}` : `${styles.arrow} ${styles.link}`}
-        href={
-          selectedNumber >= 3
-            ? `${pathPrefix}${isCategoryPagination ? '' : '/strona'}/${selectedNumber - 1}${urlID}`
-            : `${pathPrefix}${urlID}`
-        }
-      >
-        <ArrowLeft />
-      </Link>
+      {arrowLeft}
       <div className={styles.center}>
         {paginationCount < 2 ? (
           <>
@@ -47,10 +102,9 @@ const Pagination = ({
                 className={selectedNumber === el ? `${styles.link} ${styles.active}` : `${styles.link}`}
                 key={i}
                 href={
-                  el >= 2
-                    ? `${pathPrefix}${isCategoryPagination ? '' : '/strona'}/${el}${urlID}`
-                    : `${pathPrefix}${urlID}`
+                  el >= 2 ? `${pathPrefix}${addPagePrefix ? '/strona' : ''}/${el}${urlID}` : `${pathPrefix}${urlID}`
                 }
+                tabIndex={selectedNumber === el ? -1 : 0}
               >
                 {el}
               </Link>
@@ -58,68 +112,40 @@ const Pagination = ({
           </>
         ) : (
           <>
-            {selectedNumber > 2 && selectedNumber < 4 && (
-              <Link
-                className={`${styles.link}`}
-                href={`${pathPrefix}${urlID}`}
-              >
-                {1}
-              </Link>
-            )}
+            {selectedNumber == 3 && firstPaginationNumber}
             {selectedNumber > 3 && (
               <>
-                <Link
-                  className={`${styles.link}`}
-                  href={`${pathPrefix}${urlID}`}
-                >
-                  {1}
-                </Link>
-                <Link
-                  className={`${styles.link}`}
-                  href={`${pathPrefix}${urlID}`}
-                >
-                  {2}
-                </Link>
+                {firstPaginationNumber}
+                {secondPaginationNumber}
               </>
             )}
             {selectedNumber > 2 && <a className={`${styles.link} ${styles.not}`}>...</a>}
 
             {buttons.map((el, index) => {
-              if (selectedNumber < 1 && index < 1) {
-                // first 4 pages
+              //first two pagination numbers
+              if (selectedNumber == 1 && index == 1) {
                 return (
                   <Link
                     className={selectedNumber === el ? `${styles.link} ${styles.active}` : `${styles.link}`}
                     key={index}
                     href={
-                      el >= 2
-                        ? `${pathPrefix}${isCategoryPagination ? '' : '/strona'}/${el}${urlID}`
-                        : `${pathPrefix}${urlID}`
+                      el >= 2 ? `${pathPrefix}${addPagePrefix ? '/strona' : ''}/${el}${urlID}` : `${pathPrefix}${urlID}`
                     }
                   >
                     {el}
                   </Link>
                 );
               }
-              if (selectedNumber > 1 && index > paginationCount) {
-                // last 4 pages
-                return (
-                  <Link
-                    className={selectedNumber === el ? `${styles.link} ${styles.active}` : `${styles.link}`}
-                    key={index}
-                    href={`${pathPrefix}${isCategoryPagination ? '' : '/strona'}/${el}${urlID}`}
-                  >
-                    {el}
-                  </Link>
-                );
-              }
+              //logic for numbers between separators
               if (index >= selectedNumber - 2 && index <= selectedNumber) {
-                // all othher pages
                 return (
                   <Link
                     className={selectedNumber === el ? `${styles.link} ${styles.active}` : `${styles.link}`}
                     key={index}
-                    href={`${pathPrefix}${isCategoryPagination ? '' : '/strona'}/${el}${urlID}`}
+                    href={
+                      el >= 2 ? `${pathPrefix}${addPagePrefix ? '/strona' : ''}/${el}${urlID}` : `${pathPrefix}${urlID}`
+                    }
+                    tabIndex={selectedNumber === el ? -1 : 0}
                   >
                     {el}
                   </Link>
@@ -129,49 +155,19 @@ const Pagination = ({
             })}
 
             {paginationCount - selectedNumber == 2 && <a className={`${styles.not}`}>...</a>}
-            {paginationCount - selectedNumber == 2 && (
-              <>
-                <Link
-                  className={`${styles.link}`}
-                  href={`${pathPrefix}${isCategoryPagination ? '' : '/strona'}/${paginationCount}${urlID}`}
-                >
-                  {paginationCount}
-                </Link>
-              </>
-            )}
+            {paginationCount - selectedNumber == 2 && lastPaginationNumber}
 
-            {(paginationCount - selectedNumber > 2) && <a className={`${styles.not}`}>...</a>}
-            {(paginationCount - selectedNumber > 2) && (
+            {paginationCount - selectedNumber > 2 && <a className={`${styles.not}`}>...</a>}
+            {paginationCount - selectedNumber > 2 && (
               <>
-                <Link
-                  className={`${styles.link}`}
-                  href={`${pathPrefix}${isCategoryPagination ? '' : '/strona'}/${paginationCount}${urlID}`}
-                >
-                  {paginationCount - 1}
-                </Link>
-                <Link
-                  className={`${styles.link}`}
-                  href={`${pathPrefix}${isCategoryPagination ? '' : '/strona'}/${paginationCount}${urlID}`}
-                >
-                  {paginationCount}
-                </Link>
+                {preLastPaginationNumber}
+                {lastPaginationNumber}
               </>
             )}
           </>
         )}
       </div>
-      <Link
-        className={
-          selectedNumber >= paginationCount ? `${styles.disabled} ${styles.link}` : `${styles.link} ${styles.arrow}`
-        }
-        href={
-          selectedNumber < paginationCount
-            ? `${pathPrefix}${isCategoryPagination ? '' : '/strona'}/${selectedNumber + 1}${urlID}`
-            : `${pathPrefix}${isCategoryPagination ? '' : '/strona'}/${paginationCount}${urlID}`
-        }
-      >
-        <ArrowRight />
-      </Link>
+      {arrowRight}
     </div>
   );
 };

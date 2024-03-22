@@ -47,7 +47,7 @@ export default async function CategoryPaginationBlogPage({
           blogPosts: filteredBlogPosts,
           pathPrefix: `/blog/kategoria/${slug}`,
           number: parseInt(number),
-          isCategoryPagination: true,
+          addPagePrefix: false,
         }}
       />
     </>

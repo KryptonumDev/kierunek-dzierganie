@@ -3,6 +3,6 @@ export type PaginationTypes = {
   numberOfElements: number;
   elementsDivider: number;
   pathPrefix?: string;
-  isCategoryPagination?: boolean;
+  addPagePrefix?: boolean;
   urlID?: string;
 };
