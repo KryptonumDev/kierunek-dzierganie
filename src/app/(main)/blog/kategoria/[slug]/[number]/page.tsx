@@ -1,16 +1,16 @@
+import { notFound } from 'next/navigation';
+import sanityFetch from '@/utils/sanity.fetch';
+import { QueryMetadata } from '@/global/Seo/query-metadata';
 import BlogSection, { BlogSection_Query } from '@/components/_global/BlogSection';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
+import HeroSimple, { HeroSimple_Query } from '@/components/_global/HeroSimple';
 import CategoriesSection, { CategoriesSection_Query } from '@/components/_global/CategoriesSection';
-import HeroBackground, { HeroBackground_Query } from '@/components/_global/HeroBackground';
-import {
-  type BlogsCategoryStaticParamsType,
-  type BlogCategoryPageQueryProps,
-  type generateBlogCategoryPageStaticParamsProps,
-} from '@/global/types';
-import sanityFetch from '@/utils/sanity.fetch';
 import { POSTS_PER_PAGE } from '@/global/constants';
-import { notFound } from 'next/navigation';
-import { QueryMetadata } from '@/global/Seo/query-metadata';
+import type {
+  BlogsCategoryStaticParamsType,
+  BlogCategoryPageQueryProps,
+  generateBlogCategoryPageStaticParamsProps,
+} from '@/global/types';
 
 export default async function CategoryPaginationBlogPage({
   params: { slug, number },
@@ -18,8 +18,7 @@ export default async function CategoryPaginationBlogPage({
   params: { slug: string; number: string };
 }) {
   const {
-    hero_Heading,
-    hero_Paragraph,
+    HeroSimple: HeroSimpleData,
     blogPosts,
     categories_Heading,
     categories_Paragraph,
@@ -37,7 +36,7 @@ export default async function CategoryPaginationBlogPage({
   return (
     <>
       <Breadcrumbs data={page} />
-      <HeroBackground data={{ hero_Heading, hero_Paragraph }} />
+      <HeroSimple {...HeroSimpleData} />
       <CategoriesSection data={{ blogPosts, categories_Heading, categories_Paragraph, highlightedCategory: slug }} />
       <BlogSection
         {...{
@@ -57,18 +56,18 @@ export default async function CategoryPaginationBlogPage({
 async function getData(slug: string) {
   const data = await sanityFetch<BlogCategoryPageQueryProps>({
     query: /* groq */ `
-        *[_type=='BlogCategory_Collection' && slug.current == $slug][0] {
-          name,
-          "filteredBlogPosts": *[_type=="BlogPost_Collection" && $slug in category[]->slug.current],
-          ${HeroBackground_Query}
-          ${CategoriesSection_Query}
-          ${BlogSection_Query}
-        }
+      *[_type == 'BlogCategory_Collection' && slug.current == $slug][0] {
+        name,
+        "filteredBlogPosts": *[_type == "BlogPost_Collection" && $slug in category[] -> slug.current],
+        ${HeroSimple_Query}
+        ${CategoriesSection_Query}
+        ${BlogSection_Query}
+      }
     `,
     params: { slug },
     tags: ['Blog_Page'],
   });
-  data?.hero_Heading || notFound();
+  !data?.HeroSimple && notFound();
   return data;
 }
 
@@ -84,8 +83,10 @@ export async function generateStaticParams(): Promise<generateBlogCategoryPageSt
           name,
           "slug": slug.current,
         }
-      }`,
+      }
+    `,
   });
+
   return data
     .flatMap((entry) =>
       entry.categories.map((category) => {

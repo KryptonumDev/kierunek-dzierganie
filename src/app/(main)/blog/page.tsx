@@ -1,17 +1,16 @@
 import sanityFetch from '@/utils/sanity.fetch';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
-import BlogSection, { BlogSection_Query } from '@/components/_global/BlogSection';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
+import HeroSimple, { HeroSimple_Query } from '@/components/_global/HeroSimple';
+import BlogSection, { BlogSection_Query } from '@/components/_global/BlogSection';
 import CategoriesSection, { CategoriesSection_Query } from '@/components/_global/CategoriesSection';
-import HeroBackground, { HeroBackground_Query } from '@/components/_global/HeroBackground';
 import type { BlogPageQueryProps } from '@/global/types';
 
 const page = { name: 'Blog', path: '/blog' };
 
 export default async function BlogPage() {
   const {
-    hero_Heading,
-    hero_Paragraph,
+    HeroSimple: HeroSimpleData,
     blogPosts,
     categories_Heading,
     categories_Paragraph,
@@ -23,7 +22,7 @@ export default async function BlogPage() {
   return (
     <>
       <Breadcrumbs data={[page]} />
-      <HeroBackground data={{ hero_Heading, hero_Paragraph }} />
+      <HeroSimple {...HeroSimpleData} />
       <CategoriesSection data={{ blogPosts, categories_Heading, categories_Paragraph }} />
       <BlogSection
         {...{
@@ -41,7 +40,7 @@ const query = async (): Promise<BlogPageQueryProps> => {
   return await sanityFetch<BlogPageQueryProps>({
     query: /* groq */ `
       *[_type == "Blog_Page"][0] {
-        ${HeroBackground_Query}
+        ${HeroSimple_Query}
         ${CategoriesSection_Query}
         ${BlogSection_Query}
       }
@@ -51,5 +50,5 @@ const query = async (): Promise<BlogPageQueryProps> => {
 };
 
 export const generateMetadata = async () => {
-  return await QueryMetadata('Blog_Page', `${page.path}`);
+  return await QueryMetadata('Blog_Page', page.path);
 };
