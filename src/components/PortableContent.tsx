@@ -1,4 +1,8 @@
 import BadgeSection, { BadgeSection_Query, type BadgeSectionTypes } from './_blogPost/BadgeSection';
+import ConversationShowcase, {
+  ConversationShowcase_Query,
+  type ConversationShowcaseTypes,
+} from './_blogPost/ConversationShowcase';
 import HighlightedImage, { HighlightedImage_Query, HighlightedImageTypes } from './_blogPost/HighlightedImage';
 import ImageBadge, { ImageBadge_Query, type ImageBadgeTypes } from './_blogPost/ImageBadge';
 import ImagesGrid, { ImagesGrid_Query, type ImagesGridTypes } from './_blogPost/ImagesGrid';
@@ -17,8 +21,11 @@ type PortableContentMap = {
   ProcessComponent: ProcessComponentTypes;
   //TODO: ArticleGreetings for new author reference;
   Standout: StandoutTypes;
+  //TODO: LargeImage;
   ProcessShowcase: ProcessShowcaseTypes;
   QuoteSection: QuoteSectionTypes;
+  //TODO: VideoSection;
+  ConversationShowcase: ConversationShowcaseTypes;
 };
 
 export type PortableContentTypes = PortableContentMap[keyof PortableContentMap] & { _type: string };
@@ -36,6 +43,7 @@ export default function PortableContent({ data }: { data: PortableContentTypes[]
       Standout: <Standout {...(item as StandoutTypes)} />,
       ProcessShowcase: <ProcessShowcase {...(item as ProcessShowcaseTypes)} />,
       QuoteSection: <QuoteSection {...(item as QuoteSectionTypes)} />,
+      ConversationShocase: <ConversationShowcase {...(item as ConversationShowcaseTypes)} />,
     };
     const DynamicComponent = portableContentMap[portableContentType];
     if (!DynamicComponent) {
@@ -57,4 +65,5 @@ export const PortableContent_Query = /* groq */ `
     ${Standout_Query}
     ${ProcessShowcase_Query}
     ${QuoteSection_Query}
+    ${ConversationShowcase_Query}
   }`;
