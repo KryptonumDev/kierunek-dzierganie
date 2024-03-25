@@ -1,3 +1,4 @@
+import BadgeSection, { BadgeSection_Query, type BadgeSectionTypes } from './_blogPost/BadgeSection';
 import ImageBadge, { ImageBadge_Query, type ImageBadgeTypes } from './_blogPost/ImageBadge';
 import ImagesGrid, { ImagesGrid_Query, type ImagesGridTypes } from './_blogPost/ImagesGrid';
 import ProcessShowcase, { ProcessShowcase_Query, type ProcessShowcaseTypes } from './_blogPost/ProcessShowcase';
@@ -8,6 +9,7 @@ type PortableContentMap = {
   ImageBadge: ImageBadgeTypes;
   ImagesGrid: ImagesGridTypes;
   TableSection: TableSectionTypes;
+  BadgeSection: BadgeSectionTypes;
   ProcessShowcase: ProcessShowcaseTypes;
   QuoteSection: QuoteSectionTypes;
 };
@@ -21,6 +23,7 @@ export default function PortableContent({ data }: { data: PortableContentTypes[]
       ImageBadge: <ImageBadge {...(item as ImageBadgeTypes)} />,
       ImagesGrid: <ImagesGrid {...(item as ImagesGridTypes)} />,
       TableSection: <TableSection {...(item as TableSectionTypes)} />,
+      BadgeSection: <BadgeSection {...(item as BadgeSectionTypes)} />,
       ProcessShowcase: <ProcessShowcase {...(item as ProcessShowcaseTypes)} />,
       QuoteSection: <QuoteSection {...(item as QuoteSectionTypes)} />,
     };
@@ -38,6 +41,7 @@ export const PortableContent_Query = /* groq */ `
     ${ImageBadge_Query}
     ${ImagesGrid_Query}
     ${TableSection_Query}
+    ${BadgeSection_Query}
     ${ProcessShowcase_Query}
     ${QuoteSection_Query}
   }`;
