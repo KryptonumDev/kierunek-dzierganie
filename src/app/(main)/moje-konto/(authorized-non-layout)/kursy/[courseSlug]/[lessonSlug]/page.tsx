@@ -1,3 +1,4 @@
+import LessonDescription from '@/components/_dashboard/LessonDescription';
 import LessonHero from '@/components/_dashboard/LessonHero';
 import LessonNotes from '@/components/_dashboard/LessonNotes';
 import type { ImgType } from '@/global/types';
@@ -32,6 +33,20 @@ type QueryProps = {
     video: string;
     lengthInMinutes: number;
     files: {
+      asset: {
+        url: string;
+        size: number;
+        originalFilename: string;
+        _id: string;
+      };
+    }[];
+    description: string;
+    flex: {
+      title: string;
+      description: string;
+      img: ImgType;
+    }[];
+    files_alter: {
       asset: {
         url: string;
         size: number;
@@ -110,9 +125,12 @@ export default async function Course({
         progress={courses_progress}
       />
       <LessonNotes
-        progress={courses_progress}    
+        progress={courses_progress}
         currentChapter={currentChapterInfo.currentChapter}
         currentLessonIndex={currentChapterInfo.currentLessonIndex}
+      />
+      <LessonDescription
+        lesson={lesson}
       />
     </div>
   );
@@ -155,6 +173,32 @@ const query = async (courseSlug: string, lessonSlug: string) => {
           size,
           originalFilename,
           _id
+        }
+      },
+      files_alter[]{
+        asset->{
+          url,
+          size,
+          originalFilename,
+          _id
+        }
+      },
+      description,
+      flex[]{
+        title,
+        description,
+        img{
+          asset -> {
+            url,
+            altText,
+            metadata {
+              lqip,
+              dimensions {
+                width,
+                height,
+              }
+            }
+          }
         }
       }
     },
