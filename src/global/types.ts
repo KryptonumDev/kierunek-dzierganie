@@ -120,6 +120,21 @@ export type BlogPageQueryProps = {
   };
 };
 
+export type BlogPostQueryProps = {
+  hero: {
+    img: ImgType;
+    heading: string;
+    paragraph: string;
+  };
+  content: PortableTextTypes[];
+  author: {
+    img: ImgType;
+    heading: string;
+    paragraph: string;
+  };
+  date: string;
+};
+
 export type BlogCategoryPageQueryProps = {
   name: string;
   filteredBlogPosts: {
