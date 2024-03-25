@@ -1,20 +1,19 @@
 import { notFound } from 'next/navigation';
+import sanityFetch from '@/utils/sanity.fetch';
 import BlogSection, { BlogSection_Query } from '@/components/_global/BlogSection';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import CategoriesSection, { CategoriesSection_Query } from '@/components/_global/CategoriesSection';
-import HeroBackground, { HeroBackground_Query } from '@/components/_global/HeroBackground';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
-import {
-  type generateStaticParamsProps,
-  type BlogsCategoryStaticParamsType,
-  type BlogCategoryPageQueryProps,
+import type {
+  generateStaticParamsProps,
+  BlogsCategoryStaticParamsType,
+  BlogCategoryPageQueryProps,
 } from '@/global/types';
-import sanityFetch from '@/utils/sanity.fetch';
+import HeroSimple, { HeroSimple_Query } from '@/components/_global/HeroSimple';
 
 export default async function CategoryBlogPage({ params: { slug } }: { params: { slug: string } }) {
   const {
-    hero_Heading,
-    hero_Paragraph,
+    HeroSimple: HeroSimpleData,
     blogPosts,
     categories_Heading,
     categories_Paragraph,
@@ -32,7 +31,7 @@ export default async function CategoryBlogPage({ params: { slug } }: { params: {
   return (
     <>
       <Breadcrumbs data={page} />
-      <HeroBackground data={{ hero_Heading, hero_Paragraph }} />
+      <HeroSimple {...HeroSimpleData} />
       <CategoriesSection data={{ blogPosts, categories_Heading, categories_Paragraph, highlightedCategory: slug }} />
       <BlogSection
         {...{
@@ -52,18 +51,18 @@ export default async function CategoryBlogPage({ params: { slug } }: { params: {
 async function getData(slug: string) {
   const data = await sanityFetch<BlogCategoryPageQueryProps>({
     query: /* groq */ `
-        *[_type=='BlogCategory_Collection' && slug.current == $slug][0] {
-          name,
-          "filteredBlogPosts": *[_type=="BlogPost_Collection" && $slug in category[]->slug.current],
-          ${HeroBackground_Query}
-          ${CategoriesSection_Query}
-          ${BlogSection_Query}
-        }
+      *[_type == 'BlogCategory_Collection' && slug.current == $slug][0] {
+        name,
+        "filteredBlogPosts": *[_type=="BlogPost_Collection" && $slug in category[]->slug.current],
+        ${HeroSimple_Query}
+        ${CategoriesSection_Query}
+        ${BlogSection_Query}
+      }
     `,
     params: { slug },
     tags: ['Blog_Page'],
   });
-  data?.hero_Heading || notFound();
+  !data?.HeroSimple && notFound();
   return data;
 }
 
@@ -79,7 +78,8 @@ export async function generateStaticParams(): Promise<generateStaticParamsProps[
           name,
           "slug": slug.current,
         }
-      }`,
+      }
+    `,
   });
   const allCategories = data.flatMap((post) => post.categories || []);
   const uniqueCategories = allCategories.filter(
