@@ -30,6 +30,9 @@ export type ProductCard = {
   countInStock?: number;
   featuredVideo?: string;
   gallery?: ImgType;
+  course?: {
+    complexity: 1 | 2 | 3;
+  };
   variants: Array<{
     name: string;
     price: number;

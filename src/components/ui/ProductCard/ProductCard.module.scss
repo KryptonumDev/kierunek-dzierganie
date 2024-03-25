@@ -3,22 +3,45 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
 
-  img{
-    max-width: 100%;
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    aspect-ratio: 380/280;
-    border-radius: 4px;
-    margin-bottom: 24px;
+  .link{
+    position: absolute;
+    inset: 0;
+    z-index: 2;
   }
 
-  .names{
+  .image-wrap {
+    position: relative;
+
+    .badge {
+      position: absolute;
+      display: block;
+      top: 0;
+      left: 0;
+      padding: 8px 16px 8px 20px;
+      border-radius: 0px 0px 4px 0px;
+    }
+    
+    img {
+      max-width: 100%;
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      aspect-ratio: 380/280;
+      border-radius: 4px;
+      margin-bottom: 24px;
+    }
+  }
+
+  .names {
     margin-bottom: 8px;
   }
 
-  a, button{
+  a,
+  button {
+    position: relative;
     margin: 36px auto 0 auto;
+    z-index: 3;
   }
 }

@@ -66,3 +66,26 @@ export const pageUrls: { knitting: string; crocheting: string } = {
  * @constant
  */
 export const POSTS_PER_PAGE = 6;
+
+
+/**
+ * Declaration of enum course badge styles.
+ * @constant
+ */
+export const courseComplexityEnum = {
+  1: {
+    name: 'Dla początkujących',
+    background: 'var(--primary-300)',
+    color: 'var(--primary-800)',
+  },
+  2: {
+    name: 'Dla średnio zaawansowanych',
+    background: 'var(--primary-400)',
+    color: 'var(--primary-800)',
+  },
+  3: {
+    name: 'Dla zaawansowanych',
+    background: 'var(--primary-700)',
+    color: 'var(--primary-100)',
+  },
+};
