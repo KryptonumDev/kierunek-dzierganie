@@ -3,7 +3,7 @@ import Img from '@/components/ui/image';
 import styles from './StepsGrid.module.scss';
 import type { StepsGridTypes } from './StepsGrid.types';
 
-const `StepsGrid` = ({ heading, paragraph, list }: StepsGridTypes) => {
+const StepsGrid = ({ heading, paragraph, list }: StepsGridTypes) => {
   return (
     <section className={`sec-wo-margin ${styles['StepsGrid']}`}>
       <header>
