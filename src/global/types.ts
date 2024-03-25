@@ -1,4 +1,5 @@
 import type { ComponentProps } from '@/components/Components';
+import { type PortableContentTypes } from '@/components/PortableContent';
 
 export type CtaType = {
   href: string;
@@ -126,7 +127,7 @@ export type BlogPostQueryProps = {
     heading: string;
     paragraph: string;
   };
-  content: PortableTextTypes[];
+  content: PortableContentTypes[];
   author: {
     img: ImgType;
     heading: string;
