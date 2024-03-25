@@ -2,6 +2,7 @@ import BadgeSection, { BadgeSection_Query, type BadgeSectionTypes } from './_blo
 import HighlightedImage, { HighlightedImage_Query, HighlightedImageTypes } from './_blogPost/HighlightedImage';
 import ImageBadge, { ImageBadge_Query, type ImageBadgeTypes } from './_blogPost/ImageBadge';
 import ImagesGrid, { ImagesGrid_Query, type ImagesGridTypes } from './_blogPost/ImagesGrid';
+import ProcessComponent, { ProcessComponent_Query, ProcessComponentTypes } from './_blogPost/ProcessComponent';
 import ProcessShowcase, { ProcessShowcase_Query, type ProcessShowcaseTypes } from './_blogPost/ProcessShowcase';
 import QuoteSection, { QuoteSection_Query, type QuoteSectionTypes } from './_blogPost/QuoteSection';
 import TableSection, { TableSection_Query, type TableSectionTypes } from './_blogPost/TableSection';
@@ -12,6 +13,7 @@ type PortableContentMap = {
   TableSection: TableSectionTypes;
   BadgeSection: BadgeSectionTypes;
   HighlightedImage: HighlightedImageTypes;
+  ProcessComponent: ProcessComponentTypes;
   ProcessShowcase: ProcessShowcaseTypes;
   QuoteSection: QuoteSectionTypes;
 };
@@ -27,6 +29,7 @@ export default function PortableContent({ data }: { data: PortableContentTypes[]
       TableSection: <TableSection {...(item as TableSectionTypes)} />,
       BadgeSection: <BadgeSection {...(item as BadgeSectionTypes)} />,
       HighlightedImage: <HighlightedImage {...(item as HighlightedImageTypes)} />,
+      ProcessComponent: <ProcessComponent {...(item as ProcessComponentTypes)} />,
       ProcessShowcase: <ProcessShowcase {...(item as ProcessShowcaseTypes)} />,
       QuoteSection: <QuoteSection {...(item as QuoteSectionTypes)} />,
     };
@@ -46,6 +49,7 @@ export const PortableContent_Query = /* groq */ `
     ${TableSection_Query}
     ${BadgeSection_Query}
     ${HighlightedImage_Query}
+    ${ProcessComponent_Query}
     ${ProcessShowcase_Query}
     ${QuoteSection_Query}
   }`;
