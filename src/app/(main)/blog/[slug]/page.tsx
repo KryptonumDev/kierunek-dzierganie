@@ -1,10 +1,11 @@
+import PortableContent, { PortableContent_Query } from '@/components/PortableContent';
 import Hero, { Hero_Query } from '@/components/_blogPost/Hero';
 import { Img_Query } from '@/components/ui/image';
 import { BlogPostQueryProps } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 
 export default async function BlogPostPage({ params: { slug } }: { params: { slug: string } }) {
-  const { hero, author, date } = await getData(slug);
+  const { hero, author, date, content } = await getData(slug);
 
   return (
     <>
@@ -13,6 +14,7 @@ export default async function BlogPostPage({ params: { slug } }: { params: { slu
         author={author}
         date={date}
       />
+      <PortableContent data={content} />
     </>
   );
 }
@@ -30,6 +32,7 @@ async function getData(slug: string) {
         },
       },
       ${Hero_Query}
+      ${PortableContent_Query}
   }`,
     params: { slug },
     tags: ['BlogPost_Collection'],
