@@ -1,9 +1,11 @@
-import ImageBadge, { ImageBadge_Query, ImageBadgeTypes } from './_blogPost/ImageBadge';
+import ImageBadge, { ImageBadge_Query, type ImageBadgeTypes } from './_blogPost/ImageBadge';
+import ImagesGrid, { ImagesGrid_Query, type ImagesGridTypes } from './_blogPost/ImagesGrid';
 import ProcessShowcase, { ProcessShowcase_Query, type ProcessShowcaseTypes } from './_blogPost/ProcessShowcase';
 import QuoteSection, { QuoteSection_Query, type QuoteSectionTypes } from './_blogPost/QuoteSection';
 
 type PortableContentMap = {
   ImageBadge: ImageBadgeTypes;
+  ImagesGrid: ImagesGridTypes;
   ProcessShowcase: ProcessShowcaseTypes;
   QuoteSection: QuoteSectionTypes;
 };
@@ -15,6 +17,7 @@ export default function PortableContent({ data }: { data: PortableContentTypes[]
     const portableContentType = item._type as keyof PortableContentMap;
     const portableContentMap: Record<string, React.ReactNode> = {
       ImageBadge: <ImageBadge {...(item as ImageBadgeTypes)} />,
+      ImagesGrid: <ImagesGrid {...(item as ImagesGridTypes)} />,
       ProcessShowcase: <ProcessShowcase {...(item as ProcessShowcaseTypes)} />,
       QuoteSection: <QuoteSection {...(item as QuoteSectionTypes)} />,
     };
@@ -30,6 +33,7 @@ export const PortableContent_Query = /* groq */ `
   content[] {
     _type,
     ${ImageBadge_Query}
+    ${ImagesGrid_Query}
     ${ProcessShowcase_Query}
     ${QuoteSection_Query}
   }`;
