@@ -10,13 +10,14 @@
     margin: 0 auto;
     max-width: calc(793rem / 16);
     text-align: center;
-    h1 {
-      margin-bottom: clamp(16px, calc(28vw / 7.68), 36px);
-    }
     .paragraph {
+      margin-top: clamp(16px, calc(28vw / 7.68), 36px);
       & > *:not(:last-child) {
         margin-bottom: 12px;
       }
+    }
+    .cta {
+      margin-top: clamp(16px, calc(28vw / 7.68), 36px);
     }
   }
 }

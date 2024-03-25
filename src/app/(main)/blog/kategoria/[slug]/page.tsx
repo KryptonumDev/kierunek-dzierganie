@@ -54,7 +54,7 @@ async function getData(slug: string) {
       *[_type == 'BlogCategory_Collection' && slug.current == $slug][0] {
         name,
         "filteredBlogPosts": *[_type=="BlogPost_Collection" && $slug in category[]->slug.current],
-        ${HeroSimple_Query}
+        ${HeroSimple_Query(true)}
         ${CategoriesSection_Query}
         ${BlogSection_Query}
       }

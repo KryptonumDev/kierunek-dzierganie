@@ -31,7 +31,7 @@ const query = async (): Promise<CrochetingPage_QueryTypes> => {
   return await sanityFetch<CrochetingPage_QueryTypes>({
     query: /* groq */ `
       *[_type == "Crocheting_Page"][0] {
-        ${HeroSimple_Query}
+        ${HeroSimple_Query(true)}
         ${StepsGrid_Query}
         ${LatestBlogEntries_Query(true)}
       }
