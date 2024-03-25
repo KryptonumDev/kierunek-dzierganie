@@ -38,6 +38,7 @@ import WordsCollection, {
 import Partners, { Partners_Query, type PartnersProps } from '@/components/_global/Partners';
 import Faq, { Faq_Query, type FaqTypes } from '@/components/_global/Faq';
 import HeroSimple, { HeroSimple_Query, HeroSimpleTypes } from '@/components/_global/HeroSimple';
+import LatestBlogEntries, { LatestBlogEntries_Query, type LatestBlogEntriesTypes } from './_global/LatestBlogEntries';
 
 type ComponentMap = {
   HeroBackgroundImg: HeroBackgroundImgProps;
@@ -67,6 +68,7 @@ type ComponentMap = {
   CustomerCaseStudy: CustomerCaseStudyProps;
   WordsCollection: WordsCollectionProps;
   Partners: PartnersProps;
+  LatestBlogEntries: LatestBlogEntriesTypes;
 };
 
 export type ComponentProps = ComponentMap[keyof ComponentMap] & { _type: string };
@@ -143,6 +145,7 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
           index={index}
         />
       ),
+      LatestBlogEntries: <LatestBlogEntries {...(item as PartnersProps)} />,
     };
     const DynamicComponent = componentMap[componentType];
     if (!DynamicComponent) {
@@ -158,7 +161,7 @@ export const Components_Query = /* groq */ `
   content[] {
     ${HeroBackgroundImg_Query}
     ${HeroColumn_Query}
-    ${HeroSimple_Query}
+    ${HeroSimple_Query(false)}
     ${Benefits_Query}
     ${Opinions_Query}
     ${TileList_Query}
@@ -184,5 +187,6 @@ export const Components_Query = /* groq */ `
     ${WordsCollection_Query}
     ${Partners_Query}
     ${Faq_Query}
+    ${LatestBlogEntries_Query(false)}
   },
 `;

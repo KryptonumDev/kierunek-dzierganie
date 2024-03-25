@@ -12,7 +12,7 @@ const HeroSimple = ({ isHighlighted, heading, paragraph, cta }: HeroSimpleTypes)
       <header>
         <Markdown.h1>{heading}</Markdown.h1>
         {paragraph && <Markdown className={styles.paragraph}>{paragraph}</Markdown>}
-        {cta && <Button data={cta} />}
+        {cta && <Button data={cta} className={styles.cta} />}
       </header>
     </section>
   );

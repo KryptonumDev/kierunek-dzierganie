@@ -17,7 +17,7 @@
       }
     }
     .cta {
-      margin-top: clamp(16px, calc(28vw / 7.68), 36px);
+      margin: clamp(16px, calc(28vw / 7.68), 36px) auto 0;
     }
   }
 }
