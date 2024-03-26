@@ -13,15 +13,16 @@ export type BlogSectionTypes = {
   slug?: string;
   number?: number;
   pathPrefix?: string;
-  isCategoryPagination?: boolean;
 };
 
 export type HighlightedPostType = {
-  hero_Heading: string;
-  hero_Img: ImgType;
-  hero_Paragraph: string;
+  hero: {
+    img: ImgType;
+    heading: string;
+    paragraph: string;
+  };
   href?: string;
-  hero_Author: {
+  author: {
     heading: string;
     paragraph: string;
     img: ImgType;
@@ -29,9 +30,11 @@ export type HighlightedPostType = {
 };
 
 export type BlogPostsType = {
-  hero_Img: ImgType;
-  hero_Heading: string;
-  hero_Paragraph: string;
+  hero: {
+    img: ImgType;
+    heading: string;
+    paragraph: string;
+  };
   slug: string;
   number: number;
 };

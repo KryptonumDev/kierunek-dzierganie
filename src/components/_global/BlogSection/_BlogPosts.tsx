@@ -22,19 +22,19 @@ export default async function BlogPosts({ slug, number }: { slug?: string; numbe
       className={styles.blogPosts}
       id='wpisy'
     >
-      {blogPosts.map(({ hero_Heading, hero_Paragraph, hero_Img, slug }, i) => (
+      {blogPosts.map(({ hero: { heading, img, paragraph }, slug }, i) => (
         <Link
           key={i}
           className={styles.item}
           href={`/blog/${slug}`}
         >
           <Img
-            data={hero_Img}
+            data={img}
             sizes='(max-width: 499px) 100vw, (max-width: 999px) 50vw, 33vw'
           />
           <div>
-            <Markdown.h3>{hero_Heading}</Markdown.h3>
-            <Markdown>{hero_Paragraph}</Markdown>
+            <Markdown.h3>{heading}</Markdown.h3>
+            <Markdown>{paragraph}</Markdown>
           </div>
         </Link>
       ))}
@@ -49,11 +49,13 @@ async function getBlogPostData(selectedPage?: number) {
       [$POSTS_PER_PAGE * ($selectedPage-1)
       ...
       $POSTS_PER_PAGE+ ($POSTS_PER_PAGE * ($selectedPage-1))] {
-        hero_Img {
-          ${Img_Query}
+        hero {
+          img {
+            ${Img_Query}
+          },
+          heading,
+          paragraph,
         },
-        hero_Heading,
-        hero_Paragraph,
         "slug": slug.current
       }
     `,
@@ -74,12 +76,14 @@ async function getCategoryBlogPostData(selectedPage?: number, slug?: string) {
       ...
       $POSTS_PER_PAGE+ ($POSTS_PER_PAGE * ($selectedPage-1))]
        {
-        hero_Img {
-          ${Img_Query}
+        hero {
+          img {
+            ${Img_Query}
+          },
+          heading,
+          paragraph,
         },
-        hero_Heading,
-        hero_Paragraph,
-        "slug": slug.current
+          "slug": slug.current
       }
     `,
     params: { slug, selectedPage, POSTS_PER_PAGE },

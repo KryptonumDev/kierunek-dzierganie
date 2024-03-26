@@ -14,7 +14,6 @@ const BlogSection = async ({
   slug,
   number,
   pathPrefix = '/blog',
-  isCategoryPagination = false,
 }: BlogSectionTypes) => {
   return (
     <section className={styles['BlogSection']}>
@@ -31,12 +30,11 @@ const BlogSection = async ({
         number={number}
       />
       <Pagination
-        selectedNumber={number}
-        numberOfElements={blogPosts.length}
-        elementsDivider={POSTS_PER_PAGE}
+        currentPage={number}
+        allElementsCount={blogPosts.length}
+        elementsPerPage={POSTS_PER_PAGE}
         pathPrefix={pathPrefix}
-        urlID='#wpisy'
-        isCategoryPagination={isCategoryPagination}
+        scrollTo='#wpisy'
       />
     </section>
   );

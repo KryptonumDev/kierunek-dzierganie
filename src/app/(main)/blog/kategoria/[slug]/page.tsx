@@ -41,7 +41,7 @@ export default async function CategoryBlogPage({ params: { slug } }: { params: {
           slug,
           blogPosts: filteredBlogPosts,
           pathPrefix: `/blog/kategoria/${slug}`,
-          isCategoryPagination: true,
+          addPagePrefix: false,
         }}
       />
     </>

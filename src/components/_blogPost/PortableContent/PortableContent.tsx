@@ -1,117 +1,113 @@
-import { MDXRemote } from 'next-mdx-remote/rsc';
-import Link from 'next/link';
-import isExternalLink from '@/utils/is-external-link';
+import { type Node } from '@/global/types';
+import { portableTextToMarkdown } from '@/utils/portable-text-to-markdown';
+import { slugify } from '@/utils/slugify';
+import { PortableText, toPlainText, type PortableTextReactComponents } from '@portabletext/react';
+import Markdown from '@/components/ui/markdown';
+import BadgeSection, { BadgeSection_Query, type BadgeSectionTypes } from '@/components/_blogPost/BadgeSection';
+import ConversationShowcase, {
+  ConversationShowcase_Query,
+  type ConversationShowcaseTypes,
+} from '../ConversationShowcase';
+import HighlightedImage, { type HighlightedImageTypes, HighlightedImage_Query } from '../HighlightedImage';
+import ImageBadge, { ImageBadge_Query, type ImageBadgeTypes } from '../ImageBadge';
+import ImagesGrid, { ImagesGrid_Query, type ImagesGridTypes } from '../ImagesGrid';
+import ProcessComponent, { ProcessComponent_Query, type ProcessComponentTypes } from '../ProcessComponent';
+import ProcessShowcase, { ProcessShowcase_Query, type ProcessShowcaseTypes } from '../ProcessShowcase';
+import QuoteSection, { QuoteSection_Query, type QuoteSectionTypes } from '../QuoteSection';
+import Standout, { Standout_Query, type StandoutTypes } from '../Standout';
+import TableSection, { TableSection_Query, type TableSectionTypes } from '../TableSection';
+import styles from './PortableContent.module.scss';
 
-const LinkRenderer = ({
-  href,
-  children,
-}: React.AnchorHTMLAttributes<HTMLAnchorElement> & {
-  children?: React.ReactNode;
-}) => {
-  const isExternal = isExternalLink(href);
-  const Element = isExternal ? 'a' : Link;
+export default function PortableContent({ data }: { data: [] }) {
+  const components = {
+    types: {
+      ImageBadge: ({ value }: { value: ImageBadgeTypes }) => <ImageBadge {...value} />,
+      ImagesGrid: ({ value }: { value: ImagesGridTypes }) => <ImagesGrid {...value} />,
+      TableSection: ({ value }: { value: TableSectionTypes }) => <TableSection {...value} />,
+      BadgeSection: ({ value }: { value: BadgeSectionTypes }) => <BadgeSection {...value} />,
+      HighlightedImage: ({ value }: { value: HighlightedImageTypes }) => <HighlightedImage {...value} />,
+      ProcessComponent: ({ value }: { value: ProcessComponentTypes }) => <ProcessComponent {...value} />,
+      Standout: ({ value }: { value: StandoutTypes }) => <Standout {...value} />,
+      ProcessShowcase: ({ value }: { value: ProcessShowcaseTypes }) => <ProcessShowcase {...value} />,
+      QuoteSection: ({ value }: { value: QuoteSectionTypes }) => <QuoteSection {...value} />,
+      ConversationShowcase: ({ value }: { value: ConversationShowcaseTypes }) => <ConversationShowcase {...value} />,
+    },
+    block: {
+      h2: ({ value }: { value: [] }) => (
+        <Markdown.h2 id={slugify(toPlainText(value))}>{portableTextToMarkdown(value as Node)}</Markdown.h2>
+      ),
+      h3: ({ value }: { value: [] }) => (
+        <Markdown.h3 id={slugify(toPlainText(value))}>{portableTextToMarkdown(value as Node)}</Markdown.h3>
+      ),
+      h4: ({ value }: { value: [] }) => (
+        <Markdown.h4 id={slugify(toPlainText(value))}>{portableTextToMarkdown(value as Node)}</Markdown.h4>
+      ),
+      largeParagraph: ({ children }: { children: React.ReactNode }) => (
+        <p className={styles.largeParagraph}>{children}</p>
+      ),
+    },
+    listItem: {
+      number: ({ children }: { children: React.ReactNode }) => <li className={'orderedList'}>{children}</li>,
+      bullet: ({ children }: { children: React.ReactNode }) => (
+        <li>
+          <BulletList />
+          {children}
+        </li>
+      ),
+    },
+    list: {
+      bullet: ({ children }: { children: React.ReactNode }) => <ul className={'unorderedList'}>{children}</ul>,
+      number: ({ children }: { children: React.ReactNode }) => <ol className={styles.unorderedList}>{children}</ol>,
+    },
+    marks: {
+      link: ({ value, children }: { value: string; children: string }) => {
+        return (
+          <a
+            href={value}
+            target='_blank'
+            rel='noreferrer noopener'
+            className={styles.link}
+          >
+            {children}
+          </a>
+        );
+      },
+    },
+  };
 
   return (
-    <Element
-      href={href || ''}
-      className='link'
-      {...(isExternal && {
-        target: '_blank',
-        rel: 'noopener',
-      })}
-    >
-      {children}
-    </Element>
+    <section className={styles.PortableContent}>
+      <PortableText
+        value={data}
+        components={components as unknown as Partial<PortableTextReactComponents>}
+      />
+    </section>
   );
-};
+}
 
-const ListRenderer = ({
-  children,
-  ordered,
-}: React.LiHTMLAttributes<HTMLLIElement> & {
-  children?: React.ReactNode;
-  ordered?: boolean;
-}) => (
-  <li>
-    {!ordered && <BulletList />}
-    <span>{children}</span>
-  </li>
-);
+const Block_Query = /* groq */ `
+  _type == 'block' => {
+    style,
+    children[],
+    markDefs[],
+    listItem,
+  },`;
 
-type MarkdownProps = {
-  Tag?: keyof JSX.IntrinsicElements;
-  components?: Record<string, React.ReactNode>;
-  children: string;
-  className?: string;
-  id?: string;
-};
-
-const Markdown = ({ Tag, components, children, className, id, ...props }: MarkdownProps) => {
-  const markdown = (
-    <MDXRemote
-      source={children}
-      components={{
-        ...(Tag && {
-          p: ({ children }) => (
-            <Tag
-              {...props}
-              {...(id && { id })}
-            >
-              {children}
-            </Tag>
-          ),
-        }),
-        a: LinkRenderer,
-        li: ListRenderer,
-        ol: ({ children }) => <ol className='orderedList'>{children}</ol>,
-        ul: ({ children }) => <ul className='unorderedList'>{children}</ul>,
-        ...components,
-      }}
-      {...props}
-    />
-  );
-
-  return className ? <div className={className}>{markdown}</div> : markdown;
-};
-
-Markdown.h1 = (props: JSX.IntrinsicAttributes & MarkdownProps) => (
-  <Markdown
-    Tag='h1'
-    {...props}
-  />
-);
-Markdown.h2 = (props: JSX.IntrinsicAttributes & MarkdownProps) => (
-  <Markdown
-    Tag='h2'
-    {...props}
-  />
-);
-Markdown.h3 = (props: JSX.IntrinsicAttributes & MarkdownProps) => (
-  <Markdown
-    Tag='h3'
-    {...props}
-  />
-);
-Markdown.h4 = (props: JSX.IntrinsicAttributes & MarkdownProps) => (
-  <Markdown
-    Tag='h4'
-    {...props}
-  />
-);
-Markdown.h5 = (props: JSX.IntrinsicAttributes & MarkdownProps) => (
-  <Markdown
-    Tag='h5'
-    {...props}
-  />
-);
-Markdown.span = (props: JSX.IntrinsicAttributes & MarkdownProps) => (
-  <Markdown
-    Tag='span'
-    {...props}
-  />
-);
-
-export default Markdown;
+export const PortableContent_Query = /* groq */ `
+  content[] {
+    _type,
+    ${ImageBadge_Query}
+    ${ImagesGrid_Query}
+    ${TableSection_Query}
+    ${BadgeSection_Query}
+    ${HighlightedImage_Query}
+    ${ProcessComponent_Query}
+    ${Standout_Query}
+    ${ProcessShowcase_Query}
+    ${QuoteSection_Query}
+    ${ConversationShowcase_Query}
+    ${Block_Query}
+  }`;
 
 const BulletList = () => (
   <svg
