@@ -24,6 +24,9 @@ export const useCartItems = () => {
               basis,
               type,
               _type,
+              course -> {
+                complexity
+              },
               gallery[0]{
                 asset -> {
                   url,

@@ -3,6 +3,7 @@ import styles from './Checkout.module.scss';
 import type { AsideProps } from './Checkout.types';
 import { useMemo } from 'react';
 import Img from '@/components/ui/image';
+import { courseComplexityEnum } from '@/global/constants';
 
 export default function SummaryAside({ input }: AsideProps) {
   const delivery = true;
@@ -23,7 +24,7 @@ export default function SummaryAside({ input }: AsideProps) {
       {delivery && (
         <p>
           <span>Dostawa</span>
-          <span>0,00 zł</span>
+          <span>{Math.random() > 0.5 ? 'Za darmo!' : '10,00 zł'} </span>
         </p>
       )}
       {delivery && (
@@ -34,16 +35,41 @@ export default function SummaryAside({ input }: AsideProps) {
       )}
       <h3>Szczegóły zamówienia</h3>
       {input.products?.array?.map((product) => (
-        <p key={product.id}>
-          <Img
-            data={product.image}
-            sizes='175px'
-          />
-          <span>
-            {product.quantity}x {product.name}
-          </span>
-          <span dangerouslySetInnerHTML={{ __html: formatPrice(product.price * product.quantity) }} />
-        </p>
+        <div
+          className={styles['item']}
+          key={product.id}
+        >
+          <div className={styles['image-wrap']}>
+            {product.complexity && (
+              <span
+                style={{
+                  color: courseComplexityEnum[product.complexity].color,
+                  backgroundColor: courseComplexityEnum[product.complexity].background,
+                }}
+                className={styles['badge']}
+              >
+                <span>{courseComplexityEnum[product.complexity].name}</span>
+              </span>
+            )}
+            <Img
+              data={product.image}
+              sizes='175px'
+            />
+          </div>
+          <div>
+            <p className={styles['title']}>{product.name}</p>
+            <span
+              className={`${styles['price']} ${product.discount ? styles['discount'] : ''}`}
+              dangerouslySetInnerHTML={{ __html: formatPrice(product.price * product.quantity) }}
+            />
+            {product.discount && (
+              <span
+                className={styles['price']}
+                dangerouslySetInnerHTML={{ __html: formatPrice(product.discount * product.quantity) }}
+              />
+            )}
+          </div>
+        </div>
       ))}
     </div>
   );

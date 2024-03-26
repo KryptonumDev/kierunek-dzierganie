@@ -9,7 +9,10 @@ import ProductsListing, { ProductsListing_Query } from '@/components/_global/Pro
 const page = { name: 'Dzierganie na drutach', path: '/dzierganie-na-drutach' };
 
 const KnittingPage = async () => {
-  const { page: {HeroSimple: HeroSimpleData, StepsGrid: StepsGridData}, products } = await query();
+  const {
+    page: { HeroSimple: HeroSimpleData, StepsGrid: StepsGridData },
+    products,
+  } = await query();
 
   return (
     <>
@@ -31,7 +34,7 @@ const query = async (): Promise<KnittingPage_QueryTypes> => {
         ${HeroSimple_Query}
         ${StepsGrid_Query}
       },
-      "products": *[_type== 'product'][0...10]{
+      "products": *[_type== 'product' && basis == 'knitting' && type in ['digital', 'bundle']][0...10]{
         ${ProductsListing_Query}
       }
     }

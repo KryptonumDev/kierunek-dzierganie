@@ -39,9 +39,12 @@ export type InputState = {
       name: string;
       price: number;
       quantity: number;
+      discount: number;
       image: ImgType;
+      complexity: 1 | 2 | 3 | null;
     }[];
   };
+  needDelivery: boolean;
   user_id?: string;
   amount: number;
   paid_at?: string;
@@ -51,8 +54,6 @@ export type InputState = {
 };
 
 export type MappingProps = {
-  nextStep: () => Promise<void>;
-  prevStep: () => Promise<void>;
   goToCart: () => void;
   setStep: (step: number) => void;
   input: InputState;

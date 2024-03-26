@@ -42,50 +42,47 @@ export default function Cart({
           <h3>Twoje produkty</h3>
           <button onClick={setShowCart}>{CrossIcon}</button>
         </div>
-        <div>
-          {cart?.length ? (
-            <CartGrid
-              updateItemQuantity={updateItemQuantity}
-              removeItem={removeItem}
-              cart={cart}
-              fetchedItems={fetchedItems}
-            />
-          ) : (
-            <EmptyLayout
-              image_crochet={image_crochet}
-              image_knitting={image_knitting}
-            />
-          )}
-          <form className={cart?.length ? '' : styles['empty']}>
-            <div className={styles['line']} />
-            <Checkbox
-              register={register('isDiscount')}
-              label='Posiadam kod rabatowy'
-              errors={errors}
-            />
-            <Checkbox
-              register={register('isVirtual')}
-              label='Chcę wykorzystać wirtualne złotówki'
-              errors={errors}
-            />
-            <div className={styles['flex']}>
-              <button
-                onClick={setShowCart}
-                type='button'
-                className='link'
-              >
-                Kontynuuj zakupy
-              </button>
-              <Button
-                type='button'
-                onClick={goToCheckout}
-              >
-                Zamawiam
-              </Button>
-            </div>
-          </form>
-        </div>
-
+        {cart?.length ? (
+          <CartGrid
+            updateItemQuantity={updateItemQuantity}
+            removeItem={removeItem}
+            cart={cart}
+            fetchedItems={fetchedItems}
+          />
+        ) : (
+          <EmptyLayout
+            image_crochet={image_crochet}
+            image_knitting={image_knitting}
+          />
+        )}
+        <form className={cart?.length ? '' : styles['empty']}>
+          <div className={styles['line']} />
+          <Checkbox
+            register={register('isDiscount')}
+            label='Posiadam kod rabatowy'
+            errors={errors}
+          />
+          <Checkbox
+            register={register('isVirtual')}
+            label='Chcę wykorzystać wirtualne złotówki'
+            errors={errors}
+          />
+          <div className={styles['flex']}>
+            <button
+              onClick={setShowCart}
+              type='button'
+              className='link'
+            >
+              Kontynuuj zakupy
+            </button>
+            <Button
+              type='button'
+              onClick={goToCheckout}
+            >
+              Zamawiam
+            </Button>
+          </div>
+        </form>
         {highlighted_products && (
           <div className={styles['highlighted']}>
             <h3>
@@ -141,7 +138,7 @@ const CartGrid = ({ cart, fetchedItems, removeItem, updateItemQuantity }: Grid) 
   if (!fetchedItems) return;
 
   return (
-    <div>
+    <div className={styles['grid']}>
       {fetchedItems.map((item, i) => (
         <div
           className={styles['product']}

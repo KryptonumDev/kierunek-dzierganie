@@ -13,7 +13,7 @@ const Authorization = ({ registerTitle, loginTitle, registerText, loginText }: P
       {isRegister ? registerTitle : loginTitle}
       {isRegister ? registerText : loginText}
       <div className={styles['grid']}>
-        <div className={styles['providers']}>TUTAJ BĘDĄ OAUTH PROWIDERY</div>
+        {/* <div className={styles['providers']}></div> */}
         <AuthorizationForm isRegister={isRegister} setRegister={setRegister} />
       </div>
     </section>
