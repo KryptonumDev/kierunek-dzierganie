@@ -1,5 +1,4 @@
 import type { ComponentProps } from '@/components/Components';
-import { type PortableContentTypes } from '@/components/_blogPost/PortableContent/PortableContent';
 
 export type CtaType = {
   href: string;

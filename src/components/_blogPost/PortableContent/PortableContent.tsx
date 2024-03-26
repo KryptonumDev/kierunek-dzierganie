@@ -2,8 +2,8 @@ import { type Node } from '@/global/types';
 import { portableTextToMarkdown } from '@/utils/portable-text-to-markdown';
 import { slugify } from '@/utils/slugify';
 import { PortableText, toPlainText, type PortableTextReactComponents } from '@portabletext/react';
-import Markdown from '../../ui/markdown';
-import BadgeSection, { BadgeSection_Query, type BadgeSectionTypes } from '../BadgeSection';
+import Markdown from '@/components/ui/markdown';
+import BadgeSection, { BadgeSection_Query, type BadgeSectionTypes } from '@/components/_blogPost/BadgeSection';
 import ConversationShowcase, {
   ConversationShowcase_Query,
   type ConversationShowcaseTypes,
@@ -42,11 +42,13 @@ export default function PortableContent({ data }: { data: [] }) {
       h4: ({ value }: { value: [] }) => (
         <Markdown.h4 id={slugify(toPlainText(value))}>{portableTextToMarkdown(value as Node)}</Markdown.h4>
       ),
-      largeParagraph: ({ children }: { children: string }) => <p className={styles.largeParagraph}>{children}</p>,
+      largeParagraph: ({ children }: { children: React.ReactNode }) => (
+        <p className={styles.largeParagraph}>{children}</p>
+      ),
     },
     listItem: {
-      number: ({ children }: { children: string }) => <li className={'orderedList'}>{children}</li>,
-      bullet: ({ children }: { children: string }) => (
+      number: ({ children }: { children: React.ReactNode }) => <li className={'orderedList'}>{children}</li>,
+      bullet: ({ children }: { children: React.ReactNode }) => (
         <li>
           <BulletList />
           {children}
@@ -54,8 +56,8 @@ export default function PortableContent({ data }: { data: [] }) {
       ),
     },
     list: {
-      bullet: ({ children }: { children: string }) => <ul className={'unorderedList'}>{children}</ul>,
-      number: ({ children }: { children: string }) => <ol className={styles.unorderedList}>{children}</ol>,
+      bullet: ({ children }: { children: React.ReactNode }) => <ul className={'unorderedList'}>{children}</ul>,
+      number: ({ children }: { children: React.ReactNode }) => <ol className={styles.unorderedList}>{children}</ol>,
     },
     marks: {
       link: ({ value, children }: { value: string; children: string }) => {
@@ -74,7 +76,7 @@ export default function PortableContent({ data }: { data: [] }) {
   };
 
   return (
-    <section>
+    <section className={styles.PortableContent}>
       <PortableText
         value={data}
         components={components as unknown as Partial<PortableTextReactComponents>}
