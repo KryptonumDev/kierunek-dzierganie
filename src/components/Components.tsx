@@ -1,3 +1,8 @@
+import HeroBackgroundImg, {
+  HeroBackgroundImg_Query,
+  type HeroBackgroundImgProps,
+} from '@/components/_global/HeroBackgroundImg';
+import HeroColumn, { HeroColumn_Query, type HeroColumnProps } from '@/components/_global/HeroColumn';
 import Opinions, { Opinions_Query, type OpinionsProps } from '@/components/_global/Opinions';
 import TileList, { TileList_Query, type TileListProps } from '@/components/_global/TileList';
 import CtaSection, { CtaSection_Query, type CtaSectionProps } from '@/components/_global/CtaSection';
@@ -5,10 +10,6 @@ import SimpleCtaSection, {
   SimpleCtaSection_Query,
   type SimpleCtaSectionProps,
 } from '@/components/_global/SimpleCtaSection';
-import HeroBackgroundImg, {
-  HeroBackgroundImg_Query,
-  type HeroBackgroundImgProps,
-} from '@/components/_global/HeroBackgroundImg';
 import Benefits, { Benefits_Query, type BenefitsProps } from '@/components/_global/Benefits';
 import CourseModules, { CourseModules_Query, type CourseModulesProps } from '@/components/_global/CourseModules';
 import ImageShowcase, { ImageShowcase_Query, type ImageShowcaseProps } from '@/components/_global/ImageShowcase';
@@ -25,7 +26,6 @@ import TilesIndicated, { TilesIndicated_Query, type TilesIndicatedProps } from '
 import TilesIcon, { TilesIcon_Query, type TilesIconProps } from '@/components/_global/TilesIcon';
 import Divider, { Divider_Query } from '@/components/_global/Divider';
 import StepList, { StepList_Query, type StepListProps } from '@/components/_global/StepList';
-import HeroColumn, { HeroColumn_Query, type HeroColumnProps } from '@/components/_global/HeroColumn';
 import Newsletter, { Newsletter_Query, type NewsletterProps } from '@/components/_global/Newsletter';
 import CustomerCaseStudy, {
   CustomerCaseStudy_Query,
@@ -37,9 +37,13 @@ import WordsCollection, {
 } from '@/components/_global/WordsCollection';
 import Partners, { Partners_Query, type PartnersProps } from '@/components/_global/Partners';
 import Faq, { Faq_Query, type FaqTypes } from '@/components/_global/Faq';
+import HeroSimple, { HeroSimple_Query, HeroSimpleTypes } from '@/components/_global/HeroSimple';
+import LatestBlogEntries, { LatestBlogEntries_Query, type LatestBlogEntriesTypes } from './_global/LatestBlogEntries';
 
 type ComponentMap = {
   HeroBackgroundImg: HeroBackgroundImgProps;
+  HeroColumn: HeroColumnProps;
+  HeroSimple: HeroSimpleTypes;
   Benefits: BenefitsProps;
   Faq: FaqTypes;
   Opinions: OpinionsProps;
@@ -60,11 +64,11 @@ type ComponentMap = {
   TilesIndicated: TilesIndicatedProps;
   TilesIcon: TilesIconProps;
   StepList: StepListProps;
-  HeroColumn: HeroColumnProps;
   Newsletter: NewsletterProps;
   CustomerCaseStudy: CustomerCaseStudyProps;
   WordsCollection: WordsCollectionProps;
   Partners: PartnersProps;
+  LatestBlogEntries: LatestBlogEntriesTypes;
 };
 
 export type ComponentProps = ComponentMap[keyof ComponentMap] & { _type: string };
@@ -79,6 +83,13 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
           aboveTheFold={Boolean(index === 0)}
         />
       ),
+      HeroColumn: (
+        <HeroColumn
+          {...(item as HeroColumnProps)}
+          index={index}
+        />
+      ),
+      HeroSimple: <HeroSimple {...(item as HeroSimpleTypes)} />,
       Benefits: <Benefits {...(item as BenefitsProps)} />,
       Faq: <Faq {...(item as FaqTypes)} />,
       Opinions: <Opinions {...(item as OpinionsProps)} />,
@@ -110,12 +121,6 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
       ),
       Divider: <Divider />,
       StepList: <StepList {...(item as StepListProps)} />,
-      HeroColumn: (
-        <HeroColumn
-          {...(item as HeroColumnProps)}
-          index={index}
-        />
-      ),
       Newsletter: (
         <Newsletter
           {...(item as NewsletterProps)}
@@ -140,6 +145,7 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
           index={index}
         />
       ),
+      LatestBlogEntries: <LatestBlogEntries {...(item as PartnersProps)} />,
     };
     const DynamicComponent = componentMap[componentType];
     if (!DynamicComponent) {
@@ -154,6 +160,8 @@ export default Components;
 export const Components_Query = /* groq */ `
   content[] {
     ${HeroBackgroundImg_Query}
+    ${HeroColumn_Query}
+    ${HeroSimple_Query(false)}
     ${Benefits_Query}
     ${Opinions_Query}
     ${TileList_Query}
@@ -174,11 +182,11 @@ export const Components_Query = /* groq */ `
     ${TilesIcon_Query}
     ${Divider_Query}
     ${StepList_Query}
-    ${HeroColumn_Query}
     ${Newsletter_Query}
     ${CustomerCaseStudy_Query}
     ${WordsCollection_Query}
     ${Partners_Query}
     ${Faq_Query}
+    ${LatestBlogEntries_Query(false)}
   },
 `;

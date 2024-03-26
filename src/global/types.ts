@@ -1,4 +1,5 @@
 import type { ComponentProps } from '@/components/Components';
+import { HeroSimpleTypes } from '@/components/_global/HeroSimple';
 
 export type CtaType = {
   href: string;
@@ -94,8 +95,7 @@ export type PrivacyPolicyPage = {
 } & generateMetadataProps;
 
 export type BlogPageQueryProps = {
-  hero_Heading: string;
-  hero_Paragraph: string;
+  HeroSimple: HeroSimpleTypes;
   categories_Heading: string;
   categories_Paragraph: string;
   blogPosts: {

@@ -22,11 +22,13 @@
         font-size: 14px;
         font-weight: 300;
         line-height: 150%;
-        transition: color .3s var(--easing), font-size .3s var(--easing);
+        transition:
+          color 0.3s var(--easing),
+          font-size 0.3s var(--easing);
       }
 
-      &.active a{
-        color: var(--primary-800, #53423C);
+      &.active a {
+        color: var(--primary-800, #53423c);
         font-size: 18px;
       }
     }

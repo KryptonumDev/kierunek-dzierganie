@@ -1,8 +1,7 @@
 'use client';
-
 import Link from 'next/link';
-import styles from './ControlPanel.module.scss';
 import { usePathname } from 'next/navigation';
+import styles from './ControlPanel.module.scss';
 
 const links = [
   {

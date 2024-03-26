@@ -1,0 +1,26 @@
+.PreviewDeploymentInfo {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.62);
+  color: rgba(255, 255, 255, 0.8);
+  padding: 8px;
+  backdrop-filter: blur(8px);
+  border-radius: 8px;
+  position: fixed;
+  right: 5px;
+  bottom: 5px;
+  font-size: 0.8125rem;
+  height: 40px;
+  z-index: 99;
+  white-space: nowrap;
+  svg {
+    flex-shrink: 0;
+  }
+  transition: width 0.5s var(--easing);
+  width: 34px;
+  max-width: fit-content;
+  &:hover {
+    width: 230px;
+  }
+}

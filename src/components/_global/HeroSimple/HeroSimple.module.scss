@@ -1,0 +1,23 @@
+.HeroSimple {
+  &[data-highlighted='true'] {
+    padding: clamp(20px, calc(36vw / 7.68), 48px) clamp(16px, calc(28vw / 7.68), 64px);
+    background: var(--primary-200);
+    header {
+      max-width: calc(584rem / 16);
+    }
+  }
+  header {
+    margin: 0 auto;
+    max-width: calc(793rem / 16);
+    text-align: center;
+    .paragraph {
+      margin-top: clamp(16px, calc(28vw / 7.68), 36px);
+      & > *:not(:last-child) {
+        margin-bottom: 12px;
+      }
+    }
+    .cta {
+      margin: clamp(16px, calc(28vw / 7.68), 36px) auto 0;
+    }
+  }
+}

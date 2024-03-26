@@ -1,17 +1,16 @@
 import sanityFetch from '@/utils/sanity.fetch';
 import BlogSection, { BlogSection_Query } from '@/components/_global/BlogSection';
+import HeroSimple, { HeroSimple_Query } from '@/components/_global/HeroSimple';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import CategoriesSection, { CategoriesSection_Query } from '@/components/_global/CategoriesSection';
-import HeroBackground, { HeroBackground_Query } from '@/components/_global/HeroBackground';
-import { type BlogPageQueryProps, generateStaticParamsBlogPagination } from '@/global/types';
 import { POSTS_PER_PAGE } from '@/global/constants';
+import type { BlogPageQueryProps, generateStaticParamsBlogPagination } from '@/global/types';
 
 const page = { name: 'Blog', path: '/blog' };
 
 export default async function BlogPageNumber({ params: { number } }: { params: { number: string } }) {
   const {
-    hero_Heading,
-    hero_Paragraph,
+    HeroSimple: HeroSimpleData,
     blogPosts,
     categories_Heading,
     categories_Paragraph,
@@ -23,7 +22,7 @@ export default async function BlogPageNumber({ params: { number } }: { params: {
   return (
     <>
       <Breadcrumbs data={[page]} />
-      <HeroBackground data={{ hero_Heading, hero_Paragraph }} />
+      <HeroSimple {...HeroSimpleData} />
       <CategoriesSection data={{ blogPosts, categories_Heading, categories_Paragraph }} />
       <BlogSection
         {...{
@@ -43,7 +42,7 @@ async function query(): Promise<BlogPageQueryProps> {
   return await sanityFetch<BlogPageQueryProps>({
     query: /* groq */ `
       *[_type == "Blog_Page"][0] {
-        ${HeroBackground_Query}
+        ${HeroSimple_Query(true)}
         ${CategoriesSection_Query}
         ${BlogSection_Query}
       }
