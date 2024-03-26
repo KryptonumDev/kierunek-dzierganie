@@ -1,3 +1,16 @@
 .QuoteSection {
-  
+  display: grid;
+  padding: clamp(16px, calc(32vw/7.68), 32px) clamp(16px, calc(28vw/7.68), 828px);
+  font-size: clamp(calc(18rem/16), calc(24vw/7.68), calc(24rem/16));
+  justify-content: center;
+  border-radius: 6px;
+  background: var(--primary-200);
+  position: relative;
+
+  .icon {
+    position: absolute;
+    display: flex;
+    right: 32px;
+    top: -20px;
+  }
 }

@@ -55,7 +55,7 @@ export default function PortableContent({ data }: { data: [] }) {
     },
     list: {
       bullet: ({ children }: { children: string }) => <ul className={'unorderedList'}>{children}</ul>,
-      number: ({ children }: { children: string }) => <ol>{children}</ol>,
+      number: ({ children }: { children: string }) => <ol className={styles.unorderedList}>{children}</ol>,
     },
     marks: {
       link: ({ value, children }: { value: string; children: string }) => {
