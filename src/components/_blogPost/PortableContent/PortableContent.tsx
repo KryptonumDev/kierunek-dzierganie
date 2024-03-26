@@ -1,4 +1,4 @@
-import { type Node } from '@/global/types';
+import { ImgType, type Node } from '@/global/types';
 import { portableTextToMarkdown } from '@/utils/portable-text-to-markdown';
 import { slugify } from '@/utils/slugify';
 import { PortableText, toPlainText, type PortableTextReactComponents } from '@portabletext/react';
@@ -17,6 +17,7 @@ import QuoteSection, { QuoteSection_Query, type QuoteSectionTypes } from '../Quo
 import Standout, { Standout_Query, type StandoutTypes } from '../Standout';
 import TableSection, { TableSection_Query, type TableSectionTypes } from '../TableSection';
 import styles from './PortableContent.module.scss';
+import LargeImage, { LargeImage_Query } from '../LargeImage';
 
 export default function PortableContent({ data }: { data: [] }) {
   const components = {
@@ -31,6 +32,7 @@ export default function PortableContent({ data }: { data: [] }) {
       ProcessShowcase: ({ value }: { value: ProcessShowcaseTypes }) => <ProcessShowcase {...value} />,
       QuoteSection: ({ value }: { value: QuoteSectionTypes }) => <QuoteSection {...value} />,
       ConversationShowcase: ({ value }: { value: ConversationShowcaseTypes }) => <ConversationShowcase {...value} />,
+      LargeImage: ({ value }: { value: ImgType }) => <LargeImage {...value} />,
     },
     block: {
       h2: ({ value }: { value: [] }) => (
@@ -106,6 +108,7 @@ export const PortableContent_Query = /* groq */ `
     ${ProcessShowcase_Query}
     ${QuoteSection_Query}
     ${ConversationShowcase_Query}
+    ${LargeImage_Query}
     ${Block_Query}
   }`;
 
