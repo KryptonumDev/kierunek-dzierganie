@@ -1,5 +1,5 @@
 import type { ComponentProps } from '@/components/Components';
-import { type PortableContentTypes } from '@/components/PortableContent';
+import { type PortableContentTypes } from '@/components/_blogPost/PortableContent/PortableContent';
 
 export type CtaType = {
   href: string;
@@ -127,7 +127,7 @@ export type BlogPostQueryProps = {
     heading: string;
     paragraph: string;
   };
-  content: PortableContentTypes[];
+  content: [];
   author: {
     img: ImgType;
     heading: string;
@@ -161,6 +161,17 @@ export type StatutePage = {
     };
   }[];
 } & generateMetadataProps;
+
+export type Node = {
+  children?: Node[];
+  style?: string;
+  text?: string;
+  subheadings?: Node[];
+  slug?: string;
+  _type?: string;
+  marks?: string;
+  icon?: ImgType;
+};
 
 export type ProductPageQueryProps = {
   name: string;

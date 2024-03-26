@@ -1,5 +1,5 @@
-import PortableContent, { PortableContent_Query } from '@/components/PortableContent';
 import Hero, { Hero_Query } from '@/components/_blogPost/Hero';
+import PortableContent, { PortableContent_Query } from '@/components/_blogPost/PortableContent/PortableContent';
 import { Img_Query } from '@/components/ui/image';
 import { BlogPostQueryProps } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
