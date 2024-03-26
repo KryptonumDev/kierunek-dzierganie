@@ -120,7 +120,7 @@ const EmptyLayout = ({ image_crochet, image_knitting }: EmptyCart) => {
             data={image_knitting}
             sizes='(max-width: 640px) 150px, 300px'
           />
-          <Button href='/dzierganie-na-drutach'>Dzierganie na drutach</Button>
+          <Button href='/dzierganie-na-drutach'>Dzierganie</Button>
         </div>
         <div>
           <Img

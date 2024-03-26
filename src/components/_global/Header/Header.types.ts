@@ -24,6 +24,9 @@ export type QueryProps = {
       }[];
     }[];
   };
+  cart: {
+    highlighted_products: Array<ProductCard>;
+  };
   ChevronDownIcon: React.ReactNode;
   ChevronBackIcon: React.ReactNode;
   SearchIcon: React.ReactNode;

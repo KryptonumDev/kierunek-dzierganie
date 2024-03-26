@@ -5,9 +5,8 @@ import Markdown from '@/components/ui/markdown';
 import { Img_Query } from '@/components/ui/image';
 
 const Header = async () => {
-  const { global }: QueryProps = await query();
+  const { global, cart }: QueryProps = await query();
   const nav_annotation = <Markdown>{global.nav_Annotation ?? ''}</Markdown>;
-
   return (
     <Content
       global={global}
@@ -18,6 +17,7 @@ const Header = async () => {
       ChevronDownIcon={ChevronDownIcon}
       ChevronBackIcon={ChevronBackIcon}
       CrossIcon={CrossIcon}
+      cart={cart}
     />
   );
 };
@@ -47,6 +47,53 @@ const query = async (): Promise<QueryProps> => {
               href,
             }[],
           }[],
+        },
+        "cart": *[_id == 'cart'][0]{
+          highlighted_products[]->{
+            _id,
+            price,
+            discount,
+            name,
+            'slug': slug.current,
+            basis,
+            type,
+            _type,
+            course->{
+              complexity
+            },
+            gallery[0]{
+              asset -> {
+                url,
+                altText,
+                metadata {
+                  lqip,
+                  dimensions {
+                    width,
+                    height,
+                  }
+                }
+              }
+            },
+            variants[]{
+              _key,
+              name,
+              price,
+              discount,
+              gallery[0]{
+                asset -> {
+                  url,
+                  altText,
+                  metadata {
+                    lqip,
+                    dimensions {
+                      width,
+                      height,
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     `,

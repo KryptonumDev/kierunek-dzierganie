@@ -21,12 +21,11 @@ const Content = ({
   SearchIcon,
   CloseIcon,
   CrossIcon,
+  cart: { highlighted_products },
 }: QueryProps) => {
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
-
   const { cart, fetchedItems, updateItemQuantity, removeItem } = useCartItems();
-
   return (
     <>
       <div
@@ -60,6 +59,7 @@ const Content = ({
         fetchedItems={fetchedItems}
         updateItemQuantity={updateItemQuantity}
         removeItem={removeItem}
+        highlighted_products={highlighted_products}
       />
       <a
         href='#main'
