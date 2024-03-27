@@ -51,8 +51,8 @@ export default function PortableContent({ data, previousBlog, nextBlog }: Portab
       ),
     },
     listItem: {
-      number: ({ children }: { children: React.ReactNode }) => <li className={'orderedList'}>{children}</li>,
-      bullet: ({ children }: { children: React.ReactNode }) => (
+      number: ({ children }: { children: React.ReactNode[] }) => <Markdown.li>{children[0] as string}</Markdown.li>,
+      bullet: ({ children }: { children: React.ReactNode[] }) => (
         <li>
           <BulletList />
           {children}
@@ -61,7 +61,7 @@ export default function PortableContent({ data, previousBlog, nextBlog }: Portab
     },
     list: {
       bullet: ({ children }: { children: React.ReactNode }) => <ul className={'unorderedList'}>{children}</ul>,
-      number: ({ children }: { children: React.ReactNode }) => <ol className={styles.unorderedList}>{children}</ol>,
+      number: ({ children }: { children: React.ReactNode }) => <ol className={styles.orderedList}>{children}</ol>,
     },
     marks: {
       link: ({ value, children }: { value: string; children: string }) => {

@@ -110,6 +110,12 @@ Markdown.span = (props: JSX.IntrinsicAttributes & MarkdownProps) => (
     {...props}
   />
 );
+Markdown.li = (props: JSX.IntrinsicAttributes & MarkdownProps) => (
+  <Markdown
+    Tag='li'
+    {...props}
+  />
+);
 
 export default Markdown;
 
