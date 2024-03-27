@@ -298,17 +298,15 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
         >
           Wróć do koszyka
         </button>
-        <div>
-          <Button>Przechodzę do płatności</Button>
-          <div className={styles['payment-inform']}>
-            <div>
-              <Przelewy24Icon />
-              Bezpieczny zakupy z Przelewy24
-            </div>
-            <p>
-              Na kolejnym etapie zostaniesz przekierowana na stronę z płatnościami. Opłata nie zostanie jeszcze pobrana
-            </p>
+        <Button>płatności</Button>
+        <div className={styles['payment-inform']}>
+          <div>
+            <Przelewy24Icon />
+            Bezpieczny zakupy z Przelewy24
           </div>
+          <p>
+            Na kolejnym etapie zostaniesz przekierowana na stronę z płatnościami. Opłata nie zostanie jeszcze pobrana
+          </p>
         </div>
       </div>
     </>

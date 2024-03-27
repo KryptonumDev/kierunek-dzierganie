@@ -24,7 +24,7 @@ export default function SummaryAside({ input }: AsideProps) {
       {delivery && (
         <p>
           <span>Dostawa</span>
-          <span>{Math.random() > 0.5 ? 'Za darmo!' : '10,00 zł'} </span>
+          <span>Za darmo!</span>
         </p>
       )}
       {delivery && (
