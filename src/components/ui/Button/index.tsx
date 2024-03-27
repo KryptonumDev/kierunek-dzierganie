@@ -86,3 +86,8 @@ const Arrow = () => (
 );
 
 export default Button;
+
+export const CtaQuery = `
+  text,
+  href,
+`;

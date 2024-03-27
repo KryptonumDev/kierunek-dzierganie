@@ -1,0 +1,27 @@
+.Balance {
+  max-width: calc(590rem / 16);
+  margin: 0 auto;
+  text-align: center;
+  h1 {
+    margin-bottom: clamp(16px, calc(28vw / 7.68), 36px);
+  }
+  .coinParagraph {
+    margin-bottom: clamp(8px, calc(16vw / 7.68), 16px);
+  }
+  .coin {
+    margin-bottom: clamp(16px, calc(28vw / 7.68), 36px);
+    svg {
+      width: clamp(96px, calc(148vw / 7.68), 148px);
+      height: auto;
+    }
+    font-size: clamp(40px, calc(60vw / 7.68), 60px);
+    span {
+      position: absolute;
+      font-family: var(--font-city-streetwear);
+      margin-top: 0.3em;
+      line-height: 1;
+    }
+    display: grid;
+    place-items: center;
+  }
+}
