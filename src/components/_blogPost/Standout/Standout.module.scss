@@ -1,3 +1,8 @@
 .Standout {
-  
+  display: grid;
+  gap: clamp(12px, calc(20vw/7.68), 20px);
+  padding: clamp(20px, calc(32vw/7.68), 32px) clamp(16px, calc(28vw/7.68), 28px);
+  background: var(--primary-200);
+  border-radius: 4px;
+  border: 1px solid var(--primary-400);
 }
