@@ -7,7 +7,7 @@ const HighlightedImage = ({ img, isBackground, paragraph }: HighlightedImageType
   return (
     <div
       className={styles['HighlightedImage']}
-      data-isBackground={isBackground}
+      data-background={isBackground}
     >
       <Img
         data={img}

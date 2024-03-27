@@ -5,7 +5,7 @@
   align-items: center;
   padding-right: 32px;
 
-  &[data-isBackground="true"] {
+  &[data-background="true"] {
     background: var(--primary-200);
     border-radius: 4px;
   }
