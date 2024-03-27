@@ -18,8 +18,10 @@ import Standout, { Standout_Query, type StandoutTypes } from '../Standout';
 import TableSection, { TableSection_Query, type TableSectionTypes } from '../TableSection';
 import styles from './PortableContent.module.scss';
 import LargeImage, { LargeImage_Query } from '../LargeImage';
+import ArticleNavigation from '../ArticleNavigation';
+import { type PortableContentTypes } from './PortableContent.types';
 
-export default function PortableContent({ data }: { data: [] }) {
+export default function PortableContent({ data, previousBlog, nextBlog }: PortableContentTypes) {
   const components = {
     types: {
       ImageBadge: ({ value }: { value: ImageBadgeTypes }) => <ImageBadge {...value} />,
@@ -83,6 +85,10 @@ export default function PortableContent({ data }: { data: [] }) {
         value={data}
         components={components as unknown as Partial<PortableTextReactComponents>}
       />
+      <ArticleNavigation
+        previousBlog={previousBlog}
+        nextBlog={nextBlog}
+      />
     </section>
   );
 }
@@ -110,7 +116,7 @@ export const PortableContent_Query = /* groq */ `
     ${ConversationShowcase_Query}
     ${LargeImage_Query}
     ${Block_Query}
-  }`;
+  },`;
 
 const BulletList = () => (
   <svg

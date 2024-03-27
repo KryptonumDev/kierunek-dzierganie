@@ -133,6 +133,14 @@ export type BlogPostQueryProps = {
     paragraph: string;
   };
   date: string;
+  previousBlog?: {
+    slug: string;
+    name: string;
+  };
+  nextBlog?: {
+    slug: string;
+    name: string;
+  };
 };
 
 export type BlogCategoryPageQueryProps = {
