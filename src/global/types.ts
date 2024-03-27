@@ -77,23 +77,6 @@ export type PageQueryProps = {
   content: ComponentProps[];
 } & generateMetadataProps;
 
-export type StatutePageQueryProps = {
-  global: {
-    tel: string;
-    email: string;
-  };
-  page: StatutePage;
-};
-
-export type PrivacyPolicyPage = {
-  header_Heading: string;
-  header_Description: string;
-  content: {
-    title: string;
-    description: string;
-  }[];
-} & generateMetadataProps;
-
 export type BlogPageQueryProps = {
   HeroSimple: HeroSimpleTypes;
   categories_Heading: string;
@@ -144,22 +127,6 @@ export type BlogCategoryPageQueryProps = {
     }[];
   }[];
 } & BlogPageQueryProps;
-
-export type StatutePage = {
-  header_Heading: string;
-  header_Description: string;
-  content: {
-    title: string;
-    description: string;
-  }[];
-  files: {
-    asset: {
-      url: string;
-      originalFilename: string;
-      size: number;
-    };
-  }[];
-} & generateMetadataProps;
 
 export type Node = {
   children?: Node[];
