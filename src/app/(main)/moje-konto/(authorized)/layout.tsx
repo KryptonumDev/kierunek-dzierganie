@@ -1,4 +1,4 @@
-import '../global.scss';
+import '../dashboard.scss';
 import ControlPanel from '@/components/_dashboard/ControlPanel';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
