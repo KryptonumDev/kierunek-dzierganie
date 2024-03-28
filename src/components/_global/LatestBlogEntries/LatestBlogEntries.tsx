@@ -3,6 +3,7 @@ import styles from './LatestBlogEntries.module.scss';
 import type { LatestBlogEntriesTypes } from './LatestBlogEntries.types';
 
 const LatestBlogEntries = ({ heading, paragraph }: LatestBlogEntriesTypes) => {
+  return;
   return (
     <section className={styles['LatestBlogEntries']}>
       <header>
