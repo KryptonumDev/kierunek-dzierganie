@@ -79,7 +79,7 @@ export default function Checkout({ goToCart, fetchedItems, showCheckout, setShow
           discount: item.discount,
           quantity: item.quantity!,
           image: item.variants?.[0]?.gallery?.[0] ? item.variants[0].gallery[0] : item.gallery,
-          complexity: item.course?.complexity || null
+          complexity: item.course?.complexity || null,
         })),
       },
     }));
@@ -95,9 +95,12 @@ export default function Checkout({ goToCart, fetchedItems, showCheckout, setShow
 
   return (
     <>
-      <div className={`${styles['checkout']} ${showCheckout ? styles['active'] : ''}`}>
+      <div
+        className={styles['checkout']}
+        data-visible={!!showCheckout}
+      >
         <button
-          className={styles['close']}
+          className={styles['CloseButton']}
           onClick={setShowCheckout}
         >
           {CrossIcon}

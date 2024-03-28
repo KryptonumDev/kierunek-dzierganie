@@ -40,7 +40,7 @@ export default function Cart({
         className={styles['Cart']}
         data-visible={!!showCart}
       >
-        <div className={styles['flex']}>
+        <div className={`${styles['flex']} ${styles['CartHeader']}`}>
           <h3>Twoje produkty</h3>
           <button
             onClick={setShowCart}
