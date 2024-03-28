@@ -2,6 +2,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './ControlPanel.module.scss';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { useRouter } from 'next/navigation';
 
 const links = [
   {
@@ -31,8 +33,15 @@ const links = [
 ];
 
 const ControlPanel = () => {
+  const router = useRouter();
   const pathname = usePathname();
   const isCurrentPage = (href: string) => pathname.includes(href);
+  const supabase = createClientComponentClient();
+
+  const logOut = async () => {
+    await supabase.auth.signOut();
+    router.push('/moje-konto/wylogowano');
+  };
 
   return (
     <section className={styles['ControlPanel']}>
@@ -49,7 +58,12 @@ const ControlPanel = () => {
           </li>
         ))}
         <li className={styles.logout}>
-          <button className='link'>Wyloguj się</button>
+          <button
+            onClick={logOut}
+            className='link'
+          >
+            Wyloguj się
+          </button>
         </li>
       </ul>
     </section>

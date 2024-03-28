@@ -12,7 +12,12 @@ export async function middleware(req: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession();
 
-  if (!session && req.nextUrl.pathname.includes('/moje-konto')  && !req.nextUrl.pathname.includes('autoryzacja'))
+  if (
+    !session &&
+    req.nextUrl.pathname.includes('/moje-konto') &&
+    !req.nextUrl.pathname.includes('autoryzacja') &&
+    !req.nextUrl.pathname.includes('wylogowano')
+  )
     return NextResponse.redirect(new URL('/moje-konto/autoryzacja', req.url));
 
   if (session && req.nextUrl.pathname.includes('autoryzacja'))
