@@ -10,6 +10,7 @@ import Checkbox from '@/components/ui/Checkbox';
 import { formatPrice } from '@/utils/price-formatter';
 import { formatToOnlyDigits } from '@/utils/format-to-only-digits';
 import type { EmptyCart, Grid, Cart, CartForm } from './Header.types';
+import PickQuantity from '@/components/ui/PickQuantity';
 
 // TODO: query for available virtual coins
 const availableVirtualCoins = 71;
@@ -215,10 +216,8 @@ const CartGrid = ({ cart, fetchedItems, removeItem, updateItemQuantity }: Grid) 
             <h3>{item.name}</h3>
             <div>
               <div className={styles['calculator']}>
-                <span className={styles['title']}>Ilość</span>
                 {/* TODO: remove if course */}
-                <input
-                  type='number'
+                <PickQuantity
                   defaultValue={cart!.find((cartItem) => cartItem.id === item._id)?.quantity}
                   onChange={(e) => updateItemQuantity(item._id, Number(e.target.value))}
                 />
