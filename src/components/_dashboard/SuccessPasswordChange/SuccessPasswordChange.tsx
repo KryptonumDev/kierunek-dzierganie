@@ -7,7 +7,7 @@ const SuccessPasswordChange = () => {
     <section className={styles['SuccessPasswordChange']}>
       <Markdown.h1>**Sukces!** Poprawnie zmieniliśmy Twoje hasło</Markdown.h1>
       <Button
-        href='/moje-konto'
+        href='/moje-konto/kursy'
       >
         Moje konto
       </Button>

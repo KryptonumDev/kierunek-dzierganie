@@ -93,7 +93,7 @@ const Content = ({
               <Link href='/kontakt'>Kontakt</Link>
             </li>
             <li>
-              <Link href='/moje-konto'>Mój profil</Link>
+              <Link href='/moje-konto/kursy'>Mój profil</Link>
             </li>
             <li>
               <button

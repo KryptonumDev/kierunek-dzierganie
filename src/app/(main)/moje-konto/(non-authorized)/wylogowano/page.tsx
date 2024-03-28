@@ -6,7 +6,6 @@ import type { PageQueryProps } from '@/global/types';
 
 const currentUrl = '/moje-konto/wylogowano';
 const page = [
-  { name: 'Moje konto', path: '/moje-konto' },
   { name: 'Wylogowano', path: currentUrl },
 ];
 
