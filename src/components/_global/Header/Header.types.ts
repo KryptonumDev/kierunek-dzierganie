@@ -78,4 +78,6 @@ export type _NavProps = {
   ChevronBackIcon: React.ReactNode;
   SearchIcon: React.ReactNode;
   CloseIcon: React.ReactNode;
+  showMenu: boolean;
+  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
 };

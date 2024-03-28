@@ -130,7 +130,6 @@ const EmptyLayout = ({ image_crochet, image_knitting }: EmptyCart) => {
             sizes='(max-width: 640px) 150px, 300px'
           />
           <Button href='/dzierganie-na-drutach'>Dzierganie</Button>
-          <Button href='/dzierganie-na-drutach'>Dzierganie</Button>
         </div>
         <div>
           <Img

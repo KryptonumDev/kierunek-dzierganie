@@ -25,7 +25,9 @@ const Content = ({
 }: QueryProps) => {
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
   const { cart, fetchedItems, updateItemQuantity, removeItem } = useCartItems();
+
   return (
     <>
       <Checkout
@@ -83,6 +85,8 @@ const Content = ({
             ChevronBackIcon={ChevronBackIcon}
             SearchIcon={SearchIcon}
             CloseIcon={CloseIcon}
+            showMenu={showMenu}
+            setShowMenu={setShowMenu}
           />
           <ul className={styles.quickLinks}>
             <li>
@@ -113,9 +117,11 @@ const Content = ({
         onClick={() => {
           setShowCart(false);
           setShowCheckout(false);
+          setShowMenu(false);
         }}
         className={styles['Overlay']}
-        data-visible={!!(showCart || showCheckout)}
+        data-visible={!!(showCart || showCheckout || showMenu)}
+        style={{ zIndex: showMenu ? 8 : undefined }}
       />
     </>
   );

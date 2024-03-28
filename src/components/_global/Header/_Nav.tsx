@@ -6,18 +6,17 @@ import type { _NavProps } from './Header.types';
 import Search from './_Search';
 import Img from '@/components/ui/image';
 
-const Nav = ({ links, ChevronDownIcon, ChevronBackIcon, SearchIcon, CloseIcon }: _NavProps) => {
-  const [opened, setOpened] = useState(false);
+const Nav = ({ links, ChevronDownIcon, ChevronBackIcon, SearchIcon, CloseIcon, showMenu, setShowMenu }: _NavProps) => {
   const [tab, setTab] = useState<number | null>(null);
 
   const handleEscapeKey = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
-      setOpened(false);
+      setShowMenu(false);
       setTab(null);
     }
   };
   const handleClick = () => setTab(null);
-  const navToggle = () => setOpened(!opened);
+  const navToggle = () => setShowMenu(!showMenu);
 
   useEffect(() => {
     document.addEventListener('keydown', handleEscapeKey);
@@ -42,7 +41,7 @@ const Nav = ({ links, ChevronDownIcon, ChevronBackIcon, SearchIcon, CloseIcon }:
     <>
       <nav
         className={styles['Nav']}
-        data-opened={opened}
+        data-opened={showMenu}
         data-tab={tab}
       >
         <ul>
@@ -73,7 +72,10 @@ const Nav = ({ links, ChevronDownIcon, ChevronBackIcon, SearchIcon, CloseIcon }:
                     <li key={i}>
                       <Link href={href}>
                         {img && (
-                          <Img data={img} sizes='48px' />
+                          <Img
+                            data={img}
+                            sizes='48px'
+                          />
                         )}
                         <span>{name}</span>
                       </Link>
@@ -104,7 +106,6 @@ const Nav = ({ links, ChevronDownIcon, ChevronBackIcon, SearchIcon, CloseIcon }:
           <path d='M1 13H25' />
         </svg>
       </button>
-      <div className={styles['Overlay']} onClick={() => setOpened(false)}></div>
     </>
   );
 };

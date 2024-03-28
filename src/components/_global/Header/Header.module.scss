@@ -256,7 +256,7 @@
   bottom: 0;
   background: rgba(180, 162, 156, 0.42);
   backdrop-filter: blur(2px);
-  z-index: 99;
+  z-index: 9;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.5s;
@@ -281,10 +281,6 @@
         }
       }
     }
-  }
-  ~ .Overlay {
-    opacity: 1;
-    pointer-events: auto;
   }
 }
 
@@ -313,6 +309,8 @@
 }
 
 .Annotation {
+  z-index: 9;
+  position: relative;
   background-color: var(--primary-200);
   padding: 8px 0 12px;
   > div {
@@ -335,6 +333,7 @@
   right: 0;
   top: 100%;
 }
+
 .Search {
   position: relative;
   margin: 0 auto;
@@ -468,7 +467,7 @@
     }
   }
 
-  .grid{
+  .grid {
     margin-top: 48px;
   }
 
