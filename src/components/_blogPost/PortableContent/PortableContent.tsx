@@ -1,4 +1,4 @@
-import { ImgType, type Node } from '@/global/types';
+import { type ImgType, type Node } from '@/global/types';
 import { portableTextToMarkdown } from '@/utils/portable-text-to-markdown';
 import { slugify } from '@/utils/slugify';
 import { PortableText, toPlainText, type PortableTextReactComponents } from '@portabletext/react';
@@ -20,6 +20,7 @@ import styles from './PortableContent.module.scss';
 import LargeImage, { LargeImage_Query } from '../LargeImage';
 import ArticleNavigation from '../ArticleNavigation';
 import { type PortableContentTypes } from './PortableContent.types';
+import ArticleGreetings, { type ArticleGreetingsTypes, ArticleGreetings_Query } from '../ArticleGreetings';
 
 export default function PortableContent({ data, previousBlog, nextBlog }: PortableContentTypes) {
   const components = {
@@ -30,11 +31,12 @@ export default function PortableContent({ data, previousBlog, nextBlog }: Portab
       BadgeSection: ({ value }: { value: BadgeSectionTypes }) => <BadgeSection {...value} />,
       HighlightedImage: ({ value }: { value: HighlightedImageTypes }) => <HighlightedImage {...value} />,
       ProcessComponent: ({ value }: { value: ProcessComponentTypes }) => <ProcessComponent {...value} />,
+      ArticleGreetings: ({ value }: { value: ArticleGreetingsTypes }) => <ArticleGreetings {...value} />,
       Standout: ({ value }: { value: StandoutTypes }) => <Standout {...value} />,
+      LargeImage: ({ value }: { value: ImgType }) => <LargeImage {...value} />,
       ProcessShowcase: ({ value }: { value: ProcessShowcaseTypes }) => <ProcessShowcase {...value} />,
       QuoteSection: ({ value }: { value: QuoteSectionTypes }) => <QuoteSection {...value} />,
       ConversationShowcase: ({ value }: { value: ConversationShowcaseTypes }) => <ConversationShowcase {...value} />,
-      LargeImage: ({ value }: { value: ImgType }) => <LargeImage {...value} />,
     },
     block: {
       h2: ({ value }: { value: [] }) => (
@@ -115,6 +117,7 @@ export const PortableContent_Query = /* groq */ `
     ${QuoteSection_Query}
     ${ConversationShowcase_Query}
     ${LargeImage_Query}
+    ${ArticleGreetings_Query}
     ${Block_Query}
   },`;
 

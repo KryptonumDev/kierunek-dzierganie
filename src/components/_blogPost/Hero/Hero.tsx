@@ -25,7 +25,7 @@ const Hero = ({ paragraph, img, heading, author, date }: HeroTypes) => {
             sizes='(max-width: 999px) 100vw, 50vw'
           />
           <div>
-            <Markdown.h3>{author.heading}</Markdown.h3>
+            <Markdown.h3>{'**Autor publikacji**'}</Markdown.h3>
             <Markdown>{author.paragraph}</Markdown>
           </div>
         </div>

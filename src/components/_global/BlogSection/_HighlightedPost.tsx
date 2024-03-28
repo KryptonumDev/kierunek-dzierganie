@@ -18,7 +18,7 @@ export default async function HighlightedPost({
   const {
     hero,
     href,
-    author: { heading, img, paragraph },
+    author: { img, paragraph },
   } = highlightedPost;
 
   return (
@@ -40,7 +40,7 @@ export default async function HighlightedPost({
             sizes='(max-width: 999px) 100vw, 50vw'
           />
           <div>
-            <Markdown.h3>{heading}</Markdown.h3>
+            <Markdown.h3>{'**Autor publikacji**'}</Markdown.h3>
             <Markdown>{paragraph}</Markdown>
           </div>
         </div>
