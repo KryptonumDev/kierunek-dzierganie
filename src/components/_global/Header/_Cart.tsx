@@ -34,6 +34,7 @@ export default function Cart({
 
   const [virtualValue, setVirtualValue] = useState('');
   const [isVirtualCoins, setIsVirtualCoins] = useState(false);
+  const [isPromoCode, setIsPromoCode] = useState(false);
 
   useEffect(() => {
     addEventListener('keydown', (e) => {
@@ -73,11 +74,28 @@ export default function Cart({
           )}
           <form className={cart?.length ? '' : styles['empty']}>
             <div className={styles['line']} />
-            <Checkbox
-              register={register('isDiscount')}
-              label='Posiadam kod rabatowy'
-              errors={errors}
-            />
+            {isPromoCode ? (
+              <div className={styles.promoCode}>
+                <div className={styles.inputWrapper}>
+                  <Input
+                    label='Wpisz kod rabatowy'
+                    type='text'
+                    register={register('virtual')}
+                    errors={errors}
+                  />
+                  <button onClick={() => setIsPromoCode((prev) => !prev)}>{CrossIcon}</button>
+                </div>
+                {/* TODO: Add logic for Apply Button */}
+                <button className={`link ${styles.apply}`}>Zastosuj</button>
+              </div>
+            ) : (
+              <Checkbox
+                register={register('isDiscount')}
+                label='Posiadam kod rabatowy'
+                errors={errors}
+                onChange={() => setIsPromoCode((prev) => !prev)}
+              />
+            )}
             {/* TODO: Display below `virtualCoins` section only if the user is logged in and has joined affiliation program  */}
             {isVirtualCoins ? (
               <div className={styles.virtualCoins}>

@@ -435,6 +435,25 @@
       border-top: 1px solid var(--primary-300, #efe8e7);
     }
 
+    .promoCode {
+      max-width: 320px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: flex-end;
+      .inputWrapper {
+        position: relative;
+        button {
+          position: absolute;
+          right: 8px;
+          bottom: 5px;
+        }
+      }
+      .apply {
+        margin-bottom: 6px;
+      }
+    }
+
     .virtualCoins {
       max-width: 320px;
       .inputWrapper {
