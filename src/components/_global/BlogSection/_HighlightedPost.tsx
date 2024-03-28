@@ -16,25 +16,23 @@ export default async function HighlightedPost({
     slug ? (highlightedPost = await getNewestCategoryBlogData(slug)) : (highlightedPost = await getNewestBlogData());
   }
   const {
-    hero_Img,
-    hero_Heading,
+    hero,
     href,
-    hero_Paragraph,
-    hero_Author: { heading, img, paragraph },
+    author: { heading, img, paragraph },
   } = highlightedPost;
 
   return (
     <div className={styles.highlightedPost}>
       <Link href={`/blog/${href}`}>
         <Img
-          data={hero_Img}
+          data={hero.img}
           sizes=''
         />
       </Link>
       <div className={styles.highlightedPostContent}>
         <div>
-          <Markdown.h3>{hero_Heading}</Markdown.h3>
-          <Markdown>{hero_Paragraph}</Markdown>
+          <Markdown.h3>{hero.heading}</Markdown.h3>
+          <Markdown>{hero.paragraph}</Markdown>
         </div>
         <div className={styles.author}>
           <Img
@@ -55,13 +53,15 @@ async function getNewestBlogData() {
   const data = await sanityFetch<HighlightedPostType>({
     query: /* groq */ `
       *[_type == "BlogPost_Collection"] | order(publishedAt desc) [0] {
-        hero_Img {
-          ${Img_Query}
+        hero {
+          img {
+            ${Img_Query}
+          },
+          heading,
+          paragraph,
         },
         "href": slug.current,
-        hero_Heading,
-        hero_Paragraph,
-        hero_Author-> {
+        author-> {
           heading,
           paragraph,
           img {
@@ -79,13 +79,15 @@ async function getNewestCategoryBlogData(slug: string) {
   const data = await sanityFetch<HighlightedPostType>({
     query: /* groq */ `
       *[_type == "BlogPost_Collection" && $slug in category[]->slug.current] | order(publishedAt desc) [0] {
-        hero_Img {
-          ${Img_Query}
+        hero {
+          img {
+            ${Img_Query}
+          },
+          heading,
+          paragraph,
         },
-        hero_Heading,
         "href": slug.current,
-        hero_Paragraph,
-        hero_Author-> {
+        author-> {
           heading,
           paragraph,
           img {

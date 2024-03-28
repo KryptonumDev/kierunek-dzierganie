@@ -31,6 +31,7 @@ export default async function BlogPageNumber({ params: { number } }: { params: {
           highlightedPost: blog_HighlightedPost,
           number: parseInt(number),
           blogPosts: blogPosts,
+          pathPrefix: '/blog/strona',
         }}
       />
     </>
@@ -41,7 +42,7 @@ async function query(): Promise<BlogPageQueryProps> {
   return await sanityFetch<BlogPageQueryProps>({
     query: /* groq */ `
       *[_type == "Blog_Page"][0] {
-        ${HeroSimple_Query}
+        ${HeroSimple_Query(true)}
         ${CategoriesSection_Query}
         ${BlogSection_Query}
       }

@@ -103,23 +103,6 @@ export type PageQueryProps = {
   content: ComponentProps[];
 } & generateMetadataProps;
 
-export type StatutePageQueryProps = {
-  global: {
-    tel: string;
-    email: string;
-  };
-  page: StatutePage;
-};
-
-export type PrivacyPolicyPage = {
-  header_Heading: string;
-  header_Description: string;
-  content: {
-    title: string;
-    description: string;
-  }[];
-} & generateMetadataProps;
-
 export type BlogPageQueryProps = {
   HeroSimple: HeroSimpleTypes;
   categories_Heading: string;
@@ -133,15 +116,32 @@ export type BlogPageQueryProps = {
   blog_Heading: string;
   blog_Paragraph: string;
   blog_HighlightedPost: {
-    hero_Heading: string;
-    hero_Img: ImgType;
-    hero_Paragraph: string;
-    hero_Author: {
+    hero: {
+      heading: string;
+      img: ImgType;
+      paragraph: string;
+    };
+    author: {
       heading: string;
       paragraph: string;
       img: ImgType;
     };
   };
+};
+
+export type BlogPostQueryProps = {
+  hero: {
+    img: ImgType;
+    heading: string;
+    paragraph: string;
+  };
+  content: [];
+  author: {
+    img: ImgType;
+    heading: string;
+    paragraph: string;
+  };
+  date: string;
 };
 
 export type BlogCategoryPageQueryProps = {
@@ -154,21 +154,16 @@ export type BlogCategoryPageQueryProps = {
   }[];
 } & BlogPageQueryProps;
 
-export type StatutePage = {
-  header_Heading: string;
-  header_Description: string;
-  content: {
-    title: string;
-    description: string;
-  }[];
-  files: {
-    asset: {
-      url: string;
-      originalFilename: string;
-      size: number;
-    };
-  }[];
-} & generateMetadataProps;
+export type Node = {
+  children?: Node[];
+  style?: string;
+  text?: string;
+  subheadings?: Node[];
+  slug?: string;
+  _type?: string;
+  marks?: string;
+  icon?: ImgType;
+};
 
 export type ProductPageQueryProps = {
   name: string;

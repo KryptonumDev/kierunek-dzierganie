@@ -1,11 +1,11 @@
 import sanityFetch from '@/utils/sanity.fetch';
-import type { QueryProps } from './Header.types';
 import Content from './_Content';
 import Markdown from '@/components/ui/markdown';
 import { Img_Query } from '@/components/ui/image';
+import type { QueryProps } from './Header.types';
 
 const Header = async () => {
-  const { global, cart }: QueryProps = await query();
+  const { global, cart } = await query();
   const nav_annotation = <Markdown>{global.nav_Annotation ?? ''}</Markdown>;
   return (
     <Content
@@ -28,7 +28,7 @@ const query = async (): Promise<QueryProps> => {
   const data = await sanityFetch<QueryProps>({
     query: /* groq */ `
       {
-        "global":  *[_id == 'global'][0] {
+        "global": *[_id == 'global'][0] {
           image_crochet {
             ${Img_Query}
           },

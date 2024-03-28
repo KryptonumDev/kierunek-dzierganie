@@ -1,13 +1,13 @@
 'use client';
+import { useState } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import styles from './Header.module.scss';
 import Search from './_Search';
 import Annotation from './_Annotation';
 import Nav from './_Nav';
-import type { QueryProps } from './Header.types';
-import { useState } from 'react';
 import { useCartItems } from '@/utils/useCartItems';
-import dynamic from 'next/dynamic';
+import type { QueryProps } from './Header.types';
 
 const Cart = dynamic(() => import('./_Cart'), { ssr: false });
 const Checkout = dynamic(() => import('./Checkout'), { ssr: false });
@@ -28,13 +28,6 @@ const Content = ({
   const { cart, fetchedItems, updateItemQuantity, removeItem } = useCartItems();
   return (
     <>
-      <div
-        onClick={() => {
-          setShowCart(false);
-          setShowCheckout(false);
-        }}
-        className={`${styles['overlay']} ${showCart || showCheckout ? styles['active'] : ''}`}
-      />
       <Checkout
         CrossIcon={CrossIcon}
         setShowCheckout={() => setShowCheckout(false)}
@@ -116,6 +109,14 @@ const Content = ({
           CloseIcon={CloseIcon}
         />
       </header>
+      <div
+        onClick={() => {
+          setShowCart(false);
+          setShowCheckout(false);
+        }}
+        className={styles['Overlay']}
+        data-visible={!!(showCart || showCheckout)}
+      />
     </>
   );
 };

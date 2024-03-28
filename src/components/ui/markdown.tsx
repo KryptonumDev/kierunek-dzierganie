@@ -43,15 +43,23 @@ type MarkdownProps = {
   components?: Record<string, React.ReactNode>;
   children: string;
   className?: string;
+  id?: string;
 };
 
-const Markdown = ({ Tag, components, children, className, ...props }: MarkdownProps) => {
+const Markdown = ({ Tag, components, children, className, id, ...props }: MarkdownProps) => {
   const markdown = (
     <MDXRemote
       source={children}
       components={{
         ...(Tag && {
-          p: ({ children }) => <Tag {...props}>{children}</Tag>,
+          p: ({ children }) => (
+            <Tag
+              {...props}
+              {...(id && { id })}
+            >
+              {children}
+            </Tag>
+          ),
         }),
         a: LinkRenderer,
         li: ListRenderer,

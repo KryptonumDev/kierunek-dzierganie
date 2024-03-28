@@ -30,6 +30,7 @@ export default async function BlogPage() {
           paragraph: blog_Paragraph,
           highlightedPost: blog_HighlightedPost,
           blogPosts: blogPosts,
+          pathPrefix: '/blog/strona',
         }}
       />
     </>
@@ -40,7 +41,7 @@ const query = async (): Promise<BlogPageQueryProps> => {
   return await sanityFetch<BlogPageQueryProps>({
     query: /* groq */ `
       *[_type == "Blog_Page"][0] {
-        ${HeroSimple_Query}
+        ${HeroSimple_Query(true)}
         ${CategoriesSection_Query}
         ${BlogSection_Query}
       }
