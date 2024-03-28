@@ -6,6 +6,7 @@
   background: var(--primary-200);
   align-items: center;
   padding-right: clamp(16px, calc(24vw/7.68), 32px);
+  border-radius: 4px;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr 3fr;
