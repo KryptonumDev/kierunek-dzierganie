@@ -1,13 +1,13 @@
 'use client';
+import { useEffect } from 'react';
 import styles from './Header.module.scss';
-import type { EmptyCart, Grid, Cart, CartForm } from './Header.types';
+import { useForm } from 'react-hook-form';
 import Img from '@/components/ui/image';
 import Button from '@/components/ui/Button';
 import ProductCard from '@/components/ui/ProductCard';
 import Checkbox from '@/components/ui/Checkbox';
-import { useForm } from 'react-hook-form';
 import { formatPrice } from '@/utils/price-formatter';
-import { useEffect } from 'react';
+import type { EmptyCart, Grid, Cart, CartForm } from './Header.types';
 
 export default function Cart({
   goToCheckout,
@@ -31,16 +31,23 @@ export default function Cart({
     addEventListener('keydown', (e) => {
       if (e.key === 'Escape') setShowCart();
     });
-
     return () => removeEventListener('keydown', () => setShowCart());
   }, [setShowCart]);
 
   return (
     <>
-      <div className={`${styles['cart']} ${showCart ? styles['active'] : ''}`}>
+      <div
+        className={styles['Cart']}
+        data-visible={!!showCart}
+      >
         <div className={styles['flex']}>
           <h3>Twoje produkty</h3>
-          <button onClick={setShowCart}>{CrossIcon}</button>
+          <button
+            onClick={setShowCart}
+            className={styles.CloseButton}
+          >
+            {CrossIcon}
+          </button>
         </div>
         <div>
           {cart?.length ? (
@@ -85,7 +92,6 @@ export default function Cart({
             </div>
           </form>
         </div>
-
         {highlighted_products && (
           <div className={styles['highlighted']}>
             <h3>
@@ -123,7 +129,7 @@ const EmptyLayout = ({ image_crochet, image_knitting }: EmptyCart) => {
             data={image_knitting}
             sizes='(max-width: 640px) 150px, 300px'
           />
-          <Button href='/dzierganie-na-drutach'>Dzierganie na drutach</Button>
+          <Button href='/dzierganie-na-drutach'>Dzierganie</Button>
         </div>
         <div>
           <Img
