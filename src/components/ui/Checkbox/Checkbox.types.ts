@@ -6,4 +6,4 @@ export type Props = {
     name: string;
   };
   errors: FieldErrors;
-};
+} & React.InputHTMLAttributes<HTMLInputElement>;

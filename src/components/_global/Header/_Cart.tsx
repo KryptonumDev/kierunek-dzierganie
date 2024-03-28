@@ -1,13 +1,18 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './Header.module.scss';
 import { useForm } from 'react-hook-form';
 import Img from '@/components/ui/image';
 import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
 import ProductCard from '@/components/ui/ProductCard';
 import Checkbox from '@/components/ui/Checkbox';
 import { formatPrice } from '@/utils/price-formatter';
+import { formatToOnlyDigits } from '@/utils/format-to-only-digits';
 import type { EmptyCart, Grid, Cart, CartForm } from './Header.types';
+
+// TODO: query for available virtual coins
+const availableVirtualCoins = 71;
 
 export default function Cart({
   goToCheckout,
@@ -26,6 +31,9 @@ export default function Cart({
     register,
     formState: { errors },
   } = useForm<CartForm>();
+
+  const [virtualValue, setVirtualValue] = useState('');
+  const [isVirtualCoins, setIsVirtualCoins] = useState(false);
 
   useEffect(() => {
     addEventListener('keydown', (e) => {
@@ -70,11 +78,40 @@ export default function Cart({
               label='Posiadam kod rabatowy'
               errors={errors}
             />
-            <Checkbox
-              register={register('isVirtual')}
-              label='Chcę wykorzystać wirtualne złotówki'
-              errors={errors}
-            />
+            {/* TODO: Display below `virtualCoins` section only if the user is logged in and has joined affiliation program  */}
+            {isVirtualCoins ? (
+              <div className={styles.virtualCoins}>
+                <div className={styles.inputWrapper}>
+                  <Input
+                    label='Wpisz ile wirtualnych złotówek chcesz wykorzystać'
+                    type='text'
+                    maxLength={availableVirtualCoins.toString().length}
+                    register={register('virtual', {
+                      min: { value: 0, message: 'Wpisz poprawną ilość wirtualnych złotówek' },
+                      valueAsNumber: true,
+                      max: { value: availableVirtualCoins, message: 'Nie masz tyle wirtualnych złotówek' },
+                      onChange: (e) => {
+                        formatToOnlyDigits(e);
+                        setVirtualValue(e.target.value);
+                      },
+                    })}
+                    errors={errors}
+                  />
+                  <div className={styles.mask}>
+                    <span className={styles.hide}>{virtualValue}</span>
+                    <span>&nbsp;/{availableVirtualCoins}</span>
+                  </div>
+                  <button onClick={() => setIsVirtualCoins((prev) => !prev)}>{CrossIcon}</button>
+                </div>
+              </div>
+            ) : (
+              <Checkbox
+                register={register('isVirtual')}
+                label='Chcę wykorzystać wirtualne złotówki'
+                errors={errors}
+                onChange={() => setIsVirtualCoins((prev) => !prev)}
+              />
+            )}
             <div className={styles['flex']}>
               <button
                 onClick={setShowCart}
