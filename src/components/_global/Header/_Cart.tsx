@@ -32,7 +32,7 @@ export default function Cart({
     formState: { errors },
   } = useForm<CartForm>();
 
-  const [virtualValue, setVirtualValue] = useState('');
+  const [virtualValue, setVirtualValue] = useState(null);
   const [isVirtualCoins, setIsVirtualCoins] = useState(false);
   const [isPromoCode, setIsPromoCode] = useState(false);
 
@@ -80,7 +80,7 @@ export default function Cart({
                   <Input
                     label='Wpisz kod rabatowy'
                     type='text'
-                    register={register('virtual')}
+                    register={register('discount')}
                     errors={errors}
                   />
                   <button onClick={() => setIsPromoCode((prev) => !prev)}>{CrossIcon}</button>
@@ -106,7 +106,6 @@ export default function Cart({
                     maxLength={availableVirtualCoins.toString().length}
                     register={register('virtual', {
                       min: { value: 0, message: 'Wpisz poprawną ilość wirtualnych złotówek' },
-                      valueAsNumber: true,
                       max: { value: availableVirtualCoins, message: 'Nie masz tyle wirtualnych złotówek' },
                       onChange: (e) => {
                         formatToOnlyDigits(e);

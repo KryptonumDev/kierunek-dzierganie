@@ -61,7 +61,7 @@ export type CartForm = {
   isDiscount: boolean;
   isVirtual: boolean;
   discount: string;
-  virtual: number;
+  virtual: string;
 };
 
 export type _NavProps = {
