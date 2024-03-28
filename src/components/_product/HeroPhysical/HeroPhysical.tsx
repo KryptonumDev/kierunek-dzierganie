@@ -8,7 +8,7 @@ import { ImgType } from '@/global/types';
 import AddToCart from '@/components/ui/AddToCart';
 import { formatPrice } from '@/utils/price-formatter';
 
-const gallerySwitch = (data: ImgType | string, size: 'big'|'small') => ({
+const gallerySwitch = (data: ImgType | string, size: 'big' | 'small') => ({
   image: (
     <Img
       data={data as ImgType}
