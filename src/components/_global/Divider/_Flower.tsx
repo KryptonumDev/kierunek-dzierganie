@@ -19,7 +19,7 @@ const animate = (isInView: boolean, delay?: number, duration?: number) => ({
 
 export const Flower = () => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { margin: '0px 0px -5% 0px', once: true });
+  const isInView = useInView(ref, { margin: '0px 0px 5% 0px', once: true });
 
   return (
     <svg
