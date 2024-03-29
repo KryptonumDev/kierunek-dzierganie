@@ -2,13 +2,14 @@ import { Fragment } from 'react';
 import styles from './Description.module.scss';
 import ColumnImageSection, { type ColumnImageSectionTypes } from '../ColumnImageSection';
 import TextSection, { type TextSectionTypes } from '../TextSection';
-import type { OrderedListTypes } from '../OrderedList';
-import OrderedList from '../OrderedList';
+import OrderedList, { type OrderedListTypes } from '../OrderedList';
+import Standout, { type StandoutTypes } from '../Standout';
 
 type DescriptionMap = {
   ColumnImageSection: ColumnImageSectionTypes;
   TextSection: TextSectionTypes;
   OrderedList: OrderedListTypes;
+  Standout: StandoutTypes;
 };
 
 export type DescriptionTypes = DescriptionMap[keyof DescriptionMap] & { _type: string };
@@ -21,6 +22,7 @@ const Description = ({ data }: { data: DescriptionTypes[] }) => (
         ColumnImageSection: <ColumnImageSection {...(item as ColumnImageSectionTypes)} />,
         TextSection: <TextSection {...(item as TextSectionTypes)} />,
         OrderedList: <OrderedList {...(item as OrderedListTypes)} />,
+        Standout: <Standout {...(item as StandoutTypes)} />,
       };
       const DynamicComponent = componentMap[DescriptionType];
       if (!DynamicComponent) {
