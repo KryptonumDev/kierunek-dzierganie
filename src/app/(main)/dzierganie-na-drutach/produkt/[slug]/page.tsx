@@ -4,12 +4,12 @@ import type { ProductPageQueryProps, generateStaticParamsProps } from '@/global/
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import HeroPhysical from '@/components/_product/HeroPhysical';
 import Parameters from '@/components/_product/Parameters';
-import Description from '@/components/_product/Description';
-import Flex from '@/components/_product/Flex';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
+import Informations from '@/components/_product/Informations';
+import Description, { Description_Query } from '@/components/_product/Description';
 
 const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) => {
-  const { name, _id, type, variants, price, discount, featuredVideo, countInStock, gallery, parameters } =
+  const { name, _id, type, variants, price, discount, featuredVideo, countInStock, gallery, parameters, description } =
     await query(slug);
   return (
     <>
@@ -41,11 +41,10 @@ const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) =
         }}
       />
       {/* TODO: Check is there parameters and description sections, if no disable tabs system and show only needed */}
-      <Description>
-        {/* TODO: Add product description */}
-        <Flex />
-        <Parameters parameters={parameters} />
-      </Description>
+      <Informations tabs={['Opis', 'Parametry']}>
+        <Description data={description} />
+        {parameters?.length > 0 && <Parameters parameters={parameters} />}
+      </Informations>
     </>
   );
 };
@@ -57,7 +56,7 @@ export async function generateMetadata({ params: { slug } }: { params: { slug: s
 }
 
 const query = async (slug: string): Promise<ProductPageQueryProps> => {
-  const data = await sanityFetch({
+  const data = await sanityFetch<ProductPageQueryProps>({
     query: /* groq */ `
       *[_type == "product" && slug.current == $slug && basis == 'knitting' && type in ["physical", "variable"]][0] {
         name,
@@ -108,6 +107,7 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
               }
             }
           },
+          ${Description_Query}
           attributes[]{
             type,
             name,
@@ -120,7 +120,7 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
     tags: ['product'],
   });
   !data && notFound();
-  return data as ProductPageQueryProps;
+  return data;
 };
 
 export async function generateStaticParams(): Promise<generateStaticParamsProps[]> {

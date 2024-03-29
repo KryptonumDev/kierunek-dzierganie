@@ -171,13 +171,17 @@ h6 {
   }
 }
 h1,
-h2 {
+.h1,
+h2,
+.h2 {
   font-size: clamp(calc(24rem / 16), calc(26vw / 7.68), calc(36rem / 16));
 }
-h3 {
+h3,
+.h3 {
   font-size: clamp(calc(18rem / 16), calc(28vw / 7.68), calc(28rem / 16));
 }
-h4 {
+h4,
+.h4 {
   font-size: clamp(calc(16rem / 16), calc(24vw / 7.68), calc(24rem / 16));
 }
 

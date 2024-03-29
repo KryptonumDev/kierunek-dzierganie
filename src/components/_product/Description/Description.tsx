@@ -1,27 +1,26 @@
-'use client';
-import { useState } from 'react';
 import styles from './Description.module.scss';
-import type { Props } from './Description.types';
+import ColumnImageSection, { ColumnImageSectionTypes } from '../ColumnImageSection';
 
-const Description = ({ children }: Props) => {
-  const [selectedTab, setSelectedTab] = useState(0);
-
-  return (
-    <section className={styles['Description']}>
-      <div className={styles['tabs']}>
-        {children.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setSelectedTab(i)}
-            className={i === selectedTab ? styles['active'] : ''}
-          >
-            {i ? 'Parametry' : 'Opis'}
-          </button>
-        ))}
-      </div>
-      <div>{children[selectedTab]}</div>
-    </section>
-  );
+type DescriptionMap = {
+  ColumnImageSection: ColumnImageSectionTypes;
 };
+
+export type DescriptionTypes = DescriptionMap[keyof DescriptionMap] & { _type: string };
+
+const Description = ({ data }: { data: DescriptionTypes[] }) => (
+  <div className={styles.Description}>
+    {data?.map((item) => {
+      const DescriptionType = item._type as keyof DescriptionMap;
+      const componentMap: Record<string, React.ReactNode> = {
+        ColumnImageSection: <ColumnImageSection {...(item as ColumnImageSectionTypes)} />,
+      };
+      const DynamicComponent = componentMap[DescriptionType];
+      if (!DynamicComponent) {
+        return null;
+      }
+      return DynamicComponent;
+    })}
+  </div>
+);
 
 export default Description;

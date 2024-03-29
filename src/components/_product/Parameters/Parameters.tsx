@@ -5,10 +5,10 @@ const Parameters = ({ parameters }: Props) => {
   return (
     <section className={styles['Parameters']}>
       <ul>
-        {parameters?.map((param) => (
-          <li key={param.name}>
-            <strong>{param.name}</strong>
-            <span>{param.value}</span>
+        {parameters?.map(({ name, value }, i) => (
+          <li key={i}>
+            <strong>{name}</strong>
+            <span>{value}</span>
           </li>
         ))}
       </ul>
