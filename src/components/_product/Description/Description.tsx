@@ -1,27 +1,32 @@
+import { Fragment } from 'react';
 import styles from './Description.module.scss';
 import ColumnImageSection, { type ColumnImageSectionTypes } from '../ColumnImageSection';
 import TextSection, { type TextSectionTypes } from '../TextSection';
+import type { OrderedListTypes } from '../OrderedList';
+import OrderedList from '../OrderedList';
 
 type DescriptionMap = {
   ColumnImageSection: ColumnImageSectionTypes;
   TextSection: TextSectionTypes;
+  OrderedList: OrderedListTypes;
 };
 
 export type DescriptionTypes = DescriptionMap[keyof DescriptionMap] & { _type: string };
 
 const Description = ({ data }: { data: DescriptionTypes[] }) => (
   <div className={styles.Description}>
-    {data?.map((item) => {
+    {data?.map((item, index) => {
       const DescriptionType = item._type as keyof DescriptionMap;
       const componentMap: Record<string, React.ReactNode> = {
         ColumnImageSection: <ColumnImageSection {...(item as ColumnImageSectionTypes)} />,
         TextSection: <TextSection {...(item as TextSectionTypes)} />,
+        OrderedList: <OrderedList {...(item as OrderedListTypes)} />,
       };
       const DynamicComponent = componentMap[DescriptionType];
       if (!DynamicComponent) {
         return null;
       }
-      return DynamicComponent;
+      return <Fragment key={index}>{DynamicComponent}</Fragment>;
     })}
   </div>
 );
