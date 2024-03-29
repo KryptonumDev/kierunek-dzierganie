@@ -4,11 +4,13 @@ import ColumnImageSection, { type ColumnImageSectionTypes } from '../ColumnImage
 import TextSection, { type TextSectionTypes } from '../TextSection';
 import OrderedList, { type OrderedListTypes } from '../OrderedList';
 import Standout, { type StandoutTypes } from '../Standout';
+import UnorderedList, { UnorderedListTypes } from '../UnorderedList';
 
 type DescriptionMap = {
   ColumnImageSection: ColumnImageSectionTypes;
   TextSection: TextSectionTypes;
   OrderedList: OrderedListTypes;
+  UnorderedList: UnorderedListTypes;
   Standout: StandoutTypes;
 };
 
@@ -22,6 +24,7 @@ const Description = ({ data }: { data: DescriptionTypes[] }) => (
         ColumnImageSection: <ColumnImageSection {...(item as ColumnImageSectionTypes)} />,
         TextSection: <TextSection {...(item as TextSectionTypes)} />,
         OrderedList: <OrderedList {...(item as OrderedListTypes)} />,
+        UnorderedList: <UnorderedList {...(item as UnorderedListTypes)} />,
         Standout: <Standout {...(item as StandoutTypes)} />,
       };
       const DynamicComponent = componentMap[DescriptionType];
