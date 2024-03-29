@@ -11,6 +11,7 @@ import Description, { Description_Query } from '@/components/_product/Descriptio
 const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) => {
   const { name, _id, type, variants, price, discount, featuredVideo, countInStock, gallery, parameters, description } =
     await query(slug);
+
   return (
     <>
       <Breadcrumbs
