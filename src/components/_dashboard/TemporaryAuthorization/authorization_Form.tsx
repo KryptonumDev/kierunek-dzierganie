@@ -53,7 +53,7 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
         })
         .then((res) => {
           if (res.error) throw res.error;
-          router.refresh();
+          router.push('/moje-konto/kursy');
         })
         .catch((error) => {
           toast(error.message);
