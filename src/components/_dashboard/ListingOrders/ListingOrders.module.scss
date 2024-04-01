@@ -1,0 +1,21 @@
+.ListingOrders {
+  > h1 {
+    margin-bottom: clamp(28px, calc(28vw / 7.68), 28px);
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    position: relative;
+    width: fit-content;
+    max-width: 586px;
+  }
+
+  > p {
+    text-align: center;
+  }
+
+  .listing {
+    margin-top: clamp(28px, calc(36vw / 7.68), 64px);
+    display: grid;
+    gap: 42px;
+  }
+}

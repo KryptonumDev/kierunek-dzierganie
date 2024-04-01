@@ -62,7 +62,7 @@ export type Product = {
     name: string;
     price: number;
     discount: number;
-    gallery: Array<ImgType>;
+    gallery: ImgType;
   }>;
   gallery: ImgType;
 };
@@ -235,3 +235,22 @@ export type Chapter = {
     slug: string;
   }[];
 };
+
+export type Order = {
+  id: string;
+  amount: number;
+  created_at: string;
+  payment_method: string;
+  products: {
+    array: {
+      id: string;
+      name: string;
+      price: number;
+      quantity: number;
+    }[];
+  };
+  orders_statuses: {
+    id: string;
+    status_name: string;
+  }[];
+}

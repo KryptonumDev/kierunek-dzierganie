@@ -12,7 +12,7 @@ const links = [
   },
   {
     name: 'Historia zakupów',
-    href: '/moje-konto/historia-zakupow',
+    href: '/moje-konto/zakupy',
   },
   {
     name: 'Pliki do pobrania',

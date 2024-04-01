@@ -1,14 +1,16 @@
 import Button from '@/components/ui/Button';
-import styles from './EmptyCourses.module.scss';
-import type { Props } from './EmptyCourses.types';
+import styles from './EmptyOrders.module.scss';
+import type { Props } from './EmptyOrders.types';
 import Img from '@/components/ui/image';
 
-const EmptyCourses = ({ image_crochet, image_knitting }: Props) => {
+const EmptyOrders = ({ image_crochet, image_knitting }: Props) => {
   return (
-    <section className={styles['EmptyCourses']}>
+    <section className={styles['EmptyOrders']}>
+      <h1>
+        Historia <strong>zakupów</strong>
+      </h1>
       <h2 className='h1'>
-        Moje <strong>kursy</strong>
-        <span className={styles['count']}>0</span>
+        Jeszcze nie masz żadnych <strong>zakupionych produktów</strong>
       </h2>
       <p>
         Jeśli chcesz nauczyć się od podstaw <strong>dziergać lub szydełkować</strong>, kliknij któryś z kafelków niżej
@@ -33,4 +35,4 @@ const EmptyCourses = ({ image_crochet, image_knitting }: Props) => {
   );
 };
 
-export default EmptyCourses;
+export default EmptyOrders;
