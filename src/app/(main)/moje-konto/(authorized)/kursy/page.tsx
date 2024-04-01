@@ -26,7 +26,7 @@ export default async function Courses() {
 
   return (
     <div>
-      {courses ? (
+      {courses.length > 0 ? (
         <ListingCourses courses={courses} />
       ) : (
         <EmptyCourses
