@@ -108,10 +108,10 @@ const Content = ({
             </li>
           </ul>
         </div>
-        <Search
+        {/* <Search
           SearchIcon={SearchIcon}
           CloseIcon={CloseIcon}
-        />
+        /> */}
       </header>
       <div
         onClick={() => {
