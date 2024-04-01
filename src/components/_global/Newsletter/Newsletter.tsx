@@ -14,7 +14,6 @@ const Newsletter = ({ heading, img, index }: Props) => {
         data={img}
         sizes='(max-width: 539px) 90vw, (max-width: 799px) 460px, (max-width: 899px) 33vw, (max-width: 1279px) 40vw, 450px'
       />
-
       <Form Heading={Heading} />
     </section>
   );

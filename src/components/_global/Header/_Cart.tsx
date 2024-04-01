@@ -10,6 +10,7 @@ import Checkbox from '@/components/ui/Checkbox';
 import { formatPrice } from '@/utils/price-formatter';
 import { formatToOnlyDigits } from '@/utils/format-to-only-digits';
 import type { EmptyCart, Grid, Cart, CartForm } from './Header.types';
+import PickQuantity from '@/components/ui/PickQuantity';
 
 // TODO: query for available virtual coins
 const availableVirtualCoins = 71;
@@ -32,7 +33,7 @@ export default function Cart({
     formState: { errors },
   } = useForm<CartForm>();
 
-  const [virtualValue, setVirtualValue] = useState('');
+  const [virtualValue, setVirtualValue] = useState(null);
   const [isVirtualCoins, setIsVirtualCoins] = useState(false);
   const [isPromoCode, setIsPromoCode] = useState(false);
 
@@ -80,7 +81,7 @@ export default function Cart({
                   <Input
                     label='Wpisz kod rabatowy'
                     type='text'
-                    register={register('virtual')}
+                    register={register('discount')}
                     errors={errors}
                   />
                   <button onClick={() => setIsPromoCode((prev) => !prev)}>{CrossIcon}</button>
@@ -106,7 +107,6 @@ export default function Cart({
                     maxLength={availableVirtualCoins.toString().length}
                     register={register('virtual', {
                       min: { value: 0, message: 'Wpisz poprawną ilość wirtualnych złotówek' },
-                      valueAsNumber: true,
                       max: { value: availableVirtualCoins, message: 'Nie masz tyle wirtualnych złotówek' },
                       onChange: (e) => {
                         formatToOnlyDigits(e);
@@ -216,10 +216,8 @@ const CartGrid = ({ cart, fetchedItems, removeItem, updateItemQuantity }: Grid) 
             <h3>{item.name}</h3>
             <div>
               <div className={styles['calculator']}>
-                <span className={styles['title']}>Ilość</span>
                 {/* TODO: remove if course */}
-                <input
-                  type='number'
+                <PickQuantity
                   defaultValue={cart!.find((cartItem) => cartItem.id === item._id)?.quantity}
                   onChange={(e) => updateItemQuantity(item._id, Number(e.target.value))}
                 />

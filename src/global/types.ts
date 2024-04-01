@@ -1,5 +1,6 @@
 import type { ComponentProps } from '@/components/Components';
-import { HeroSimpleTypes } from '@/components/_global/HeroSimple';
+import type { HeroSimpleTypes } from '@/components/_global/HeroSimple';
+import type { DescriptionTypes } from '@/components/_product/Description/Description';
 
 export type CtaType = {
   href: string;
@@ -180,6 +181,7 @@ export type ProductPageQueryProps = {
     name: string;
     value: string;
   }>;
+  description: DescriptionTypes[];
 } & generateMetadataProps;
 
 export type generateStaticParamsProps = {
