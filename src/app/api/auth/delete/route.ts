@@ -12,12 +12,20 @@ const adminClient = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.
 
 export async function GET() {
   const supabase = createRouteHandlerClient({ cookies });
-  const code = '47e187f8-b579-47f4-af96-af157519cbbb';
 
-  const res = await adminClient.auth.admin.deleteUser(code);
-  console.log(res);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  supabase.auth.signOut();
+  if(!user) return NextResponse.json({ success: false, error: 'No user found' }, { status: 404 });
 
-  return NextResponse.json({ code, res });
+  try {
+    const res = await adminClient.auth.admin.deleteUser(user.id);
+
+    if (res.error) throw new Error(res.error.message);
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({success: false, error}, { status: 500 });
+  }
 }

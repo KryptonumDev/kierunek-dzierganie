@@ -1,3 +1,4 @@
+'use client';
 import Input from '@/components/ui/Input';
 import styles from './UserData.module.scss';
 import type { DeletePopupFormTypes, DeletePopupDataTypes } from './UserData.types';
@@ -5,8 +6,11 @@ import { useForm } from 'react-hook-form';
 import Button from '@/components/ui/Button';
 import { useCallback, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 export default function DeletePopup({ openDeletePopup, setOpenDeletePopup }: DeletePopupDataTypes) {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -15,7 +19,18 @@ export default function DeletePopup({ openDeletePopup, setOpenDeletePopup }: Del
     mode: 'all',
   });
 
-  const onSubmit = async () => {};
+  const onSubmit = async () => {
+    fetch('/api/auth/delete')
+      .then((res) => res.json())
+      .then(() => {
+        // TODO: Redirect to deleted account page, currently after deleting account user is redirected to login page by middleware :\ 
+        router.push('/moje-konto/usuniete');
+      })
+      .catch((err) => {
+        toast('Wystąpił błąd podczas usuwania konta, proszę skontaktować się z obsługą klienta');
+        console.error(err);
+      });
+  };
 
   const handleEscapeKey = useCallback(
     (e: KeyboardEvent) => {
