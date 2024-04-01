@@ -47,6 +47,9 @@ dependencies:
   react-select:
     specifier: ^5.8.0
     version: 5.8.0(@types/react@18.2.67)(react-dom@18.2.0)(react@18.2.0)
+  react-select-country-list:
+    specifier: ^2.2.3
+    version: 2.2.3
   react-use-cart:
     specifier: ^1.13.0
     version: 1.13.0(react@18.2.0)
@@ -70,6 +73,9 @@ devDependencies:
   '@types/react-dom':
     specifier: ^18.2.18
     version: 18.2.22
+  '@types/react-select-country-list':
+    specifier: ^2.2.3
+    version: 2.2.3
   '@typescript-eslint/eslint-plugin':
     specifier: ^6.19.1
     version: 6.21.0(@typescript-eslint/parser@6.21.0)(eslint@8.57.0)(typescript@5.4.3)
@@ -3021,6 +3027,10 @@ packages:
     dependencies:
       '@types/react': 18.2.67
     dev: false
+
+  /@types/react-select-country-list@2.2.3:
+    resolution: {integrity: sha512-nffcYOwuun+5B0EWqubK+amHpPdK9Xj20xkLYNqYrzmESd8FnpLwHsS79ClLAWA9y+icVA8gWPkbwBp1gpjSwA==}
+    dev: true
 
   /@types/react-transition-group@4.4.10:
     resolution: {integrity: sha512-hT/+s0VQs2ojCX823m60m5f0sL5idt9SO6Tj6Dg+rdphGPIeJbJ6CxvBYkgkGKrYeDjvIpKTR38UzmtHJOGW3Q==}
@@ -8286,6 +8296,10 @@ packages:
       react: 18.2.0
       rxjs: 7.8.1
       use-sync-external-store: 1.2.0(react@18.2.0)
+    dev: false
+
+  /react-select-country-list@2.2.3:
+    resolution: {integrity: sha512-eRgXL613dVyJiE99yKDYLvSBKDxvIlhkmvO2DVIjdKVyUQq6kBqoMUV/2zuRIAsbRXgBGmKjeL1dxjf7zTfszg==}
     dev: false
 
   /react-select@5.8.0(@types/react@18.2.67)(react-dom@18.2.0)(react@18.2.0):

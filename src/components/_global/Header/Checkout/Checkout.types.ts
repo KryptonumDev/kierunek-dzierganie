@@ -14,7 +14,7 @@ export type InputState = {
   shippingSameAsBilling: boolean;
   shipping: {
     firstName: string;
-    address1: string;
+    address: string;
     city: string;
     country: string;
     postcode: string;
@@ -25,7 +25,7 @@ export type InputState = {
   billing: {
     nip: string;
     firstName: string;
-    address1: string;
+    address: string;
     city: string;
     country: string;
     postcode: string;

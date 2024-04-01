@@ -5,7 +5,7 @@ import type { Props } from './PasswordInput.types';
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 
-const PasswordInput = ({ textarea, label, register, errors, password, isRegister }: Props) => {
+const PasswordInput = ({ textarea, label, register, errors, password, isRegister, ...props }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
   const [value, setValue] = useState('');
 
@@ -39,12 +39,14 @@ const PasswordInput = ({ textarea, label, register, errors, password, isRegister
         <textarea
           data-lenis-prevent
           {...register}
+          {...props}
           name={register.name}
         />
       ) : (
         <div className={styles['input-wrap']}>
           <input
             {...register}
+            {...props}
             name={register.name}
             type={password && !showPassword ? 'password' : 'text'}
             onChange={(e) => {
@@ -62,7 +64,8 @@ const PasswordInput = ({ textarea, label, register, errors, password, isRegister
               {showPassword ? 'Ukryj hasło' : 'Pokaż hasło'}
             </button>
           )}
-          {isRegister ? (
+
+          {isRegister && !props.disabled && (
             <p
               className={`${styles['input-info']}  ${value.length >= 12 ? styles['success'] : ''} ${errors[register.name] && value.length < 12 ? styles['errored'] : ''}`}
             >
@@ -73,14 +76,15 @@ const PasswordInput = ({ textarea, label, register, errors, password, isRegister
               />
               Co najmniej 12 znaków
             </p>
-          ) : password ? (
+          )}
+          {password && !isRegister && (
             <Link
               className={`${styles['input-info']}`}
               href={'/moje-konto/przypomnij-haslo'}
             >
               Przypomnij hasło
             </Link>
-          ) : null}
+          )}
         </div>
       )}
     </label>

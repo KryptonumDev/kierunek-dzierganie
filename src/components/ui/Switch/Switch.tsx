@@ -1,3 +1,4 @@
+'use client';
 import styles from './Switch.module.scss';
 import type { SwitchTypes } from './Switch.types';
 

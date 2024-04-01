@@ -3,8 +3,7 @@ import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
-  const cookieStore = cookies();
-  const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+  const supabase = createRouteHandlerClient({ cookies });
   const { searchParams } = new URL(req.url);
   const code = searchParams.get('code');
   const backUrl = searchParams.get('backUrl') || '/moje-konto';

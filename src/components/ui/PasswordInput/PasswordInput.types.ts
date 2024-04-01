@@ -9,4 +9,5 @@ export type Props = {
     name: string;
   };
   errors: FieldErrors;
-};
+} & React.InputHTMLAttributes<HTMLInputElement> &
+  React.TextareaHTMLAttributes<HTMLTextAreaElement>;

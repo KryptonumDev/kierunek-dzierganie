@@ -22,7 +22,7 @@ export default function Checkout({ goToCart, fetchedItems, showCheckout, setShow
     needDelivery: false,
     shipping: {
       firstName: '',
-      address1: '',
+      address: '',
       city: '',
       country: '',
       postcode: '',
@@ -33,7 +33,7 @@ export default function Checkout({ goToCart, fetchedItems, showCheckout, setShow
     billing: {
       nip: '',
       firstName: '',
-      address1: '',
+      address: '',
       city: '',
       country: '',
       postcode: '',
