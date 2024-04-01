@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import styles from './Header.module.scss';
-import Search from './_Search';
+// import Search from './_Search';
 import Annotation from './_Annotation';
 import Nav from './_Nav';
 import { useCartItems } from '@/utils/useCartItems';
