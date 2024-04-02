@@ -10,10 +10,21 @@ import PercentChart from '@/components/ui/PercentChart';
 import { formatBytes } from '@/utils/format-bytes';
 import Switch from '@/components/ui/Switch';
 import { useRouter } from 'next/navigation';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
-const LessonHero = ({ progress, lesson, course, currentChapter, currentChapterIndex, currentLessonIndex }: Props) => {
+const LessonHero = ({
+  progress,
+  lesson,
+  course,
+  currentChapter,
+  currentChapterIndex,
+  currentLessonIndex,
+  left_handed,
+  id,
+}: Props) => {
   const router = useRouter();
-  const [leftHanded, setLeftHanded] = useState(false);
+  const supabase = createClientComponentClient();
+  const [leftHanded, setLeftHanded] = useState(left_handed);
   const [autoplay, setAutoplay] = useState(false);
   const [isCompleted, setIsCompleted] = useState(
     () => progress.progress[currentChapter._id]![lesson._id]?.ended ?? false
@@ -80,6 +91,17 @@ const LessonHero = ({ progress, lesson, course, currentChapter, currentChapterIn
       .catch(() => {});
   };
 
+  const setIsLeftHanded = async (isLeftHanded: boolean) => {
+    await supabase
+      .from('profiles')
+      .update({
+        left_handed: isLeftHanded,
+      })
+      .eq('id', id);
+
+    setLeftHanded(isLeftHanded);
+  };
+
   return (
     <section className={styles['LessonHero']}>
       <div className={styles['grid']}>
@@ -133,7 +155,12 @@ const LessonHero = ({ progress, lesson, course, currentChapter, currentChapterIn
             ) : (
               <>
                 {currentChapterIndex === course.chapters.length - 1 ? (
-                  <div />
+                  <Link
+                    className={`${styles['next']} link`}
+                    href={`/moje-konto/kursy/${course.slug}/certyfikat`}
+                  >
+                    Podsumowanie kursu
+                  </Link>
                 ) : (
                   <Link
                     className={`${styles['next']} link`}
@@ -172,7 +199,9 @@ const LessonHero = ({ progress, lesson, course, currentChapter, currentChapterIn
       <div className={styles['columns']}>
         <div className={styles['column']}>
           <Switch inputProps={{ onClick: () => setAutoplay(!autoplay) }}>Autoodtwarzanie</Switch>
-          <Switch inputProps={{ onClick: () => setLeftHanded(!leftHanded) }}>Jestem osobą leworęczną</Switch>
+          <Switch inputProps={{ checked: leftHanded, onClick: () => setIsLeftHanded(!leftHanded) }}>
+            Jestem osobą leworęczną
+          </Switch>
           <p>Ustawienie te dostosowuje w jaki sposób wyświetlają Ci się kursy i pliki do lekcji</p>
         </div>
         <div className={styles['column']}>

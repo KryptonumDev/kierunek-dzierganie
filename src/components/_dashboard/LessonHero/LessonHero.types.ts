@@ -15,8 +15,10 @@ export type Props = {
     lengthInMinutes: number;
     files: File[];
   };
+  left_handed: boolean;
   progress: CoursesProgress;
   currentChapterIndex: number;
   currentLessonIndex: number;
   currentChapter: Chapter;
+  id: string;
 };

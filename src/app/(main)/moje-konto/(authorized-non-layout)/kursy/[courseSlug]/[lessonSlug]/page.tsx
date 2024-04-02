@@ -31,24 +31,27 @@ type QueryProps = {
     }[];
     files_alter: File[];
   };
+  courses_progress: SupabaseData['courses_progress'][0];
+  left_handed: boolean;
+  id: string;
 };
 
 type SupabaseData = {
-  data: {
-    courses_progress: {
-      id: number;
-      course_id: string;
-      owner_id: string;
-      progress: {
+  id: string;
+  left_handed: boolean;
+  courses_progress: {
+    id: number;
+    course_id: string;
+    owner_id: string;
+    progress: {
+      [key: string]: {
         [key: string]: {
-          [key: string]: {
-            ended: boolean;
-            notes: string;
-          };
+          ended: boolean;
+          notes: string;
         };
       };
-    }[];
-  };
+    };
+  }[];
 };
 
 export default async function Course({
@@ -56,14 +59,7 @@ export default async function Course({
 }: {
   params: { courseSlug: string; lessonSlug: string };
 }) {
-  const {
-    course,
-    lesson,
-    courses_progress,
-  }: QueryProps & { courses_progress: SupabaseData['data']['courses_progress'][0] } = await query(
-    courseSlug,
-    lessonSlug
-  );
+  const { course, lesson, courses_progress, left_handed, id }: QueryProps = await query(courseSlug, lessonSlug);
 
   const currentChapterInfo = (() => {
     let currentChapter = course.chapters[0]!;
@@ -104,6 +100,8 @@ export default async function Course({
         ]}
       />
       <LessonHero
+        id={id}
+        left_handed={left_handed}
         course={course}
         lesson={lesson}
         currentChapter={currentChapterInfo.currentChapter}
@@ -127,11 +125,12 @@ const query = async (courseSlug: string, lessonSlug: string) => {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const res: unknown = await supabase
+  const res = await supabase
     .from('profiles')
     .select(
       `
         id, 
+        left_handed,
         courses_progress (
           id,
           course_id,
@@ -141,6 +140,7 @@ const query = async (courseSlug: string, lessonSlug: string) => {
       `
     )
     .eq('id', user!.id)
+    .returns<SupabaseData[]>()
     .single();
 
   const data: QueryProps = await sanityFetch({
@@ -239,12 +239,14 @@ const query = async (courseSlug: string, lessonSlug: string) => {
     },
   });
 
-  if (!(res as SupabaseData).data.courses_progress.some((el) => el.course_id === data?.course._id)) return notFound();
+  if (!res.data?.courses_progress?.some((el) => el.course_id === data?.course._id)) return notFound();
 
   if (!data.lesson) return notFound();
 
   return {
     ...data,
-    courses_progress: (res as SupabaseData).data.courses_progress.find((el) => el.course_id === data.course._id)!,
+    courses_progress: res.data.courses_progress.find((el) => el.course_id === data.course._id)!,
+    left_handed: res.data.left_handed,
+    id: user!.id,
   };
 };
