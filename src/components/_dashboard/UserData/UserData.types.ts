@@ -1,19 +1,11 @@
+import type { Billing } from '@/global/types';
+
 export type QueryProps = {
   id: string;
   left_handed: boolean;
   email: string;
   avatar_url: string;
-  billing_data: {
-    nip: string;
-    firstName: string;
-    address: string;
-    city: string;
-    country: string;
-    postcode: string;
-    phone: string;
-    company: string;
-    invoiceType: 'Osoba prywatna' | 'Firma';
-  };
+  billing_data: Billing;
 };
 
 export type UserDataTypes = {
@@ -45,7 +37,7 @@ export type PersonalDataFormTypes = {
 
 export type PersonalDataTypes = {
   id: string;
-  billing_data: QueryProps['billing_data'];
+  billing_data: Billing;
 };
 
 export type DeletePopupDataTypes = {

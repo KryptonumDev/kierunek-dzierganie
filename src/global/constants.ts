@@ -89,3 +89,19 @@ export const courseComplexityEnum = {
     color: 'var(--primary-100)',
   },
 };
+
+
+/**
+ * Declaration of enum order statuses.
+ * @constant
+ */
+export const statusesSwitch = {
+  'AWAITING PAYMENT': 'Oczekuje na płatność',
+  PENDING: 'W trakcie realizacji',
+  COMPLETED: 'Zrealizowane',
+  REFUNDED: 'Zwrócone',
+  CANCELLED: 'Anulowane',
+  'AWAITING SEND': 'Oczekuje na wysyłkę',
+  'PARCEL GENERATED': 'Przesyłka wygenerowana',
+  SENDED: 'Wysłano',
+};

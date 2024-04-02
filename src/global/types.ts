@@ -249,12 +249,22 @@ export type Order = {
       quantity: number;
     }[];
   };
+  billing: Billing;
+  shipping: Shipping;
   orders_statuses: {
     id: string;
-    status_name: 'AWAITING PAYMENT' | 'PENDING' | 'COMPLETED' | 'REFUNDED' | 'CANCELLED' | 'AWAITING SEND' | 'PARCEL GENERATED' | 'SENDED';
+    status_name:
+      | 'AWAITING PAYMENT'
+      | 'PENDING'
+      | 'COMPLETED'
+      | 'REFUNDED'
+      | 'CANCELLED'
+      | 'AWAITING SEND'
+      | 'PARCEL GENERATED'
+      | 'SENDED';
     complete_percent: number;
   };
-}
+};
 
 export type File = {
   asset: {
@@ -263,4 +273,25 @@ export type File = {
     originalFilename: string;
     _id: string;
   };
-}
+};
+
+export type Billing = {
+  nip: string;
+  firstName: string;
+  address1: string;
+  city: string;
+  country: string;
+  postcode: string;
+  phone: string;
+  company: string;
+  invoiceType: 'Osoba prywatna' | 'Firma';
+};
+
+export type Shipping = {
+  firstName: string;
+  address1: string;
+  city: string;
+  country: string;
+  postcode: string;
+  phone: string;
+};

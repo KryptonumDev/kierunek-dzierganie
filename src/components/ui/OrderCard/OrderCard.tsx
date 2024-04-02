@@ -6,18 +6,7 @@ import type { OrderCardTypes } from './OrderCard.types';
 import { formatDateToPolishLocale } from '@/utils/formatDateToPolishLocale';
 import { formatPrice } from '@/utils/price-formatter';
 import Link from 'next/link';
-import { courseComplexityEnum } from '@/global/constants';
-
-export const statusesSwitch = {
-  'AWAITING PAYMENT': 'Oczekuje na płatność',
-  PENDING: 'W trakcie realizacji',
-  COMPLETED: 'Zrealizowane',
-  REFUNDED: 'Zwrócone',
-  CANCELLED: 'Anulowane',
-  'AWAITING SEND': 'Oczekuje na wysyłkę',
-  'PARCEL GENERATED': 'Przesyłka wygenerowana',
-  SENDED: 'Wysłano',
-};
+import { courseComplexityEnum, statusesSwitch } from '@/global/constants';
 
 const OrderCard = ({ order, product }: OrderCardTypes) => {
   const mainImage = useMemo(

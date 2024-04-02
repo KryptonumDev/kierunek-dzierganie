@@ -16,7 +16,7 @@ type QueryProps = {
   orders: Order[];
 };
 
-export default async function Courses() {
+export default async function Orders() {
   const { orders, global, products }: QueryProps = await query();
 
   return (
