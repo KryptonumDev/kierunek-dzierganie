@@ -10,14 +10,14 @@
     .badge {
       position: absolute;
       display: block;
-      bottom: 0;
+      top: 0;
       left: 0;
-      padding: 8px 20px; 
-      border-radius: 0px 4px 0px 0px;
+      padding: 8px 20px;
+      border-radius: 0px 0px 4px 0px;
       background: var(--primary-300, #efe8e7);
 
       color: var(--primary-800, #53423c);
-      font-size: clamp(14px, calc(14vw/7.68), 18px);
+      font-size: clamp(14px, calc(14vw / 7.68), 18px);
       font-weight: 300;
       line-height: 150%;
     }

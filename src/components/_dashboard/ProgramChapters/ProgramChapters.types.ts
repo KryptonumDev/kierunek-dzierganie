@@ -1,6 +1,6 @@
 import type { Course, CoursesProgress } from '@/global/types';
 
-export type Props = {
+export type ProgramChaptersTypes = {
   course: Course;
   courses_progress: CoursesProgress;
 };

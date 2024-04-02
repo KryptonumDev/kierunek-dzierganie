@@ -1,0 +1,14 @@
+.ProgramChapters {
+  h1 {
+    margin-bottom: clamp(28px, calc(36vw / 7.68), 48px);
+    text-align: center;
+  }
+
+  .grid {
+    display: grid;
+    padding: 36px 36px 36px 274px;
+    gap: 80px; 
+    border-radius: 8px;
+    background: var(--primary-200, #faf4f0);
+  }
+}

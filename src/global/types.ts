@@ -222,6 +222,7 @@ export type Course = {
   _id: string;
   name: string;
   slug: string;
+  type: 'course' | 'program';
   chapters: {
     _id: string;
     chapterDescription: string;

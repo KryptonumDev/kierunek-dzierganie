@@ -1,4 +1,5 @@
 import CourseChapters from '@/components/_dashboard/CourseChapters';
+import ProgramChapters from '@/components/_dashboard/ProgramChapters';
 import type { CoursesProgress, Course } from '@/global/types';
 import { checkCourseProgress } from '@/utils/check-course-progress';
 import sanityFetch from '@/utils/sanity.fetch';
@@ -15,10 +16,17 @@ export default async function Course({ params: { courseSlug } }: { params: { cou
   const { course, courses_progress }: QueryProps = await query(courseSlug);
   return (
     <div>
-      <CourseChapters
-        courses_progress={courses_progress}
-        course={course}
-      />
+      {course.type === 'course' ? (
+        <CourseChapters
+          courses_progress={courses_progress}
+          course={course}
+        />
+      ) : (
+        <ProgramChapters
+          courses_progress={courses_progress}
+          course={course}
+        />
+      )}
     </div>
   );
 }
@@ -51,6 +59,7 @@ const query = async (slug: string): Promise<QueryProps> => {
       "course": *[_type == "course" && slug.current == $slug][0]{
         _id,
         name,
+        type,
         "slug": slug.current,
         chapters {
           "_id": _key,
