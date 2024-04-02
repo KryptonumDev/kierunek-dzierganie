@@ -3,9 +3,12 @@ import styles from './ListingCourses.module.scss';
 import type { Props } from './ListingCourses.types';
 
 const ListingCourses = ({ courses }: Props) => {
-
   return (
     <section className={styles['ListingCourses']}>
+      <h1>
+        Moje <strong>kursy</strong>
+      </h1>
+      {/* TODO: ostatni oglądany kurs */}
       {/* TODO: filters */}
       <div className={styles['grid']}>
         {courses.map((course) => (
@@ -16,6 +19,7 @@ const ListingCourses = ({ courses }: Props) => {
             image={course.image}
             complexity={course.complexity}
             courseLength={course.courseLength}
+            progressPercentage={course.progressPercentage}
           />
         ))}
       </div>

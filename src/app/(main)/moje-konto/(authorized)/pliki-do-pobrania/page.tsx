@@ -2,7 +2,7 @@ import EmptyFiles from '@/components/_dashboard/EmptyFiles';
 import FilesHero from '@/components/_dashboard/FilesHero';
 import ListingFiles from '@/components/_dashboard/ListingFiles';
 import { Img_Query } from '@/components/ui/image';
-import type { File, ImgType } from '@/global/types';
+import type { CoursesProgress, File, ImgType } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
@@ -29,6 +29,7 @@ type QueryProps = {
   };
   id: string;
   left_handed: boolean;
+  progress: CoursesProgress[];
 };
 
 export default async function Files() {
@@ -36,6 +37,7 @@ export default async function Files() {
     data: { global, courses },
     id,
     left_handed,
+    progress,
   }: QueryProps = await query();
 
   return (
@@ -45,7 +47,11 @@ export default async function Files() {
         id={id}
       />
       {courses.length > 0 ? (
-        <ListingFiles left_handed={left_handed} courses={courses} />
+        <ListingFiles
+          left_handed={left_handed}
+          courses={courses}
+          progress={progress}
+        />
       ) : (
         <EmptyFiles
           image_crochet={global.image_crochet}
@@ -69,8 +75,10 @@ const query = async (): Promise<QueryProps> => {
         id,
         left_handed,
         courses_progress (
+          id,
           course_id,
-          owner_id
+          owner_id,
+          progress
         )
       `
     )
@@ -128,5 +136,5 @@ const query = async (): Promise<QueryProps> => {
       id: res.data!.courses_progress.map((course) => course.course_id),
     },
   });
-  return { data: data, id: res.data!.id, left_handed: res.data!.left_handed };
+  return { data: data, id: res.data!.id, left_handed: res.data!.left_handed, progress: res.data!.courses_progress };
 };

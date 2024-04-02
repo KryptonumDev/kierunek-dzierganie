@@ -3,8 +3,9 @@ import Button from '../Button';
 import Img from '../image';
 import styles from './CourseCard.module.scss';
 import type { Props } from './CourseCard.types';
+import PercentChart from '../PercentChart';
 
-const CourseCard = ({ name, slug, image, complexity, courseLength }: Props) => {
+const CourseCard = ({ name, slug, image, complexity, courseLength, progressPercentage }: Props) => {
   return (
     <div className={styles['CourseCard']}>
       <div className={styles['image-wrap']}>
@@ -25,7 +26,9 @@ const CourseCard = ({ name, slug, image, complexity, courseLength }: Props) => {
       <small>Długość kursu: {courseLength}</small>
       <h3>{name}</h3>
       <div className={styles['flex']}>
-        <p>Ukończono 0%</p>
+        <p>
+          Ukończono <PercentChart p={progressPercentage} />
+        </p>
         <Button href={`/moje-konto/kursy/${slug}`}>Oglądaj</Button>
       </div>
     </div>

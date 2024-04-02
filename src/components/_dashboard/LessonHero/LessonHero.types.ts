@@ -8,8 +8,8 @@ export type Props = {
     chapters: Chapter[];
   };
   lesson: {
+    title: string;
     _id: string;
-    name: string;
     slug: string;
     video: string;
     lengthInMinutes: number;

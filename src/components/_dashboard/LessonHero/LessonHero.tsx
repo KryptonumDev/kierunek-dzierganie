@@ -16,9 +16,8 @@ const LessonHero = ({ progress, lesson, course, currentChapter, currentChapterIn
   const [leftHanded, setLeftHanded] = useState(false);
   const [autoplay, setAutoplay] = useState(false);
   const [isCompleted, setIsCompleted] = useState(
-    () => progress.progress[course.chapters[0]!._id]![lesson._id]?.ended ?? false
+    () => progress.progress[currentChapter._id]![lesson._id]?.ended ?? false
   );
-
   const completePercentage = useMemo(() => {
     const totalLessons = currentChapter.lessons.length;
     let completedLessons = 0;
@@ -48,6 +47,24 @@ const LessonHero = ({ progress, lesson, course, currentChapter, currentChapterIn
     })
       .then(() => {
         setIsCompleted(ended);
+
+        // check if  course progress is 100%
+
+        if (ended) {
+          let completedChapters = 0;
+          for (const chapterId in progress.progress) {
+            let completedLessons = 0;
+            for (const lessonId in progress.progress[chapterId]) {
+              if (progress.progress[chapterId]![lessonId]!.ended || lessonId === currentLessonId) completedLessons++;
+            }
+            if (completedLessons === course.chapters.find((el) => el._id === chapterId)!.lessons.length)
+              completedChapters++;
+          }
+          if (completedChapters === course.chapters.length) {
+            router.push(`/moje-konto/kursy/${course.slug}/certyfikat`);
+          }
+        }
+
         if (!autoplay && type === 'auto') return;
 
         if (type === 'manual') {
@@ -56,36 +73,12 @@ const LessonHero = ({ progress, lesson, course, currentChapter, currentChapterIn
         }
 
         if (currentChapter.lessons.length > currentLessonIndex + 1)
-          window.location.href = `/moje-konto/kursy/${course.slug}/${currentChapter.lessons[currentLessonIndex + 1]!.slug}`;
+          router.push(`/moje-konto/kursy/${course.slug}/${currentChapter.lessons[currentLessonIndex + 1]!.slug}`);
         else
-          window.location.href = `/moje-konto/kursy/${course.slug}/${course.chapters[currentChapterIndex + 1]!.lessons[0]!.slug}`;
+          router.push(`/moje-konto/kursy/${course.slug}/${course.chapters[currentChapterIndex + 1]!.lessons[0]!.slug}`);
       })
       .catch(() => {});
   };
-
-  // useEffect(() => {
-  //   // check if there is new lessons/chapters or some lessons/chapters were removed and update progress
-  //   // rework to creating an object with all lessons and chapters and then update progress
-  //   // const newObj = {
-  //   //   ...progress,
-  //   //   progress: course.chapters.reduce(
-  //   //     (acc, el) => {
-  //   //       acc[el._id] = el.lessons.reduce(
-  //   //         (acc, el) => {
-  //   //           acc[el._id] = {
-  //   //             ended: false,
-  //   //             notes: null,
-  //   //           };
-  //   //           return acc;
-  //   //         },
-  //   //         {} as Record<string, { ended: boolean; notes: null }>
-  //   //       );
-  //   //       return acc;
-  //   //     },
-  //   //     {} as Record<string, Record<string, { ended: boolean; notes: null }>>
-  //   //   ),
-  //   // };
-  // }, []);
 
   return (
     <section className={styles['LessonHero']}>
@@ -170,7 +163,7 @@ const LessonHero = ({ progress, lesson, course, currentChapter, currentChapterIn
                 key={i}
                 aria-current={el.slug === lesson.slug}
               >
-                <small>Lekcja {i + 1}</small> {el.name}
+                <small>Lekcja {i + 1}</small> {el.title}
               </Link>
             ))}
           </div>

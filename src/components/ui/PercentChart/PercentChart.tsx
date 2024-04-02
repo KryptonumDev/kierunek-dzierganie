@@ -23,14 +23,14 @@ export default function PercentChart({ p }: { p: number }) {
           cx='29'
           cy='29'
           fill='transparent'
-          strokeLinecap="round"
+          strokeLinecap='round'
           stroke='#9A827A'
           strokeWidth='1px'
           strokeDasharray={`${2 * 3.14 * 28}px`}
           strokeDashoffset={`${2 * 3.14 * 28 * ((100 - p) / 100)}px`}
         ></circle>
       </svg>
-      {p}%
+      {Math.round(p)}%
     </span>
   );
 }

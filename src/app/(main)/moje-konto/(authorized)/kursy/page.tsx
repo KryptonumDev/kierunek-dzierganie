@@ -18,6 +18,7 @@ type QueryProps = {
     image: ImgType;
     complexity: 1 | 2 | 3;
     courseLength: string;
+    progressPercentage: number;
   }[];
 };
 
@@ -50,8 +51,10 @@ const query = async (): Promise<QueryProps> => {
       `
         id,
         courses_progress (
+          id,
           course_id,
-          owner_id
+          owner_id,
+          progress
         )
       `
     )
@@ -93,5 +96,33 @@ const query = async (): Promise<QueryProps> => {
       id: res.data!.courses_progress.map((course) => course.course_id),
     },
   });
-  return data;
+
+  return {
+    ...data,
+    courses: data.courses.map((course) => {
+      const progress = res.data!.courses_progress.find((el) => el.course_id === course._id)!;
+
+      let totalLessons = 0;
+      let completedLessons = 0;
+
+      for (const sectionId in progress.progress) {
+        const lessons = progress.progress[sectionId];
+        for (const lessonId in lessons) {
+          totalLessons++;
+          if (lessons[lessonId]!.ended) {
+            completedLessons++;
+          }
+        }
+      }
+
+      // if 0 lessons, return to avoid division by 0
+      if (totalLessons === 0) {
+        return { ...course, progressPercentage: 100 };
+      }
+
+      const completionPercentage = (completedLessons / totalLessons) * 100;
+
+      return { ...course, progressPercentage: completionPercentage };
+    }),
+  };
 };

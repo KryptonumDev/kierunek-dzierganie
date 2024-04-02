@@ -1,7 +1,8 @@
 import LessonDescription from '@/components/_dashboard/LessonDescription';
 import LessonHero from '@/components/_dashboard/LessonHero';
 import LessonNotes from '@/components/_dashboard/LessonNotes';
-import type { File, ImgType } from '@/global/types';
+import Breadcrumbs from '@/components/_global/Breadcrumbs';
+import type { Chapter, File, ImgType } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
@@ -12,23 +13,12 @@ type QueryProps = {
     _id: string;
     name: string;
     slug: string;
-    chapters: {
-      _id: string;
-      chapterDescription: string;
-      chapterName: string;
-      chapterImage: ImgType;
-      lessons: {
-        _id: string;
-        name: string;
-        video: string;
-        lengthInMinutes: number;
-        slug: string;
-      }[];
-    }[];
+    chapters: Chapter[];
   };
   lesson: {
     _id: string;
     name: string;
+    title: string;
     slug: string;
     video: string;
     lengthInMinutes: number;
@@ -77,14 +67,18 @@ export default async function Course({
 
   const currentChapterInfo = (() => {
     let currentChapter = course.chapters[0]!;
+    let isFindChapter = false;
     let currentChapterIndex = 0;
     let currentLessonIndex = 0;
 
     course.chapters.every((chapter) => {
       chapter.lessons.forEach((currentLesson) => {
-        if (currentLesson._id === lesson._id) currentChapter = chapter;
+        if (currentLesson._id === lesson._id) {
+          currentChapter = chapter;
+          isFindChapter = true;
+        }
       });
-      return !currentChapter;
+      return !isFindChapter;
     });
 
     course.chapters.every((chapter, i) => {
@@ -101,7 +95,14 @@ export default async function Course({
   })();
 
   return (
-    <div>
+    <>
+      <Breadcrumbs
+        data={[
+          { name: 'Moje kursy', path: '/moje-konto/kursy' },
+          { name: course.name, path: `/moje-konto/kursy/${course.slug}` },
+          { name: lesson.title, path: `/moje-konto/kursy/${course.slug}/${lesson.slug}` },
+        ]}
+      />
       <LessonHero
         course={course}
         lesson={lesson}
@@ -115,10 +116,8 @@ export default async function Course({
         currentChapter={currentChapterInfo.currentChapter}
         currentLessonIndex={currentChapterInfo.currentLessonIndex}
       />
-      <LessonDescription
-        lesson={lesson}
-      />
-    </div>
+      <LessonDescription lesson={lesson} />
+    </>
   );
 }
 
@@ -150,6 +149,7 @@ const query = async (courseSlug: string, lessonSlug: string) => {
     "lesson": *[_type == "lesson" && slug.current == $lessonSlug][0]{
       _id,
       name,
+      title,
       "slug": slug.current,
       video,
       lengthInMinutes,
@@ -210,6 +210,7 @@ const query = async (courseSlug: string, lessonSlug: string) => {
         chapterDescription,
         chapterName,
         lessons[]->{
+          title,
           _id,  
           name,
           video,

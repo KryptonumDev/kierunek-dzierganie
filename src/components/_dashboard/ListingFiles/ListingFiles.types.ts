@@ -1,4 +1,4 @@
-import type { File } from '@/global/types';
+import type { CoursesProgress, File } from '@/global/types';
 
 export type ListingFilesTypes = {
   courses: {
@@ -15,4 +15,5 @@ export type ListingFilesTypes = {
     }[];
   }[];
   left_handed: boolean;
+  progress: CoursesProgress[];
 };

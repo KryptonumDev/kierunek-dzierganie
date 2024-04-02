@@ -1,3 +1,4 @@
+'use client';
 import { useMemo } from 'react';
 import Button from '../Button';
 import Img from '../image';
@@ -26,6 +27,8 @@ const ChapterCard = ({ name, image, description, lessons, courseSlug, number, pr
     return completionPercentage;
   }, [progress]);
 
+  const firstUnendedLesson = lessons.find((lesson) => !progress[lesson._id]?.ended) || lessons[0]!;
+
   return (
     <div className={styles['chapterCard']}>
       <div>
@@ -47,7 +50,7 @@ const ChapterCard = ({ name, image, description, lessons, courseSlug, number, pr
         <span>
           Ukończono <PercentChart p={completionPercentage} />
         </span>
-        <Button href={`/moje-konto/kursy/${courseSlug}/${lessons[0]?.slug}`}>Oglądaj</Button>
+        <Button href={`/moje-konto/kursy/${courseSlug}/${firstUnendedLesson.slug}`}>Oglądaj</Button>
       </div>
     </div>
   );

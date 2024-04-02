@@ -3,20 +3,24 @@ import styles from './ListingFiles.module.scss';
 import type { ListingFilesTypes } from './ListingFiles.types';
 import type { File } from '@/global/types';
 import { formatBytes } from '@/utils/format-bytes';
+import Link from 'next/link';
 
-const ListingFiles = ({ courses, left_handed }: ListingFilesTypes) => {
+const ListingFiles = ({ courses, left_handed, progress }: ListingFilesTypes) => {
   const transformFiles = useMemo(() => {
-    type ArrElement = { name: string; files: File[]; filesAlt: File[] };
+    type ArrElement = { slug: string; name: string; files: File[]; filesAlt: File[]; showCert: boolean };
 
     const newArr: ArrElement[] = [];
 
     courses.forEach((course) => {
       const obj: ArrElement = {
         name: course.name,
+        slug: course.slug,
         files: [],
         filesAlt: [],
+        showCert: false,
       };
 
+      // get all files from lessons
       course.chapters.forEach((chapter) => {
         chapter.lessons.forEach((lesson) => {
           if (lesson.files) obj.files.push(...lesson.files);
@@ -24,11 +28,27 @@ const ListingFiles = ({ courses, left_handed }: ListingFilesTypes) => {
         });
       });
 
+      // check if course is completed
+      const courseProgress = progress.find((el) => el.course_id === course._id)!;
+
+      let completedChapters = 0;
+      for (const chapterId in courseProgress.progress) {
+        let completedLessons = 0;
+        for (const lessonId in courseProgress.progress[chapterId]) {
+          if (courseProgress.progress[chapterId]![lessonId]!.ended) completedLessons++;
+        }
+        if (completedLessons === course.chapters.find((el) => el._id === chapterId)!.lessons.length)
+          completedChapters++;
+      }
+      if (completedChapters === course.chapters.length) {
+        obj.showCert = true;
+      }
+
       newArr.push(obj);
     });
 
     return newArr;
-  }, [courses]);
+  }, [courses, progress]);
 
   return (
     <section className={styles['ListingFiles']}>
@@ -50,6 +70,16 @@ const ListingFiles = ({ courses, left_handed }: ListingFilesTypes) => {
                   </a>
                 </li>
               ))}
+              {/* TODO: przerobić na wyświetlenie procentów kursu */}
+              {el.showCert && (
+                <li>
+                  {/* TODO: przerobić na pobieranie certyfikatu */}
+                  <Link href={`/moje-konto/kursy/${el.slug}/certyfikat`}>
+                    <Icon />
+                    Certyfikat
+                  </Link>
+                </li>
+              )}
             </ul>
           ) : (
             <ul>

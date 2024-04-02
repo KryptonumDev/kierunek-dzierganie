@@ -6,4 +6,5 @@ export type Props = {
   image: ImgType;
   courseLength: string;
   complexity: 1 | 2 | 3;
+  progressPercentage: number;
 };

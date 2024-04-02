@@ -1,4 +1,5 @@
 .LessonHero {
+  margin-top: 0 !important;
   .columns {
     display: flex;
     gap: clamp(36px, calc(48vw/7.68), 80px);

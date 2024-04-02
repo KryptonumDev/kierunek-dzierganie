@@ -212,10 +212,29 @@ export type CoursesProgress = {
     [key: string]: {
       [key: string]: {
         ended: boolean;
-        notes: string;
+        notes: string | null;
       };
     };
   };
+};
+
+export type Course = {
+  _id: string;
+  name: string;
+  slug: string;
+  chapters: {
+    _id: string;
+    chapterDescription: string;
+    chapterName: string;
+    chapterImage: ImgType;
+    lessons: {
+      _id: string;
+      name: string;
+      video: string;
+      lengthInMinutes: number;
+      slug: string;
+    }[];
+  }[];
 };
 
 export type generateStaticParamsBlogPagination = {
@@ -229,6 +248,7 @@ export type Chapter = {
   chapterImage: ImgType;
   lessons: {
     _id: string;
+    title: string;
     name: string;
     video: string;
     lengthInMinutes: number;
