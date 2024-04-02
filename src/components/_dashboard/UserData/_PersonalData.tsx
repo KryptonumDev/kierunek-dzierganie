@@ -22,7 +22,7 @@ export default function PersonalData({ billing_data, id }: PersonalDataTypes) {
     mode: 'all',
     defaultValues: {
       firstName: billing_data.firstName,
-      address: billing_data.address,
+      address: billing_data.address1,
       postcode: billing_data.postcode,
       city: billing_data.city,
       country: billing_data.country,

@@ -78,7 +78,7 @@ export default function Checkout({ goToCart, fetchedItems, showCheckout, setShow
           price: item.price,
           discount: item.discount,
           quantity: item.quantity!,
-          image: item.variants?.[0]?.gallery?.[0] ? item.variants[0].gallery[0] : item.gallery,
+          image: item.variants?.[0]?.gallery ? item.variants[0].gallery : item.gallery,
           complexity: item.course?.complexity || null,
         })),
       },

@@ -13,7 +13,7 @@ interface QueryProps {
   };
   courses_progress: CoursesProgress;
 }
- 
+
 export default async function Certificate({ params: { courseSlug } }: { params: { courseSlug: string } }) {
   const {
     // course,
