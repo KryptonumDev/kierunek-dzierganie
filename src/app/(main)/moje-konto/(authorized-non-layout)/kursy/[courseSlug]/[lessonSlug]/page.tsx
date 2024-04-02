@@ -1,7 +1,7 @@
 import LessonDescription from '@/components/_dashboard/LessonDescription';
 import LessonHero from '@/components/_dashboard/LessonHero';
 import LessonNotes from '@/components/_dashboard/LessonNotes';
-import type { ImgType } from '@/global/types';
+import type { File, ImgType } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
@@ -32,28 +32,14 @@ type QueryProps = {
     slug: string;
     video: string;
     lengthInMinutes: number;
-    files: {
-      asset: {
-        url: string;
-        size: number;
-        originalFilename: string;
-        _id: string;
-      };
-    }[];
+    files: File[];
     description: string;
     flex: {
       title: string;
       description: string;
       img: ImgType;
     }[];
-    files_alter: {
-      asset: {
-        url: string;
-        size: number;
-        originalFilename: string;
-        _id: string;
-      };
-    }[];
+    files_alter: File[];
   };
 };
 

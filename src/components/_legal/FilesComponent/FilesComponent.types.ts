@@ -1,9 +1,5 @@
+import type { File } from '@/global/types';
+
 export type Props = {
-  data: {
-    asset: {
-      url: string;
-      originalFilename: string;
-      size: number;
-    }
-  }[];
+  data: File[];
 };

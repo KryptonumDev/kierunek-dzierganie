@@ -255,3 +255,12 @@ export type Order = {
     complete_percent: number;
   };
 }
+
+export type File = {
+  asset: {
+    url: string;
+    size: number;
+    originalFilename: string;
+    _id: string;
+  };
+}

@@ -1,4 +1,4 @@
-import type { ImgType } from '@/global/types';
+import type { File, ImgType } from '@/global/types';
 
 export type LessonDescriptionTypes = {
   lesson: {
@@ -8,13 +8,6 @@ export type LessonDescriptionTypes = {
       description: string;
       img: ImgType;
     }[];
-    files_alter: {
-      asset: {
-        url: string;
-        size: number;
-        originalFilename: string;
-        _id: string;
-      };
-    }[];
+    files_alter: File[];
   };
 };

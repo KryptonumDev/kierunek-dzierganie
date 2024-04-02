@@ -1,4 +1,4 @@
-import type { CoursesProgress, Chapter } from '@/global/types';
+import type { CoursesProgress, Chapter, File } from '@/global/types';
 
 export type Props = {
   course: {
@@ -13,14 +13,7 @@ export type Props = {
     slug: string;
     video: string;
     lengthInMinutes: number;
-    files: {
-      asset: {
-        url: string;
-        size: number;
-        originalFilename: string;
-        _id: string;
-      };
-    }[];
+    files: File[];
   };
   progress: CoursesProgress;
   currentChapterIndex: number;

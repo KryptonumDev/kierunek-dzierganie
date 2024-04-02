@@ -1,3 +1,5 @@
+import type { File } from '@/global/types';
+
 export type StatutePage_QueryTypes = {
   global: {
     tel?: string;
@@ -10,12 +12,6 @@ export type StatutePage_QueryTypes = {
       title: string;
       description: string;
     }[];
-    files: {
-      asset: {
-        url: string;
-        originalFilename: string;
-        size: number;
-      };
-    }[];
+    files: File[];
   };
 };
