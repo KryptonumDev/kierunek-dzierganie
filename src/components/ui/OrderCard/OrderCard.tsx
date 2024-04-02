@@ -8,6 +8,17 @@ import { formatPrice } from '@/utils/price-formatter';
 import Link from 'next/link';
 import { courseComplexityEnum } from '@/global/constants';
 
+export const statusesSwitch = {
+  'AWAITING PAYMENT': 'Oczekuje na płatność',
+  PENDING: 'W trakcie realizacji',
+  COMPLETED: 'Zrealizowane',
+  REFUNDED: 'Zwrócone',
+  CANCELLED: 'Anulowane',
+  'AWAITING SEND': 'Oczekuje na wysyłkę',
+  'PARCEL GENERATED': 'Przesyłka wygenerowana',
+  SENDED: 'Wysłano',
+};
+
 const OrderCard = ({ order, product }: OrderCardTypes) => {
   const mainImage = useMemo(
     () => (product.variants?.length > 0 ? product.variants[0]!.gallery : product.gallery),
@@ -38,8 +49,15 @@ const OrderCard = ({ order, product }: OrderCardTypes) => {
       </div>
       <div className={styles['information']}>
         <div className={styles['status']}>
-          <p>Status: TODO</p>
-          <span className={styles['line']} />
+          <p>Status: {statusesSwitch[order.orders_statuses.status_name]}</p>
+          <span
+            style={
+              {
+                '--percent': `${order.orders_statuses.complete_percent}%`,
+              } as React.CSSProperties
+            }
+            className={styles['line']}
+          />
         </div>
         <div className={styles['main-data']}>
           <h3>Numer zamówienia: {order.id}</h3>

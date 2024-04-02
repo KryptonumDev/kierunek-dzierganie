@@ -251,6 +251,7 @@ export type Order = {
   };
   orders_statuses: {
     id: string;
-    status_name: string;
-  }[];
+    status_name: 'AWAITING PAYMENT' | 'PENDING' | 'COMPLETED' | 'REFUNDED' | 'CANCELLED' | 'AWAITING SEND' | 'PARCEL GENERATED' | 'SENDED';
+    complete_percent: number;
+  };
 }

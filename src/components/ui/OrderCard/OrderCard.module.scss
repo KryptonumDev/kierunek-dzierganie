@@ -1,6 +1,6 @@
 .orderCard {
   display: grid;
-  grid-template-columns: clamp(213px, calc(213vw/7.68), 277px) 1fr;
+  grid-template-columns: clamp(213px, calc(213vw / 7.68), 277px) 1fr;
   gap: 24px;
 
   @media (max-width: 540px) {
@@ -52,6 +52,18 @@
         height: 2px;
         border-radius: 1px;
         background: var(--primary-300, #efe8e7);
+        position: relative;
+
+        &::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: var(--percent);
+          border-radius: 1px;
+          background: var(--primary-600, #9a827a);
+        }
       }
     }
 
@@ -70,7 +82,7 @@
       align-items: center;
       gap: 16px;
 
-      span{
+      span {
         color: var(--primary-800, #53423c);
         font-size: 14px;
         font-weight: 300;

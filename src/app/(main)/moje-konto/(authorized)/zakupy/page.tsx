@@ -42,26 +42,11 @@ const query = async (): Promise<QueryProps> => {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // TODO: orders_statuses returns null, fix it
   const res = await supabase
     .from('profiles')
-    .select(
-      `
-        id,
-        orders (
-          products,
-          id,
-          amount,
-          payment_method,
-          created_at,
-          orders_statuses(
-            id,
-            status_name
-          )
-        )
-      `
-    )
+    .select('id, orders ( products, id, amount, payment_method, created_at, status, orders_statuses( * ) )')
     .eq('id', user!.id)
+    .returns<{ id: string; orders: Order[] }[]>()
     .single();
 
   const allUniqueProductsId = res
