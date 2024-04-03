@@ -1,19 +1,19 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import styles from './Header.module.scss';
-import { useForm } from 'react-hook-form';
+// import { useForm } from 'react-hook-form';
 import Img from '@/components/ui/image';
 import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
+// import Input from '@/components/ui/Input';
 import ProductCard from '@/components/ui/ProductCard';
-import Checkbox from '@/components/ui/Checkbox';
+// import Checkbox from '@/components/ui/Checkbox';
 import { formatPrice } from '@/utils/price-formatter';
-import { formatToOnlyDigits } from '@/utils/format-to-only-digits';
-import type { EmptyCart, Grid, Cart, CartForm } from './Header.types';
+// import { formatToOnlyDigits } from '@/utils/format-to-only-digits';
+import type { EmptyCart, Grid, Cart } from './Header.types';
 import PickQuantity from '@/components/ui/PickQuantity';
 
 // TODO: query for available virtual coins
-const availableVirtualCoins = 71;
+// const availableVirtualCoins = 71;
 
 export default function Cart({
   goToCheckout,
@@ -28,14 +28,14 @@ export default function Cart({
   updateItemQuantity,
   removeItem,
 }: Cart) {
-  const {
-    register,
-    formState: { errors },
-  } = useForm<CartForm>();
+  // const {
+  //   register,
+  //   formState: { errors },
+  // } = useForm<CartForm>();
 
-  const [virtualValue, setVirtualValue] = useState(null);
-  const [isVirtualCoins, setIsVirtualCoins] = useState(false);
-  const [isPromoCode, setIsPromoCode] = useState(false);
+  // const [virtualValue, setVirtualValue] = useState(null);
+  // const [isVirtualCoins, setIsVirtualCoins] = useState(false);
+  // const [isPromoCode, setIsPromoCode] = useState(false);
 
   useEffect(() => {
     addEventListener('keydown', (e) => {
