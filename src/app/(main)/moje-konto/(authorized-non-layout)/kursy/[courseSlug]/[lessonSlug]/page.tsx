@@ -3,19 +3,15 @@ import LessonHero from '@/components/_dashboard/LessonHero';
 import LessonNotes from '@/components/_dashboard/LessonNotes';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import Seo from '@/global/Seo';
-import type { Chapter, File, ImgType } from '@/global/types';
+import type { Chapter, Course, CoursesProgress, File, ImgType } from '@/global/types';
+import { checkCourseProgress } from '@/utils/check-course-progress';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
 type QueryProps = {
-  course: {
-    _id: string;
-    name: string;
-    slug: string;
-    chapters: Chapter[];
-  };
+  course: Course;
   lesson: {
     _id: string;
     name: string;
@@ -40,19 +36,7 @@ type QueryProps = {
 type SupabaseData = {
   id: string;
   left_handed: boolean;
-  courses_progress: {
-    id: number;
-    course_id: string;
-    owner_id: string;
-    progress: {
-      [key: string]: {
-        [key: string]: {
-          ended: boolean;
-          notes: string;
-        };
-      };
-    };
-  }[];
+  courses_progress: CoursesProgress[];
 };
 
 export default async function Course({
@@ -105,14 +89,14 @@ export default async function Course({
         left_handed={left_handed}
         course={course}
         lesson={lesson}
-        currentChapter={currentChapterInfo.currentChapter}
+        currentChapter={currentChapterInfo.currentChapter as Chapter}
         currentChapterIndex={currentChapterInfo.currentChapterIndex}
         currentLessonIndex={currentChapterInfo.currentLessonIndex}
         progress={courses_progress}
       />
       <LessonNotes
         progress={courses_progress}
-        currentChapter={currentChapterInfo.currentChapter}
+        currentChapter={currentChapterInfo.currentChapter as Chapter}
         currentLessonIndex={currentChapterInfo.currentLessonIndex}
       />
       <LessonDescription lesson={lesson} />
@@ -213,16 +197,41 @@ const query = async (courseSlug: string, lessonSlug: string) => {
       }
     },
     "course": *[_type == "course" && slug.current == $courseSlug][0]{
-      _id,
-      name,
-      "slug": slug.current,
-      chapters {
-        "_id": _key,
-        chapterImage {
+        _id,
+        name,
+        type,
+        "slug": slug.current,
+        chapters {
+          "_id": _key,
+          chapterImage {
+            asset -> {
+              url,
+              altText,
+              metadata {
+                lqip,
+                dimensions {
+                  width,
+                  height,
+                }
+              }
+            }
+          }, 
+          chapterDescription,
+          chapterName,
+          lessons[]->{
+            _id,
+            title,
+            name,
+            video,
+            lengthInMinutes,
+            "slug": slug.current
+          }
+        }[],
+        image {
           asset -> {
-            url,
-            altText,
-            metadata {
+          url,
+          altText,
+          metadata {
               lqip,
               dimensions {
                 width,
@@ -230,32 +239,8 @@ const query = async (courseSlug: string, lessonSlug: string) => {
               }
             }
           }
-        }, 
-        chapterDescription,
-        chapterName,
-        lessons[]->{
-          title,
-          _id,  
-          name,
-          video,
-          lengthInMinutes,
-          "slug": slug.current
-        }
-      }[],
-      image {
-        asset -> {
-        url,
-        altText,
-        metadata {
-            lqip,
-            dimensions {
-              width,
-              height,
-            }
-          }
-        }
-      },
-    }
+        },
+      }
     }`,
     params: {
       lessonSlug: lessonSlug,
@@ -267,9 +252,14 @@ const query = async (courseSlug: string, lessonSlug: string) => {
 
   if (!data.lesson) return notFound();
 
+  const progress = await checkCourseProgress(
+    data.course,
+    res.data!.courses_progress.find((el) => el.course_id === data.course._id)!
+  );
+
   return {
     ...data,
-    courses_progress: res.data.courses_progress.find((el) => el.course_id === data.course._id)!,
+    courses_progress: progress,
     left_handed: res.data.left_handed,
     id: user!.id,
   };

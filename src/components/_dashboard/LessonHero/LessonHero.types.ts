@@ -1,12 +1,7 @@
-import type { CoursesProgress, Chapter, File } from '@/global/types';
+import type { CoursesProgress, Chapter, File, Course } from '@/global/types';
 
 export type Props = {
-  course: {
-    _id: string;
-    name: string;
-    slug: string;
-    chapters: Chapter[];
-  };
+  course: Course;
   lesson: {
     title: string;
     _id: string;
