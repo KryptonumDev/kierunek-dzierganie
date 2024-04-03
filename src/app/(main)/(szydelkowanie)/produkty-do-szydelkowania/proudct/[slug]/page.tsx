@@ -8,7 +8,7 @@ import Informations from '@/components/_product/Informations';
 import Description, { Description_Query } from '@/components/_product/Description';
 import type { ProductPageQueryProps, generateStaticParamsProps } from '@/global/types';
 
-const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) => {
+const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
   const { name, _id, type, variants, price, discount, featuredVideo, countInStock, gallery, parameters, description } =
     await query(slug);
 
@@ -18,11 +18,11 @@ const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) =
         data={[
           {
             name: 'Szydełkowanie',
-            path: '/szydelkowanie/',
+            path: '/kursy-szydelkowania',
           },
           {
             name,
-            path: `/szydelkowanie/produkt/${slug}`,
+            path: `/kursy-szydelkowania/produkt/${slug}`,
           },
         ]}
         visible={true}
@@ -50,10 +50,10 @@ const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) =
   );
 };
 
-export default LandingPage;
+export default Product;
 
 export async function generateMetadata({ params: { slug } }: { params: { slug: string } }) {
-  return await QueryMetadata('product', `/szydelkowanie/produkt/${slug}`, slug);
+  return await QueryMetadata('product', `/kursy-szydelkowania/produkt/${slug}`, slug);
 }
 
 const query = async (slug: string): Promise<ProductPageQueryProps> => {

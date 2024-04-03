@@ -75,7 +75,7 @@ export default function Cart({
           )}
           <form className={cart?.length ? '' : styles['empty']}>
             <div className={styles['line']} />
-            {isPromoCode ? (
+            {/* {isPromoCode ? (
               <div className={styles.promoCode}>
                 <div className={styles.inputWrapper}>
                   <Input
@@ -86,7 +86,7 @@ export default function Cart({
                   />
                   <button onClick={() => setIsPromoCode((prev) => !prev)}>{CrossIcon}</button>
                 </div>
-                {/* TODO: Add logic for Apply Button */}
+                TODO: Add logic for Apply Button
                 <button className={`link ${styles.apply}`}>Zastosuj</button>
               </div>
             ) : (
@@ -96,9 +96,9 @@ export default function Cart({
                 errors={errors}
                 onChange={() => setIsPromoCode((prev) => !prev)}
               />
-            )}
+            )} */}
             {/* TODO: Display below `virtualCoins` section only if the user is logged in and has joined affiliation program  */}
-            {isVirtualCoins ? (
+            {/* {isVirtualCoins ? (
               <div className={styles.virtualCoins}>
                 <div className={styles.inputWrapper}>
                   <Input
@@ -129,7 +129,7 @@ export default function Cart({
                 errors={errors}
                 onChange={() => setIsVirtualCoins((prev) => !prev)}
               />
-            )}
+            )} */}
             <div className={styles['flex']}>
               <button
                 onClick={setShowCart}
@@ -184,14 +184,14 @@ const EmptyLayout = ({ image_crochet, image_knitting }: EmptyCart) => {
             data={image_knitting}
             sizes='(max-width: 640px) 150px, 300px'
           />
-          <Button href='/dzierganie-na-drutach'>Dzierganie</Button>
+          <Button href='/kursy-dziergania-na-drutach'>Dzierganie</Button>
         </div>
         <div>
           <Img
             data={image_crochet}
             sizes='(max-width: 640px) 150px, 300px'
           />
-          <Button href='/szydelkowanie'>Szydełkowanie</Button>
+          <Button href='/kursy-szydelkowania'>Szydełkowanie</Button>
         </div>
       </div>
     </div>

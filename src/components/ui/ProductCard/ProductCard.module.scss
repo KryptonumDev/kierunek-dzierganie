@@ -5,6 +5,10 @@
   justify-content: space-between;
   position: relative;
 
+  h3{
+    font-size: clamp(18px, calc(24vw/7.68), 24px);
+  }
+
   .link{
     position: absolute;
     inset: 0;
@@ -14,13 +18,23 @@
   .image-wrap {
     position: relative;
 
+
     .badge {
+      font-size: 14px;
       position: absolute;
       display: block;
       top: 0;
       left: 0;
       padding: 8px 16px 8px 20px;
       border-radius: 0px 0px 4px 0px;
+      max-width: 100%;
+
+      span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+      }
     }
     
     img {

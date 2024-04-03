@@ -57,8 +57,8 @@ export const mailerLiteGroup: { newsletter: string } = {
  * @constant
  */
 export const pageUrls: { knitting: string; crocheting: string } = {
-  knitting: '/dzierganie-na-drutach',
-  crocheting: '/szydelkowanie',
+  knitting: '/kursy-dziergania-na-drutach',
+  crocheting: '/kursy-szydelkowania',
 };
 
 /**

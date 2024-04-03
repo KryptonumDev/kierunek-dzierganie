@@ -1,8 +1,43 @@
 .ProductsListing {
-  
-  .grid{
+  .grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 48px 32px;
+    gap: clamp(28px, calc(28vw / 7.68), 48px) clamp(24px, calc(24vw / 7.68), 32px);
+    margin-top: clamp(28px, calc(48vw / 7.68), 64px);
+
+    @media (max-width: 899px) {
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 520px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  h2 {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 36px auto;
+  }
+
+  h2 + div {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 36px auto;
+  }
+
+  .filters {
+    border-bottom: 1px solid var(--primary-400, #e5d8d4);
+
+    button {
+      display: flex;
+      align-items: center;
+      padding: 10px 0px;
+      gap: 8px;
+      margin-left: auto;
+
+      svg {
+        transform: rotateZ(180deg);
+      }
+    }
   }
 }

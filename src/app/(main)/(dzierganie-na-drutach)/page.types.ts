@@ -8,6 +8,8 @@ export type KnittingPage_QueryTypes = {
     HeroSimple: HeroSimpleTypes;
     StepsGrid: StepsGridTypes;
     LatestBlogEntries: LatestBlogEntriesTypes;
+    listing_title: string;
+    listing_text: string;
   };
   products: ProductCard[];
 };

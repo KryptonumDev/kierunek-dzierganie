@@ -4,23 +4,37 @@ import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import HeroSimple, { HeroSimple_Query } from '@/components/_global/HeroSimple';
 import StepsGrid, { StepsGrid_Query } from '@/components/_global/StepsGrid';
 import LatestBlogEntries, { LatestBlogEntries_Query } from '@/components/_global/LatestBlogEntries';
-import type { KnittingPage_QueryTypes } from './page.types';
+import type { KnittingPage_QueryTypes } from '../page.types';
 import ProductsListing, { ProductsListing_Query } from '@/components/_global/ProductsListing';
+import Markdown from '@/components/ui/markdown';
 
-const page = { name: 'Dzierganie na drutach', path: '/dzierganie-na-drutach' };
+const page = { name: 'Produkty do dziergania', path: '/produkty-do-dziergania' };
 
 const KnittingPage = async () => {
   const {
-    page: { HeroSimple: HeroSimpleData, StepsGrid: StepsGridData, LatestBlogEntries: LatestBlogEntriesData },
+    page: {
+      HeroSimple: HeroSimpleData,
+      StepsGrid: StepsGridData,
+      LatestBlogEntries: LatestBlogEntriesData,
+      listing_title,
+      listing_text,
+    },
     products,
   } = await query();
+
+  const title = <Markdown.h2>{listing_title}</Markdown.h2>;
+  const text = <Markdown>{listing_text}</Markdown>;
 
   return (
     <>
       <Breadcrumbs data={[page]} />
       <HeroSimple {...HeroSimpleData} />
       <StepsGrid {...StepsGridData} />
-      <ProductsListing products={products} />
+      <ProductsListing
+        title={title}
+        text={text}
+        products={products}
+      />
       <LatestBlogEntries {...LatestBlogEntriesData} />
     </>
   );
@@ -36,8 +50,10 @@ const query = async (): Promise<KnittingPage_QueryTypes> => {
         ${HeroSimple_Query(true)}
         ${StepsGrid_Query}
         ${LatestBlogEntries_Query(true)}
+        "listing_title" : listing_Heading_Products,
+        "listing_text": listing_Paragraph_Products,
       },
-      "products": *[_type== 'product' && basis == 'knitting' && type in ['digital', 'bundle']][0...10]{
+      "products": *[_type== 'product' && visible == true && basis == 'knitting' && type in ['variable', 'physical']][0...10]{
         ${ProductsListing_Query}
       }
     }

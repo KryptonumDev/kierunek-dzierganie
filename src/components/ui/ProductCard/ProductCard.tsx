@@ -54,7 +54,10 @@ const ProductCard = ({ data, inCart = false }: Props) => {
 
   return (
     <div className={styles['productCard']}>
-      <Link href={`${pageUrls[data.basis]}/produkt/${data.slug}`} className={styles['link']}/>
+      <Link
+        href={`${pageUrls[data.basis]}/produkt/${data.slug}`}
+        className={styles['link']}
+      />
       <div>
         {mainVariant.image && (
           <div className={styles['image-wrap']}>
@@ -66,7 +69,7 @@ const ProductCard = ({ data, inCart = false }: Props) => {
                 }}
                 className={styles['badge']}
               >
-                {courseComplexityEnum[data.course.complexity].name}
+                <span>{courseComplexityEnum[data.course.complexity].name}</span>
               </span>
             )}
             <Img
