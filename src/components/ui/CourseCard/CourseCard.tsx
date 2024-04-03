@@ -5,7 +5,7 @@ import styles from './CourseCard.module.scss';
 import type { Props } from './CourseCard.types';
 import PercentChart from '../PercentChart';
 
-const CourseCard = ({ name, slug, image, complexity, courseLength, progressPercentage }: Props) => {
+const CourseCard = ({ name, slug, image, complexity, progressPercentage }: Props) => {
   return (
     <div className={styles['CourseCard']}>
       <div className={styles['image-wrap']}>
