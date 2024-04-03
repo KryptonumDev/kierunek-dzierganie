@@ -7,8 +7,10 @@ export type Props = {
     _id: string;
     slug: string;
     video: string;
+    video_alter: string;
     lengthInMinutes: number;
     files: File[];
+    files_alter: File[];
   };
   left_handed: boolean;
   progress: CoursesProgress;

@@ -107,12 +107,21 @@ const LessonHero = ({
       <div className={styles['grid']}>
         <div className={styles['content']}>
           <div className={styles.video}>
-            <Vimeo
-              video={lesson.video}
-              loop={false}
-              onEnd={() => updateProgress('auto', true)}
-              className={styles['vimeo']}
-            />
+            {leftHanded ? (
+              <Vimeo
+                video={lesson.video_alter}
+                loop={false}
+                onEnd={() => updateProgress('auto', true)}
+                className={styles['vimeo']}
+              />
+            ) : (
+              <Vimeo
+                video={lesson.video}
+                loop={false}
+                onEnd={() => updateProgress('auto', true)}
+                className={styles['vimeo']}
+              />
+            )}
           </div>
           <nav className={styles.nav}>
             {currentLessonIndex === 0 ? (
@@ -207,17 +216,35 @@ const LessonHero = ({
         <div className={styles['column']}>
           <h2>Pliki do pobrania</h2>
           <ul className={styles['list']}>
-            {lesson.files?.map((el) => (
-              <li key={el.asset._id}>
-                <a
-                  href={el.asset.url}
-                  className='link'
-                  download
-                >
-                  {el.asset.originalFilename} <small>({formatBytes(el.asset.size)})</small>
-                </a>
-              </li>
-            ))}
+            {leftHanded ? (
+              <>
+                {lesson.files_alter?.map((el) => (
+                  <li key={el.asset._id}>
+                    <a
+                      href={el.asset.url}
+                      className='link'
+                      download
+                    >
+                      {el.asset.originalFilename} <small>({formatBytes(el.asset.size)})</small>
+                    </a>
+                  </li>
+                ))}
+              </>
+            ) : (
+              <>
+                {lesson.files?.map((el) => (
+                  <li key={el.asset._id}>
+                    <a
+                      href={el.asset.url}
+                      className='link'
+                      download
+                    >
+                      {el.asset.originalFilename} <small>({formatBytes(el.asset.size)})</small>
+                    </a>
+                  </li>
+                ))}
+              </>
+            )}
           </ul>
         </div>
       </div>
