@@ -23,7 +23,7 @@ const CourseCard = ({ name, slug, image, complexity, courseLength, progressPerce
           sizes='380px'
         />
       </div>
-      <small>Długość kursu: {courseLength}</small>
+      {/* <small>Długość kursu: {courseLength}</small> */}
       <h3>{name}</h3>
       <div className={styles['flex']}>
         <p>

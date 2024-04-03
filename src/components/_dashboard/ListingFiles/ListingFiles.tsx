@@ -52,54 +52,59 @@ const ListingFiles = ({ courses, left_handed, progress }: ListingFilesTypes) => 
 
   return (
     <section className={styles['ListingFiles']}>
-      {transformFiles.map((el, i) => (
-        <div key={el.name + i}>
-          <h3>{el.name}</h3>
-          {left_handed ? (
-            <ul>
-              {el.filesAlt.map((file) => (
-                <li key={file.asset._id}>
-                  <a
-                    href={file.asset.url}
-                    target='_blank'
-                    rel='noreferrer'
-                    download
-                  >
-                    <Icon />
-                    {file.asset.originalFilename} <small>({formatBytes(file.asset.size)})</small>
-                  </a>
-                </li>
-              ))}
-              {/* TODO: przerobić na wyświetlenie procentów kursu */}
-              {el.showCert && (
-                <li>
-                  {/* TODO: przerobić na pobieranie certyfikatu */}
-                  <Link href={`/moje-konto/kursy/${el.slug}/certyfikat`}>
-                    <Icon />
-                    Certyfikat
-                  </Link>
-                </li>
-              )}
-            </ul>
-          ) : (
-            <ul>
-              {el.files.map((file) => (
-                <li key={file.asset._id}>
-                  <a
-                    href={file.asset.url}
-                    target='_blank'
-                    rel='noreferrer'
-                    download
-                  >
-                    <Icon />
-                    {file.asset.originalFilename} <small>({formatBytes(file.asset.size)})</small>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      ))}
+      {transformFiles.map((el, i) => {
+        if(left_handed && el.filesAlt.length === 0) return null;
+        if(!left_handed && el.files.length === 0) return null;
+
+        return (
+          <div key={el.name + i}>
+            <h3>{el.name}</h3>
+            {left_handed ? (
+              <ul>
+                {el.filesAlt.map((file) => (
+                  <li key={file.asset._id}>
+                    <a
+                      href={file.asset.url}
+                      target='_blank'
+                      rel='noreferrer'
+                      download
+                    >
+                      <Icon />
+                      {file.asset.originalFilename} <small>({formatBytes(file.asset.size)})</small>
+                    </a>
+                  </li>
+                ))}
+                {/* TODO: przerobić na wyświetlenie procentów kursu */}
+                {el.showCert && (
+                  <li>
+                    {/* TODO: przerobić na pobieranie certyfikatu */}
+                    <Link href={`/moje-konto/kursy/${el.slug}/certyfikat`}>
+                      <Icon />
+                      Certyfikat
+                    </Link>
+                  </li>
+                )}
+              </ul>
+            ) : (
+              <ul>
+                {el.files.map((file) => (
+                  <li key={file.asset._id}>
+                    <a
+                      href={file.asset.url}
+                      target='_blank'
+                      rel='noreferrer'
+                      download
+                    >
+                      <Icon />
+                      {file.asset.originalFilename} <small>({formatBytes(file.asset.size)})</small>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        );
+      })}
     </section>
   );
 };

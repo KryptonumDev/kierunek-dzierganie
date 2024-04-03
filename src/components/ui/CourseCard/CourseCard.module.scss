@@ -4,6 +4,7 @@
 
   .image-wrap {
     position: relative;
+    margin-bottom: 28px;
 
     .badge {
       position: absolute;
@@ -44,7 +45,6 @@
   small {
     display: block;
     margin-bottom: 4px;
-    margin-top: 28px;
     color: var(--primary-800, #53423c);
     font-size: 14px;
     font-weight: 300;
