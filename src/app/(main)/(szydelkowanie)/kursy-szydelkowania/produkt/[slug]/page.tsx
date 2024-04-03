@@ -12,6 +12,12 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
   const { name, _id, type, variants, price, discount, featuredVideo, countInStock, gallery, parameters, description } =
     await query(slug);
 
+  const tabs = [];
+
+  if (description?.length > 0) tabs.push('Opis');
+
+  if (parameters?.length > 0) tabs.push('Parametry');
+
   return (
     <>
       <Breadcrumbs
@@ -41,11 +47,12 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
           gallery,
         }}
       />
-      {/* TODO: Check is there parameters and description sections, if no disable tabs system and show only needed */}
-      <Informations tabs={['Opis', 'Parametry']}>
-        <Description data={description} />
-        {parameters?.length > 0 && <Parameters parameters={parameters} />}
+
+      <Informations tabs={tabs}>
+        {tabs.includes('Opis') && <Description data={description} />}
+        {tabs.includes('Parametry') && <Parameters parameters={parameters} />}
       </Informations>
+      <h2>Tutaj będzie opis produktu</h2>
     </>
   );
 };
@@ -59,7 +66,7 @@ export async function generateMetadata({ params: { slug } }: { params: { slug: s
 const query = async (slug: string): Promise<ProductPageQueryProps> => {
   const data = await sanityFetch<ProductPageQueryProps>({
     query: /* groq */ `
-      *[_type == "product" && slug.current == $slug && basis == 'crocheting' && type in ["physical", "variable"]][0] {
+      *[_type == 'product' && basis == 'crocheting' && type in ['digital', 'bundle'] && slug.current == $slug][0] {
         name,
         'slug': slug.current,
         _id,

@@ -5,7 +5,6 @@ import type { Props } from './Informations.types';
 
 const Informations = ({ tabs, children }: Props) => {
   const [selectedTab, setSelectedTab] = useState(0);
-
   return (
     <section className={styles['Informations']}>
       <div className={styles['tabs']}>
@@ -22,7 +21,6 @@ const Informations = ({ tabs, children }: Props) => {
             )
         )}
       </div>
-
       <div>{children[selectedTab]}</div>
     </section>
   );
