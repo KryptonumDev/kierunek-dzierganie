@@ -10,10 +10,10 @@ const links = [
     name: 'Moje kursy',
     href: '/moje-konto/kursy',
   },
-  {
-    name: 'Historia zakupów',
-    href: '/moje-konto/zakupy',
-  },
+  // {
+  //   name: 'Historia zakupów',
+  //   href: '/moje-konto/zakupy',
+  // },
   {
     name: 'Pliki do pobrania',
     href: '/moje-konto/pliki-do-pobrania',
@@ -22,10 +22,10 @@ const links = [
     name: 'Moje dane',
     href: '/moje-konto/dane',
   },
-  {
-    name: 'Program lojalnościowy',
-    href: '/moje-konto/program-lojalnosciowy',
-  },
+  // {
+  //   name: 'Program lojalnościowy',
+  //   href: '/moje-konto/program-lojalnosciowy',
+  // },
   {
     name: 'Pomoc',
     href: '/moje-konto/pomoc',
