@@ -2,6 +2,7 @@ import LessonDescription from '@/components/_dashboard/LessonDescription';
 import LessonHero from '@/components/_dashboard/LessonHero';
 import LessonNotes from '@/components/_dashboard/LessonNotes';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
+import Seo from '@/global/Seo';
 import type { Chapter, File, ImgType } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
@@ -117,6 +118,29 @@ export default async function Course({
       <LessonDescription lesson={lesson} />
     </>
   );
+}
+
+export async function generateMetadata({
+  params: { lessonSlug, courseSlug },
+}: {
+  params: { courseSlug: string; lessonSlug: string };
+}) {
+  const data: { lesson: { title: string } } = await sanityFetch({
+    query: /* groq */ `
+    {
+      "lesson": *[_type == "lesson" && slug.current == $slug][0]{
+        title,
+      }
+    }`,
+    params: {
+      slug: lessonSlug,
+    },
+  });
+
+  return Seo({
+    title: `${data.lesson.title} | Kierunek dzierganie`,
+    path: `/moje-konto/kursy/${courseSlug}/${lessonSlug}`,
+  });
 }
 
 const query = async (courseSlug: string, lessonSlug: string) => {

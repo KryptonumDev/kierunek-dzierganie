@@ -2,6 +2,7 @@ import EmptyFiles from '@/components/_dashboard/EmptyFiles';
 import FilesHero from '@/components/_dashboard/FilesHero';
 import ListingFiles from '@/components/_dashboard/ListingFiles';
 import { Img_Query } from '@/components/ui/image';
+import Seo from '@/global/Seo';
 import type { CoursesProgress, File, ImgType } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
@@ -60,6 +61,13 @@ export default async function Files() {
       )}
     </div>
   );
+}
+
+export async function generateMetadata() {
+  return Seo({
+    title: 'Pliki do pobrania | Kierunek dzierganie',
+    path: '/moje-konto/pliki-do-pobrania',
+  });
 }
 
 const query = async (): Promise<QueryProps> => {

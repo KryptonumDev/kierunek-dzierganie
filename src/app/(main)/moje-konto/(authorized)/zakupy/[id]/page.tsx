@@ -1,4 +1,5 @@
 import OrderData from '@/components/_dashboard/OrderData';
+import Seo from '@/global/Seo';
 import type { Order, Product } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
@@ -20,6 +21,13 @@ export default async function Order({ params: { id } }: { params: { id: string }
       products={products}
     />
   );
+}
+
+export async function generateMetadata({ params: { id } }: { params: { id: string } }) {
+  return Seo({
+    title: 'Historia zakupów | Kierunek dzierganie',
+    path: `/moje-konto/zakupy/${id}`,
+  });
 }
 
 const query = async (id: string): Promise<QueryProps> => {

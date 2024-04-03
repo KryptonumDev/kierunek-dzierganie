@@ -1,6 +1,7 @@
 import EmptyOrders from '@/components/_dashboard/EmptyOrders';
 import ListingOrders from '@/components/_dashboard/ListingOrders';
 import { Img_Query } from '@/components/ui/image';
+import Seo from '@/global/Seo';
 import type { ImgType, Order, Product } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
@@ -34,6 +35,13 @@ export default async function Orders() {
       )}
     </div>
   );
+}
+
+export async function generateMetadata() {
+  return Seo({
+    title: 'Historia zakupów | Kierunek dzierganie',
+    path: '/moje-konto/zakupy',
+  });
 }
 
 const query = async (): Promise<QueryProps> => {

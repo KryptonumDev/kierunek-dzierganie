@@ -1,5 +1,6 @@
 import UserData from '@/components/_dashboard/UserData';
 import type { QueryProps } from '@/components/_dashboard/UserData/UserData.types';
+import Seo from '@/global/Seo';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 
@@ -8,6 +9,13 @@ const MyDataPage = async () => {
 
   return <UserData data={data} />;
 };
+
+export async function generateMetadata() {
+  return Seo({
+    title: 'Moje dane | Kierunek dzierganie',
+    path: '/moje-konto/dane',
+  });
+}
 
 export default MyDataPage;
 

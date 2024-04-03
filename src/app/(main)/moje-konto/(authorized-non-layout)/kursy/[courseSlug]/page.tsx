@@ -1,5 +1,6 @@
 import CourseChapters from '@/components/_dashboard/CourseChapters';
 import ProgramChapters from '@/components/_dashboard/ProgramChapters';
+import { QueryMetadata } from '@/global/Seo/query-metadata';
 import type { CoursesProgress, Course } from '@/global/types';
 import { checkCourseProgress } from '@/utils/check-course-progress';
 import sanityFetch from '@/utils/sanity.fetch';
@@ -16,7 +17,7 @@ export default async function Course({ params: { courseSlug } }: { params: { cou
   const { course, courses_progress }: QueryProps = await query(courseSlug);
   return (
     <div>
-      {course.type === 'course' ? (
+      {course.type !== 'course' ? (
         <CourseChapters
           courses_progress={courses_progress}
           course={course}
@@ -29,6 +30,10 @@ export default async function Course({ params: { courseSlug } }: { params: { cou
       )}
     </div>
   );
+}
+
+export async function generateMetadata({ params: { courseSlug } }: { params: { courseSlug: string}}) {
+  return await QueryMetadata('course', `/moje-konto/kursy/${courseSlug}`, courseSlug);
 }
 
 const query = async (slug: string): Promise<QueryProps> => {

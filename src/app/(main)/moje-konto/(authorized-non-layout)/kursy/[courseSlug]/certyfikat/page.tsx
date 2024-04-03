@@ -1,4 +1,5 @@
 import CertificateHero from '@/components/_dashboard/CertificateHero';
+import { QueryMetadata } from '@/global/Seo/query-metadata';
 import type { CoursesProgress } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
@@ -50,6 +51,10 @@ export default async function Certificate({ params: { courseSlug } }: { params: 
       <CertificateHero />
     </div>
   );
+}
+
+export async function generateMetadata({ params: { courseSlug } }: { params: { courseSlug: string}}) {
+  return await QueryMetadata('course', `/moje-konto/kursy/${courseSlug}/certyfikat`, courseSlug);
 }
 
 const query = async (slug: string): Promise<QueryProps> => {

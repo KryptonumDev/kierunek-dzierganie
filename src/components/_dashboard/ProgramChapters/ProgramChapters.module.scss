@@ -5,10 +5,34 @@
   }
 
   .grid {
+    > svg {
+      position: absolute;
+      top: 124px;
+      left: 36px;
+      bottom: 124px;
+      z-index: 1;
+    }
+    .circle {
+      position: absolute;
+      left: 68px;
+      bottom: 72px;
+      border-radius: 50%;
+      background: var(--primary-400, #e5d8d4);
+      display: flex;
+      width: 128px;
+      height: 128px;
+      justify-content: center;
+      align-items: center;
+    }
+    position: relative;
     display: grid;
     padding: 36px 36px 36px 274px;
-    gap: 80px; 
+    gap: 80px;
     border-radius: 8px;
     background: var(--primary-200, #faf4f0);
+    > div {
+      position: relative;
+      z-index: 2;
+    }
   }
 }

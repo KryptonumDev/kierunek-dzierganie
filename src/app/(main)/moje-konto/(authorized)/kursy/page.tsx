@@ -1,6 +1,7 @@
 import EmptyCourses from '@/components/_dashboard/EmptyCourses';
 import ListingCourses from '@/components/_dashboard/ListingCourses';
 import { Img_Query } from '@/components/ui/image';
+import Seo from '@/global/Seo';
 import type { ImgType } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
@@ -37,6 +38,13 @@ export default async function Courses() {
       )}
     </div>
   );
+}
+
+export async function generateMetadata() {
+  return Seo({
+    title: 'Moje kursy | Kierunek dzierganie',
+    path: '/moje-konto/kursy',
+  });
 }
 
 const query = async (): Promise<QueryProps> => {
