@@ -17,7 +17,7 @@ export default async function Course({ params: { courseSlug } }: { params: { cou
   const { course, courses_progress }: QueryProps = await query(courseSlug);
   return (
     <div>
-      {course.type !== 'course' ? (
+      {course.type === 'course' ? (
         <CourseChapters
           courses_progress={courses_progress}
           course={course}

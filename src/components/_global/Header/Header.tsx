@@ -7,6 +7,7 @@ import type { QueryProps } from './Header.types';
 const Header = async () => {
   const { global, cart } = await query();
   const nav_annotation = <Markdown>{global.nav_Annotation ?? ''}</Markdown>;
+
   return (
     <Content
       global={global}
@@ -48,7 +49,7 @@ const query = async (): Promise<QueryProps> => {
             }[],
           }[],
         },
-        "cart": *[_id == 'cart'][0]{
+        "cart": *[_id == 'Cart'][0]{
           highlighted_products[]->{
             _id,
             price,

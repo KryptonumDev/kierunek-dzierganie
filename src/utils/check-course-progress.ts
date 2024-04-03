@@ -37,6 +37,11 @@ export async function checkCourseProgress(course: Course, progress: CoursesProgr
   // check if newProgress different from progress change it in supabase
   let different = false;
   for (const key in newProgress.progress) {
+    if(!progress.progress?.[key]){
+      different = true;
+      break;
+    }
+
     if (Object.keys(newProgress.progress[key]!).length !== Object.keys(progress.progress[key]!).length) {
       different = true;
       break;

@@ -125,7 +125,7 @@ const query = async (): Promise<QueryProps> => {
 
       // if 0 lessons, return to avoid division by 0
       if (totalLessons === 0) {
-        return { ...course, progressPercentage: 100 };
+        return { ...course, progressPercentage: 0 };
       }
 
       const completionPercentage = (completedLessons / totalLessons) * 100;
