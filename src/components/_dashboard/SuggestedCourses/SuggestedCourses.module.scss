@@ -1,0 +1,48 @@
+.SuggestedCourses {
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: clamp(28px, calc(36vw/7.68), 64px);
+
+  header {
+    display: grid;
+    gap: clamp(16px, calc(28vw/7.68), 40px);
+  }
+
+  .courses {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: clamp(24px, calc(32vw/7.68), 32px);
+    justify-content: center;
+
+    div {
+      position: relative;
+      display: grid;
+      gap: clamp(20px, calc(24vw/7.68), 24px);
+      justify-items: center;
+
+      .tag {
+        position: absolute;
+        padding: 8px 16px 8px 20px;
+        background: var(--primary-200);
+        border-radius: 4px 0px 4px 0px;
+        justify-self: flex-start;
+      }
+
+      img {
+        aspect-ratio: 1.37/1;
+        object-fit: cover;
+        display: block;
+        border-radius: 6px 4px 4px 4px;
+        width: 100%;
+        height: 280px;
+
+        @media(max-width: 799px) {
+          height: auto;
+        }
+      }
+    }
+  }
+}
