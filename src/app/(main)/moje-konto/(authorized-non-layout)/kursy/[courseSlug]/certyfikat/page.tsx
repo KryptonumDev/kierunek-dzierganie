@@ -1,4 +1,8 @@
 import CertificateHero from '@/components/_dashboard/CertificateHero';
+import SuggestedCourses, {
+  SuggestedCoursesTypes,
+  SuggestedCourses_Query,
+} from '@/components/_dashboard/SuggestedCourses';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
 import type { CoursesProgress } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
@@ -13,12 +17,14 @@ interface QueryProps {
     slug: string;
   };
   courses_progress: CoursesProgress;
+  suggestedCourses: SuggestedCoursesTypes['courses'];
 }
 
 export default async function Certificate({ params: { courseSlug } }: { params: { courseSlug: string } }) {
   const {
     // course,
     courses_progress,
+    suggestedCourses,
   }: QueryProps = await query(courseSlug);
 
   const completionPercentage = (() => {
@@ -49,11 +55,16 @@ export default async function Certificate({ params: { courseSlug } }: { params: 
   return (
     <div>
       <CertificateHero />
+      <SuggestedCourses
+        heading='Czujesz **niedosyt**?'
+        paragraph='Wybraliśmy dla Ciebie kurs, dzięki któremu Twoje umiejętności wskoczą na **wyższy poziom!**'
+        courses={suggestedCourses}
+      />
     </div>
   );
 }
 
-export async function generateMetadata({ params: { courseSlug } }: { params: { courseSlug: string}}) {
+export async function generateMetadata({ params: { courseSlug } }: { params: { courseSlug: string } }) {
   return await QueryMetadata('course', `/moje-konto/kursy/${courseSlug}/certyfikat`, courseSlug);
 }
 
@@ -80,6 +91,8 @@ const query = async (slug: string): Promise<QueryProps> => {
     .returns<{ id: string; courses_progress: CoursesProgress[] }[]>()
     .single();
 
+  const ownedCourses = res.data?.courses_progress.map((el) => el.course_id);
+
   const data: QueryProps = await sanityFetch({
     query: /* groq */ `
     {
@@ -87,10 +100,12 @@ const query = async (slug: string): Promise<QueryProps> => {
         _id,
         name,
         "slug": slug.current,
-      }
+      },
+      ${SuggestedCourses_Query}
     }`,
     params: {
       slug: slug,
+      courses: ownedCourses,
     },
   });
 
@@ -99,5 +114,6 @@ const query = async (slug: string): Promise<QueryProps> => {
   return {
     course: data.course,
     courses_progress: res.data!.courses_progress.find((el) => el.course_id === data.course._id)!,
+    suggestedCourses: data.suggestedCourses,
   };
 };
