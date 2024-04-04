@@ -5,8 +5,47 @@ import Img from '../image';
 import styles from './ProgramChapterCard.module.scss';
 import type { Props } from './ProgramChapterCard.types';
 import PercentChart from '../PercentChart';
+import { formatTime } from '@/utils/format-time';
 
-const ProgramChapterCard = ({ name, image, description, lessons, courseSlug, number, progress }: Props) => {
+const circleTypes = {
+  '1': {
+    title: 'Tu jesteśmy!',
+    background: 'var(--primary-400, #E5D8D4)',
+    mobile: false,
+  },
+  '2': {
+    title: 'W trakcie!',
+    background: 'var(--primary-300, #EFE8E7)',
+    mobile: false,
+  },
+  '3': {
+    title: 'Ukończone!',
+    background: 'var(--success-400, #99AB9C)',
+    mobile: false,
+  },
+  '4': {
+    title: 'Dostęp odblokuje się za',
+    background: 'var(--primary-300, #EFE8E7)',
+    mobile: true,
+  },
+  '5': {
+    title: 'Odblokowane!',
+    background: 'var(--primary-300, #EFE8E7)',
+    mobile: false,
+  },
+};
+
+const ProgramChapterCard = ({
+  name,
+  image,
+  description,
+  lessons,
+  courseSlug,
+  number,
+  progress,
+  circleType,
+  timeLeft,
+}: Props) => {
   const completionPercentage = useMemo(() => {
     let totalLessons = 0;
     let completedLessons = 0;
@@ -31,7 +70,13 @@ const ProgramChapterCard = ({ name, image, description, lessons, courseSlug, num
   const lengthInMinutes = lessons.reduce((acc, lesson) => acc + lesson.lengthInMinutes, 0);
 
   return (
-    <div className={styles['programChapterCard']}>
+    <div className={`${styles['programChapterCard']} ${timeLeft ? styles['blocked'] : ''}`}>
+      <div
+        style={{ backgroundColor: circleTypes[circleType].background }}
+        className={`${styles['circle']} ${circleTypes[circleType].mobile ? styles['mobile'] : ''}`}
+      >
+        {circleTypes[circleType].title} {circleType === '4' && formatTime(timeLeft)}
+      </div>
       <Img
         data={image}
         sizes='380px'
@@ -51,7 +96,11 @@ const ProgramChapterCard = ({ name, image, description, lessons, courseSlug, num
           <span>
             Ukończono <PercentChart p={completionPercentage} />
           </span>
-          <Button href={`/moje-konto/kursy/${courseSlug}/${firstUnendedLesson.slug}`}>Oglądaj</Button>
+          {timeLeft ? (
+            <Button disabled>Oglądaj</Button>
+          ) : (
+            <Button href={`/moje-konto/kursy/${courseSlug}/${firstUnendedLesson.slug}`}>Oglądaj</Button>
+          )}
         </div>
       </div>
     </div>

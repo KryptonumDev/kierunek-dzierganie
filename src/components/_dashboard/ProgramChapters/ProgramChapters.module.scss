@@ -5,28 +5,38 @@
   }
 
   .grid {
-    > svg {
+    &::after {
+      content: '';
       position: absolute;
-      top: 124px;
-      left: 36px;
-      bottom: 124px;
+      top: 140px;
+      left: 140px;
+      bottom: 140px;
+      width: 1px;
+      background-color: var(--primary-400, #e5d8d4);
       z-index: 1;
+
+      @media (max-width: 1024px) {
+        left: 112px;
+      }
+
+      @media (max-width: 899px) {
+        bottom: 6%;
+      }
+
+      @media (max-width: 600px) {
+        display: none;
+      }
     }
-    .circle {
-      position: absolute;
-      left: 68px;
-      bottom: 72px;
-      border-radius: 50%;
-      background: var(--primary-400, #e5d8d4);
-      display: flex;
-      width: 128px;
-      height: 128px;
-      justify-content: center;
-      align-items: center;
+
+    @media (max-width: 600px) {
+      width: calc(100% + var(--pageMargin) + var(--pageMargin));
+      margin-left: calc(var(--pageMargin) * -1);
+      margin-right: calc(var(--pageMargin) * -1);
     }
+
     position: relative;
     display: grid;
-    padding: 36px 36px 36px 274px;
+    padding: 36px;
     gap: 80px;
     border-radius: 8px;
     background: var(--primary-200, #faf4f0);

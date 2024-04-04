@@ -228,6 +228,7 @@ export type Course = {
     chapterDescription: string;
     chapterName: string;
     chapterImage: ImgType;
+    dateOfUnlock?: Date;
     lessons: {
       _id: string;
       name: string;

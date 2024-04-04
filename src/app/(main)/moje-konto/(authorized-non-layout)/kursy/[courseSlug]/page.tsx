@@ -1,5 +1,5 @@
 import CourseChapters from '@/components/_dashboard/CourseChapters';
-// import ProgramChapters from '@/components/_dashboard/ProgramChapters';
+import ProgramChapters from '@/components/_dashboard/ProgramChapters';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
 import type { CoursesProgress, Course } from '@/global/types';
 import { checkCourseProgress } from '@/utils/check-course-progress';
@@ -17,12 +17,7 @@ export default async function Course({ params: { courseSlug } }: { params: { cou
   const { course, courses_progress }: QueryProps = await query(courseSlug);
   return (
     <div>
-      <CourseChapters
-        courses_progress={courses_progress}
-        course={course}
-      />
-
-      {/* {course.type === 'course' ? (
+      {course.type === 'course' ? (
         <CourseChapters
           courses_progress={courses_progress}
           course={course}
@@ -32,7 +27,7 @@ export default async function Course({ params: { courseSlug } }: { params: { cou
           courses_progress={courses_progress}
           course={course}
         />
-      )} */}
+      )}
     </div>
   );
 }
@@ -72,6 +67,7 @@ const query = async (slug: string): Promise<QueryProps> => {
         type,
         "slug": slug.current,
         chapters {
+          dateOfUnlock,
           "_id": _key,
           chapterImage {
             asset -> {
