@@ -4,6 +4,7 @@
   justify-content: center;
   text-align: center;
   gap: clamp(28px, calc(36vw/7.68), 64px);
+  padding-top: clamp(118px, calc(172vw/7.68), 240px);
 
   header {
     display: grid;
