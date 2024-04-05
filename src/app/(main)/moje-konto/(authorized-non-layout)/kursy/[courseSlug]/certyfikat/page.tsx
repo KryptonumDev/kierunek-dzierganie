@@ -1,4 +1,5 @@
 import CertificateHero from '@/components/_dashboard/CertificateHero';
+import CertificateSection from '@/components/_dashboard/CertificateSection';
 import SuggestedCourses, {
   SuggestedCoursesTypes,
   SuggestedCourses_Query,
@@ -18,14 +19,11 @@ interface QueryProps {
   };
   courses_progress: CoursesProgress;
   suggestedCourses: SuggestedCoursesTypes['courses'];
+  full_name: string;
 }
 
 export default async function Certificate({ params: { courseSlug } }: { params: { courseSlug: string } }) {
-  const {
-    // course,
-    courses_progress,
-    suggestedCourses,
-  }: QueryProps = await query(courseSlug);
+  const { course, courses_progress, suggestedCourses, full_name }: QueryProps = await query(courseSlug);
 
   const completionPercentage = (() => {
     let totalLessons = 0;
@@ -55,6 +53,10 @@ export default async function Certificate({ params: { courseSlug } }: { params: 
   return (
     <div>
       <CertificateHero />
+      <CertificateSection
+        course={course}
+        full_name={full_name}
+      />
       <SuggestedCourses
         heading='Czujesz **niedosyt**?'
         paragraph='Wybraliśmy dla Ciebie kurs, dzięki któremu Twoje umiejętności wskoczą na **wyższy poziom!**'
@@ -78,7 +80,8 @@ const query = async (slug: string): Promise<QueryProps> => {
     .from('profiles')
     .select(
       `
-        id, 
+        id,
+        full_name,
         courses_progress (
           id,
           course_id,
@@ -88,7 +91,7 @@ const query = async (slug: string): Promise<QueryProps> => {
       `
     )
     .eq('id', user!.id)
-    .returns<{ id: string; courses_progress: CoursesProgress[] }[]>()
+    .returns<{ id: string; full_name: string; courses_progress: CoursesProgress[] }[]>()
     .single();
 
   const ownedCourses = res.data?.courses_progress.map((el) => el.course_id);
@@ -115,5 +118,6 @@ const query = async (slug: string): Promise<QueryProps> => {
     course: data.course,
     courses_progress: res.data!.courses_progress.find((el) => el.course_id === data.course._id)!,
     suggestedCourses: data.suggestedCourses,
+    full_name: res.data!.full_name,
   };
 };
