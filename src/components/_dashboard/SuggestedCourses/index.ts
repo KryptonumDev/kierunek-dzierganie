@@ -7,7 +7,7 @@ export type { SuggestedCoursesTypes } from './SuggestedCourses.types';
  * Define courses in params.
  */
 export const SuggestedCourses_Query = `
-"suggestedCourses": *[_type=="product" && type=="digital" && !(course->_id in $courses)][0..2] {
+"suggestedCourses": *[_type=="product" && type=="digital" && (course->_id in $courses)][0..2] {
   price,
   name,
   course -> {
