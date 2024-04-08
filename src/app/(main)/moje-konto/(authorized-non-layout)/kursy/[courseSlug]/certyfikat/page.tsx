@@ -1,5 +1,6 @@
 import CertificateHero from '@/components/_dashboard/CertificateHero';
 import CertificateSection from '@/components/_dashboard/CertificateSection';
+import NotesSection from '@/components/_dashboard/NotesSection';
 import SuggestedCourses, {
   SuggestedCoursesTypes,
   SuggestedCourses_Query,
@@ -16,21 +17,36 @@ interface QueryProps {
     _id: string;
     name: string;
     slug: string;
+    chapters: {
+      chapterName: string;
+      lessons: {
+        name: string;
+        _id: string;
+      }[];
+    }[];
   };
-  courses_progress: CoursesProgress;
+  course_progress: CoursesProgress;
   suggestedCourses: SuggestedCoursesTypes['courses'];
   full_name: string;
+  notes: {
+    chapterName: string;
+    lessons: {
+      name: string;
+      notes: string;
+    }[];
+  }[];
+  notesSum: number;
 }
 
 export default async function Certificate({ params: { courseSlug } }: { params: { courseSlug: string } }) {
-  const { course, courses_progress, suggestedCourses, full_name }: QueryProps = await query(courseSlug);
+  const { course, course_progress, suggestedCourses, full_name, notes, notesSum }: QueryProps = await query(courseSlug);
 
   const completionPercentage = (() => {
     let totalLessons = 0;
     let completedLessons = 0;
 
-    for (const sectionId in courses_progress.progress) {
-      const lessons = courses_progress.progress[sectionId];
+    for (const sectionId in course_progress.progress) {
+      const lessons = course_progress.progress[sectionId];
       for (const lessonId in lessons) {
         totalLessons++;
         if (lessons[lessonId]!.ended) {
@@ -57,6 +73,13 @@ export default async function Certificate({ params: { courseSlug } }: { params: 
         course={course}
         full_name={full_name}
       />
+      {notesSum != 0 && (
+        <NotesSection
+          notes={notes}
+          courseName={course.name}
+          notesSum={notesSum}
+        />
+      )}
       <SuggestedCourses
         heading='Czujesz **niedosyt**?'
         paragraph='Wybraliśmy dla Ciebie kurs, dzięki któremu Twoje umiejętności wskoczą na **wyższy poziom!**'
@@ -103,6 +126,13 @@ const query = async (slug: string): Promise<QueryProps> => {
         _id,
         name,
         "slug": slug.current,
+        chapters[] {
+          chapterName,
+          lessons[]-> {
+            _id,
+            name
+          },
+        },
       },
       ${SuggestedCourses_Query}
     }`,
@@ -114,10 +144,68 @@ const query = async (slug: string): Promise<QueryProps> => {
 
   if (!res.data!.courses_progress.some((el) => el.course_id === data.course._id)) return notFound();
 
+  const course_progress = res.data!.courses_progress.find((el) => el.course_id === data.course._id)!;
+
+  const notes = mapNotes(course_progress, data.course);
+
   return {
     course: data.course,
-    courses_progress: res.data!.courses_progress.find((el) => el.course_id === data.course._id)!,
+    course_progress,
     suggestedCourses: data.suggestedCourses,
     full_name: res.data!.full_name,
+    notes,
+    notesSum: sumNotesCharacters(notes),
   };
 };
+
+function mapNotes(course_progress: CoursesProgress, course: QueryProps['course']) {
+  const notes: QueryProps['notes'] = [];
+
+  for (const sectionId in course_progress.progress) {
+    const lessons = course_progress.progress[sectionId];
+    for (const lessonId in lessons) {
+      const lesson = lessons[lessonId];
+      if (lesson?.notes && lesson.notes.length > 10) {
+        const chapters = course.chapters;
+        if (chapters) {
+          for (const chapter of chapters) {
+            for (const chapterLesson of chapter.lessons) {
+              if (chapterLesson._id === lessonId) {
+                const note = notes.find((note) => note.chapterName === chapter.chapterName);
+                if (note) {
+                  note.lessons.push({
+                    name: chapterLesson.name,
+                    notes: lesson.notes,
+                  });
+                } else {
+                  notes.push({
+                    chapterName: chapter.chapterName,
+                    lessons: [
+                      {
+                        name: chapterLesson.name,
+                        notes: lesson.notes,
+                      },
+                    ],
+                  });
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return notes;
+}
+
+function sumNotesCharacters(notes: QueryProps['notes']) {
+  let sum = 0;
+
+  for (const note of notes) {
+    for (const lesson of note.lessons) {
+      sum += lesson.notes.length;
+    }
+  }
+
+  return sum;
+}
