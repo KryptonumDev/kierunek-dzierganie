@@ -1,4 +1,7 @@
 export const formatBytes = (bytes: number) => {
+  if (typeof bytes !== 'number') {
+    return;
+  }
   const KB = bytes / 1024;
   const MB = KB / 1024;
   if (MB >= 1) {
