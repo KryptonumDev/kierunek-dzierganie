@@ -12,9 +12,9 @@ export default function Certificate({
   authorName: string;
 }) {
   Font.register({
-    family: 'CityStreetwear',
+    family: 'Calligraffitti',
     format: 'truetype',
-    fonts: [{ src: '/fonts/CityStreetwear-Regular.ttf' }],
+    fonts: [{ src: '/fonts/Calligraffitti-Regular.ttf' }],
   });
 
   Font.register({
@@ -35,9 +35,9 @@ export default function Certificate({
     certificateHeading: { paddingBottom: '64px', fontSize: '28px' },
     section: { color: '#53423c', textAlign: 'center', width: '80%', alignSelf: 'center' },
     courseName: { padding: '10px 10px 11px 10px', backgroundColor: '#faf4f0', marginBottom: '32px', fontSize: '18px' },
-    fullName: { padding: '6px', border: '1px solid #EFE8E7', fontSize: '30px' },
+    fullName: { padding: '6px', border: '1px solid #EFE8E7', fontSize: '30px', fontFamily: 'Calligraffitti' },
     quote: { color: '#53423c', textAlign: 'center', width: '80%', alignSelf: 'center', position: 'relative' },
-    //cityStreetwear: { fontFamily: 'CityStreetwear' },
+    calligraffitti: { fontFamily: 'Calligraffitti' },
   });
 
   return (
@@ -50,9 +50,11 @@ export default function Certificate({
         <View style={styles.section}>
           <RoseIcon />
           <Text style={styles.icon}>
-            Kierunek <Text>Dzierganie</Text>
+            Kierunek <Text style={styles.calligraffitti}>Dzierganie</Text>
           </Text>
-          <Text style={styles.certificateHeading}>Certyfikat ukończenia kursu</Text>
+          <Text style={styles.certificateHeading}>
+            <Text style={styles.calligraffitti}>Certyfikat</Text> ukończenia kursu
+          </Text>
         </View>
         <View style={styles.quote}>
           <Text style={styles.courseName}>{courseName}</Text>
