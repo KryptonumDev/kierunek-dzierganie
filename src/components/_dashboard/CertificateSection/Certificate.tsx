@@ -3,16 +3,21 @@ import React from 'react';
 import { Document, Font, Page, Path, StyleSheet, Svg, Text, View } from '@react-pdf/renderer';
 
 export default function Certificate({ courseName, full_name }: { courseName: string; full_name: string }) {
+  // Font.register({
+  //   family: 'CityStreetwear',
+  //   format: 'truetype',
+  //   fonts: [{ src: '/fonts/CityStreetwear-Regular.ttf' }],
+  // });
   Font.register({
-    family: 'Roboto',
-    src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-light-webfont.ttf',
+    family: 'Lato',
+    fonts: [{ src: '/fonts/Lato-Light.ttf' }],
   });
 
   const styles = StyleSheet.create({
     page: {
       backgroundColor: '#fdfbf8',
       padding: '85px 41px 0px 41px',
-      fontFamily: 'Roboto',
+      fontFamily: 'Lato',
       fontSize: '18px',
       lineHeight: '150%',
       position: 'relative',
@@ -23,6 +28,7 @@ export default function Certificate({ courseName, full_name }: { courseName: str
     courseName: { padding: '10px 10px 11px 10px', backgroundColor: '#faf4f0', marginBottom: '32px', fontSize: '18px' },
     fullName: { padding: '6px', border: '1px solid #EFE8E7', fontSize: '30px' },
     quote: { color: '#53423c', textAlign: 'center', width: '80%', alignSelf: 'center', position: 'relative' },
+    //cityStreetwear: { fontFamily: 'CityStreetwear' },
   });
 
   return (
@@ -34,7 +40,9 @@ export default function Certificate({ courseName, full_name }: { courseName: str
       >
         <View style={styles.section}>
           <RoseIcon />
-          <Text style={styles.icon}>Kierunek Dzierganie</Text>
+          <Text style={styles.icon}>
+            Kierunek <Text>Dzierganie</Text>
+          </Text>
           <Text style={styles.certificateHeading}>Certyfikat ukończenia kursu</Text>
         </View>
         <View style={styles.quote}>
@@ -82,7 +90,7 @@ export default function Certificate({ courseName, full_name }: { courseName: str
               fontSize: '14px',
             }}
           >
-            Data TODO
+            {new Date().toLocaleDateString('pl-PL')}
           </Text>
         </View>
       </Page>

@@ -5,14 +5,14 @@ import { type NotesSectionTypes } from './NotesSection.types';
 
 export default function Notes({ notes, courseName }: NotesSectionTypes) {
   Font.register({
-    family: 'Roboto',
-    src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-light-webfont.ttf',
+    family: 'Lato',
+    src: '/fonts/Lato-Light.ttf',
   });
 
   const styles = StyleSheet.create({
     page: {
       backgroundColor: '#fdfbf8',
-      fontFamily: 'Roboto',
+      fontFamily: 'Lato',
       fontSize: '18px',
       padding: '85px 41px 0px 41px',
       display: 'flex',
