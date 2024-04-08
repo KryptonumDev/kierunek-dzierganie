@@ -7,7 +7,7 @@ import type { CertificateSectionTypes } from './CertificateSection.types';
 import { useEffect, useState } from 'react';
 import { PDFDownloadLink, pdf } from '@react-pdf/renderer';
 const CertificateSection = ({ course, full_name }: CertificateSectionTypes) => {
-  if (full_name == null) full_name = 'Anonim';
+  if (full_name == null) full_name = 'Tutaj będzie twoje imię i nazwisko jak dodasz go w ustawieniach';
 
   const [pdfSize, setPdfSize] = useState(0);
 
