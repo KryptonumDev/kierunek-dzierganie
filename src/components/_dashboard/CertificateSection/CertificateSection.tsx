@@ -17,13 +17,14 @@ const CertificateSection = ({ course, full_name, authorName }: CertificateSectio
         <Certificate
           courseName={course.name}
           full_name={full_name}
+          authorName={authorName}
         />
       ).toBlob();
       setPdfSize(blob.size);
     };
 
     generatePdfBlob();
-  }, [course, full_name]);
+  }, [course, full_name, authorName]);
 
   const parsedCertificateName = `Certyfikat-${course.name}-${full_name}.pdf`
     .replace(/ /g, '-')
@@ -32,23 +33,34 @@ const CertificateSection = ({ course, full_name, authorName }: CertificateSectio
 
   return (
     <section className={styles['CertificateSection']}>
-      <div className={styles.icon}>
-        <CertificateIcon />
-      </div>
-      <PDFDownloadLink
-        className={`${styles.link} link`}
-        fileName={parsedCertificateName}
-        document={
-          <Certificate
-            courseName={course.name}
-            full_name={full_name}
-            authorName={authorName}
-          />
-        }
-      >
-        {parsedCertificateName}
-        <span className={styles.fileSize}>{` (${formatBytes(pdfSize)})`}</span>
-      </PDFDownloadLink>
+      {pdfSize ? (
+        <>
+          <div className={styles.icon}>
+            <CertificateIcon />
+          </div>
+          <PDFDownloadLink
+            className={`${styles.link} link`}
+            fileName={parsedCertificateName}
+            document={
+              <Certificate
+                courseName={course.name}
+                full_name={full_name}
+                authorName={authorName}
+              />
+            }
+          >
+            {parsedCertificateName}
+            <span className={styles.fileSize}>{` (${formatBytes(pdfSize)})`}</span>
+          </PDFDownloadLink>
+        </>
+      ) : (
+        <>
+          <div className={styles.icon}>
+            <CertificateIcon />
+          </div>
+          <span>Ładowanie...</span>
+        </>
+      )}
     </section>
   );
 };

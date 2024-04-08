@@ -26,33 +26,55 @@ const NotesSection = ({ notes, courseName, notesSum }: NotesSectionTypes) => {
 
   return (
     <section className={styles['NotesSection']}>
-      <header>
-        <h2>
-          Pobierz wszystkie <strong>notatki z kursu</strong>
-        </h2>
-        <p>
-          Masz zapisane <span>{notesSum}</span> znaków w notatkach! <strong>Gratulujemy</strong>. Niżej możesz pobrać
-          wszystkie notatki, by mieć je pod ręką.
-        </p>
-      </header>
-      <div className={styles.wrapper}>
-        <div className={styles.icon}>
-          <NotesIcon />
-        </div>
-        <PDFDownloadLink
-          className={`${styles.link} link`}
-          fileName='Notatki-z-kursu.pdf'
-          document={
-            <Notes
-              notes={notes}
-              courseName={courseName}
-            />
-          }
-        >
-          Notatki-z-kursu.pdf
-          <span className={styles.fileSize}>{` (${formatBytes(pdfSize)})`}</span>
-        </PDFDownloadLink>
-      </div>
+      {pdfSize ? (
+        <>
+          <header>
+            <h2>
+              Pobierz wszystkie <strong>notatki z kursu</strong>
+            </h2>
+            <p>
+              Masz zapisane <span>{notesSum}</span> znaków w notatkach! <strong>Gratulujemy</strong>. Niżej możesz
+              pobrać wszystkie notatki, by mieć je pod ręką.
+            </p>
+          </header>
+          <div className={styles.wrapper}>
+            <div className={styles.icon}>
+              <NotesIcon />
+            </div>
+            <PDFDownloadLink
+              className={`${styles.link} link`}
+              fileName='Notatki-z-kursu.pdf'
+              document={
+                <Notes
+                  notes={notes}
+                  courseName={courseName}
+                />
+              }
+            >
+              Notatki-z-kursu.pdf
+              <span className={styles.fileSize}>{` (${formatBytes(pdfSize)})`}</span>
+            </PDFDownloadLink>
+          </div>
+        </>
+      ) : (
+        <>
+          <header>
+            <h2>
+              Pobierz wszystkie <strong>notatki z kursu</strong>
+            </h2>
+            <p>
+              Masz zapisane <span>{notesSum}</span> znaków w notatkach! <strong>Gratulujemy</strong>. Niżej możesz
+              pobrać wszystkie notatki, by mieć je pod ręką.
+            </p>
+          </header>
+          <div className={styles.wrapper}>
+            <div className={styles.icon}>
+              <NotesIcon />
+            </div>
+            <span>Ładowanie...</span>
+          </div>
+        </>
+      )}
     </section>
   );
 };
