@@ -4,11 +4,31 @@ import { formatBytes } from '@/utils/format-bytes';
 import Certificate from './Certificate';
 import styles from './CertificateSection.module.scss';
 import type { CertificateSectionTypes } from './CertificateSection.types';
-import { PDFDownloadLink } from '@react-pdf/renderer';
+import { useEffect, useState } from 'react';
+import { PDFDownloadLink, pdf } from '@react-pdf/renderer';
 const CertificateSection = ({ course, full_name }: CertificateSectionTypes) => {
-  if (full_name == null) full_name = 'Janusz Tracz';
+  if (full_name == null) full_name = 'Anonim';
 
-  const parsedCertificateName = `Certyfikat-${course.name}-${full_name}.pdf`.replace(/ /g, '-').toLowerCase();
+  const [pdfSize, setPdfSize] = useState(0);
+
+  useEffect(() => {
+    const generatePdfBlob = async () => {
+      const blob = await pdf(
+        <Certificate
+          courseName={course.name}
+          full_name={full_name}
+        />
+      ).toBlob();
+      setPdfSize(blob.size);
+    };
+
+    generatePdfBlob();
+  }, [course, full_name]);
+
+  const parsedCertificateName = `Certyfikat-${course.name}-${full_name}.pdf`
+    .replace(/ /g, '-')
+    .toLowerCase()
+    .replace(/^(.)/, (match) => match.toUpperCase());
 
   return (
     <section className={styles['CertificateSection']}>
@@ -16,7 +36,7 @@ const CertificateSection = ({ course, full_name }: CertificateSectionTypes) => {
         <CertificateIcon />
       </div>
       <PDFDownloadLink
-        className='link'
+        className={`${styles.link} link`}
         fileName={parsedCertificateName}
         document={
           <Certificate
@@ -26,7 +46,7 @@ const CertificateSection = ({ course, full_name }: CertificateSectionTypes) => {
         }
       >
         {parsedCertificateName}
-        <span className={styles.fileSize}>{` (${formatBytes(12000)})`}</span>
+        <span className={styles.fileSize}>{` (${formatBytes(pdfSize)})`}</span>
       </PDFDownloadLink>
     </section>
   );
