@@ -8,6 +8,11 @@ export default function Notes({ notes, courseName }: NotesSectionTypes) {
     family: 'Lato',
     src: '/fonts/Lato-Light.ttf',
   });
+  Font.register({
+    family: 'Calligraffitti',
+    format: 'truetype',
+    fonts: [{ src: '/fonts/Calligraffitti-Regular.ttf' }],
+  });
 
   const styles = StyleSheet.create({
     page: {
@@ -24,6 +29,7 @@ export default function Notes({ notes, courseName }: NotesSectionTypes) {
     chapterName: { fontSize: '18px', paddingBottom: '10px' },
     name: { fontSize: '16px', paddingBottom: '10px' },
     notes: { border: '1px solid #EFE8E7', padding: '6px', fontSize: '14px', borderRadius: '4px' },
+    calligraffitti: { fontFamily: 'Calligraffitti' },
   });
 
   return (
@@ -35,7 +41,9 @@ export default function Notes({ notes, courseName }: NotesSectionTypes) {
       >
         <View style={styles.section}>
           <RoseIcon />
-          <Text style={styles.title}>Kierunek Dzierganie</Text>
+          <Text style={styles.title}>
+            Kierunek <Text style={styles.calligraffitti}>Dzierganie</Text>
+          </Text>
           <Text>{`Notatki z kursu ${courseName}`}</Text>
         </View>
         {notes.map(({ lessons, chapterName }, index: number) => (
