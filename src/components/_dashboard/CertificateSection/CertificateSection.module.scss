@@ -14,13 +14,12 @@
     justify-self: center;
   }
 
-  .fileSize {
-    font-weight: 300;
-    font-style: italic;
-    color: var(--primary-600);
-  }
-
   .link {
     width: fit-content;
+    .fileSize {
+      font-weight: 300;
+      font-style: italic;
+      color: var(--primary-600);
+    }
   }
 }

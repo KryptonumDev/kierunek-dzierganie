@@ -1,4 +1,11 @@
 .NotesSection {
+  .wrapper {
+    display: grid;
+    align-items: center;
+    gap: clamp(12px, calc(16vw/7.68), 24px);
+    justify-content: center;
+  }
+
   header {
     text-align: center;
     display: grid;
@@ -30,15 +37,15 @@
     width: fit-content;
     border-radius: 4px;
     justify-self: center;
+  }
+
+  .link {
+    width: fit-content;
 
     .fileSize {
       font-weight: 300;
       font-style: italic;
       color: var(--primary-600);
     }
-  }
-
-  .link {
-    width: fit-content;
   }
 }
