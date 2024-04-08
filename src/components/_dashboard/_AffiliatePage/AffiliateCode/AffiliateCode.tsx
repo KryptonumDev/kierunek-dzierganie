@@ -1,12 +1,10 @@
 import Markdown from '@/components/ui/markdown';
-import Button from '@/components/ui/Button';
 import styles from './AffiliateCode.module.scss';
 import CopyToClipboard from '@/components/ui/CopyToClipboard';
 import type { AffiliateCodeTypes } from './AffiliateCode.types';
+import Subscribe from '../TextSection/_Subscribe';
 
-const prettifyCode = (code: string) => code.replace(/(\d{3})(\d{3})/, '$1 $2');
-
-const AffiliateCode = ({ heading, paragraph, isSubscribed, code }: AffiliateCodeTypes) => {
+const AffiliateCode = ({ heading, paragraph, isSubscribed, code, userId }: AffiliateCodeTypes) => {
   return (
     <section className={styles['AffiliateCode']}>
       <div className={styles['max-width']}>
@@ -16,19 +14,12 @@ const AffiliateCode = ({ heading, paragraph, isSubscribed, code }: AffiliateCode
           <div className={styles.code}>
             <p className={styles.paragraph}>Twój kod promocyjny to:</p>
             <div className={styles.box}>
-              <p>{prettifyCode(code.toString())}</p>
-              <CopyToClipboard copy={prettifyCode(code.toString())} />
+              <p>{code}</p>
+              <CopyToClipboard copy={code} />
             </div>
           </div>
         ) : (
-          <>
-            <Button
-              type='button'
-              className={styles.cta}
-            >
-              Świetnie! Generuję kod
-            </Button>
-          </>
+          <Subscribe userId={userId}>Świetnie! Generuję kod</Subscribe>
         )}
       </div>
     </section>

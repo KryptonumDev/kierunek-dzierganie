@@ -31,7 +31,6 @@ const query = async (): Promise<QueryProps> => {
       `
         id,
         left_handed,
-        email,
         billing_data,
         avatar_url
       `
@@ -41,5 +40,5 @@ const query = async (): Promise<QueryProps> => {
 
   if (!data) throw new Error('No data found');
 
-  return data;
+  return {...data, email: user!.email!};
 };

@@ -4,10 +4,10 @@ import { formatNumberToSpaces } from '@/utils/format-number-to-spaces';
 import type { BalanceTypes } from './Balance.types';
 
 const paragraph = (balance: number) =>
-  `Masz już ${formatNumberToSpaces(balance)} wirtualnych złotówek. Gdy dodasz produkt do koszyka, możesz zapłacić **zarówno zwykłymi, jak i wirtualnymi**.`;
+  `Masz już ${formatNumberToSpaces(balance ?? 0)} wirtualnych złotówek. Gdy dodasz produkt do koszyka, możesz zapłacić **zarówno zwykłymi, jak i wirtualnymi**.`;
 
 const Balance = ({ heading, balance, name }: BalanceTypes) => {
-  heading = heading.replace('${name}', name);
+  heading = heading.replace(' ${name}', name ? ` ${name}` : '');
 
   return (
     <section className={styles['Balance']}>
