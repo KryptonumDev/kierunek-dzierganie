@@ -6,7 +6,7 @@ import styles from './CertificateSection.module.scss';
 import type { CertificateSectionTypes } from './CertificateSection.types';
 import { useEffect, useState } from 'react';
 import { PDFDownloadLink, pdf } from '@react-pdf/renderer';
-const CertificateSection = ({ course, full_name }: CertificateSectionTypes) => {
+const CertificateSection = ({ course, full_name, authorName }: CertificateSectionTypes) => {
   if (full_name == null) full_name = 'Tutaj będzie twoje imię i nazwisko jak dodasz go w ustawieniach';
 
   const [pdfSize, setPdfSize] = useState(0);
@@ -42,6 +42,7 @@ const CertificateSection = ({ course, full_name }: CertificateSectionTypes) => {
           <Certificate
             courseName={course.name}
             full_name={full_name}
+            authorName={authorName}
           />
         }
       >

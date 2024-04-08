@@ -4,4 +4,5 @@ export type CertificateSectionTypes = {
     slug: string;
   };
   full_name: string;
+  authorName: string;
 };

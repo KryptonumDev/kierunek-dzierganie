@@ -17,6 +17,10 @@ interface QueryProps {
     _id: string;
     name: string;
     slug: string;
+    author: {
+      name: string;
+      surname: string;
+    };
     chapters: {
       chapterName: string;
       lessons: {
@@ -36,10 +40,12 @@ interface QueryProps {
     }[];
   }[];
   notesSum: number;
+  authorName: string;
 }
 
 export default async function Certificate({ params: { courseSlug } }: { params: { courseSlug: string } }) {
-  const { course, course_progress, suggestedCourses, full_name, notes, notesSum }: QueryProps = await query(courseSlug);
+  const { course, course_progress, suggestedCourses, full_name, notes, notesSum, authorName }: QueryProps =
+    await query(courseSlug);
 
   const completionPercentage = (() => {
     let totalLessons = 0;
@@ -72,6 +78,7 @@ export default async function Certificate({ params: { courseSlug } }: { params: 
       <CertificateSection
         course={course}
         full_name={full_name}
+        authorName={authorName}
       />
       {notesSum != 0 && (
         <NotesSection
@@ -104,7 +111,7 @@ const query = async (slug: string): Promise<QueryProps> => {
     .select(
       `
         id,
-        full_name,
+        billing_data->firstName,
         courses_progress (
           id,
           course_id,
@@ -114,10 +121,11 @@ const query = async (slug: string): Promise<QueryProps> => {
       `
     )
     .eq('id', user!.id)
-    .returns<{ id: string; full_name: string; courses_progress: CoursesProgress[] }[]>()
+    .returns<{ id: string; firstName: string; courses_progress: CoursesProgress[] }[]>()
     .single();
 
   const ownedCourses = res.data?.courses_progress.map((el) => el.course_id);
+  ownedCourses ?? notFound();
 
   const data: QueryProps = await sanityFetch({
     query: /* groq */ `
@@ -125,6 +133,10 @@ const query = async (slug: string): Promise<QueryProps> => {
       "course": *[_type == "course" && slug.current == $slug][0]{
         _id,
         name,
+        author -> {
+          name,
+          surname
+        },
         "slug": slug.current,
         chapters[] {
           chapterName,
@@ -152,9 +164,10 @@ const query = async (slug: string): Promise<QueryProps> => {
     course: data.course,
     course_progress,
     suggestedCourses: data.suggestedCourses,
-    full_name: res.data!.full_name,
+    full_name: res.data!.firstName,
     notes,
     notesSum: sumNotesCharacters(notes),
+    authorName: `${data.course.author.name || ''} ${data.course.author.surname || ''}`,
   };
 };
 

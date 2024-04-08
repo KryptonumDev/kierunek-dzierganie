@@ -2,12 +2,21 @@
 import React from 'react';
 import { Document, Font, Page, Path, StyleSheet, Svg, Text, View } from '@react-pdf/renderer';
 
-export default function Certificate({ courseName, full_name }: { courseName: string; full_name: string }) {
-  // Font.register({
-  //   family: 'CityStreetwear',
-  //   format: 'truetype',
-  //   fonts: [{ src: '/fonts/CityStreetwear-Regular.ttf' }],
-  // });
+export default function Certificate({
+  courseName,
+  full_name,
+  authorName,
+}: {
+  courseName: string;
+  full_name: string;
+  authorName: string;
+}) {
+  Font.register({
+    family: 'CityStreetwear',
+    format: 'truetype',
+    fonts: [{ src: '/fonts/CityStreetwear-Regular.ttf' }],
+  });
+
   Font.register({
     family: 'Lato',
     fonts: [{ src: '/fonts/Lato-Light.ttf' }],
@@ -71,7 +80,7 @@ export default function Certificate({ courseName, full_name }: { courseName: str
               fontSize: '14px',
             }}
           >
-            Imię TODO
+            {authorName}
           </Text>
           <Text
             style={{ width: '37.5%', position: 'absolute', bottom: -100, right: 0, color: '#9A827A', fontSize: '12px' }}
