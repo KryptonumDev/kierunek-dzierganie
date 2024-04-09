@@ -21,6 +21,7 @@ import LargeImage, { LargeImage_Query } from '../LargeImage';
 import ArticleNavigation from '../ArticleNavigation';
 import { type PortableContentTypes } from './PortableContent.types';
 import ArticleGreetings, { type ArticleGreetingsTypes, ArticleGreetings_Query } from '../ArticleGreetings';
+import VideoSection, { type VideoSectionTypes, VideoSection_Query } from '../VideoSection';
 
 export default function PortableContent({ data, previousBlog, nextBlog }: PortableContentTypes) {
   const components = {
@@ -37,6 +38,7 @@ export default function PortableContent({ data, previousBlog, nextBlog }: Portab
       ProcessShowcase: ({ value }: { value: ProcessShowcaseTypes }) => <ProcessShowcase {...value} />,
       QuoteSection: ({ value }: { value: QuoteSectionTypes }) => <QuoteSection {...value} />,
       ConversationShowcase: ({ value }: { value: ConversationShowcaseTypes }) => <ConversationShowcase {...value} />,
+      VideoSection: ({ value }: { value: VideoSectionTypes }) => <VideoSection {...value} />,
     },
     block: {
       h2: ({ value }: { value: [] }) => (
@@ -119,6 +121,7 @@ export const PortableContent_Query = /* groq */ `
     ${LargeImage_Query}
     ${ArticleGreetings_Query}
     ${Block_Query}
+    ${VideoSection_Query}
   },`;
 
 const BulletList = () => (
