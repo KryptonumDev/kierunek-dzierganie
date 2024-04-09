@@ -28,7 +28,7 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
           },
           {
             name,
-            path: `/kursy-szydelkowania/produkt/${slug}`,
+            path: `/kursy-szydelkowania/${slug}`,
           },
         ]}
         visible={true}
@@ -60,7 +60,7 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
 export default Product;
 
 export async function generateMetadata({ params: { slug } }: { params: { slug: string } }) {
-  return await QueryMetadata('product', `/kursy-szydelkowania/produkt/${slug}`, slug);
+  return await QueryMetadata('product', `/kursy-szydelkowania/${slug}`, slug);
 }
 
 const query = async (slug: string): Promise<ProductPageQueryProps> => {

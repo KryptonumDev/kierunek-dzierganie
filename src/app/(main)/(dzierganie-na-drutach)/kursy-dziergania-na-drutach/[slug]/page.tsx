@@ -12,17 +12,19 @@ const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) =
   const { name, _id, type, variants, price, discount, featuredVideo, countInStock, gallery, parameters, description } =
     await query(slug);
 
+  console.log(type);
+
   return (
     <>
       <Breadcrumbs
         data={[
           {
             name: 'Dzerganie na drutach',
-            path: '/kursy-dziergania-na-drutach/',
+            path: '/kursy-dziergania-na-drutach',
           },
           {
             name,
-            path: `/kursy-dziergania-na-drutach/produkt/${slug}`,
+            path: `/kursy-dziergania-na-drutach/${slug}`,
           },
         ]}
         visible={true}
@@ -41,7 +43,6 @@ const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) =
           gallery,
         }}
       />
-
       <Informations tabs={['Opis', 'Parametry']}>
         <Description data={description} />
         {parameters?.length > 0 && <Parameters parameters={parameters} />}
@@ -53,7 +54,7 @@ const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) =
 export default LandingPage;
 
 export async function generateMetadata({ params: { slug } }: { params: { slug: string } }) {
-  return await QueryMetadata('product', `/kursy-dziergania-na-drutach/produkt/${slug}`, slug);
+  return await QueryMetadata('product', `/kursy-dziergania-na-drutach/${slug}`, slug);
 }
 
 const query = async (slug: string): Promise<ProductPageQueryProps> => {

@@ -28,7 +28,7 @@ const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) =
           },
           {
             name,
-            path: `/produkty-do-dziergania/produkt/${slug}`,
+            path: `/produkty-do-dziergania/${slug}`,
           },
         ]}
         visible={true}
@@ -60,7 +60,7 @@ const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) =
 export default LandingPage;
 
 export async function generateMetadata({ params: { slug } }: { params: { slug: string } }) {
-  return await QueryMetadata('product', `/kursy-dziergania-na-drutach/produkt/${slug}`, slug);
+  return await QueryMetadata('product', `/kursy-dziergania-na-drutach/${slug}`, slug);
 }
 
 const query = async (slug: string): Promise<ProductPageQueryProps> => {
