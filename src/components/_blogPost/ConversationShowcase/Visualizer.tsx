@@ -7,7 +7,8 @@ import styles from './ConversationShowcase.module.scss';
 export default function Visualizer({ audioFile }: { audioFile: { asset: { url: string } } }) {
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
+  const [currentTime, setCurrentTime] = useState<number>(0);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -32,6 +33,22 @@ export default function Visualizer({ audioFile }: { audioFile: { asset: { url: s
     };
   }, []);
 
+  useEffect(() => {
+    const audioElement = audioRef.current;
+    if (audioElement && audioBlob) {
+      const handleLoadedMetadata = () => {
+        setHasLoaded(true);
+      };
+
+      audioElement.src = URL.createObjectURL(audioBlob);
+      audioElement.addEventListener('loadedmetadata', handleLoadedMetadata);
+
+      return () => {
+        audioElement.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      };
+    }
+  }, [audioBlob]);
+
   const handlePlayPause = () => {
     if (audioRef.current) {
       if (isPlaying) {
@@ -47,45 +64,41 @@ export default function Visualizer({ audioFile }: { audioFile: { asset: { url: s
 
   return (
     <div className={styles.cloud}>
-      {audioBlob ? (
+      <audio
+        ref={audioRef}
+        controls
+        src={audioFile.asset.url}
+        style={{ display: 'none' }}
+      />
+      {hasLoaded ? (
         <div className={styles.visualizer}>
           <button onClick={handlePlayPause}>{isPlaying ? '<Pause />' : <Play />}</button>
-          <audio
-            ref={audioRef}
-            controls
-            src={audioFile.asset.url}
-            style={{ display: 'none' }}
-          />
           <div className={styles.audioVisualizer}>
-            <AudioVisualizer
-              blob={audioBlob}
-              width={372}
-              height={42}
-              barWidth={2}
-              gap={4}
-              barColor={'#E5D8D4'}
-              barPlayedColor={'#766965'}
-              currentTime={currentTime || 0}
-            />
+            {audioBlob && (
+              <AudioVisualizer
+                blob={audioBlob}
+                width={372}
+                height={42}
+                barWidth={2}
+                gap={4}
+                barColor={'#E5D8D4'}
+                barPlayedColor={'#766965'}
+                currentTime={currentTime || 0}
+              />
+            )}
           </div>
-          {audioRef.current?.duration ? (
-            <div className={styles.controls}>
-              {currentTime && (
-                <>
-                  <p>
-                    {String(Math.floor(currentTime / 60)).padStart(2, '00')}:
-                    {String(Math.floor(currentTime % 60)).padStart(2, '00')}
-                  </p>
-                  <p>
-                    {String(Math.floor(audioRef.current.duration / 60)).padStart(2, '00')}:
-                    {String(Math.floor(audioRef.current.duration % 60)).padStart(2, '00')}
-                  </p>
-                </>
-              )}
-            </div>
-          ) : (
-            ''
-          )}
+          <div className={styles.controls}>
+            <>
+              <p>
+                {String(Math.floor(currentTime / 60)).padStart(2, '00')}:
+                {String(Math.floor(currentTime % 60)).padStart(2, '00')}
+              </p>
+              <p>
+                {String(Math.floor((audioRef.current?.duration ?? 0) / 60)).padStart(2, '00')}:
+                {String(Math.floor((audioRef.current?.duration ?? 0) % 60)).padStart(2, '00')}
+              </p>
+            </>
+          </div>
         </div>
       ) : (
         <div className={styles.loading}>Ładowanie...</div>
