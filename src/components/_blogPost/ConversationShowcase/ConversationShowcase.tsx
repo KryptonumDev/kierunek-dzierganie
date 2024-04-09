@@ -22,7 +22,7 @@ const ConversationShowcase = ({ list, recipient, sender }: ConversationShowcaseT
               <div className={styles.recipient}>
                 <Img
                   data={recipient.img}
-                  sizes=''
+                  sizes='48px'
                 />
                 <Markdown.h4>{recipient.name}</Markdown.h4>
               </div>
@@ -31,7 +31,7 @@ const ConversationShowcase = ({ list, recipient, sender }: ConversationShowcaseT
                 <Markdown.h4>{sender.name}</Markdown.h4>
                 <Img
                   data={sender.img}
-                  sizes=''
+                  sizes='48px'
                 />
               </div>
             )}
