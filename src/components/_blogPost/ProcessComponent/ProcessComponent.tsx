@@ -4,7 +4,6 @@ import type { ProcessComponentTypes } from './ProcessComponent.types';
 import Markdown from '@/components/ui/markdown';
 
 const ProcessComponent = ({ list }: ProcessComponentTypes) => {
-  console.log(list);
   return (
     <div className={styles['ProcessComponent']}>
       {list.map(({ img, paragraph }, index) => (

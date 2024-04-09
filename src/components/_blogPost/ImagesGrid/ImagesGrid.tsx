@@ -4,7 +4,6 @@ import type { ImagesGridTypes } from './ImagesGrid.types';
 import Markdown from '@/components/ui/markdown';
 
 const ImagesGrid = ({ list }: ImagesGridTypes) => {
-  console.log(list);
   return (
     <div className={styles['ImagesGrid']}>
       {list.map(({ img, paragraph }, index) => (
