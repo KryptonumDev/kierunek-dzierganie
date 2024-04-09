@@ -3,10 +3,35 @@ import Content from './_Content';
 import Markdown from '@/components/ui/markdown';
 import { Img_Query } from '@/components/ui/image';
 import type { QueryProps } from './Header.types';
+import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
+import { getServiceAccess } from '@/utils/supabase-admin';
+import { cookies } from 'next/headers';
 
 const Header = async () => {
   const { global, cart } = await query();
   const nav_annotation = <Markdown>{global.nav_Annotation ?? ''}</Markdown>;
+
+  const supabase = createServerActionClient({ cookies });
+  const adminbase = await getServiceAccess();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data } = await adminbase
+    .from('profiles')
+    .select(
+      `
+      id,
+      billing_data,
+      shipping_data,
+      virtual_wallet (
+        amount
+      )
+    `
+    )
+    .eq('id', user?.id)
+    .single();
 
   return (
     <Content
@@ -19,6 +44,11 @@ const Header = async () => {
       ChevronBackIcon={ChevronBackIcon}
       CrossIcon={CrossIcon}
       cart={cart}
+      userEmail={user?.email}
+      shipping={data?.shipping_data}
+      billing={data?.billing_data}
+      // @ts-expect-error - virtual_wallet is not array, bug in supabase
+      virtualWallet={data?.virtual_wallet?.amount}
     />
   );
 };

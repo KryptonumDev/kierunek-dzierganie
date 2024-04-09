@@ -4,15 +4,23 @@ import SummaryAside from './_SummaryAside';
 import PersonalData from './_PersonalData';
 import { useEffect, useState } from 'react';
 import Authorization from './_Authorization';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 const stepContent = (props: MappingProps) => ({
   1: <Authorization {...props} />,
   2: <PersonalData {...props} />,
 });
 
-export default function Checkout({ goToCart, fetchedItems, showCheckout, setShowCheckout, CrossIcon }: Props) {
-  const supabase = createClientComponentClient();
+export default function Checkout({
+  goToCart,
+  fetchedItems,
+  showCheckout,
+  setShowCheckout,
+  CrossIcon,
+  userEmail,
+  billing,
+  shipping,
+  virtualWallet,
+}: Props) {
   const [step, setStep] = useState(1);
 
   const [input, setInput] = useState<InputState>({
@@ -21,39 +29,30 @@ export default function Checkout({ goToCart, fetchedItems, showCheckout, setShow
     amount: 0,
     needDelivery: false,
     shipping: {
-      firstName: '',
-      address: '',
-      city: '',
-      country: '',
-      postcode: '',
-      email: '',
-      phone: '',
-      company: '',
+      firstName: shipping?.firstName ?? '',
+      address1: shipping?.address1 ?? '',
+      city: shipping?.city ?? '',
+      country: shipping?.country ?? '',
+      postcode: shipping?.postcode ?? '',
+      phone: shipping?.phone ?? '',
     },
     billing: {
-      nip: '',
-      firstName: '',
-      address: '',
-      city: '',
-      country: '',
-      postcode: '',
-      email: '',
-      phone: '',
-      company: '',
+      nip: billing?.nip ?? '',
+      firstName: billing?.firstName ?? '',
+      address1: billing?.address1 ?? '',
+      city: billing?.city ?? '',
+      country: billing?.country ?? '',
+      postcode: billing?.postcode ?? '',
+      email: userEmail ?? '',
+      phone: billing?.phone ?? '',
+      company: billing?.company ?? '',
+      invoiceType: billing?.invoiceType ?? 'Osoba prywatna',
     },
   });
 
   useEffect(() => {
-    const getInitialStep = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (user) setStep(2);
-    };
-
-    getInitialStep();
-  }, [setStep, supabase]);
+    if (userEmail) setStep(2);
+  }, []);
 
   useEffect(() => {
     if (!fetchedItems?.length) {

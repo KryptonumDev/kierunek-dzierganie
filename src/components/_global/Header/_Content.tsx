@@ -8,6 +8,7 @@ import Annotation from './_Annotation';
 import Nav from './_Nav';
 import { useCartItems } from '@/utils/useCartItems';
 import type { QueryProps } from './Header.types';
+import type { Discount } from '@/global/types';
 
 const Cart = dynamic(() => import('./_Cart'), { ssr: false });
 const Checkout = dynamic(() => import('./Checkout'), { ssr: false });
@@ -22,10 +23,16 @@ const Content = ({
   CloseIcon,
   CrossIcon,
   cart: { highlighted_products },
+  userEmail,
+  shipping,
+  billing,
+  virtualWallet,
 }: QueryProps) => {
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [usedDiscount, setUsedDiscount] = useState<Discount | null>(null);
+  const [usedVirtualMoney, setUsedVirtualMoney] = useState<number | null>(null);
   const { cart, fetchedItems, updateItemQuantity, removeItem } = useCartItems();
 
   return (
@@ -39,6 +46,10 @@ const Content = ({
           setShowCart(true);
           setShowCheckout(false);
         }}
+        userEmail={userEmail}
+        shipping={shipping}
+        billing={billing}
+        virtualWallet={virtualWallet}
       />
       <Cart
         goToCheckout={() => {
@@ -55,6 +66,11 @@ const Content = ({
         updateItemQuantity={updateItemQuantity}
         removeItem={removeItem}
         highlighted_products={highlighted_products}
+        virtualWallet={virtualWallet}
+        setUsedVirtualMoney={setUsedVirtualMoney}
+        usedVirtualMoney={usedVirtualMoney}
+        usedDiscount={usedDiscount}
+        setUsedDiscount={setUsedDiscount}
       />
       <a
         href='#main'

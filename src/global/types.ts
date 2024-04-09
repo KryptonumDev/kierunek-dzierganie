@@ -317,3 +317,10 @@ export type Shipping = {
   postcode: string;
   phone: string;
 };
+
+export type Discount = {
+  amount: number;
+  code: string;
+  id: string;
+  type: string;
+};

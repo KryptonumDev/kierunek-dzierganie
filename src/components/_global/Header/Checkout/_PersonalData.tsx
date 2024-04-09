@@ -38,7 +38,7 @@ const generateNewInput = (data: FormValues, input: InputState) => {
     billingDifferentThanShipping: !data.shippingSameAsBilling,
     shipping: {
       firstName: data.shippingFullName,
-      address: data.shippingAddress,
+      address1: data.shippingAddress,
       city: data.shippingCity,
       country: data.shippingCountry,
       postcode: data.shippingZipCode,
@@ -49,13 +49,14 @@ const generateNewInput = (data: FormValues, input: InputState) => {
     billing: {
       nip: data.nip,
       firstName: data.fullName,
-      address: data.address,
+      address1: data.address,
       city: data.city,
       country: data.country,
       postcode: data.zipCode,
       email: data.email,
       phone: data.phoneNumber,
       company: data.companyName,
+      invoiceType: data.invoiceType,
     },
   };
 };
@@ -66,14 +67,14 @@ const generateDefaults = (input: InputState) => {
 
     fullName: input.billing.firstName,
     email: input.billing.email,
-    address: input.billing.address,
+    address: input.billing.address1,
     city: input.billing.city,
     country: input.billing.country,
     zipCode: input.billing.postcode,
     phoneNumber: input.billing.phone,
 
     shippingFullName: input.shipping.firstName,
-    shippingAddress: input.shipping.address,
+    shippingAddress: input.shipping.address1,
     shippingCity: input.shipping.city,
     shippingCountry: input.shipping.country,
     shippingZipCode: input.shipping.postcode,

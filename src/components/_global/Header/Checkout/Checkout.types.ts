@@ -1,4 +1,4 @@
-import type { ImgType } from '@/global/types';
+import type { Billing, ImgType, Shipping } from '@/global/types';
 import type { useCartItems } from '../Header.types';
 
 export type Props = {
@@ -7,31 +7,18 @@ export type Props = {
   CrossIcon: React.ReactNode;
   fetchedItems: useCartItems['fetchedItems'];
   goToCart: () => void;
+  userEmail?: string;
+  shipping?: Shipping;
+  billing?: Billing;
+  virtualWallet: number;
 };
 
 export type InputState = {
   firmOrder: boolean;
   shippingSameAsBilling: boolean;
-  shipping: {
-    firstName: string;
-    address: string;
-    city: string;
-    country: string;
-    postcode: string;
+  shipping: Shipping;
+  billing: Billing & {
     email: string;
-    phone: string;
-    company: string;
-  };
-  billing: {
-    nip: string;
-    firstName: string;
-    address: string;
-    city: string;
-    country: string;
-    postcode: string;
-    email: string;
-    phone: string;
-    company: string;
   };
   products?: {
     array: {
