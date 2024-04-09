@@ -3,6 +3,8 @@ import localFont from 'next/font/local';
 import Analitics from '@/global/Analitics';
 import { LOCALE, THEME_COLOR } from '@/global/constants';
 import SchemaOrganization from '@/global/Schema/Ogranization';
+import { isProduction } from '@/utils/is-production';
+import CookieConsent from '@/components/_global/CookieConsent';
 import type { Viewport } from 'next';
 
 const Lato = localFont({
@@ -47,6 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className={`${Lato.className} ${CityStreetWear.variable}`}>
         {children}
+        {!isProduction && <CookieConsent />}
         <Analitics />
       </body>
     </html>
