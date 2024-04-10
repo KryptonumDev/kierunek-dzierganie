@@ -12,6 +12,7 @@ type QueryTypes = {
   facebook?: string;
   youtube?: string;
   linkedin?: string;
+  pinterest?: string;
 };
 
 const SchemaOrganization = async () => {
@@ -23,9 +24,10 @@ const SchemaOrganization = async () => {
     facebook = '',
     youtube = '',
     linkedin = '',
+    pinterest = '',
   } = await query();
 
-  const socialMediaUrls = [instagram, facebook, youtube, linkedin].filter(Boolean);
+  const socialMediaUrls = [instagram, facebook, youtube, linkedin, pinterest].filter(Boolean);
 
   return (
     <script
@@ -76,6 +78,7 @@ const query = async (): Promise<QueryTypes> => {
         facebook,
         youtube,
         linkedin,
+        pinterest,
       }
     `,
     tags: ['global'],
