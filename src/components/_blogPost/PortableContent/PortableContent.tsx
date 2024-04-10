@@ -22,6 +22,8 @@ import ArticleNavigation from '../ArticleNavigation';
 import { type PortableContentTypes } from './PortableContent.types';
 import ArticleGreetings, { type ArticleGreetingsTypes, ArticleGreetings_Query } from '../ArticleGreetings';
 import VideoSection, { type VideoSectionTypes, VideoSection_Query } from '../VideoSection';
+import { generateTableOfContent } from '@/utils/generate-table-of-content';
+import TableOfContent from '../TableOfContent/TableOfContent';
 
 export default function PortableContent({ data, previousBlog, nextBlog }: PortableContentTypes) {
   const components = {
@@ -83,16 +85,21 @@ export default function PortableContent({ data, previousBlog, nextBlog }: Portab
     },
   };
 
+  const content = generateTableOfContent(data);
+
   return (
     <section className={styles.PortableContent}>
-      <PortableText
-        value={data}
-        components={components as unknown as Partial<PortableTextReactComponents>}
-      />
-      <ArticleNavigation
-        previousBlog={previousBlog}
-        nextBlog={nextBlog}
-      />
+      <TableOfContent content={content} />
+      <div>
+        <PortableText
+          value={data}
+          components={components as unknown as Partial<PortableTextReactComponents>}
+        />
+        <ArticleNavigation
+          previousBlog={previousBlog}
+          nextBlog={nextBlog}
+        />
+      </div>
     </section>
   );
 }

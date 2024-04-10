@@ -1,6 +1,24 @@
 .PortableContent {
   display: grid;
   gap: clamp(20px, calc(20vw/7.68), 28px);
+  grid-template-columns: 400px auto;
+  align-items: flex-start;
+
+  @media(max-width: 999px) {
+    grid-template-columns: 1fr;
+  }
+
+  nav {
+    position: sticky;
+    top: 121px;
+    width: 400px;
+
+    @media (max-width: 999px) {
+      position: relative;
+      top: 0;
+      width: 100%;
+    }
+  }
 
   .orderedList {
     display: grid;
@@ -44,11 +62,13 @@
         background: var(--primary-300);
       }
     }
+
     li:nth-child(2n) {
       &::before {
         background: var(--primary-400);
       }
     }
+
     li:nth-child(3n) {
       &::before {
         background: var(--primary-500);
