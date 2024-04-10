@@ -34,6 +34,7 @@
     "swiper": "^11.0.6"
   },
   "devDependencies": {
+    "@types/gtag.js": "^0.0.19",
     "@types/node": "^20.11.5",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",

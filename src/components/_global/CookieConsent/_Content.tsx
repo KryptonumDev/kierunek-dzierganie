@@ -9,7 +9,7 @@ import type { ContentProps } from './CookieConsent.types';
 
 declare global {
   interface Window {
-    dataLayer: unknown[];
+    dataLayer?: unknown[];
   }
 }
 
