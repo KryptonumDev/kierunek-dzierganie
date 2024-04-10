@@ -1,12 +1,10 @@
 import CertificateHero from '@/components/_dashboard/CertificateHero';
 import CertificateSection from '@/components/_dashboard/CertificateSection';
 import NotesSection from '@/components/_dashboard/NotesSection';
-import SuggestedCourses, {
-  SuggestedCoursesTypes,
-  SuggestedCourses_Query,
-} from '@/components/_dashboard/SuggestedCourses';
+import SuggestedCourses from '@/components/_dashboard/SuggestedCourses';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
-import type { CoursesProgress } from '@/global/types';
+import { PRODUCT_CARD_QUERY } from '@/global/constants';
+import type { CoursesProgress, ProductCard } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
@@ -30,7 +28,7 @@ interface QueryProps {
     }[];
   };
   course_progress: CoursesProgress;
-  suggestedCourses: SuggestedCoursesTypes['courses'];
+  suggestedCourse: ProductCard;
   full_name: string;
   notes: {
     chapterName: string;
@@ -44,7 +42,7 @@ interface QueryProps {
 }
 
 export default async function Certificate({ params: { courseSlug } }: { params: { courseSlug: string } }) {
-  const { course, course_progress, suggestedCourses, full_name, notes, notesSum, authorName }: QueryProps =
+  const { course, course_progress, suggestedCourse, full_name, notes, notesSum, authorName }: QueryProps =
     await query(courseSlug);
 
   const completionPercentage = (() => {
@@ -90,7 +88,7 @@ export default async function Certificate({ params: { courseSlug } }: { params: 
       <SuggestedCourses
         heading='Czujesz **niedosyt**?'
         paragraph='Wybraliśmy dla Ciebie kurs, dzięki któremu Twoje umiejętności wskoczą na **wyższy poziom!**'
-        courses={suggestedCourses}
+        course={suggestedCourse}
       />
     </div>
   );
@@ -146,7 +144,9 @@ const query = async (slug: string): Promise<QueryProps> => {
           },
         },
       },
-      ${SuggestedCourses_Query}
+      "suggestedCourse": *[_type=="product" && type=="digital" && !(course->_id in $courses)][0]{
+        ${PRODUCT_CARD_QUERY}
+      }
     }`,
     params: {
       slug: slug,
@@ -163,7 +163,7 @@ const query = async (slug: string): Promise<QueryProps> => {
   return {
     course: data.course,
     course_progress,
-    suggestedCourses: data.suggestedCourses,
+    suggestedCourse: data.suggestedCourse,
     full_name: res.data!.firstName,
     notes,
     notesSum: sumNotesCharacters(notes),

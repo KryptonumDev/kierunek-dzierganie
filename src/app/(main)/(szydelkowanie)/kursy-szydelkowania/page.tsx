@@ -5,8 +5,9 @@ import HeroSimple, { HeroSimple_Query } from '@/components/_global/HeroSimple';
 import StepsGrid, { StepsGrid_Query } from '@/components/_global/StepsGrid';
 import LatestBlogEntries, { LatestBlogEntries_Query } from '@/components/_global/LatestBlogEntries';
 import type { CrochetingPage_QueryTypes } from '../page.types';
-import ProductsListing, { ProductsListing_Query } from '@/components/_global/ProductsListing';
+import ProductsListing from '@/components/_global/ProductsListing';
 import Markdown from '@/components/ui/markdown';
+import { PRODUCT_CARD_QUERY } from '@/global/constants';
 
 const page = { name: 'Szydełkowanie', path: '/kursy-szydelkowania' };
 
@@ -53,7 +54,7 @@ const query = async (): Promise<CrochetingPage_QueryTypes> => {
         "listing_text": listing_Paragraph,
       },
       "products": *[_type== 'product' && visible == true && basis == 'crocheting' && type in ['digital', 'bundle']][0...10]{
-        ${ProductsListing_Query}
+        ${PRODUCT_CARD_QUERY}
       }
     }
     `,

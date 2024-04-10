@@ -67,7 +67,6 @@ export const pageUrls: { knitting: string; crocheting: string } = {
  */
 export const POSTS_PER_PAGE = 12;
 
-
 /**
  * Declaration of enum course badge styles.
  * @constant
@@ -90,7 +89,6 @@ export const courseComplexityEnum = {
   },
 };
 
-
 /**
  * Declaration of enum order statuses.
  * @constant
@@ -105,3 +103,49 @@ export const statusesSwitch = {
   'PARCEL GENERATED': 'Przesyłka wygenerowana',
   SENDED: 'Wysłano',
 };
+
+export const PRODUCT_CARD_QUERY = `
+  _id,
+  price,
+  discount,
+  name,
+  'slug': slug.current,
+  basis,
+  type,
+  _type,
+  course->{
+    complexity
+  },
+  gallery[0]{
+    asset -> {
+      url,
+      altText,
+      metadata {
+        lqip,
+        dimensions {
+          width,
+          height,
+        }
+      }
+    }
+  },
+  variants[]{
+    _key,
+    name,
+    price,
+    discount,
+    gallery[0]{
+      asset -> {
+        url,
+        altText,
+        metadata {
+          lqip,
+          dimensions {
+            width,
+            height,
+          }
+        }
+      }
+    }
+  }
+`;
