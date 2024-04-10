@@ -90,7 +90,7 @@ export default function PortableContent({ data, previousBlog, nextBlog, links }:
   return (
     <section className={styles.PortableContent}>
       <TableOfContent content={content} />
-      <div>
+      <div className={styles.blogContent}>
         <PortableText
           value={data}
           components={components as unknown as Partial<PortableTextReactComponents>}

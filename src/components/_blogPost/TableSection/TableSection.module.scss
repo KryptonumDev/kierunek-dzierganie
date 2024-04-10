@@ -1,6 +1,7 @@
 .TableSection {
   display: grid;
   row-gap: clamp(4px, calc(12vw/7.68), 12px);
+  margin-bottom: 48px;
 
   .item {
     display: grid;

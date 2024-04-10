@@ -8,6 +8,8 @@
   padding-right: clamp(16px, calc(24vw/7.68), 32px);
   border-radius: 4px;
 
+  margin: clamp(64px, calc(80vw/7.68), 144px) 0px;
+
   @media (max-width: 768px) {
     grid-template-columns: 1fr 3fr;
   }

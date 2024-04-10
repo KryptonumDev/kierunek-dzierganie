@@ -2,6 +2,7 @@
   display: grid;
   gap: clamp(48px, calc(48vw/7.68), 64px);
   counter-reset: counter;
+  margin: clamp(16px, calc(32vw/7.68), 64px) 0px;
 
   .item {
     display: grid;

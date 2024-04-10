@@ -20,6 +20,11 @@
     }
   }
 
+  .blogContent {
+    display: grid;
+    gap: 16px;
+  }
+
   .orderedList {
     display: grid;
     list-style-type: none;
