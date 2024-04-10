@@ -24,6 +24,7 @@ interface QueryProps {
       lessons: {
         name: string;
         _id: string;
+        title: string;
       }[];
     }[];
   };
@@ -140,7 +141,8 @@ const query = async (slug: string): Promise<QueryProps> => {
           chapterName,
           lessons[]-> {
             _id,
-            name
+            name,
+            title
           },
         },
       },
@@ -187,7 +189,7 @@ function mapNotes(course_progress: CoursesProgress, course: QueryProps['course']
                 const note = notes.find((note) => note.chapterName === chapter.chapterName);
                 if (note) {
                   note.lessons.push({
-                    name: chapterLesson.name,
+                    name: chapterLesson.title,
                     notes: lesson.notes,
                   });
                 } else {
@@ -195,7 +197,7 @@ function mapNotes(course_progress: CoursesProgress, course: QueryProps['course']
                     chapterName: chapter.chapterName,
                     lessons: [
                       {
-                        name: chapterLesson.name,
+                        name: chapterLesson.title,
                         notes: lesson.notes,
                       },
                     ],
