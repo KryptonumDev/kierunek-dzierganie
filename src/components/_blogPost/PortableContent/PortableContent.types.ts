@@ -8,4 +8,8 @@ export type PortableContentTypes = {
     slug: string;
     name: string;
   };
+  links: {
+    facebook: string;
+    pinterest: string;
+  };
 };

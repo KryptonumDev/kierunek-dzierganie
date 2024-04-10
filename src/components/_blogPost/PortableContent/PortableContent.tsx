@@ -24,8 +24,9 @@ import ArticleGreetings, { type ArticleGreetingsTypes, ArticleGreetings_Query } 
 import VideoSection, { type VideoSectionTypes, VideoSection_Query } from '../VideoSection';
 import { generateTableOfContent } from '@/utils/generate-table-of-content';
 import TableOfContent from '../TableOfContent/TableOfContent';
+import ShareArticle from '../ShareArticle';
 
-export default function PortableContent({ data, previousBlog, nextBlog }: PortableContentTypes) {
+export default function PortableContent({ data, previousBlog, nextBlog, links }: PortableContentTypes) {
   const components = {
     types: {
       ImageBadge: ({ value }: { value: ImageBadgeTypes }) => <ImageBadge {...value} />,
@@ -86,7 +87,6 @@ export default function PortableContent({ data, previousBlog, nextBlog }: Portab
   };
 
   const content = generateTableOfContent(data);
-
   return (
     <section className={styles.PortableContent}>
       <TableOfContent content={content} />
@@ -99,6 +99,7 @@ export default function PortableContent({ data, previousBlog, nextBlog }: Portab
           previousBlog={previousBlog}
           nextBlog={nextBlog}
         />
+        <ShareArticle {...links} />
       </div>
     </section>
   );

@@ -141,6 +141,10 @@ export type BlogPostQueryProps = {
     slug: string;
     name: string;
   };
+  links: {
+    facebook: string;
+    pinterest: string;
+  } 
 };
 
 export type BlogCategoryPageQueryProps = {
