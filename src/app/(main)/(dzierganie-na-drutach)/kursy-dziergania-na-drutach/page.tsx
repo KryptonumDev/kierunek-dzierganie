@@ -5,8 +5,9 @@ import HeroSimple, { HeroSimple_Query } from '@/components/_global/HeroSimple';
 import StepsGrid, { StepsGrid_Query } from '@/components/_global/StepsGrid';
 import LatestBlogEntries, { LatestBlogEntries_Query } from '@/components/_global/LatestBlogEntries';
 import type { KnittingPage_QueryTypes } from '../page.types';
-import ProductsListing, { ProductsListing_Query } from '@/components/_global/ProductsListing';
+import ProductsListing from '@/components/_global/ProductsListing';
 import Markdown from '@/components/ui/markdown';
+import { PRODUCT_CARD_QUERY } from '@/global/constants';
 
 const page = { name: 'Dzierganie na drutach', path: '/kursy-dziergania-na-drutach' };
 
@@ -54,7 +55,7 @@ const query = async (): Promise<KnittingPage_QueryTypes> => {
         "listing_text": listing_Paragraph,
       },
       "products": *[_type== 'product' && visible == true && basis == 'knitting' && type in ['digital', 'bundle']][0...10]{
-        ${ProductsListing_Query}
+        ${PRODUCT_CARD_QUERY}
       }
     }
     `,

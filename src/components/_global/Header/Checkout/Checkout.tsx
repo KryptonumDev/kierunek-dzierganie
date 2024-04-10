@@ -19,7 +19,7 @@ export default function Checkout({
   userEmail,
   billing,
   shipping,
-  virtualWallet,
+  // virtualWallet,
 }: Props) {
   const [step, setStep] = useState(1);
 

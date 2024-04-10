@@ -1,3 +1,7 @@
 .CertificateHero {
-  
+  display: grid;
+  gap: clamp(16px, calc(28vw/7.68), 36px);
+  padding: clamp(24px, calc(32vw/7.68), 48px) clamp(16px, calc(28vw/7.68), 64px) clamp(16px, calc(28vw/7.68), 48px) clamp(16px, calc(28vw/7.68), 64px);
+  text-align: center;
+  background: var(--primary-200);
 }

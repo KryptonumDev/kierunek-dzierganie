@@ -62,7 +62,7 @@ export async function POST(request: Request) {
       timeLimit: 60,
       encoding: Encoding.UTF8,
       city: input.billing.city,
-      address: input.billing.address,
+      address: input.billing.address1,
       zip: input.billing.postcode,
       client: input.billing.firstName,
     };
