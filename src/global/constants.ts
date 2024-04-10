@@ -1,3 +1,5 @@
+import { Img_Query } from '@/components/ui/image';
+
 /**
  * Global declaration of themeColor in HEX format.
  * @constant
@@ -117,17 +119,7 @@ export const PRODUCT_CARD_QUERY = `
     complexity
   },
   gallery[0]{
-    asset -> {
-      url,
-      altText,
-      metadata {
-        lqip,
-        dimensions {
-          width,
-          height,
-        }
-      }
-    }
+    ${Img_Query}
   },
   variants[]{
     _key,
@@ -135,17 +127,7 @@ export const PRODUCT_CARD_QUERY = `
     price,
     discount,
     gallery[0]{
-      asset -> {
-        url,
-        altText,
-        metadata {
-          lqip,
-          dimensions {
-            width,
-            height,
-          }
-        }
-      }
-    }
-  }
+      ${Img_Query}
+    },
+  },
 `;

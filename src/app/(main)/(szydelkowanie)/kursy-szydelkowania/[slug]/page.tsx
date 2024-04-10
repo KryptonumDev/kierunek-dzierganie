@@ -8,6 +8,7 @@ import Informations from '@/components/_product/Informations';
 import Description, { Description_Query } from '@/components/_product/Description';
 import TableOfContent, { TableOfContent_Query } from '@/components/_product/TableOfContent';
 import type { ProductPageQueryProps, generateStaticParamsProps } from '@/global/types';
+import Package, { Package_Query } from '@/components/_product/Package';
 
 const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
   const {
@@ -23,6 +24,9 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
     parameters,
     description,
     course,
+    courses,
+    package_Heading,
+    package_Paragraph,
   } = await query(slug);
 
   const tabs = [];
@@ -59,6 +63,20 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
           gallery,
         }}
       />
+      {courses && (
+        <Package
+          product={{
+            name,
+            _id,
+            price,
+            discount,
+            featuredVideo,
+            countInStock,
+          }}
+          heading={package_Heading}
+          paragraph={package_Paragraph}
+        />
+      )}
       <Informations tabs={tabs}>
         {tabs.includes('Spis treści') && <TableOfContent chapters={course.chapters} />}
         {tabs.includes('Opis') && <Description data={description} />}
@@ -101,6 +119,7 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
             }
           }
         },
+        ${Package_Query}
         ${TableOfContent_Query}
         ${Description_Query}
         parameters[]{
