@@ -43,31 +43,20 @@ const Button = ({ data, children, href, className, ...props }: ButtonProps) => {
   );
 };
 
-const Ellipse = () => {
-  const id = 'ellipse-' + Math.random().toString(36).substring(2, 11);
-  return (
-    <svg
-      xmlns='http://www.w3.org/2000/svg'
-      width='51'
-      height='54'
-      fill='none'
-      className={styles.ellipse}
-    >
-      <mask
-        id={id}
-        fill='#fff'
-      >
-        <path d='M47.78 45.124a27 27 0 112.706-32.714l-.383.246a26.545 26.545 0 10-2.66 32.162l.337.306z'></path>
-      </mask>
-      <path
-        stroke='#53423C'
-        strokeWidth='1.5'
-        d='M47.78 45.124a27 27 0 112.706-32.714l-.383.246a26.545 26.545 0 10-2.66 32.162l.337.306z'
-        mask={`url(#${id})`}
-      ></path>
-    </svg>
-  );
-};
+const Ellipse = () => (
+  <svg
+    xmlns='http://www.w3.org/2000/svg'
+    width={50}
+    height={55}
+    fill='none'
+  >
+    <path
+      d='M49.691 13.437c-4.25-7.25-18.94-18.375-36.316-8.375C7.871 8.625-1.455 17.262.684 31.687 3 47.313 15.339 53.19 22.809 54.376c7.002 1.111 17.125 0 24.25-8.438'
+      stroke='#53423C'
+      strokeWidth={0.5}
+    />
+  </svg>
+);
 
 const Arrow = () => (
   <svg
