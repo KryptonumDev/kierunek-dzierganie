@@ -27,6 +27,9 @@ import TableOfContent from '../TableOfContent/TableOfContent';
 import ShareArticle from '../ShareArticle';
 
 export default function PortableContent({ data, previousBlog, nextBlog, links }: PortableContentTypes) {
+  
+  if (!data) return null;
+
   const components = {
     types: {
       ImageBadge: ({ value }: { value: ImageBadgeTypes }) => <ImageBadge {...value} />,
@@ -87,6 +90,7 @@ export default function PortableContent({ data, previousBlog, nextBlog, links }:
   };
 
   const content = generateTableOfContent(data);
+
   return (
     <section className={styles.PortableContent}>
       <TableOfContent content={content} />
@@ -114,7 +118,7 @@ const Block_Query = /* groq */ `
   },`;
 
 export const PortableContent_Query = /* groq */ `
-  content[] {
+  portableText[] {
     _type,
     ${ImageBadge_Query}
     ${ImagesGrid_Query}
