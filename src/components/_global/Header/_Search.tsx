@@ -1,8 +1,23 @@
 'use client';
+
 import { useEffect, useRef, useState } from 'react';
 import styles from './Header.module.scss';
 
 const Search = ({ SearchIcon, CloseIcon }: { SearchIcon: React.ReactNode; CloseIcon: React.ReactNode }) => {
+  async function getSearchResults(value: string) {
+    try {
+      const response = await fetch(`/api/search?search=${value}`, {
+        method: 'GET',
+      });
+      const responseData = await response.json();
+      console.log(responseData);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  let debounce: NodeJS.Timeout | null = null;
+
   const ref = useRef<HTMLInputElement>(null);
   const handleClear = () => {
     if (ref.current) {
@@ -12,10 +27,13 @@ const Search = ({ SearchIcon, CloseIcon }: { SearchIcon: React.ReactNode; CloseI
   };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (ref.current) {
-      if (e.target.value.length > 0) {
-        ref.current.dataset.searching = 'true';
+      if (e.target.value.length >= 3) {
+        if (debounce) clearTimeout(debounce);
+        debounce = setTimeout(() => {
+          getSearchResults(e.target.value);
+        }, 1000);
       } else {
-        ref.current.dataset.searching = 'false';
+        debounce = null;
       }
     }
   };

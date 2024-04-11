@@ -3,12 +3,12 @@ import { useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import styles from './Header.module.scss';
-// import Search from './_Search';
 import Annotation from './_Annotation';
 import Nav from './_Nav';
 import { useCartItems } from '@/utils/useCartItems';
 import type { QueryProps } from './Header.types';
 import type { Discount } from '@/global/types';
+import Search from './_Search';
 
 const Cart = dynamic(() => import('./_Cart'), { ssr: false });
 const Checkout = dynamic(() => import('./Checkout'), { ssr: false });
@@ -124,10 +124,10 @@ const Content = ({
             </li>
           </ul>
         </div>
-        {/* <Search
+        <Search
           SearchIcon={SearchIcon}
           CloseIcon={CloseIcon}
-        /> */}
+        />
       </header>
       <div
         onClick={() => {
