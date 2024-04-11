@@ -1,3 +1,4 @@
+import Components, { Components_Query } from '@/components/Components';
 import Hero, { Hero_Query } from '@/components/_blogPost/Hero';
 import PortableContent, { PortableContent_Query } from '@/components/_blogPost/PortableContent/PortableContent';
 import { ShareArticle_Query } from '@/components/_blogPost/ShareArticle';
@@ -6,7 +7,7 @@ import { type BlogPostQueryProps } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 
 export default async function BlogPostPage({ params: { slug } }: { params: { slug: string } }) {
-  const { hero, author, date, content, previousBlog, nextBlog, links } = await getData(slug);
+  const { hero, author, date, content, previousBlog, nextBlog, links, portableText } = await getData(slug);
 
   return (
     <>
@@ -16,11 +17,12 @@ export default async function BlogPostPage({ params: { slug } }: { params: { slu
         date={date}
       />
       <PortableContent
-        data={content}
+        data={portableText}
         previousBlog={previousBlog}
         nextBlog={nextBlog}
         links={links}
       />
+      <Components data={content} />
     </>
   );
 }
@@ -48,6 +50,7 @@ async function getData(slug: string) {
         "slug": slug.current,
         "name" : hero.heading
       },
+      ${Components_Query}
   }`,
     params: { slug },
     tags: ['BlogPost_Collection'],
