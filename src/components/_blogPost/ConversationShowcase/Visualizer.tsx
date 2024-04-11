@@ -72,7 +72,7 @@ export default function Visualizer({ audioFile }: { audioFile: { asset: { url: s
       />
       {hasLoaded ? (
         <div className={styles.visualizer}>
-          <button onClick={handlePlayPause}>{isPlaying ? '<Pause />' : <Play />}</button>
+          <button onClick={handlePlayPause}>{isPlaying ? <Pause /> : <Play />}</button>
           <div className={styles.audioVisualizer}>
             {audioBlob && (
               <AudioVisualizer
@@ -119,6 +119,25 @@ function Play() {
       <path
         fill='#766965'
         d='M21.788 11.127L8.28 2.863a1.5 1.5 0 00-2.075.517A1.487 1.487 0 006 4.13v16.525a1.495 1.495 0 001.5 1.488c.277 0 .548-.076.784-.22l13.503-8.263a1.481 1.481 0 000-2.532v-.001zM7.5 20.636V4.143l13.484 8.25L7.5 20.637z'
+      ></path>
+    </svg>
+  );
+}
+
+function Pause() {
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      width='24'
+      height='25'
+      fill='none'
+      viewBox='0 0 24 25'
+    >
+      <path
+        stroke='#766965'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        d='M7.25 4.893H10v15H7.25v-15zm6.75 0h2.75v15H14v-15z'
       ></path>
     </svg>
   );
