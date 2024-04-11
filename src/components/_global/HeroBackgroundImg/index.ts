@@ -5,7 +5,6 @@ export default HeroBackgroundImg;
 
 export const HeroBackgroundImg_Query = `
   _type == "HeroBackgroundImg" => {
-    _type,
     isReversed,
     heading,
     paragraph,

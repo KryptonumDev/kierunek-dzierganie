@@ -127,6 +127,7 @@ export type BlogPostQueryProps = {
     paragraph: string;
   };
   content: [];
+  portableText: [];
   author: {
     img: ImgType;
     heading: string;

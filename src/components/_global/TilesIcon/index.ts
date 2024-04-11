@@ -5,7 +5,6 @@ export default TilesIcon;
 
 export const TilesIcon_Query = `
   _type == "TilesIcon" => {
-    _type,
     heading,
     paragraph,
     list[] {
