@@ -21,6 +21,7 @@ const KnittingPage = async () => {
       listing_text,
     },
     products,
+    categories
   } = await query();
 
   const title = <Markdown.h2>{listing_title}</Markdown.h2>;
@@ -35,6 +36,8 @@ const KnittingPage = async () => {
         title={title}
         text={text}
         products={products}
+        categories={categories}
+        basis='/produkty-do-dziergania/'
       />
       <LatestBlogEntries {...LatestBlogEntriesData} />
     </>
@@ -56,6 +59,11 @@ const query = async (): Promise<KnittingPage_QueryTypes> => {
       },
       "products": *[_type== 'product' && visible == true && basis == 'knitting' && type in ['variable', 'physical']][0...10]{
         ${PRODUCT_CARD_QUERY}
+      },
+      "categories": *[_type == 'productCategory'][]{
+        name,
+        slug,
+        _id
       }
     }
     `,

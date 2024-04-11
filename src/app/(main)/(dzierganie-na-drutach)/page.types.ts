@@ -12,4 +12,9 @@ export type KnittingPage_QueryTypes = {
     listing_text: string;
   };
   products: ProductCard[];
+  categories: {
+    name: string;
+    slug: string;
+    _id: string;
+  }[];
 };
