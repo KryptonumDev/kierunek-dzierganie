@@ -9,7 +9,7 @@ import ProductsListing from '@/components/_global/ProductsListing';
 import Markdown from '@/components/ui/markdown';
 import { PRODUCT_CARD_QUERY } from '@/global/constants';
 
-const page = { name: 'Produkty do szydelkowania', path: '/produkty-do-szydelkowania' };
+const page = { name: 'Produkty do szydełkowania', path: '/produkty-do-szydelkowania' };
 
 const CrochetingPage = async () => {
   const {
@@ -21,7 +21,7 @@ const CrochetingPage = async () => {
       listing_text,
     },
     products,
-    categories
+    categories,
   } = await query();
 
   const title = <Markdown.h2>{listing_title}</Markdown.h2>;
