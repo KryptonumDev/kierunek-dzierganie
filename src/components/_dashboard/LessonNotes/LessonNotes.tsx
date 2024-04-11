@@ -49,7 +49,7 @@ const LessonNotes = ({ progress, currentChapter, currentLessonIndex }: LessonNot
         <Input
           textarea={true}
           label=''
-          placeholder='Napisz, coś ciekawego'
+          placeholder='Napisz coś ciekawego'
           rows={5}
           register={register('notes')}
           errors={errors}

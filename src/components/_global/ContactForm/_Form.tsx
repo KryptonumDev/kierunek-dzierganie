@@ -65,7 +65,7 @@ const Form = ({ aboveTheFold }: { aboveTheFold: boolean }) => {
         errors={errors}
       />
       <Input
-        label='Nr. telefonu (opcjonalnie)'
+        label='Nr telefonu (opcjonalnie)'
         type='tel'
         placeholder='_ _ _ - _ _ _ - _ _ _'
         register={register('tel', {
@@ -75,7 +75,7 @@ const Form = ({ aboveTheFold }: { aboveTheFold: boolean }) => {
       />
       <Input
         label='Temat wiadomości'
-        placeholder='Napisz co siedzi Ci w głowie'
+        placeholder='Napisz, co siedzi Ci w głowie:'
         textarea={true}
         register={register('message', {
           required: { value: true, message: 'Temat wiadomości jest wymagany' },
