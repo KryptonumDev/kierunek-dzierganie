@@ -168,23 +168,27 @@ export type Node = {
 };
 
 export type ProductPageQueryProps = {
-  name: string;
-  slug: string;
-  _id: string;
-  type: string;
-  variants: Array<ProductVariant>;
-  gallery?: Array<ImgType>;
-  featuredVideo?: string;
-  price?: number;
-  discount?: number;
-  countInStock?: number;
-  parameters: Array<{
+  product: {
     name: string;
-    value: string;
-  }>;
-  description: DescriptionTypes[];
-  course: TableOfContentTypes;
-} & generateMetadataProps;
+    slug: string;
+    _id: string;
+    type: string;
+    variants: Array<ProductVariant>;
+    gallery?: Array<ImgType>;
+    featuredVideo?: string;
+    price?: number;
+    discount?: number;
+    countInStock?: number;
+    parameters: Array<{
+      name: string;
+      value: string;
+    }>;
+    courses: ProductCard[];
+    description: DescriptionTypes[];
+    course: TableOfContentTypes;
+  };
+  card: ProductCard;
+};
 
 export type generateStaticParamsProps = {
   slug: string;

@@ -4,4 +4,5 @@ export type PackageTypes = {
   product: ProductCard;
   heading: string;
   paragraph: string;
+  courses: ProductCard[];
 };

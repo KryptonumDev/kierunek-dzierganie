@@ -12,8 +12,6 @@ const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) =
   const { name, _id, type, variants, price, discount, featuredVideo, countInStock, gallery, parameters, description } =
     await query(slug);
 
-  console.log(type);
-
   return (
     <>
       <Breadcrumbs

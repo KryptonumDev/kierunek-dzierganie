@@ -9,4 +9,30 @@
       margin-bottom: clamp(16px, calc(24vw / 7.68), 24px);
     }
   }
+
+  .list {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 136px;
+    position: relative;
+
+    >svg{
+      position: absolute;
+      top: -86px;
+      left: 286px;
+    }
+
+    > div {
+      height: fit-content;
+    }
+
+    .cards{
+      display: grid;
+      gap: 24px;
+
+      >p{
+        margin-bottom: 8px;
+      }
+    }
+  }
 }

@@ -1,9 +1,20 @@
 .productCard {
   text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
   position: relative;
+
+  &.horizontal{
+    display: grid;
+    grid-template-columns: 292fr 374fr;
+    gap: 24px;
+    text-align: left;
+
+    button{
+      margin-left: 0;
+    }
+  }
+
+  .data{
+  }
 
   h3{
     font-size: clamp(18px, calc(24vw/7.68), 24px);

@@ -9,30 +9,27 @@ import Description, { Description_Query } from '@/components/_product/Descriptio
 import TableOfContent, { TableOfContent_Query } from '@/components/_product/TableOfContent';
 import type { ProductPageQueryProps, generateStaticParamsProps } from '@/global/types';
 import Package, { Package_Query } from '@/components/_product/Package';
+import { PRODUCT_CARD_QUERY } from '@/global/constants';
 
 const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
   const {
-    name,
-    _id,
-    type,
-    variants,
-    price,
-    discount,
-    featuredVideo,
-    countInStock,
-    gallery,
-    parameters,
-    description,
-    course,
-    courses,
-    package_Heading,
-    package_Paragraph,
+    product: {
+      name,
+      _id,
+      type,
+      variants,
+      price,
+      discount,
+      featuredVideo,
+      countInStock,
+      gallery,
+      parameters,
+      description,
+      course,
+      courses,
+    },
+    card,
   } = await query(slug);
-
-  const tabs = [];
-  if (course) tabs.push('Spis treści');
-  if (description?.length > 0) tabs.push('Opis');
-  if (parameters?.length > 0) tabs.push('Parametry');
 
   return (
     <>
@@ -63,26 +60,22 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
           gallery,
         }}
       />
-      {courses && (
-        <Package
-          product={{
-            name,
-            _id,
-            price,
-            discount,
-            featuredVideo,
-            countInStock,
-          }}
-          heading={package_Heading}
-          paragraph={package_Paragraph}
-        />
-      )}
-      <Informations tabs={tabs}>
-        {tabs.includes('Spis treści') && <TableOfContent chapters={course.chapters} />}
-        {tabs.includes('Opis') && <Description data={description} />}
-        {tabs.includes('Parametry') && <Parameters parameters={parameters} />}
+      <Informations tabs={['Spis treści', 'Pakiet', 'Opis', 'Parametry']}>
+        {course && <TableOfContent chapters={course.chapters} />}
+        {courses && (
+          <Package
+            product={card}
+            heading={'Jeden pakiet – niezliczona ilość wiedzy'}
+            paragraph={
+              'Zdobądź niezbędne umiejętności i rozwijaj kreatywność z **pakietem kursów** – w korzystnej cenie!'
+            }
+            courses={courses}
+          />
+        )}
+        {description?.length > 0 && <Description data={description} />}
+        {parameters?.length > 0 && <Parameters parameters={parameters} />}
       </Informations>
-      <h2>Tutaj będzie opis produktu</h2>
+      {/* TODO: Add featured courses */}
     </>
   );
 };
@@ -96,7 +89,8 @@ export async function generateMetadata({ params: { slug } }: { params: { slug: s
 const query = async (slug: string): Promise<ProductPageQueryProps> => {
   const data = await sanityFetch<ProductPageQueryProps>({
     query: /* groq */ `
-      *[_type == 'product' && basis == 'crocheting' && type in ['digital', 'bundle'] && slug.current == $slug][0] {
+    {
+      "product": *[_type == 'product' && basis == 'crocheting' && type in ['digital', 'bundle'] && slug.current == $slug][0] {
         name,
         'slug': slug.current,
         _id,
@@ -151,12 +145,17 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
             value
           }
         }
+      },
+      "card": *[_type == 'product' && basis == 'crocheting' && type in ['digital', 'bundle'] && slug.current == $slug][0] {
+        ${PRODUCT_CARD_QUERY}
       }
+    }
     `,
     params: { slug },
     tags: ['product'],
   });
-  !data && notFound();
+
+  !data?.product && notFound();
   return data;
 };
 

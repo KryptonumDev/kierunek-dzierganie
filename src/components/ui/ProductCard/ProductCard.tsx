@@ -10,7 +10,7 @@ import { useCart } from 'react-use-cart';
 import { courseComplexityEnum, pageUrls } from '@/global/constants';
 import Link from 'next/link';
 
-const ProductCard = ({ data, inCart = false }: Props) => {
+const ProductCard = ({ data, inCart = false, horizontal }: Props) => {
   const { addItem } = useCart();
   const [buttonText, setButtonText] = useState(inCart ? 'Już w koszyku' : 'Dodaj do koszyka');
   const mainVariant = useMemo(() => {
@@ -53,51 +53,53 @@ const ProductCard = ({ data, inCart = false }: Props) => {
   }, [inCart, buttonText]);
 
   return (
-    <div className={styles['productCard']}>
+    <div className={`${styles['productCard']} ${horizontal ? styles['horizontal'] : ''}`}>
       <Link
-        href={`${pageUrls[data.basis]}/produkt/${data.slug}`}
+        href={`${pageUrls[data.basis]}/${data.slug}`}
         className={styles['link']}
       />
-      <div>
-        {mainVariant.image && (
-          <div className={styles['image-wrap']}>
-            {data.course?.complexity && (
-              <span
-                style={{
-                  color: courseComplexityEnum[data.course.complexity].color,
-                  backgroundColor: courseComplexityEnum[data.course.complexity].background,
-                }}
-                className={styles['badge']}
-              >
-                <span>{courseComplexityEnum[data.course.complexity].name}</span>
-              </span>
-            )}
-            <Img
-              data={mainVariant.image}
-              sizes='380px'
-            />
-          </div>
-        )}
-        <span>rating</span>
-        <h3 className={styles['names']}>{mainVariant.name}</h3>
-        <p
-          className={styles['price']}
-          dangerouslySetInnerHTML={{ __html: mainVariant.price }}
-        />
-      </div>
-      {mainVariant.type === 'variable' ? (
-        <Button href={`${pageUrls[data.basis]}/produkt/${data.slug}`}>Wybierz wariant</Button>
-      ) : (
-        <Button
-          disabled={buttonText !== 'Dodaj do koszyka'}
-          onClick={() => {
-            addItem({ quantity: 1, id: data._id, price: 0 });
-            setButtonText('Dodano do koszyka');
-          }}
-        >
-          {buttonText}
-        </Button>
+      {mainVariant.image && (
+        <div className={styles['image-wrap']}>
+          {data.course?.complexity && (
+            <span
+              style={{
+                color: courseComplexityEnum[data.course.complexity].color,
+                backgroundColor: courseComplexityEnum[data.course.complexity].background,
+              }}
+              className={styles['badge']}
+            >
+              <span>{courseComplexityEnum[data.course.complexity].name}</span>
+            </span>
+          )}
+          <Img
+            data={mainVariant.image}
+            sizes='380px'
+          />
+        </div>
       )}
+      <div className={styles['data']}>
+        <div>
+          <span>rating</span>
+          <h3 className={styles['names']}>{mainVariant.name}</h3>
+          <p
+            className={styles['price']}
+            dangerouslySetInnerHTML={{ __html: mainVariant.price }}
+          />
+        </div>
+        {mainVariant.type === 'variable' ? (
+          <Button href={`${pageUrls[data.basis]}/${data.slug}`}>Wybierz wariant</Button>
+        ) : (
+          <Button
+            disabled={buttonText !== 'Dodaj do koszyka'}
+            onClick={() => {
+              addItem({ quantity: 1, id: data._id, price: 0 });
+              setButtonText('Dodano do koszyka');
+            }}
+          >
+            {buttonText}
+          </Button>
+        )}
+      </div>
     </div>
   );
 };
