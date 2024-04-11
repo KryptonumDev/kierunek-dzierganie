@@ -6,16 +6,32 @@ import HeroPhysical from '@/components/_product/HeroPhysical';
 import Parameters from '@/components/_product/Parameters';
 import Informations from '@/components/_product/Informations';
 import Description, { Description_Query } from '@/components/_product/Description';
+import TableOfContent, { TableOfContent_Query } from '@/components/_product/TableOfContent';
 import type { ProductPageQueryProps, generateStaticParamsProps } from '@/global/types';
+import Package, { Package_Query } from '@/components/_product/Package';
 
 const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
-  const { name, _id, type, variants, price, discount, featuredVideo, countInStock, gallery, parameters, description } =
-    await query(slug);
+  const {
+    name,
+    _id,
+    type,
+    variants,
+    price,
+    discount,
+    featuredVideo,
+    countInStock,
+    gallery,
+    parameters,
+    description,
+    course,
+    courses,
+    package_Heading,
+    package_Paragraph,
+  } = await query(slug);
 
   const tabs = [];
-
+  if (course) tabs.push('Spis treści');
   if (description?.length > 0) tabs.push('Opis');
-
   if (parameters?.length > 0) tabs.push('Parametry');
 
   return (
@@ -47,8 +63,22 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
           gallery,
         }}
       />
-
+      {courses && (
+        <Package
+          product={{
+            name,
+            _id,
+            price,
+            discount,
+            featuredVideo,
+            countInStock,
+          }}
+          heading={package_Heading}
+          paragraph={package_Paragraph}
+        />
+      )}
       <Informations tabs={tabs}>
+        {tabs.includes('Spis treści') && <TableOfContent chapters={course.chapters} />}
         {tabs.includes('Opis') && <Description data={description} />}
         {tabs.includes('Parametry') && <Parameters parameters={parameters} />}
       </Informations>
@@ -89,12 +119,13 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
             }
           }
         },
+        ${Package_Query}
+        ${TableOfContent_Query}
         ${Description_Query}
         parameters[]{
           name,
           value,
         },
-
         variants[]{
           name,
           price,
