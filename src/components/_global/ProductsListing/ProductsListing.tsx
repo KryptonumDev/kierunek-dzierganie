@@ -4,7 +4,7 @@ import type { ProductsListingTypes } from './ProductsListing.types';
 import Filters from './_Filters';
 // import Pagination from '@/components/ui/Pagination';
 
-const ProductsListing = ({ title, text, products, categories, basis }: ProductsListingTypes) => {
+const ProductsListing = ({ title, text, products, categories, basis, courses }: ProductsListingTypes) => {
   return (
     <section
       id='produkty'
@@ -13,6 +13,7 @@ const ProductsListing = ({ title, text, products, categories, basis }: ProductsL
       {title}
       {text}
       <Filters
+        courses={courses}
         basis={basis}
         categories={categories}
       />

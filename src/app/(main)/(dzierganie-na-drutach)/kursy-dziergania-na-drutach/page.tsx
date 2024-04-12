@@ -38,6 +38,7 @@ const KnittingPage = async () => {
         products={products}
         categories={categories}
         basis='/kursy-dziergania-na-drutach/'
+        courses={true}
       />
       <LatestBlogEntries {...LatestBlogEntriesData} />
     </>

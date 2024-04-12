@@ -38,6 +38,7 @@ const CrochetingPage = async () => {
         products={products}
         categories={categories}
         basis='/kursy-szydelkowania/'
+        courses={true}
       />
       <LatestBlogEntries {...LatestBlogEntriesData} />
     </>

@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import Checkbox from '@/components/ui/Checkbox';
 
-export default function Filters({ basis, categories }: FiltersTypes) {
+export default function Filters({ basis, categories, courses }: FiltersTypes) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const newParams = new URLSearchParams(searchParams.toString());
@@ -84,12 +84,14 @@ export default function Filters({ basis, categories }: FiltersTypes) {
             </button>
           ))}
         </div>
-        <div>
-          <h3>Poziom trudności</h3>
-          <button onClick={() => handleComplexityClick('1')}>Dla początkujących</button>
-          <button onClick={() => handleComplexityClick('2')}>Dla średnio zaawansowanych</button>
-          <button onClick={() => handleComplexityClick('3')}>Dla zaawansowanych</button>
-        </div>
+        {courses && (
+          <div>
+            <h3>Poziom trudności</h3>
+            <button onClick={() => handleComplexityClick('1')}>Dla początkujących</button>
+            <button onClick={() => handleComplexityClick('2')}>Dla średnio zaawansowanych</button>
+            <button onClick={() => handleComplexityClick('3')}>Dla zaawansowanych</button>
+          </div>
+        )}
       </div>
       <div
         data-open={open}
