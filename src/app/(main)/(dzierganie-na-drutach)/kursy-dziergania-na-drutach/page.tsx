@@ -62,7 +62,7 @@ const query = async (): Promise<KnittingPage_QueryTypes> => {
       },
       "categories": *[_type == 'courseCategory'][]{
         name,
-        slug,
+        "slug": slug.current,
         _id
       }
     }
