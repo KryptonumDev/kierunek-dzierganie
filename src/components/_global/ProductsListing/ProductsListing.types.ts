@@ -5,6 +5,7 @@ export type ProductsListingTypes = {
   title: JSX.Element;
   text: JSX.Element;
   basis: string;
+  courses: boolean;
   categories: {
     name: string;
     slug: string;
@@ -14,6 +15,7 @@ export type ProductsListingTypes = {
 
 export type FiltersTypes = {
   basis: string;
+  courses: boolean;
   categories: {
     name: string;
     slug: string;

@@ -38,6 +38,7 @@ const CrochetingPage = async () => {
         products={products}
         categories={categories}
         basis='/produkty-do-szydelkowania/'
+        courses={false}
       />
       <LatestBlogEntries {...LatestBlogEntriesData} />
     </>
@@ -59,9 +60,9 @@ const query = async (): Promise<CrochetingPage_QueryTypes> => {
       "products": *[_type == 'product' && visible == true && basis == 'crocheting' && type in ['variable', 'physical']][0...10]{
         ${PRODUCT_CARD_QUERY}
       },
-      "categories": *[_type == 'courseCategory'][]{
+      "categories": *[_type == 'productCategory'][]{
         name,
-        slug,
+        "slug": slug.current,
         _id
       }
     }

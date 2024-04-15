@@ -38,6 +38,7 @@ const KnittingPage = async () => {
         products={products}
         categories={categories}
         basis='/produkty-do-dziergania/'
+        courses={false}
       />
       <LatestBlogEntries {...LatestBlogEntriesData} />
     </>
@@ -62,7 +63,7 @@ const query = async (): Promise<KnittingPage_QueryTypes> => {
       },
       "categories": *[_type == 'productCategory'][]{
         name,
-        slug,
+        "slug": slug.current,
         _id
       }
     }
