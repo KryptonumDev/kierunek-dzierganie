@@ -15,11 +15,11 @@
     gap: 16px;
   }
 
-  .list {
-    overflow-y: auto;
+  .unorderedList {
     max-height: 200px;
-    padding: 10px 10px 10px 24px;
+    overflow-y: auto;
     direction: rtl;
+    padding: 10px 10px 10px 24px;
 
     &::-webkit-scrollbar {
       width: 3px;
@@ -40,11 +40,6 @@
       direction: ltr;
     }
 
-    >a {
-      display: grid;
-      justify-self: flex-end;
-    }
-
     @media (max-width: 999px) {
       &::-webkit-scrollbar {
         width: 0px;
@@ -54,6 +49,7 @@
 
   .link {
     width: fit-content;
+    text-align: start;
   }
 
   .unorderedList {

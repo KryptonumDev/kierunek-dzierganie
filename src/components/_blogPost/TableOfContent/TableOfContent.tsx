@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 
 const TableOfContent = ({ content }: { content: Node[] }) => {
   const [scrollPercentage, setScrollPercentage] = useState<number>(0);
-  const contentRef = useRef<HTMLLIElement>(null);
+  const contentRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,12 +36,14 @@ const TableOfContent = ({ content }: { content: Node[] }) => {
           <strong>W artykule znajdziesz:</strong>
         </h2>
       </header>
-      <ul className={styles.unorderedList}>
+      <ul
+        className={styles.unorderedList}
+        ref={contentRef}
+      >
         {content.map(({ text, slug, subheadings }, index) => (
           <li
             key={index}
             className={styles.list}
-            ref={contentRef}
           >
             <Link
               href={`#${slug}`}
