@@ -79,7 +79,14 @@ const ProductCard = ({ data, inCart = false, horizontal }: Props) => {
       )}
       <div className={styles['data']}>
         <div>
-          <span>rating</span>
+          {data.course?.rating !== undefined && data.course.reviewsCount > 0 && (
+            <p className={styles['rating']}>
+              <Hearth />{' '}
+              <span>
+                <b>{data.course.rating}</b>/5 ({data.course.reviewsCount})
+              </span>
+            </p>
+          )}
           <h3 className={styles['names']}>{mainVariant.name}</h3>
           <p
             className={styles['price']}
@@ -105,3 +112,19 @@ const ProductCard = ({ data, inCart = false, horizontal }: Props) => {
 };
 
 export default ProductCard;
+
+const Hearth = () => (
+  <svg
+    xmlns='http://www.w3.org/2000/svg'
+    width='25'
+    height='23'
+    fill='none'
+  >
+    <path
+      stroke='#B4A29C'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      d='M13.378 19.691c2.61-.846 10.89-7.363 10.615-13.27C23.7.06 18.137 1.202 15.61 3.551c-3.09 2.87-5.359 8.365-3.457 9.048 2.353.844 2.465-1.361 1.986-2.794C13.55 8.039 8.684-1.293 3.107 2.303c-6.43 4.146 3.521 13.42 7.689 18.814.56.724 1.297.884 1.356 0'
+    />
+  </svg>
+);

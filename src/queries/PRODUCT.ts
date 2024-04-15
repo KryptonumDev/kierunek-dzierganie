@@ -8,7 +8,7 @@ export const PRODUCT = `
   type,
   _type,
   course -> {
-    complexity
+    complexity,
   },
   gallery[0]{
     asset -> {

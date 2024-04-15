@@ -31,7 +31,7 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
     },
     card,
   } = await query(slug);
-
+  console.log(course)
   return (
     <>
       <Breadcrumbs
@@ -125,12 +125,13 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
               lengthInMinutes,
             },
           },
-          "reviews": *[_type == 'courseReviewCollection' && references(^._id)]{
+          "reviews": *[_type == 'courseReviewCollection' && references(^._id)][0...10]{
             rating,
             review,
             nameOfReviewer,
             _id
-          }
+          },
+          "rating": math::avg(*[_type == 'courseReviewCollection' && references(^._id)]{rating}.rating)
         },
         parameters[]{
           name,

@@ -116,7 +116,9 @@ export const PRODUCT_CARD_QUERY = `
   type,
   _type,
   course->{
-    complexity
+    complexity,
+    "reviewsCount": count(*[_type == 'courseReviewCollection' && references(^._id)]),
+    "rating": math::avg(*[_type == 'courseReviewCollection' && references(^._id)]{rating}.rating)
   },
   gallery[0]{
     ${Img_Query}

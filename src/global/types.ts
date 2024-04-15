@@ -35,6 +35,8 @@ export type ProductCard = {
   gallery?: ImgType;
   course?: {
     complexity: 1 | 2 | 3;
+    reviewsCount: number;
+    rating: number;
   };
   variants: Array<{
     name: string;
