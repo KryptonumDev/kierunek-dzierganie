@@ -70,7 +70,7 @@ const Content = ({ CloseIcon, heading, paragraph, details }: ContentProps) => {
       acc[name as keyof CookiesObject] = 'granted';
       return acc;
     }, {} as CookiesObject);
-    setCookie('CookieConsent', JSON.stringify(cookies), 365);
+    setCookie('CookieConsent', JSON.stringify(cookies), 90);
     gtag('consent', 'update', {
       ad_personalization: 'granted',
       ad_storage: 'granted',
@@ -89,7 +89,7 @@ const Content = ({ CloseIcon, heading, paragraph, details }: ContentProps) => {
       acc[name as keyof CookiesObject] = 'denied';
       return acc;
     }, {} as CookiesObject);
-    setCookie('CookieConsent', JSON.stringify(cookies), 365);
+    setCookie('CookieConsent', JSON.stringify(cookies), 90);
     gtag('consent', 'update', {
       ad_personalization: 'denied',
       ad_storage: 'denied',
@@ -114,7 +114,7 @@ const Content = ({ CloseIcon, heading, paragraph, details }: ContentProps) => {
   };
 
   const acceptPart = () => {
-    setCookie('CookieConsent', JSON.stringify(activeCookies), 365);
+    setCookie('CookieConsent', JSON.stringify(activeCookies), 90);
     gtag('consent', 'update', {
       ad_personalization: activeCookies.marketing,
       ad_storage: activeCookies.marketing,
@@ -170,7 +170,7 @@ const Content = ({ CloseIcon, heading, paragraph, details }: ContentProps) => {
             >
               <p>{service}</p>
               <div className={styles.cookies}>
-                {cookies.map(({ name, description, expiry, type }, i) => (
+                {cookies?.map(({ name, description, expiry, type }, i) => (
                   <div
                     className={styles.cookiesItem}
                     key={i}
@@ -203,7 +203,7 @@ const Content = ({ CloseIcon, heading, paragraph, details }: ContentProps) => {
             >
               <p>{service}</p>
               <div className={styles.cookies}>
-                {cookies.map(({ name, description, expiry, type }, i) => (
+                {cookies?.map(({ name, description, expiry, type }, i) => (
                   <div
                     className={styles.cookiesItem}
                     key={i}
@@ -236,7 +236,7 @@ const Content = ({ CloseIcon, heading, paragraph, details }: ContentProps) => {
             >
               <p>{service}</p>
               <div className={styles.cookies}>
-                {cookies.map(({ name, description, expiry, type }, i) => (
+                {cookies?.map(({ name, description, expiry, type }, i) => (
                   <div
                     className={styles.cookiesItem}
                     key={i}
@@ -269,7 +269,7 @@ const Content = ({ CloseIcon, heading, paragraph, details }: ContentProps) => {
             >
               <p>{service}</p>
               <div className={styles.cookies}>
-                {cookies.map(({ name, description, expiry, type }, i) => (
+                {cookies?.map(({ name, description, expiry, type }, i) => (
                   <div
                     className={styles.cookiesItem}
                     key={i}
@@ -296,7 +296,7 @@ const Content = ({ CloseIcon, heading, paragraph, details }: ContentProps) => {
             >
               <p>{service}</p>
               <div className={styles.cookies}>
-                {cookies.map(({ name, description, expiry, type }, i) => (
+                {cookies?.map(({ name, description, expiry, type }, i) => (
                   <div
                     className={styles.cookiesItem}
                     key={i}

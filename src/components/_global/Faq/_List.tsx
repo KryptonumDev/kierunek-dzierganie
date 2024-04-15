@@ -8,7 +8,7 @@ const List = ({ Indicator, list }: ListTypes) => {
   const [opened, setOpened] = useState(0);
   const handleClick = (e: React.MouseEvent<HTMLElement>, i: number) => {
     e.preventDefault();
-    setOpened(i);
+    setOpened(opened === i ? -1 : i);
   };
 
   return (

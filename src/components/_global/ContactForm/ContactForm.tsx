@@ -1,11 +1,10 @@
 import sanityFetch from '@/utils/sanity.fetch';
 import Markdown from '@/components/ui/markdown';
 import styles from './ContactForm.module.scss';
-import type { Props } from './ContactForm.types';
-import type { QueryProps } from './ContactForm.types';
-import { urlWithoutProtocol } from '@/utils/url-without-protocool';
 import CopyToClipboard from '@/components/ui/CopyToClipboard';
 import Form from './_Form';
+import type { Props } from './ContactForm.types';
+import type { QueryProps } from './ContactForm.types';
 
 const ContactForm = async ({ heading, paragraph, aboveTheFold }: Props) => {
   const { email, tel, messenger } = await query();
@@ -42,7 +41,7 @@ const ContactForm = async ({ heading, paragraph, aboveTheFold }: Props) => {
               target='_blank'
               rel='noopener noreferrer'
             >
-              {urlWithoutProtocol(messenger)}
+              Messenger (m.me)
             </a>
             <CopyToClipboard copy={messenger} />
           </p>
