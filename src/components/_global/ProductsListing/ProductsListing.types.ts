@@ -6,7 +6,13 @@ export type ProductsListingTypes = {
   text: JSX.Element;
   basis: string;
   courses: boolean;
+  productsTotalCount: number;
   categories: {
+    name: string;
+    slug: string;
+    _id: string;
+  }[];
+  authors: {
     name: string;
     slug: string;
     _id: string;
@@ -21,4 +27,15 @@ export type FiltersTypes = {
     slug: string;
     _id: string;
   }[];
-}
+  authors?: {
+    name: string;
+    slug: string;
+    _id: string;
+  }[];
+};
+
+export type PaginationTypes = {
+  allElementsCount: number;
+  elementsPerPage: number;
+  basis: string;
+};

@@ -99,4 +99,113 @@
       display: none;
     }
   }
+
+  .active-filters {
+    margin-top: 28px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: space-between;
+
+    >button{
+      height: fit-content;
+    }
+
+    > div {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+
+      button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px 10px 16px;
+        border-radius: 4px;
+        border: 1px solid var(--primary-500, #b4a29c);
+        background: var(--primary-200, #faf4f0);
+      }
+    }
+  }
+}
+
+.pagination {
+  margin-top: 48px;
+  display: flex;
+  gap: auto;
+  align-items: center;
+  align-self: stretch;
+  min-width: 500px;
+  justify-content: center;
+
+  @media (max-width: 499px) {
+    min-width: 100%;
+  }
+
+  .center {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: space-between;
+
+    .link {
+      width: 44px;
+      height: auto;
+      aspect-ratio: 1/1;
+      color: var(--primary-700);
+      border-radius: 50%;
+      display: grid;
+      align-items: center;
+      justify-content: center;
+      transition:
+        color 0.3s ease,
+        background 0.3s ease;
+
+      &:hover {
+        color: var(--primary-900);
+        background: var(--primary-200);
+      }
+
+      &.active {
+        background: var(--primary-300);
+        pointer-events: none;
+      }
+
+      &:focus-visible {
+        outline: 1px solid var(--primary-600);
+        outline-offset: 0px;
+        background: var(--primary-200);
+      }
+    }
+
+    .not {
+      padding: 14px 20px;
+    }
+  }
+
+  .arrow {
+    display: grid;
+    border-radius: 50%;
+    width: 48px;
+    height: auto;
+    aspect-ratio: 1/1;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+
+    &.disabled {
+      pointer-events: none;
+    }
+
+    &:hover {
+      background: var(--primary-200);
+    }
+
+    &:focus-visible {
+      outline: 1px solid var(--primary-600);
+      background: var(--primary-200);
+      outline-offset: 0px;
+    }
+  }
 }
