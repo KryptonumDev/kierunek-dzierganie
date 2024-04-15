@@ -6,7 +6,7 @@ import findSearchedName from './find-searched-name';
 import Placeholder from './Placeholder';
 import { type SearchResultType } from '../Header.types';
 
-export default function PhysicalProducts({
+export default function Products({
   searchResults,
   passedRef,
 }: {
@@ -18,7 +18,7 @@ export default function PhysicalProducts({
       <header>
         <h3>Produkty fizyczne</h3>
         {searchResults ? (
-          <p>{`${searchResults.physicalProducts?.length + searchResults.productVariants?.length}`}</p>
+          <p>{`${searchResults.physicalProducts?.length + searchResults.variableProducts?.length}`}</p>
         ) : (
           <Loader />
         )}
@@ -46,7 +46,7 @@ export default function PhysicalProducts({
           </>
         )}
         {searchResults ? (
-          searchResults.productVariants?.map(({ name, slug, variants: { gallery }, basis }, index) => (
+          searchResults.variableProducts?.map(({ name, slug, variants: { gallery }, basis }, index) => (
             <Link
               className={styles.item}
               key={index}

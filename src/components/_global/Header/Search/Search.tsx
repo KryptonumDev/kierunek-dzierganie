@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import { type SearchResultType } from '../Header.types';
 import styles from '../Header.module.scss';
 import Courses from './Courses';
-import PhysicalProducts from './PhysicalProducts';
 import Articles from './Articles';
+import Products from './Products';
 
 const Search = ({ SearchIcon, CloseIcon }: { SearchIcon: React.ReactNode; CloseIcon: React.ReactNode }) => {
   const [isSearching, setIsSearching] = useState(false);
@@ -165,7 +165,7 @@ const Search = ({ SearchIcon, CloseIcon }: { SearchIcon: React.ReactNode; CloseI
               passedRef={ref}
               searchResults={searchResults}
             />
-            <PhysicalProducts
+            <Products
               passedRef={ref}
               searchResults={searchResults}
             />

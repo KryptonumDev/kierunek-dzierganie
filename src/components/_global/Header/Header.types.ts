@@ -107,7 +107,7 @@ export type SearchResultType = {
     slug: string;
     basis: 'crocheting' | 'knitting';
   }[];
-  productVariants: {
+  variableProducts: {
     variants: {
       gallery: ImgType;
     };

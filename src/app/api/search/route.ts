@@ -18,7 +18,7 @@ async function getSearchResults(search: string | undefined) {
   return await sanityFetch<SearchResultType>({
     query: /* groq */ `
     {
-    "courses": *[_type=='product' && type=='digital' && slug.current match ["*"+$slug+"*"]][]{
+    "courses": *[_type=='product' && type=='digital' && name match ["*"+$slug+"*"]][]{
       course -> {
         image {
           ${Img_Query}
@@ -28,7 +28,7 @@ async function getSearchResults(search: string | undefined) {
       basis,
       "slug": slug.current,
     },
-      "physicalProducts": *[_type=='product' && type=='physical' && slug.current match ["*"+$slug+"*"]][] {
+      "physicalProducts": *[_type=='product' && type=='physical' && name match ["*"+$slug+"*"]][] {
         gallery[0] {
           ${Img_Query}
         },
@@ -36,7 +36,7 @@ async function getSearchResults(search: string | undefined) {
         basis,
         "slug": slug.current,
       },
-      "productVariants": *[_type=='product' && type=='variable' && slug.current match["*"+$slug+"*"]][] {
+      "variableProducts": *[_type=='product' && type=='variable' && name match["*"+$slug+"*"]][] {
           variants[0] {
             gallery[0] {
               ${Img_Query}
@@ -46,7 +46,7 @@ async function getSearchResults(search: string | undefined) {
           name,
           basis,
       },
-      "blogPosts": *[_type=='BlogPost_Collection' && slug.current match ["*"+$slug+"*"]][] {
+      "blogPosts": *[_type=='BlogPost_Collection' && hero.heading match ["*"+$slug+"*"]][] {
         hero {
           img {
             ${Img_Query}
