@@ -6,10 +6,11 @@ import HeroPhysical from '@/components/_product/HeroPhysical';
 import Parameters from '@/components/_product/Parameters';
 import Informations from '@/components/_product/Informations';
 import Description, { Description_Query } from '@/components/_product/Description';
-import TableOfContent, { TableOfContent_Query } from '@/components/_product/TableOfContent';
+import TableOfContent from '@/components/_product/TableOfContent';
 import type { ProductPageQueryProps, generateStaticParamsProps } from '@/global/types';
 import Package, { Package_Query } from '@/components/_product/Package';
 import { PRODUCT_CARD_QUERY } from '@/global/constants';
+import Reviews from '@/components/_product/Reviews';
 
 const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
   const {
@@ -60,7 +61,7 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
           gallery,
         }}
       />
-      <Informations tabs={['Spis treści', 'Pakiet', 'Opis', 'Parametry']}>
+      <Informations tabs={['Spis treści', 'Pakiet', 'Opis', 'Parametry', 'Opinie']}>
         {course && <TableOfContent chapters={course.chapters} />}
         {courses && (
           <Package
@@ -74,6 +75,7 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
         )}
         {description?.length > 0 && <Description data={description} />}
         {parameters?.length > 0 && <Parameters parameters={parameters} />}
+        {course?.reviews && course?.reviews.length > 0 && <Reviews reviews={course.reviews} />}
       </Informations>
       {/* TODO: Add featured courses */}
     </>
@@ -114,8 +116,22 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
           }
         },
         ${Package_Query}
-        ${TableOfContent_Query}
         ${Description_Query}
+        course -> {
+          chapters[] {
+            chapterName,
+            lessons[] -> {
+              title,
+              lengthInMinutes,
+            },
+          },
+          "reviews": *[_type == 'courseReviewCollection' && references(^._id)]{
+            rating,
+            review,
+            nameOfReviewer,
+            _id
+          }
+        },
         parameters[]{
           name,
           value,
@@ -144,7 +160,7 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
             name,
             value
           }
-        }
+        },
       },
       "card": *[_type == 'product' && basis == 'crocheting' && type in ['digital', 'bundle'] && slug.current == $slug][0] {
         ${PRODUCT_CARD_QUERY}

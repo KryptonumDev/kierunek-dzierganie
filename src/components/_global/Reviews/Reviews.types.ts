@@ -17,6 +17,11 @@ export type SliderProps = {
     review: string;
     images: React.ReactNode[];
   }[];
-  QuoteIcon: React.ReactNode;
-  RatingIcon: React.ReactNode;
+};
+
+export type CardProps = {
+  rating: number;
+  name: string;
+  review: string;
+  images?: React.ReactNode[];
 };

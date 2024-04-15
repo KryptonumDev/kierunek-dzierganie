@@ -1,14 +1,15 @@
 'use client';
-import { Fragment, useRef, useState } from 'react';
-import Link from 'next/link';
+import { useRef, useState } from 'react';
+// import Link from 'next/link';
 import styles from './Reviews.module.scss';
 import 'swiper/css';
 import { Swiper, SwiperSlide, type SwiperRef } from 'swiper/react';
 import { A11y } from 'swiper/modules';
 import type { SliderProps } from './Reviews.types';
 import SliderControls from '@/components/ui/SliderControls';
+import Card from './_Card';
 
-const Slider = ({ list, QuoteIcon, RatingIcon }: SliderProps) => {
+const Slider = ({ list }: SliderProps) => {
   const listLength = list.length;
   const ref = useRef<SwiperRef | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -35,40 +36,26 @@ const Slider = ({ list, QuoteIcon, RatingIcon }: SliderProps) => {
       >
         {list.map(({ rating, name, review, images }, i) => (
           <SwiperSlide
-            className={styles.item}
             key={i}
-          >
-            {QuoteIcon}
-            <div className={styles.info}>
-              <h3>{name}</h3>
-              <div className={styles.rating}>
-                {RatingIcon}
-                <p>
-                  <strong>{rating}</strong>/5
-                </p>
-              </div>
-            </div>
-            <p>{review}</p>
-            {/* TODO: Add CTA to history of this person in Sanity and Next.js */}
-            {images && (
-              <div className={styles.images}>
-                {images.map((img, i) => (
-                  <Fragment key={i}>{img}</Fragment>
-                ))}
-              </div>
-            )}
+          > 
+            <Card 
+              rating={rating}
+              name={name}
+              review={review}
+              images={images}
+            />
           </SwiperSlide>
         ))}
       </Swiper>
       <SliderControls {...{ activeIndex, handlePrev, handleNext, slideTo, length: listLength }} />
-      <p className={styles.login}>
+      {/* <p className={styles.login}>
         <Link
           href='/moje-konto/autoryzacja'
           className='link'
         >
           Zaloguj się, aby dodać opinię
         </Link>
-      </p>
+      </p> */}
     </>
   );
 };

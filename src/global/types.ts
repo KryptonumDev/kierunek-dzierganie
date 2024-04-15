@@ -1,6 +1,7 @@
 import type { ComponentProps } from '@/components/Components';
 import type { HeroSimpleTypes } from '@/components/_global/HeroSimple';
 import type { DescriptionTypes } from '@/components/_product/Description/Description';
+import { ReviewsTypes } from '@/components/_product/Reviews';
 import { TableOfContentTypes } from '@/components/_product/TableOfContent/TableOfContent.types';
 
 export type CtaType = {
@@ -183,9 +184,9 @@ export type ProductPageQueryProps = {
       name: string;
       value: string;
     }>;
-    courses: ProductCard[];
+    courses: ProductCard[]
     description: DescriptionTypes[];
-    course: TableOfContentTypes;
+    course: TableOfContentTypes & ReviewsTypes;
   };
   card: ProductCard;
 };

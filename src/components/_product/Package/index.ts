@@ -7,6 +7,4 @@ export const Package_Query = `
   courses[] -> {
     ${PRODUCT_CARD_QUERY}
   },
-  package_Heading,
-  package_Paragraph,
 `;
