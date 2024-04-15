@@ -91,3 +91,35 @@ export type _NavProps = {
   showMenu: boolean;
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
 };
+
+export type SearchResultType = {
+  courses: {
+    course: {
+      image: ImgType;
+    };
+    name: string;
+    basis: 'crocheting' | 'knitting';
+    slug: string;
+  }[];
+  physicalProducts: {
+    gallery: ImgType;
+    name: string;
+    slug: string;
+    basis: 'crocheting' | 'knitting';
+  }[];
+  variableProducts: {
+    variants: {
+      gallery: ImgType;
+    };
+    name: string;
+    slug: string;
+    basis: 'crocheting' | 'knitting';
+  }[];
+  blogPosts: {
+    hero: {
+      img: ImgType;
+      heading: string;
+    };
+    slug: string;
+  }[];
+};
