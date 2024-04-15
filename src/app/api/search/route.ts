@@ -1,3 +1,4 @@
+import { type SearchResultType } from '@/components/_global/Header/Header.types';
 import { Img_Query } from '@/components/ui/image';
 import sanityFetch from '@/utils/sanity.fetch';
 import { NextResponse, type NextRequest } from 'next/server';
@@ -7,6 +8,7 @@ export async function GET(request: NextRequest) {
   const search = searchParams.get('search')?.toLowerCase().replace(/\s/g, '-');
   try {
     const data = await getSearchResults(search);
+    console.log(data);
     return NextResponse.json({ data }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });
@@ -14,22 +16,25 @@ export async function GET(request: NextRequest) {
 }
 
 async function getSearchResults(search: string | undefined) {
-  return await sanityFetch({
+  return await sanityFetch<SearchResultType>({
     query: /* groq */ `
     {
     "courses": *[_type=='product' && type=='digital' && slug.current match ["*"+$slug+"*"]][]{
       course -> {
-        ${Img_Query}
+        image {
+          ${Img_Query}
+        }
       },
       name,
       basis,
-        "slug": slug.current,
+      "slug": slug.current,
     },
       "physicalProducts": *[_type=='product' && type=='physical' && slug.current match ["*"+$slug+"*"]][] {
         gallery[0] {
           ${Img_Query}
         },
         name,
+        basis,
         "slug": slug.current,
       },
       "productVariants": *[_type=='product' && type=='variable' && slug.current match["*"+$slug+"*"]][] {
@@ -39,8 +44,18 @@ async function getSearchResults(search: string | undefined) {
             }
           },
           "slug": slug.current,
-            name,
-      }
+          name,
+          basis,
+      },
+      "blogPosts": *[_type=='BlogPost_Collection' && slug.current match ["*"+$slug+"*"]][] {
+        hero {
+          img {
+            ${Img_Query}
+          },
+          heading,
+          },
+          "slug": slug.current,
+        },
       }
     `,
     params: {

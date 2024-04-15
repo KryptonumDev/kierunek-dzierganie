@@ -1,14 +1,14 @@
 'use client';
-import { useState } from 'react';
-import Link from 'next/link';
+import type { Discount } from '@/global/types';
+import { useCartItems } from '@/utils/useCartItems';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import { useState } from 'react';
 import styles from './Header.module.scss';
+import type { QueryProps } from './Header.types';
+import Search from './Search/Search';
 import Annotation from './_Annotation';
 import Nav from './_Nav';
-import { useCartItems } from '@/utils/useCartItems';
-import type { QueryProps } from './Header.types';
-import type { Discount } from '@/global/types';
-import Search from './_Search';
 
 const Cart = dynamic(() => import('./_Cart'), { ssr: false });
 const Checkout = dynamic(() => import('./Checkout'), { ssr: false });
