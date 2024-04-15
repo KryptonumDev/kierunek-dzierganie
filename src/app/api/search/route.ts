@@ -8,7 +8,6 @@ export async function GET(request: NextRequest) {
   const search = searchParams.get('search')?.toLowerCase().replace(/\s/g, '-');
   try {
     const data = await getSearchResults(search);
-    console.log(data);
     return NextResponse.json({ data }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });
