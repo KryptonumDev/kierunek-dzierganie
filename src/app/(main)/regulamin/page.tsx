@@ -6,7 +6,7 @@ import Contents from '@/components/_legal/Contents';
 import FilesComponent, { FilesComponent_Query } from '@/components/_legal/FilesComponent';
 import { Header_Query } from '@/components/_legal/Header';
 import { Contents_Query } from '@/components/_legal/Contents';
-import { StatutePage_QueryTypes } from './page.types';
+import type { StatutePage_QueryTypes } from './page.types';
 
 const page = { name: 'Regulamin', path: '/regulamin' };
 
