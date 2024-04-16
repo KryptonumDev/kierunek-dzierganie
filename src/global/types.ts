@@ -52,6 +52,7 @@ export type ProductCard = {
 };
 
 export type ProductVariant = {
+  _id: string;
   name: string;
   price: number;
   discount: number;
@@ -66,6 +67,7 @@ export type ProductVariant = {
 };
 
 export type ProductPhysical = {
+  _id: string;
   name: string;
   price?: number;
   discount?: number;

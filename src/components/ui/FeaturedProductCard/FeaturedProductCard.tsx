@@ -30,7 +30,7 @@ const FeaturedProductCard = ({ excerpt, data, inCart = false }: Props) => {
       name: data.name,
     };
 
-    if ('variants' in data && data.variants?.length > 0) {
+    if (data.variants && data.variants?.length > 0) {
       const minPrice = Math.min(...data.variants.map((variant) => variant.price));
       const maxPrice = Math.max(...data.variants.map((variant) => variant.price));
 

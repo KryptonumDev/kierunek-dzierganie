@@ -1,6 +1,6 @@
 import OrderData from '@/components/_dashboard/OrderData';
 import Seo from '@/global/Seo';
-import type { Order, Product } from '@/global/types';
+import type { Order, ProductCard } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
@@ -8,7 +8,7 @@ import { notFound } from 'next/navigation';
 import { PRODUCT_CARD_QUERY } from 'src/global/constants';
 
 type QueryProps = {
-  products: Product[];
+  products: ProductCard[];
   order: Order;
 };
 

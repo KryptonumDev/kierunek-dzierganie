@@ -3,7 +3,6 @@ import type { ProductPhysical, ProductVariant } from '@/global/types';
 export type Props = {
   name: string;
   id: string;
-  type: string;
   variants: Array<ProductVariant>;
   physical: ProductPhysical;
 };

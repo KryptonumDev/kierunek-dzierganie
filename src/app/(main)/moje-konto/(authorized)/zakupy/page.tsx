@@ -2,7 +2,7 @@ import EmptyOrders from '@/components/_dashboard/EmptyOrders';
 import ListingOrders from '@/components/_dashboard/ListingOrders';
 import { Img_Query } from '@/components/ui/image';
 import Seo from '@/global/Seo';
-import type { ImgType, Order, Product } from '@/global/types';
+import type { ImgType, Order, ProductCard } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
@@ -13,7 +13,7 @@ type QueryProps = {
     image_knitting: ImgType;
     image_crochet: ImgType;
   };
-  products: Product[];
+  products: ProductCard[];
   orders: Order[];
 };
 

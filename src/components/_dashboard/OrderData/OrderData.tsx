@@ -85,21 +85,23 @@ const OrderData = ({ order, products }: OrderDataTypes) => {
             key={item._id + i}
           >
             <div className={styles['image-wrap']}>
-              {item.course?.complexity && (
+              {item.complexity && (
                 <span
                   style={{
-                    color: courseComplexityEnum[item.course.complexity].color,
-                    backgroundColor: courseComplexityEnum[item.course.complexity].background,
+                    color: courseComplexityEnum[item.complexity].color,
+                    backgroundColor: courseComplexityEnum[item.complexity].background,
                   }}
                   className={styles['badge']}
                 >
-                  {courseComplexityEnum[item.course.complexity].name}
+                  {courseComplexityEnum[item.complexity].name}
                 </span>
               )}
-              <Img
-                data={item.gallery}
-                sizes='175px'
-              />
+              {item.gallery && (
+                <Img
+                  data={item.gallery}
+                  sizes='175px'
+                />
+              )}
             </div>
             <div className={styles['right-column']}>
               <p>{item.name}</p>
@@ -110,7 +112,7 @@ const OrderData = ({ order, products }: OrderDataTypes) => {
               <div className={styles['price']}>
                 <span
                   className={item.discount ? styles['discount'] : ''}
-                  dangerouslySetInnerHTML={{ __html: formatPrice(item.price) }}
+                  dangerouslySetInnerHTML={{ __html: formatPrice(item.price!) }}
                 />
                 {item.discount ? <span dangerouslySetInnerHTML={{ __html: formatPrice(item.discount) }} /> : null}
               </div>

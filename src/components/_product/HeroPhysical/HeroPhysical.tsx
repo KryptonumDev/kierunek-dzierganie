@@ -23,7 +23,7 @@ const gallerySwitch = (data: ImgType | string, size: 'big' | 'small') => ({
   ),
 });
 
-const HeroPhysical = ({ name, id, type, variants, physical }: Props) => {
+const HeroPhysical = ({ name, id, variants, physical }: Props) => {
   const attributes = useMemo(() => {
     if (!variants) return [];
     const arr = [] as AttributesTypes;
@@ -198,8 +198,7 @@ const HeroPhysical = ({ name, id, type, variants, physical }: Props) => {
         </div>
         <AddToCart
           id={id}
-          type={type}
-          variant={chosenVariant}
+          variant={chosenVariant?._id}
           disabled={!count}
           quantity={count}
         />

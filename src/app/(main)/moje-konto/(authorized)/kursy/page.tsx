@@ -95,9 +95,9 @@ const query = async (): Promise<QueryProps> => {
         "slug": slug.current,
         complexity,
         courseLength,
-        image {
+        "image": gallery {
           ${Img_Query}
-        },
+        }[0],
       },
     }`,
     params: {

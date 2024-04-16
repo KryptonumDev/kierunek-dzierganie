@@ -2,12 +2,11 @@ import { notFound } from 'next/navigation';
 import sanityFetch from '@/utils/sanity.fetch';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
-import HeroPhysical from '@/components/_product/HeroPhysical';
 import Parameters from '@/components/_product/Parameters';
 import Informations from '@/components/_product/Informations';
 import Description, { Description_Query } from '@/components/_product/Description';
 import TableOfContent from '@/components/_product/TableOfContent';
-import type { ProductPageQueryProps, generateStaticParamsProps } from '@/global/types';
+import type { ProductPageQueryProps } from '@/global/types';
 import Package, { Package_Query } from '@/components/_product/Package';
 import { PRODUCT_CARD_QUERY } from '@/global/constants';
 import Reviews from '@/components/_product/Reviews';
@@ -16,14 +15,14 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
   const {
     product: {
       name,
-      _id,
-      type,
-      variants,
-      price,
-      discount,
-      featuredVideo,
-      countInStock,
-      gallery,
+      // _id,
+      // type,
+      // variants,
+      // price,
+      // discount,
+      // featuredVideo,
+      // countInStock,
+      // gallery,
       parameters,
       description,
       course,
@@ -46,20 +45,6 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
           },
         ]}
         visible={true}
-      />
-      <HeroPhysical
-        name={name}
-        id={_id}
-        type={type}
-        variants={variants}
-        physical={{
-          name,
-          price,
-          discount,
-          countInStock,
-          featuredVideo,
-          gallery,
-        }}
       />
       <Informations tabs={['Spis treści', 'Pakiet', 'Opis', 'Parametry', 'Opinie']}>
         {course && <TableOfContent chapters={course.chapters} />}
@@ -92,7 +77,7 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
   const data = await sanityFetch<ProductPageQueryProps>({
     query: /* groq */ `
     {
-      "product": *[_type == 'product' && basis == 'crocheting' && type in ['digital', 'bundle'] && slug.current == $slug][0] {
+      "product": *[(_type == 'course' || _type == 'bundle') && basis == 'crocheting' && slug.current == $slug][0] {
         name,
         'slug': slug.current,
         _id,
@@ -163,7 +148,7 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
           }
         },
       },
-      "card": *[_type == 'product' && basis == 'crocheting' && type in ['digital', 'bundle'] && slug.current == $slug][0] {
+      "card": *[(_type == 'course' || _type == 'bundle') && basis == 'crocheting' && slug.current == $slug][0] {
         ${PRODUCT_CARD_QUERY}
       }
     }
@@ -176,16 +161,16 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
   return data;
 };
 
-export async function generateStaticParams(): Promise<generateStaticParamsProps[]> {
-  const data: generateStaticParamsProps[] = await sanityFetch({
-    query: /* groq */ `
-      *[_type == "product" && basis == 'crocheting' && type in ["physical", "variable"]] {
-        'slug': slug.current,
-      }
-    `,
-  });
+// export async function generateStaticParams(): Promise<generateStaticParamsProps[]> {
+//   const data: generateStaticParamsProps[] = await sanityFetch({
+//     query: /* groq */ `
+//       *[(_type == 'course' || _type == 'bundle') && basis == 'crocheting'] {
+//         'slug': slug.current,
+//       }
+//     `,
+//   });
 
-  return data.map(({ slug }) => ({
-    slug,
-  }));
-}
+//   return data.map(({ slug }) => ({
+//     slug,
+//   }));
+// }

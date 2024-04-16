@@ -1,7 +1,7 @@
 import styles from './HeroVirtual.module.scss';
-import type { HeroVirtualTypes } from './HeroVirtual.types';
+// import type { HeroVirtualTypes } from './HeroVirtual.types';
 
-const HeroVirtual = ({  }: HeroVirtualTypes) => {
+const HeroVirtual = () => {
   return (
     <section className={styles['HeroVirtual']}>
 
