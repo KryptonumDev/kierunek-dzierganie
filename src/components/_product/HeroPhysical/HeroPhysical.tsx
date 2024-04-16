@@ -3,25 +3,10 @@ import { useCallback, useMemo, useState } from 'react';
 import styles from './HeroPhysical.module.scss';
 import type { AttributesTypes, Props, SelectedAttributesTypes } from './HeroPhysical.types';
 import Select, { SingleValue } from 'react-select';
-import Img from '@/components/ui/image';
 import { ImgType } from '@/global/types';
 import AddToCart from '@/components/ui/AddToCart';
 import { formatPrice } from '@/utils/price-formatter';
-
-const gallerySwitch = (data: ImgType | string, size: 'big' | 'small') => ({
-  image: (
-    <Img
-      data={data as ImgType}
-      sizes={size === 'big' ? '(max-width: 840px) 100vw, 50vw' : '80px'}
-    />
-  ),
-  video: (
-    <iframe
-      src={data as string}
-      style={{ aspectRatio: '16/9', width: '100%', height: 'auto', borderRadius: '4px' }}
-    />
-  ),
-});
+import Gallery from '@/components/ui/Gallery';
 
 const HeroPhysical = ({ name, id, variants, physical }: Props) => {
   const attributes = useMemo(() => {
@@ -52,7 +37,6 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
 
   const [count, setCount] = useState(1);
   const [chosenVariant, setChosenVariant] = useState(variants ? variants[0] : physical);
-  const [selectedImage, setSelectedImage] = useState(0);
   const [chosenAttributes, setChosenAttributes] = useState(() => {
     const obj = {} as SelectedAttributesTypes;
     attributes.forEach((el) => {
@@ -62,7 +46,7 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
   });
 
   const images = useMemo(() => {
-    const images = [];
+    const images: Array<{ data: ImgType | string; type: 'video' | 'image' }> = [];
     // add video as first element if exists
     if (chosenVariant?.featuredVideo) images.push({ type: 'video', data: chosenVariant?.featuredVideo });
     chosenVariant?.gallery!.forEach((el) => images.push({ type: 'image', data: el }));
@@ -87,7 +71,6 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
 
       setChosenVariant(filteredVariant);
       setChosenAttributes(filteredAttributes);
-      setSelectedImage(0);
       setCount(filteredVariant!.countInStock > 0 ? 1 : 0);
     },
     [variants, chosenAttributes]
@@ -95,23 +78,7 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
 
   return (
     <section className={styles['HeroPhysical']}>
-      <div className={styles['gallery']}>
-        {gallerySwitch(images[selectedImage]!.data, 'big')[images[selectedImage]!.type as 'image' | 'video']}
-        <div className={styles['gallery-grid']}>
-          {images.map((el, index) => {
-            if (index === selectedImage) return null;
-            return (
-              <button
-                onClick={() => setSelectedImage(index)}
-                key={index}
-              >
-                {gallerySwitch(el.data, 'small')[el.type as 'image' | 'video']}
-              </button>
-            );
-          })}
-        </div>
-        {/* TODO: add arrows */}
-      </div>
+      <Gallery images={images} />
       <div className={styles['info']}>
         {/* <p>reviews</p> TODO: add reviews */}
         <h1>{name}</h1>

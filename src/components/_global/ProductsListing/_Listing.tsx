@@ -6,10 +6,12 @@ import { ListingProps } from './ProductsListing.types';
 export default function Listing({ featuredProductExcerpt, products }: ListingProps) {
   return (
     <div className={styles['products']}>
-      <FeaturedProductCard
-        excerpt={featuredProductExcerpt}
-        data={products[0]!}
-      />
+      {products.length > 0 && (
+        <FeaturedProductCard
+          excerpt={featuredProductExcerpt}
+          data={products[0]!}
+        />
+      )}
       <div className={styles['grid']}>
         {products.slice(1).map((product) => (
           <ProductCard

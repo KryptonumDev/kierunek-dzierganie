@@ -1,6 +1,6 @@
 export type Props = {
   id: string;
-  disabled: boolean;
+  disabled?: boolean;
   variant?: string;
   quantity?: number;
 };

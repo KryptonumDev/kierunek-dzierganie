@@ -141,7 +141,7 @@ export type BlogPostQueryProps = {
   links: {
     facebook: string;
     pinterest: string;
-  } 
+  };
 };
 
 export type BlogCategoryPageQueryProps = {
@@ -181,10 +181,41 @@ export type ProductPageQueryProps = {
       name: string;
       value: string;
     }>;
-    courses: ProductCard[];
+    rating: number;
+    reviewsCount: number;
     description: DescriptionTypes[];
-    course: TableOfContentTypes & ReviewsTypes;
-  };
+  } & ReviewsTypes;
+};
+
+export type CoursePageQueryProps = {
+  product: {
+    name: string;
+    slug: string;
+    _id: string;
+    type: string;
+    gallery?: Array<ImgType>;
+    featuredVideo?: string;
+    price?: number;
+    discount?: number;
+    countInStock?: number;
+    courses: ProductCard[];
+    rating: number;
+    reviewsCount: number;
+    description: DescriptionTypes[];
+    author: {
+      name: string;
+      slug: string;
+      image: ImgType;
+      description: string;
+      countOfCourse: number;
+    };
+    relatedBundle:
+      | null
+      | ({
+          courses: ProductCard[];
+        } & ProductCard);
+  } & TableOfContentTypes &
+    ReviewsTypes;
   card: ProductCard;
 };
 

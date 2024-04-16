@@ -5,31 +5,17 @@ import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import Informations from '@/components/_product/Informations';
 import Description, { Description_Query } from '@/components/_product/Description';
 import TableOfContent from '@/components/_product/TableOfContent';
-import type { ProductPageQueryProps } from '@/global/types';
+import type { CoursePageQueryProps, generateStaticParamsProps } from '@/global/types';
 import Package, { Package_Query } from '@/components/_product/Package';
 import { PRODUCT_CARD_QUERY } from '@/global/constants';
 import Reviews from '@/components/_product/Reviews';
 import HeroVirtual from '@/components/_product/HeroVirtual';
+import { Img_Query } from '@/components/ui/image';
 
-const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
+const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
   const {
-    product: {
-      name,
-      // _id,
-      // type,
-      // variants,
-      // price,
-      // discount,
-      // featuredVideo,
-      // countInStock,
-      // gallery,
-      parameters,
-      description,
-      chapters,
-      reviews,
-      rating,
-      courses,
-    },
+    product: { relatedBundle, name, description, chapters, reviews, courses },
+    product,
     card,
   } = await query(slug);
 
@@ -48,30 +34,29 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
         ]}
         visible={true}
       />
-      <HeroVirtual />
-
-
-      {/* 
-        TODO: add section you can buy in bundle
-      <Package
-        product={card}
-        heading={'Jeden pakiet – niezliczona ilość wiedzy'}
-        paragraph={'Zdobądź niezbędne umiejętności i rozwijaj kreatywność z **pakietem kursów** – w korzystnej cenie!'}
-        courses={courses}
-      /> */}
-
-      <Informations tabs={['Spis treści', 'Pakiet', 'Opis', 'Parametry', 'Opinie']}>
+      <HeroVirtual course={product} />
+      {relatedBundle && (
+        <Package
+          product={relatedBundle}
+          heading={'Jeden pakiet – niezliczona ilość wiedzy'}
+          paragraph={
+            'Zdobądź niezbędne umiejętności i rozwijaj kreatywność z **pakietem kursów** – w korzystnej cenie!'
+          }
+          courses={relatedBundle.courses}
+        />
+      )}
+      {courses && (
+        <Package
+          product={card}
+          heading={'Jeden pakiet – niezliczona ilość wiedzy'}
+          paragraph={
+            'Zdobądź niezbędne umiejętności i rozwijaj kreatywność z **pakietem kursów** – w korzystnej cenie!'
+          }
+          courses={courses}
+        />
+      )}
+      <Informations tabs={['Spis treści', 'Opis', 'Parametry', 'Opinie']}>
         {chapters && <TableOfContent chapters={chapters} />}
-        {courses && (
-          <Package
-            product={card}
-            heading={'Jeden pakiet – niezliczona ilość wiedzy'}
-            paragraph={
-              'Zdobądź niezbędne umiejętności i rozwijaj kreatywność z **pakietem kursów** – w korzystnej cenie!'
-            }
-            courses={courses}
-          />
-        )}
         {description?.length > 0 && <Description data={description} />}
         {reviews.length > 0 && <Reviews reviews={reviews} />}
       </Informations>
@@ -80,14 +65,14 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
   );
 };
 
-export default Product;
+export default Course;
 
 export async function generateMetadata({ params: { slug } }: { params: { slug: string } }) {
-  return await QueryMetadata('course', `/kursy-szydelkowania/${slug}`, slug);
+  return await QueryMetadata(['course', 'bundle'], `/kursy-szydelkowania/${slug}`, slug);
 }
 
-const query = async (slug: string): Promise<ProductPageQueryProps> => {
-  const data = await sanityFetch<ProductPageQueryProps>({
+const query = async (slug: string): Promise<CoursePageQueryProps> => {
+  const data = await sanityFetch<CoursePageQueryProps>({
     query: /* groq */ `
     {
       "product": *[(_type == 'course' || _type == 'bundle') && basis == 'crocheting' && slug.current == $slug][0] {
@@ -128,9 +113,25 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
           nameOfReviewer,
           _id
         },
-        "rating": math::avg(*[_type == 'productReviewCollection' && references(^._id)]{rating}.rating)
+        "rating": math::avg(*[_type == 'productReviewCollection' && references(^._id)]{rating}.rating),
+        author->{
+          _id,
+          name,
+          "slug": slug.current,
+          image {
+            ${Img_Query}
+          },
+          description,
+          "countOfCourse": count(*[_type == 'course' && references(^._id)]),
+        },
+        "relatedBundle": *[_type == 'bundle' && references(^._id)][0]{
+          ${PRODUCT_CARD_QUERY}
+          courses[]->{
+            ${PRODUCT_CARD_QUERY}
+          }
+        },
       },
-      "card": *[(_type == 'course' || _type == 'bundle') && basis == 'crocheting' && slug.current == $slug][0] {
+      "card": *[_type == 'bundle' && basis == 'crocheting' && slug.current == $slug][0] {
         ${PRODUCT_CARD_QUERY}
       }
     }
@@ -138,21 +139,20 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
     params: { slug },
     tags: ['product'],
   });
-
   !data?.product?._id && notFound();
   return data;
 };
 
-// export async function generateStaticParams(): Promise<generateStaticParamsProps[]> {
-//   const data: generateStaticParamsProps[] = await sanityFetch({
-//     query: /* groq */ `
-//       *[(_type == 'course' || _type == 'bundle') && basis == 'crocheting'] {
-//         'slug': slug.current,
-//       }
-//     `,
-//   });
+export async function generateStaticParams(): Promise<generateStaticParamsProps[]> {
+  const data: generateStaticParamsProps[] = await sanityFetch({
+    query: /* groq */ `
+      *[(_type == 'course' || _type == 'bundle') && basis == 'crocheting'] {
+        'slug': slug.current,
+      }
+    `,
+  });
 
-//   return data.map(({ slug }) => ({
-//     slug,
-//   }));
-// }
+  return data.map(({ slug }) => ({
+    slug,
+  }));
+}

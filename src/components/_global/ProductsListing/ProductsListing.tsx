@@ -15,7 +15,7 @@ const ProductsListing = ({
   productsTotalCount,
   authors,
 }: ProductsListingTypes) => {
-  const featuredProductExcerpt = products[0]!.excerpt ? <Markdown>{products[0]!.excerpt}</Markdown> : undefined;
+  const featuredProductExcerpt = products?.[0]?.excerpt ? <Markdown>{products[0]!.excerpt}</Markdown> : undefined;
 
   return (
     <section

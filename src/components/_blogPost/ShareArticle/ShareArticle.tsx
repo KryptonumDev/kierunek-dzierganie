@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import styles from './ShareArticle.module.scss';
 import type { ShareArticleTypes } from './ShareArticle.types';
 import Share from './Share';
