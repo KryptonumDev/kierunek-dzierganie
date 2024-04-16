@@ -89,20 +89,25 @@ const Pagination = ({ allElementsCount, elementsPerPage, basis }: PaginationType
       return;
     }
 
+    const section = document.getElementById('listing');
+
     if (page <= 1) {
       newParams.delete('strona');
       router.push(`${basis}?${newParams.toString()}`, { scroll: false });
+      section!.scrollIntoView();
       return;
     }
 
     if (page > paginationCount) {
       newParams.set('strona', String(paginationCount));
       router.push(`${basis}?${newParams.toString()}`, { scroll: false });
+      section!.scrollIntoView();
       return;
     }
 
     newParams.set('strona', String(page));
     router.push(`${basis}?${newParams.toString()}`, { scroll: false });
+    section!.scrollIntoView();
   };
 
   return (

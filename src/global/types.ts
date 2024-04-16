@@ -30,6 +30,7 @@ export type ProductCard = {
   basis: 'crocheting' | 'knitting';
   slug: string;
   name: string;
+  excerpt?: string;
   price?: number;
   discount?: number;
   countInStock?: number;
@@ -52,6 +53,7 @@ export type CourseCard = {
   basis: 'crocheting' | 'knitting';
   slug: string;
   name: string;
+  excerpt?: string;
   price?: number;
   discount?: number;
   countInStock?: number;

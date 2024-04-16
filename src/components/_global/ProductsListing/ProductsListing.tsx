@@ -3,6 +3,8 @@ import styles from './ProductsListing.module.scss';
 import type { ProductsListingTypes } from './ProductsListing.types';
 import Filters from './_Filters';
 import Pagination from './_Pagination';
+import FeaturedProductCard from '@/components/ui/FeaturedProductCard';
+import Markdown from '@/components/ui/markdown';
 
 const ProductsListing = ({
   title,
@@ -12,12 +14,11 @@ const ProductsListing = ({
   basis,
   courses,
   productsTotalCount,
-  authors
+  authors,
 }: ProductsListingTypes) => {
-
   return (
     <section
-      id='produkty'
+      id='listing'
       className={styles['ProductsListing']}
     >
       {title}
@@ -28,13 +29,19 @@ const ProductsListing = ({
         categories={categories}
         authors={authors}
       />
-      <div className={styles['grid']}>
-        {products.map((product) => (
-          <ProductCard
-            key={product._id}
-            data={product}
-          />
-        ))}
+      <div className={styles['products']}>
+        <FeaturedProductCard
+          excerpt={products[0]!.excerpt ? <Markdown>{products[0]!.excerpt}</Markdown> : undefined}
+          data={products[0]!}
+        />
+        <div className={styles['grid']}>
+          {products.slice(1).map((product) => (
+            <ProductCard
+              key={product._id}
+              data={product}
+            />
+          ))}
+        </div>
       </div>
       {/* TODO: Change no items text */}
       {products.length === 0 && <h2>Niestety teraz w tym rozdziale nic niema :( </h2>}
