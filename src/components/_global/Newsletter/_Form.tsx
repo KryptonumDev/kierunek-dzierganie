@@ -100,7 +100,7 @@ const Form = ({ Heading }: { Heading: React.ReactNode }) => {
         className={styles.cta}
         disabled={status?.sending}
       >
-        Zapisuje się
+        Zapisuję się
       </Button>
       <State
         success={status?.success}

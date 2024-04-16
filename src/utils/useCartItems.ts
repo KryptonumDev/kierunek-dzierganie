@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useCart } from 'react-use-cart';
 import sanityFetch from './sanity.fetch';
 import type { Product } from '@/global/types';
+import { PRODUCT } from 'src/queries/PRODUCT';
 
 export const useCartItems = () => {
   const { items: rawCart, updateItemQuantity, updateItem, removeItem } = useCart();
@@ -16,46 +17,7 @@ export const useCartItems = () => {
         const res = await sanityFetch<Product[]>({
           query: `
             *[_type== 'product' && _id in $id]{
-              _id,
-              price,
-              discount,
-              name,
-              'slug': slug.current,
-              basis,
-              type,
-              _type,
-              gallery[0]{
-                asset -> {
-                  url,
-                  altText,
-                  metadata {
-                    lqip,
-                    dimensions {
-                      width,
-                      height,
-                    }
-                  }
-                }
-              },
-              variants{
-                _key,
-                name,
-                price,
-                discount,
-                gallery[0]{
-                  asset -> {
-                    url,
-                    altText,
-                    metadata {
-                      lqip,
-                      dimensions {
-                        width,
-                        height,
-                      }
-                    }
-                  }
-                }
-              }
+              ${PRODUCT}
             }
           `,
           params: {

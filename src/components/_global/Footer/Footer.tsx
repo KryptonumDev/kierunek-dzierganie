@@ -60,7 +60,7 @@ const Footer = async () => {
         <div className={styles.legal}>
           <Link href='/polityka-prywatnosci'>Polityka prywatności</Link>
           <Link href='/regulamin'>Regulamin</Link>
-          <Link href='/zarzadzaj-ciasteczkami'>Zarządzaj ciasteczkami</Link>
+          {/* <Link href='/zarzadzaj-ciasteczkami'>Zarządzaj ciasteczkami</Link> */}
         </div>
       </div>
     </footer>

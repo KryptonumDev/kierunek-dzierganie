@@ -1,3 +1,5 @@
+import { Img_Query } from '@/components/ui/image';
+
 /**
  * Global declaration of themeColor in HEX format.
  * @constant
@@ -57,8 +59,8 @@ export const mailerLiteGroup: { newsletter: string } = {
  * @constant
  */
 export const pageUrls: { knitting: string; crocheting: string } = {
-  knitting: '/dzierganie-na-drutach',
-  crocheting: '/szydelkowanie',
+  knitting: '/kursy-dziergania-na-drutach',
+  crocheting: '/kursy-szydelkowania',
 };
 
 /**
@@ -66,3 +68,68 @@ export const pageUrls: { knitting: string; crocheting: string } = {
  * @constant
  */
 export const POSTS_PER_PAGE = 12;
+
+/**
+ * Declaration of enum course badge styles.
+ * @constant
+ */
+export const courseComplexityEnum = {
+  1: {
+    name: 'Dla początkujących',
+    background: 'var(--primary-300)',
+    color: 'var(--primary-800)',
+  },
+  2: {
+    name: 'Dla średnio zaawansowanych',
+    background: 'var(--primary-400)',
+    color: 'var(--primary-800)',
+  },
+  3: {
+    name: 'Dla zaawansowanych',
+    background: 'var(--primary-700)',
+    color: 'var(--primary-100)',
+  },
+};
+
+/**
+ * Declaration of enum order statuses.
+ * @constant
+ */
+export const statusesSwitch = {
+  'AWAITING PAYMENT': 'Oczekuje na płatność',
+  PENDING: 'W trakcie realizacji',
+  COMPLETED: 'Zrealizowane',
+  REFUNDED: 'Zwrócone',
+  CANCELLED: 'Anulowane',
+  'AWAITING SEND': 'Oczekuje na wysyłkę',
+  'PARCEL GENERATED': 'Przesyłka wygenerowana',
+  SENDED: 'Wysłano',
+};
+
+export const PRODUCT_CARD_QUERY = `
+  _id,
+  price,
+  discount,
+  name,
+  'slug': slug.current,
+  basis,
+  type,
+  _type,
+  course->{
+    complexity,
+    "reviewsCount": count(*[_type == 'courseReviewCollection' && references(^._id)]),
+    "rating": math::avg(*[_type == 'courseReviewCollection' && references(^._id)]{rating}.rating)
+  },
+  gallery[0]{
+    ${Img_Query}
+  },
+  variants[]{
+    _key,
+    name,
+    price,
+    discount,
+    gallery[0]{
+      ${Img_Query}
+    },
+  },
+`;

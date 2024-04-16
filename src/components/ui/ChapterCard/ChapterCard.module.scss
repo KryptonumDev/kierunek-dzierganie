@@ -10,11 +10,16 @@
     .badge {
       position: absolute;
       display: block;
-      bottom: 0;
+      top: 0;
       left: 0;
-      padding: 8px 16px 8px 20px;
-      border-radius: 0px 4px 0px 0px;
+      padding: 8px 20px;
+      border-radius: 0px 0px 4px 0px;
       background: var(--primary-300, #efe8e7);
+
+      color: var(--primary-800, #53423c);
+      font-size: clamp(14px, calc(14vw / 7.68), 18px);
+      font-weight: 300;
+      line-height: 150%;
     }
 
     img {
@@ -27,8 +32,8 @@
   }
 
   h2 {
-    margin-top: 24px;
-    margin-bottom: 8px;
+    margin-top: clamp(16px, calc(20vw / 7.68), 24px);
+    margin-bottom: clamp(4px, calc(8vw / 7.68), 8px);
 
     color: var(--primary-800, #53423c);
     font-size: 24px;
@@ -37,7 +42,7 @@
 
     span {
       color: var(--primary-700, #766965);
-      font-size: 18px;
+      font-size: clamp(16px, calc(18vw / 7.68), 18px);
       font-weight: 300;
       line-height: 150%;
     }
@@ -56,5 +61,11 @@
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
+
+    span {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
   }
 }

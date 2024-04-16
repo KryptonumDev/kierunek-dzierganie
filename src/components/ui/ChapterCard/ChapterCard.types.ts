@@ -1,4 +1,4 @@
-import type { ImgType } from '@/global/types';
+import type { CoursesProgress, ImgType } from '@/global/types';
 
 export type Props = {
   name: string;
@@ -7,9 +7,11 @@ export type Props = {
   courseSlug: string;
   number: number;
   lessons: {
+    _id: string;
     name: string;
     video: string;
     lengthInMinutes: number;
     slug: string;
   }[];
+  progress: CoursesProgress['progress']['string'];
 };

@@ -6,7 +6,7 @@ const Checkbox = ({ register, label, errors, ...props }: Props) => {
   return (
     <label
       className={styles['Checkbox']}
-      aria-invalid={!!errors[register.name]}
+      aria-invalid={!!(errors ? errors[register.name] : false)}
     >
       <div className={styles.icon}>
         <input
@@ -19,7 +19,7 @@ const Checkbox = ({ register, label, errors, ...props }: Props) => {
       </div>
       <p>
         {label}
-        <Error error={errors[register.name]?.message?.toString()} />
+        {errors && <Error error={errors[register.name]?.message?.toString()} />}
       </p>
     </label>
   );

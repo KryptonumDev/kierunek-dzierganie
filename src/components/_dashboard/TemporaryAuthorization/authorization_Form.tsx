@@ -8,6 +8,7 @@ import type { FormValues, FormProps } from './authorization.types';
 import Input from '@/components/ui/PasswordInput';
 import { REGEX } from '@/global/constants';
 import Checkbox from '@/components/ui/Checkbox';
+import { useState } from 'react';
 
 const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
   const supabase = createClientComponentClient();
@@ -20,7 +21,10 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
     mode: 'all',
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
+    setIsSubmitting(true);
     if (isRegister) {
       await supabase.auth
         .signUp({
@@ -37,6 +41,9 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
         .catch((error) => {
           toast(error.message);
           console.error(error); // TODO: Add error handling
+        })
+        .finally(() => {
+          setIsSubmitting(false);
         });
     } else {
       await supabase.auth
@@ -46,11 +53,14 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
         })
         .then((res) => {
           if (res.error) throw res.error;
-          router.refresh();
+          router.push('/moje-konto/kursy');
         })
         .catch((error) => {
           toast(error.message);
           console.error(error); // TODO: Add error handling
+        })
+        .finally(() => {
+          setIsSubmitting(false);
         });
     }
   };
@@ -99,7 +109,7 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
           errors={errors}
         />
       )}
-      <Button>{isRegister ? 'Zarejestruj się' : 'Zaloguj się'}</Button>
+      <Button disabled={isSubmitting}>{isRegister ? 'Zarejestruj się' : 'Zaloguj się'}</Button>
       {isRegister ? (
         <p>
           Masz już konto?{' '}
@@ -109,6 +119,7 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
               setRegister(false);
             }}
             type='button'
+            disabled={isSubmitting}
           >
             Zaloguj się
           </button>
@@ -122,6 +133,7 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
               setRegister(true);
             }}
             type='button'
+            disabled={isSubmitting}
           >
             Zarejestruj się
           </button>

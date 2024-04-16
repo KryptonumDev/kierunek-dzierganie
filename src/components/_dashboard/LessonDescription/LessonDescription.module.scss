@@ -1,0 +1,56 @@
+.LessonDescription {
+  margin-top: clamp(96px, calc(140vw / 7.68), 240px);
+
+  h2 {
+    margin-bottom: 36px;
+    text-align: center;
+  }
+
+  p {
+    text-align: center;
+  }
+
+  .grid {
+    margin-top: 64px;
+    display: grid;
+    gap: clamp(16px, calc(28vw/7.68), 32px);
+
+    .item {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 32px;
+
+      &.left {
+        flex-direction: row-reverse;
+      }
+
+      img {
+        max-width: 50%;
+        width: 100%;
+        height: auto;
+        border-radius: 4px;
+      }
+
+      @media (max-width: 820px) {
+        flex-direction: column-reverse !important;
+
+        img{
+          max-width: 485px;
+        }
+      }
+
+      h3 {
+        margin-bottom: clamp(12px, calc(28vw/7.68), 36px);
+        color: var(--primary-800, #53423c);
+        font-size: clamp(18px, calc(36vw/7.68), 36px);
+        font-weight: 300;
+        line-height: 120%;
+      }
+
+      p {
+        text-align: left;
+      }
+    }
+  }
+}

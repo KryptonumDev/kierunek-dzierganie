@@ -54,8 +54,9 @@ const Markdown = ({ Tag, components, children, className, id, ...props }: Markdo
         ...(Tag && {
           p: ({ children }) => (
             <Tag
-              {...props}
+              {...(className && { className: className })}
               {...(id && { id })}
+              {...props}
             >
               {children}
             </Tag>
@@ -71,7 +72,18 @@ const Markdown = ({ Tag, components, children, className, id, ...props }: Markdo
     />
   );
 
-  return className ? <div className={className}>{markdown}</div> : markdown;
+  return Tag ? (
+    markdown
+  ) : (
+    <div
+      {...(className && { className: className })}
+      {...(Object.keys(props).length > 0 && {
+        ...props,
+      })}
+    >
+      {markdown}
+    </div>
+  );
 };
 
 Markdown.h1 = (props: JSX.IntrinsicAttributes & MarkdownProps) => (

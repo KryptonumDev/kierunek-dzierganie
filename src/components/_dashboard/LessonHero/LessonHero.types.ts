@@ -1,42 +1,21 @@
-import type { ImgType } from '@/global/types';
+import type { CoursesProgress, Chapter, File, Course } from '@/global/types';
 
 export type Props = {
-  course: {
-    _id: string;
-    name: string;
-    slug: string;
-    chapters: {
-      _id: string;
-      chapterDescription: string;
-      chapterName: string;
-      chapterImage: ImgType;
-      lessons: {
-        _id: string;
-        name: string;
-        video: string;
-        lengthInMinutes: number;
-        slug: string;
-      }[];
-    }[];
-  };
+  course: Course;
   lesson: {
+    title: string;
     _id: string;
-    name: string;
     slug: string;
     video: string;
+    video_alter: string;
     lengthInMinutes: number;
+    files: File[];
+    files_alter: File[];
   };
-  progress: {
-    id: number;
-    course_id: string;
-    owner_id: string;
-    progress: {
-      [key: string]: {
-        [key: string]: {
-          ended: boolean;
-          notes: string;
-        };
-      };
-    };
-  };
+  left_handed: boolean;
+  progress: CoursesProgress;
+  currentChapterIndex: number;
+  currentLessonIndex: number;
+  currentChapter: Chapter;
+  id: string;
 };

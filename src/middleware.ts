@@ -9,16 +9,21 @@ export async function middleware(req: NextRequest) {
 
   // Refresh session if expired - required for Server Components
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!session && req.nextUrl.pathname.includes('/moje-konto')  && !req.nextUrl.pathname.includes('autoryzacja'))
+  if (
+    !user &&
+    req.nextUrl.pathname.includes('/moje-konto') &&
+    !req.nextUrl.pathname.includes('autoryzacja') &&
+    !req.nextUrl.pathname.includes('wylogowano')
+  )
     return NextResponse.redirect(new URL('/moje-konto/autoryzacja', req.url));
 
-  if (session && req.nextUrl.pathname.includes('autoryzacja'))
+  if (user && req.nextUrl.pathname.includes('autoryzacja'))
     return NextResponse.redirect(new URL('/moje-konto/kursy', req.url));
 
-  if (session && req.nextUrl.pathname === '/moje-konto')
+  if (user && req.nextUrl.pathname === '/moje-konto')
     return NextResponse.redirect(new URL('/moje-konto/kursy', req.url));
 
   return res;

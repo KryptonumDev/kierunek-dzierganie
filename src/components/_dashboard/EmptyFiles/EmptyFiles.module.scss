@@ -1,0 +1,39 @@
+.EmptyFiles {
+  margin-top: 144px;
+
+  >h2{
+    text-align: center;
+  }
+
+  >p{
+    text-align: center;
+    margin-top: 28px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(16px, calc(24vw / 7.68), 24px);
+    margin: 0 auto;
+    width: fit-content;
+    margin-top: clamp(20px, calc(48vw / 7.68), 48px);
+
+    > div {
+      max-width: 400px;
+      width: 100%;
+
+      img {
+        margin-bottom: 20px;
+        border-radius: 6px;
+      }
+
+      a {
+        margin: 0 auto;
+
+        @media (max-width: 480px) {
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}

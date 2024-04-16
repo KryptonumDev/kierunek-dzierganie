@@ -4,45 +4,55 @@ import SummaryAside from './_SummaryAside';
 import PersonalData from './_PersonalData';
 import { useEffect, useState } from 'react';
 import Authorization from './_Authorization';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import Payment from './_Payment';
 
 const stepContent = (props: MappingProps) => ({
-  1: <PersonalData {...props} />,
-  2: <Authorization {...props} />,
-  3: <Payment {...props} />,
+  1: <Authorization {...props} />,
+  2: <PersonalData {...props} />,
 });
 
-export default function Checkout({ goToCart, fetchedItems, showCheckout, setShowCheckout, CrossIcon }: Props) {
-  const supabase = createClientComponentClient();
+export default function Checkout({
+  goToCart,
+  fetchedItems,
+  showCheckout,
+  setShowCheckout,
+  CrossIcon,
+  userEmail,
+  billing,
+  shipping,
+  // virtualWallet,
+}: Props) {
   const [step, setStep] = useState(1);
 
   const [input, setInput] = useState<InputState>({
     firmOrder: false,
     shippingSameAsBilling: true,
     amount: 0,
+    needDelivery: false,
     shipping: {
-      firstName: 'Tets ',
-      address1: 'test',
-      city: 'test',
-      country: 'PL',
-      postcode: '12-123',
-      email: 'test@test.tes',
-      phone: '123123123',
-      company: '',
+      firstName: shipping?.firstName ?? '',
+      address1: shipping?.address1 ?? '',
+      city: shipping?.city ?? '',
+      country: shipping?.country ?? '',
+      postcode: shipping?.postcode ?? '',
+      phone: shipping?.phone ?? '',
     },
     billing: {
-      nip: '',
-      firstName: 'Tets ',
-      address1: 'test',
-      city: 'test',
-      country: 'PL',
-      postcode: '12-123',
-      email: 'test@test.tes',
-      phone: '123123123',
-      company: '',
+      nip: billing?.nip ?? '',
+      firstName: billing?.firstName ?? '',
+      address1: billing?.address1 ?? '',
+      city: billing?.city ?? '',
+      country: billing?.country ?? '',
+      postcode: billing?.postcode ?? '',
+      email: userEmail ?? '',
+      phone: billing?.phone ?? '',
+      company: billing?.company ?? '',
+      invoiceType: billing?.invoiceType ?? 'Osoba prywatna',
     },
   });
+
+  useEffect(() => {
+    if (userEmail) setStep(2);
+  }, []);
 
   useEffect(() => {
     if (!fetchedItems?.length) {
@@ -58,14 +68,17 @@ export default function Checkout({ goToCart, fetchedItems, showCheckout, setShow
 
     setInput((prev) => ({
       ...prev,
-      amount: fetchedItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
+      amount: fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price * item.quantity), 0),
+      needDelivery: fetchedItems.some((item) => item.type === 'physical' || item.type === 'variable'),
       products: {
         array: fetchedItems.map((item) => ({
           id: item._id,
           name: item.name,
           price: item.price,
-          quantity: item.quantity,
-          image: item.variants?.[0]?.gallery?.[0] ? item.variants[0].gallery[0] : item.gallery,
+          discount: item.discount,
+          quantity: item.quantity!,
+          image: item.variants?.[0]?.gallery ? item.variants[0].gallery : item.gallery,
+          complexity: item.course?.complexity || null,
         })),
       },
     }));
@@ -79,49 +92,20 @@ export default function Checkout({ goToCart, fetchedItems, showCheckout, setShow
     return () => removeEventListener('keydown', () => setShowCheckout());
   }, [setShowCheckout]);
 
-  const nextStep = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (user && (!input.user_id || input.user_id !== user.id)) {
-      setInput({ ...input, user_id: user.id });
-    }
-
-    let nextStep = step + 1;
-    if (nextStep === 2 && user) nextStep++;
-
-    setStep(nextStep);
-  };
-
-  const prevStep = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (user && (!input.user_id || input.user_id !== user.id)) {
-      setInput({ ...input, user_id: user.id });
-    }
-
-    let nextStep = step - 1;
-    if (nextStep === 2 && user) nextStep--;
-
-    setStep(nextStep);
-  };
-
   return (
     <>
-      <div className={`${styles['checkout']} ${showCheckout ? styles['active'] : ''}`}>
+      <div
+        className={styles['checkout']}
+        data-visible={!!showCheckout}
+      >
         <button
-          className={styles['close']}
+          className={styles['CloseButton']}
           onClick={setShowCheckout}
         >
           {CrossIcon}
         </button>
         <div className={styles['content']}>
-          <div className={styles['main']}>
-            {stepContent({ goToCart, nextStep, setStep, prevStep, input, setInput })[step as keyof typeof stepContent]}
-          </div>
+          {stepContent({ goToCart, setStep, input, setInput })[step as keyof typeof stepContent]}
           <SummaryAside input={input} />
         </div>
       </div>

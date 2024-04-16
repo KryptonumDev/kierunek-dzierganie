@@ -1,0 +1,22 @@
+.cta{
+  margin: 0 auto;
+}
+
+.TextSection {
+  max-width: calc(690rem / 16);
+  margin: 0 auto;
+  text-align: center;
+  .paragraph {
+    margin-top: clamp(16px, calc(28vw / 7.68), 36px);
+    & > *:not(:last-child) {
+      margin-bottom: 12px;
+    }
+  }
+  .cta {
+    margin: clamp(28px, calc(36vw / 7.68), 36px) auto 0;
+  }
+  .additionalInfo {
+    margin-top: clamp(8px, calc(12vw / 7.68), 16px);
+    font-size: calc(14rem / 16);
+  }
+}

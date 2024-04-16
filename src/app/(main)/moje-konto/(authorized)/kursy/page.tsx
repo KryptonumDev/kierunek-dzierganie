@@ -1,6 +1,7 @@
 import EmptyCourses from '@/components/_dashboard/EmptyCourses';
 import ListingCourses from '@/components/_dashboard/ListingCourses';
 import { Img_Query } from '@/components/ui/image';
+import Seo from '@/global/Seo';
 import type { ImgType } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
@@ -18,6 +19,7 @@ type QueryProps = {
     image: ImgType;
     complexity: 1 | 2 | 3;
     courseLength: string;
+    progressPercentage: number;
   }[];
 };
 
@@ -26,7 +28,7 @@ export default async function Courses() {
 
   return (
     <div>
-      {courses ? (
+      {courses.length > 0 ? (
         <ListingCourses courses={courses} />
       ) : (
         <EmptyCourses
@@ -36,6 +38,13 @@ export default async function Courses() {
       )}
     </div>
   );
+}
+
+export async function generateMetadata() {
+  return Seo({
+    title: 'Moje kursy | Kierunek dzierganie',
+    path: '/moje-konto/kursy',
+  });
 }
 
 const query = async (): Promise<QueryProps> => {
@@ -50,8 +59,10 @@ const query = async (): Promise<QueryProps> => {
       `
         id,
         courses_progress (
+          id,
           course_id,
-          owner_id
+          owner_id,
+          progress
         )
       `
     )
@@ -93,5 +104,33 @@ const query = async (): Promise<QueryProps> => {
       id: res.data!.courses_progress.map((course) => course.course_id),
     },
   });
-  return data;
+
+  return {
+    ...data,
+    courses: data.courses.map((course) => {
+      const progress = res.data!.courses_progress.find((el) => el.course_id === course._id)!;
+
+      let totalLessons = 0;
+      let completedLessons = 0;
+
+      for (const sectionId in progress.progress) {
+        const lessons = progress.progress[sectionId];
+        for (const lessonId in lessons) {
+          totalLessons++;
+          if (lessons[lessonId]!.ended) {
+            completedLessons++;
+          }
+        }
+      }
+
+      // if 0 lessons, return to avoid division by 0
+      if (totalLessons === 0) {
+        return { ...course, progressPercentage: 0 };
+      }
+
+      const completionPercentage = (completedLessons / totalLessons) * 100;
+
+      return { ...course, progressPercentage: completionPercentage };
+    }),
+  };
 };

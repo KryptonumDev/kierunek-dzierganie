@@ -16,9 +16,12 @@
 
   .grid{
     margin-top: 48px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 32px;
+    // display: grid;
+    // grid-template-columns: 1fr 1fr;
+    // gap: 32px;
+    max-width: 500px;
+    width: 100%;
+    margin: 0 auto;
   }
 
   form{
@@ -34,7 +37,7 @@
 
     >button{
       text-align: center;
-      margin: 36px 0;
+      margin: 36px auto;
     }
   }
 }

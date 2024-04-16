@@ -1,0 +1,94 @@
+.orderCard {
+  display: grid;
+  grid-template-columns: clamp(213px, calc(213vw / 7.68), 277px) 1fr;
+  gap: 24px;
+
+  @media (max-width: 540px) {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .image-wrap {
+    position: relative;
+
+    .badge {
+      position: absolute;
+      display: block;
+      top: 0;
+      left: 0;
+      padding: 8px 16px 8px 20px;
+      border-radius: 0px 0px 4px 0px;
+    }
+
+    img {
+      aspect-ratio: 277/200;
+      object-fit: cover;
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+  }
+
+  .information {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    @media (max-width: 540px) {
+      gap: 16px;
+    }
+
+    .status {
+      p {
+        color: var(--primary-800, #53423c);
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 150%;
+        margin-bottom: 8px;
+      }
+      .line {
+        display: block;
+        width: 100%;
+        height: 2px;
+        border-radius: 1px;
+        background: var(--primary-300, #efe8e7);
+        position: relative;
+
+        &::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: var(--percent);
+          border-radius: 1px;
+          background: var(--primary-600, #9a827a);
+        }
+      }
+    }
+
+    .main-data {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .payment {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+
+      span {
+        color: var(--primary-800, #53423c);
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 150%;
+        margin-bottom: 8px;
+      }
+    }
+  }
+}

@@ -12,11 +12,9 @@ const Contents = ({ data, isPrivacyPolicy }: Props) => {
             className={styles.content}
             data-isPrivacyPolicy={isPrivacyPolicy}
           >
-            <Markdown.h2
-              className={styles.title}
-            >
-              {title}
-            </Markdown.h2>
+            <h2 className={styles.title}>
+              <Markdown.span>{title}</Markdown.span>
+            </h2>
             <Markdown className={styles.description}>{description}</Markdown>
           </div>
         );

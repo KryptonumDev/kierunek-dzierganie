@@ -1,0 +1,76 @@
+.Input {
+  font-size: calc(14rem / 16);
+  color: var(--primary-900);
+  border: 1px solid var(--primary-400);
+  border-radius: 4px;
+  padding: 8px;
+  transition:
+    border-color 0.5s,
+    background-color 0.5s;
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 8px;
+  align-items: center;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--primary-400);
+    background-color: var(--primary-200);
+  }
+
+  &:focus-visible {
+    outline: none;
+    border-color: var(--primary-600);
+  }
+
+  p {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  input {
+    position: absolute;
+    width: 0px;
+    height: 0px;
+    opacity: 0;
+    top: 0;
+    left: 0;
+  }
+
+  .mark {
+    display: block;
+    border-radius: var(--Radius-full, 5000px);
+    border: 1px solid var(--primary-600, #9a827a);
+    width: 32px;
+    height: 32px;
+    position: relative;
+
+    &::after {
+      content: '';
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--primary-600, #9a827a);
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+      transition: all 0.3s var(--easing);
+    }
+  }
+
+  input:checked ~ .mark::after {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+
+  &[aria-invalid='true'] {
+    input,
+    textarea {
+      border-color: var(--error-600);
+    }
+  }
+}

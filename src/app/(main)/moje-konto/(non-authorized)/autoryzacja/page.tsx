@@ -1,24 +1,15 @@
 import Authorization from '@/components/_dashboard/TemporaryAuthorization/authorization';
-import Markdown from '@/components/ui/markdown';
+import Seo from '@/global/Seo';
 
 const AuthorizationPage = async () => {
-  const registerTitle = <Markdown.h1>**Zarejestruj się**</Markdown.h1>;
-  const registerText = (
-    <Markdown>Dołącz do naszej **twórczej społeczności** i razem z nami rozwijaj swoją kreatywność!</Markdown>
-  );
-  const loginTitle = <Markdown.h1>**Zaloguj się**</Markdown.h1>;
-  const loginText = (
-    <Markdown>Przejdź do swojego konta, aby uzyskać **dostęp do kursu** lub sprawdzić status zamówienia.</Markdown>
-  );
-
-  return (
-    <Authorization
-      registerTitle={registerTitle}
-      loginTitle={loginTitle}
-      registerText={registerText}
-      loginText={loginText}
-    />
-  );
+  return <Authorization />;
 };
+
+export async function generateMetadata() {
+  return Seo({
+    title: 'Autoryzacja | Kierunek dzierganie',
+    path: '/moje-konto/autoryzacja',
+  });
+}
 
 export default AuthorizationPage;

@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
+  reactStrictMode: false,
   productionBrowserSourceMaps: true,
   images: {
     dangerouslyAllowSVG: true,
@@ -12,15 +13,20 @@ const nextConfig = {
       },
     ],
   },
-  // async redirects() {
-  //   return [
-  //     {
-  //       source: '/',
-  //       destination: '/landing/program-rozwojowy-dziergania-na-drutach',
-  //       permanent: false,
-  //     },
-  //   ];
-  // },
+  async redirects() {
+    return [
+      {
+        source: '/szydelkowanie',
+        destination: '/kursy-szydelkowania',
+        permanent: true,
+      },
+      {
+        source: '/dzierganie-na-drutach',
+        destination: '/kursy-dziergania-na-drutach',
+        permanent: true,
+      }
+    ];
+  },
 };
 
 export default nextConfig;

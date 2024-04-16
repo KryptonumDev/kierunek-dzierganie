@@ -18,7 +18,7 @@ type FormValues = {
   accept: boolean;
 };
 
-export default function Authorization({ nextStep, prevStep }: MappingProps) {
+export default function Authorization({ setStep, goToCart }: MappingProps) {
   const [isRegister, setRegister] = useState(true);
   const supabase = createClientComponentClient();
   const router = useRouter();
@@ -44,7 +44,7 @@ export default function Authorization({ nextStep, prevStep }: MappingProps) {
           if (res.error) throw res.error;
           // TODO: check is account created before activation
           toast('Na podany adres e-mail został wysłany link aktywacyjny');
-          nextStep();
+          setStep(2);
         })
         .catch((error) => {
           toast(error.message);
@@ -57,7 +57,7 @@ export default function Authorization({ nextStep, prevStep }: MappingProps) {
           password: data.password,
         })
         .then((res) => {
-          nextStep();
+          setStep(2);
           if (res.error) throw res.error;
           router.refresh();
         })
@@ -69,90 +69,92 @@ export default function Authorization({ nextStep, prevStep }: MappingProps) {
   };
 
   return (
-    <form
-      className={styles.authorization}
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <legend>Zaloguj się, aby mieć dostęp do swoich kursów</legend>
-      <Input
-        label='E-mail'
-        register={register('email', {
-          required: {
-            value: true,
-            message: 'Pole wymagane',
-          },
-          pattern: {
-            value: REGEX.email,
-            message: 'Proszę wpisać poprawny e-mail',
-          },
-        })}
-        errors={errors}
-      />
-      <PasswordInput
-        isRegister={isRegister}
-        password={true}
-        label='Password'
-        register={register('password', {
-          required: {
-            value: true,
-            message: 'Pole wymagane',
-          },
-          minLength: {
-            value: 12,
-            message: 'Co najmniej 12 znaków',
-          },
-        })}
-        errors={errors}
-      />
-      {isRegister && (
-        <Checkbox
-          register={register('accept', {
+    <>
+      <form
+        className={`${styles['main']} ${styles['authorization']}`}
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <legend>Zaloguj się, aby mieć dostęp do swoich kursów</legend>
+        <Input
+          label='E-mail'
+          register={register('email', {
             required: {
               value: true,
-              message: 'Zgoda jest wymagana',
+              message: 'Pole wymagane',
+            },
+            pattern: {
+              value: REGEX.email,
+              message: 'Proszę wpisać poprawny e-mail',
             },
           })}
-          label='Akceptuję warunki polityki prywatności i regulaminu'
           errors={errors}
         />
-      )}
-      <Button>{isRegister ? 'Zarejestruj się' : 'Zaloguj się'}</Button>
-      {isRegister ? (
-        <p>
-          Masz już konto?{' '}
-          <button
-            className='link'
-            onClick={() => {
-              setRegister(false);
-            }}
-            type='button'
-          >
-            Zaloguj się
-          </button>
-        </p>
-      ) : (
-        <p>
-          Nie masz jeszcze konta?{' '}
-          <button
-            className='link'
-            onClick={() => {
-              setRegister(true);
-            }}
-            type='button'
-          >
-            Zarejestruj się
-          </button>
-        </p>
-      )}
+        <PasswordInput
+          isRegister={isRegister}
+          password={true}
+          label='Password'
+          register={register('password', {
+            required: {
+              value: true,
+              message: 'Pole wymagane',
+            },
+            minLength: {
+              value: 12,
+              message: 'Co najmniej 12 znaków',
+            },
+          })}
+          errors={errors}
+        />
+        {isRegister && (
+          <Checkbox
+            register={register('accept', {
+              required: {
+                value: true,
+                message: 'Zgoda jest wymagana',
+              },
+            })}
+            label='Akceptuję warunki polityki prywatności i regulaminu'
+            errors={errors}
+          />
+        )}
+        <Button>{isRegister ? 'Zarejestruj się' : 'Zaloguj się'}</Button>
+        {isRegister ? (
+          <p>
+            Masz już konto?{' '}
+            <button
+              className='link'
+              onClick={() => {
+                setRegister(false);
+              }}
+              type='button'
+            >
+              Zaloguj się
+            </button>
+          </p>
+        ) : (
+          <p>
+            Nie masz jeszcze konta?{' '}
+            <button
+              className='link'
+              onClick={() => {
+                setRegister(true);
+              }}
+              type='button'
+            >
+              Zarejestruj się
+            </button>
+          </p>
+        )}
+      </form>
       <div className={styles.buttons}>
         <button
           className={`link ${styles['return']}`}
           type='button'
-          onClick={prevStep}
+          onClick={goToCart}
         >
-          Wróć do poprzedniego kroku
+          Wróć do koszyka
         </button>
       </div>
-    </form>
+    </>
   );
 }

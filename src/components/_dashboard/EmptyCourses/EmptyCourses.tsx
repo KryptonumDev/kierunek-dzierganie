@@ -19,14 +19,14 @@ const EmptyCourses = ({ image_crochet, image_knitting }: Props) => {
             data={image_knitting}
             sizes='(max-width: 640px) 150px, 300px'
           />
-          <Button href='/dzierganie-na-drutach'>Dzierganie na drutach</Button>
+          <Button href='/kursy-dziergania-na-drutach'>Dzierganie</Button>
         </div>
         <div>
           <Img
             data={image_crochet}
             sizes='(max-width: 640px) 150px, 300px'
           />
-          <Button href='/szydelkowanie'>Szydełkowanie</Button>
+          <Button href='/kursy-szydelkowania'>Szydełkowanie</Button>
         </div>
       </div>
     </section>

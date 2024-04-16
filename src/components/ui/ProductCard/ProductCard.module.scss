@@ -1,24 +1,85 @@
 .productCard {
   text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  position: relative;
 
-  img{
-    max-width: 100%;
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    aspect-ratio: 380/280;
-    border-radius: 4px;
-    margin-bottom: 24px;
+  .rating {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+
+    span {
+      font-size: 14px;
+      color: var(--primary-800, #53423C);
+
+      b {
+        font-weight: 300;
+        font-size: 32px;
+        font-family: var(--font-city-streetwear);
+      }
+    }
   }
 
-  .names{
+  &.horizontal {
+    display: grid;
+    grid-template-columns: 292fr 374fr;
+    gap: 24px;
+    text-align: left;
+
+    button {
+      margin-left: 0;
+    }
+  }
+
+  h3 {
+    font-size: clamp(18px, calc(24vw / 7.68), 24px);
+  }
+
+  .link {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+  }
+
+  .image-wrap {
+    position: relative;
+
+    .badge {
+      font-size: 14px;
+      position: absolute;
+      display: block;
+      top: 0;
+      left: 0;
+      padding: 8px 16px 8px 20px;
+      border-radius: 0px 0px 4px 0px;
+      max-width: 100%;
+
+      span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+      }
+    }
+
+    img {
+      max-width: 100%;
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      aspect-ratio: 380/280;
+      border-radius: 4px;
+      margin-bottom: 24px;
+    }
+  }
+
+  .names {
     margin-bottom: 8px;
   }
 
-  a, button{
+  a,
+  button {
+    position: relative;
     margin: 36px auto 0 auto;
+    z-index: 3;
   }
 }

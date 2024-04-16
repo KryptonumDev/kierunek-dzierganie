@@ -1,4 +1,4 @@
-import type { ImgType, Product, ProductCard } from '@/global/types';
+import type { Billing, Discount, ImgType, Product, ProductCard, Shipping } from '@/global/types';
 import type { Item } from 'react-use-cart';
 
 export type useCartItems = {
@@ -24,12 +24,20 @@ export type QueryProps = {
       }[];
     }[];
   };
+  cart: {
+    highlighted_products: Array<ProductCard>;
+  };
   ChevronDownIcon: React.ReactNode;
   ChevronBackIcon: React.ReactNode;
   SearchIcon: React.ReactNode;
   CloseIcon: React.ReactNode;
   Logo: React.ReactNode;
   CrossIcon: React.ReactNode;
+
+  userEmail?: string;
+  shipping?: Shipping;
+  billing?: Billing;
+  virtualWallet: number;
 };
 
 export type EmptyCart = {
@@ -45,6 +53,11 @@ export type Cart = {
   image_crochet: ImgType;
   highlighted_products?: Array<ProductCard>;
   CrossIcon: React.ReactNode;
+  virtualWallet: number;
+  setUsedVirtualMoney: React.Dispatch<React.SetStateAction<number | null>>;
+  setUsedDiscount: React.Dispatch<React.SetStateAction<Discount | null>>;
+  usedVirtualMoney: number | null;
+  usedDiscount: Discount | null;
 } & useCartItems;
 
 export type Grid = {
@@ -75,4 +88,38 @@ export type _NavProps = {
   ChevronBackIcon: React.ReactNode;
   SearchIcon: React.ReactNode;
   CloseIcon: React.ReactNode;
+  showMenu: boolean;
+  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export type SearchResultType = {
+  courses: {
+    course: {
+      image: ImgType;
+    };
+    name: string;
+    basis: 'crocheting' | 'knitting';
+    slug: string;
+  }[];
+  physicalProducts: {
+    gallery: ImgType;
+    name: string;
+    slug: string;
+    basis: 'crocheting' | 'knitting';
+  }[];
+  variableProducts: {
+    variants: {
+      gallery: ImgType;
+    };
+    name: string;
+    slug: string;
+    basis: 'crocheting' | 'knitting';
+  }[];
+  blogPosts: {
+    hero: {
+      img: ImgType;
+      heading: string;
+    };
+    slug: string;
+  }[];
 };

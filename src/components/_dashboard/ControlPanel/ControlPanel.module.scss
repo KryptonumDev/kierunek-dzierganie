@@ -1,42 +1,67 @@
 .ControlPanel {
-  position: sticky;
-  top: 140px;
+  @media (min-width: 1000px) {
+    position: sticky;
+    top: 140px;
+  }
   border-radius: 6px;
-  background: var(--primary-200, #faf4f0);
-  padding: 36px;
+  background: var(--primary-200);
+  padding: clamp(16px, calc(24vw / 7.68), 36px);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: fit-content;
-
   ul {
-    display: grid;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
     gap: 28px;
-
+    @media (min-width: 1000px) {
+      .logout {
+        margin-top: 160px;
+        width: fit-content;
+        text-align: left;
+      }
+    }
+    @media (max-width: 999px) {
+      flex-direction: row;
+      gap: 34px 48px;
+      .logout {
+        margin-left: auto;
+      }
+      li {
+        flex-grow: 1;
+        text-align: center;
+      }
+    }
     li {
-      display: block;
-
+      list-style-type: none;
       a {
-        display: block;
-        color: var(--primary-700, #766965);
-        font-size: 14px;
+        display: grid;
+        gap: 4px;
+        grid-template-columns: auto 1fr;
+        color: var(--primary-700);
+        font-size: calc(14rem / 16);
+        &:hover {
+          color: var(--primary-900);
+        }
         font-weight: 300;
         line-height: 150%;
         transition:
-          color 0.3s var(--easing),
-          font-size 0.3s var(--easing);
-      }
-
-      &.active a {
-        color: var(--primary-800, #53423c);
-        font-size: 18px;
+          color 0.5s var(--easing),
+          font-size 0.5s var(--easing);
+        svg {
+          margin-top: 0.35em;
+          width: 0px;
+          transition: width 0.5s var(--easing);
+        }
+        &[aria-current='true'] {
+          color: var(--primary-800, #53423c);
+          font-size: 18px;
+          svg {
+            width: 21px;
+          }
+        }
       }
     }
-  }
-
-  > *:last-child {
-    margin-top: 160px;
-    width: fit-content;
-    text-align: left;
   }
 }

@@ -4,6 +4,9 @@
   gap: 8px;
   align-items: center;
   cursor: pointer;
+  &:has(input[disabled]) {
+    cursor: not-allowed;
+  }
   .switcher {
     width: 62px;
     height: 32px;

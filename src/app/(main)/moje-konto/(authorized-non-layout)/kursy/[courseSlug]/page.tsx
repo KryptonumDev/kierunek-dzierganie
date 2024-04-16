@@ -1,45 +1,39 @@
 import CourseChapters from '@/components/_dashboard/CourseChapters';
-import type { ImgType } from '@/global/types';
+import ProgramChapters from '@/components/_dashboard/ProgramChapters';
+import { QueryMetadata } from '@/global/Seo/query-metadata';
+import type { CoursesProgress, Course } from '@/global/types';
+import { checkCourseProgress } from '@/utils/check-course-progress';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
 interface QueryProps {
-  course: {
-    _id: string;
-    name: string;
-    slug: string;
-    chapters: {
-      chapterDescription: string;
-      chapterName: string;
-      chapterImage: ImgType;
-      lessons: {
-        name: string;
-        video: string;
-        lengthInMinutes: number;
-        slug: string;
-      }[];
-    }[];
-  };
+  course: Course;
+  courses_progress: CoursesProgress;
 }
 
-type SupabaseData = {
-  data: {
-    courses_progress: {
-      course_id: string;
-      owner_id: string;
-    }[];
-  };
-};
-
 export default async function Course({ params: { courseSlug } }: { params: { courseSlug: string } }) {
-  const { course }: QueryProps = await query(courseSlug);
+  const { course, courses_progress }: QueryProps = await query(courseSlug);
   return (
     <div>
-      <CourseChapters course={course} />
+      {course.type === 'course' ? (
+        <CourseChapters
+          courses_progress={courses_progress}
+          course={course}
+        />
+      ) : (
+        <ProgramChapters
+          courses_progress={courses_progress}
+          course={course}
+        />
+      )}
     </div>
   );
+}
+
+export async function generateMetadata({ params: { courseSlug } }: { params: { courseSlug: string } }) {
+  return await QueryMetadata('course', `/moje-konto/kursy/${courseSlug}`, courseSlug);
 }
 
 const query = async (slug: string): Promise<QueryProps> => {
@@ -48,14 +42,16 @@ const query = async (slug: string): Promise<QueryProps> => {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const res: unknown = await supabase
+  const res = await supabase
     .from('profiles')
     .select(
       `
         id, 
         courses_progress (
+          id,
           course_id,
-          owner_id
+          owner_id,
+          progress
         )
       `
     )
@@ -65,16 +61,42 @@ const query = async (slug: string): Promise<QueryProps> => {
   const data: QueryProps = await sanityFetch({
     query: /* groq */ `
     {
-    "course": *[_type == "course" && slug.current == $slug][0]{
-      _id,
-      name,
-      "slug": slug.current,
-      chapters {
-        chapterImage {
+      "course": *[_type == "course" && slug.current == $slug][0]{
+        _id,
+        name,
+        type,
+        "slug": slug.current,
+        chapters {
+          dateOfUnlock,
+          "_id": _key,
+          chapterImage {
+            asset -> {
+              url,
+              altText,
+              metadata {
+                lqip,
+                dimensions {
+                  width,
+                  height,
+                }
+              }
+            }
+          }, 
+          chapterDescription,
+          chapterName,
+          lessons[]->{
+            _id,
+            name,
+            video,
+            lengthInMinutes,
+            "slug": slug.current
+          }
+        }[],
+        image {
           asset -> {
-            url,
-            altText,
-            metadata {
+          url,
+          altText,
+          metadata {
               lqip,
               dimensions {
                 width,
@@ -82,37 +104,23 @@ const query = async (slug: string): Promise<QueryProps> => {
               }
             }
           }
-        }, 
-        chapterDescription,
-        chapterName,
-        lessons[]->{
-          name,
-          video,
-          lengthInMinutes,
-          "slug": slug.current
-        }
-      }[],
-      image {
-        asset -> {
-        url,
-        altText,
-        metadata {
-            lqip,
-            dimensions {
-              width,
-              height,
-            }
-          }
-        }
-      },
-    }
+        },
+      }
     }`,
     params: {
       slug: slug,
     },
   });
 
-  if (!(res as SupabaseData).data.courses_progress.some((el) => el.course_id === data.course._id)) return notFound();
+  if (!res.data!.courses_progress.some((el) => el.course_id === data.course._id)) return notFound();
 
-  return data;
+  const progress = await checkCourseProgress(
+    data.course,
+    res.data!.courses_progress.find((el) => el.course_id === data.course._id)!
+  );
+
+  return {
+    course: data.course,
+    courses_progress: progress,
+  };
 };

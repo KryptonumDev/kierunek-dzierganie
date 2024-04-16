@@ -1,12 +1,37 @@
 import sanityFetch from '@/utils/sanity.fetch';
-import type { QueryProps } from './Header.types';
 import Content from './_Content';
 import Markdown from '@/components/ui/markdown';
 import { Img_Query } from '@/components/ui/image';
+import type { QueryProps } from './Header.types';
+import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
+import { getServiceAccess } from '@/utils/supabase-admin';
+import { cookies } from 'next/headers';
 
 const Header = async () => {
-  const { global }: QueryProps = await query();
+  const { global, cart } = await query();
   const nav_annotation = <Markdown>{global.nav_Annotation ?? ''}</Markdown>;
+
+  const supabase = createServerActionClient({ cookies });
+  const adminbase = await getServiceAccess();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data } = await adminbase
+    .from('profiles')
+    .select(
+      `
+      id,
+      billing_data,
+      shipping_data,
+      virtual_wallet (
+        amount
+      )
+    `
+    )
+    .eq('id', user?.id)
+    .single();
 
   return (
     <Content
@@ -18,6 +43,12 @@ const Header = async () => {
       ChevronDownIcon={ChevronDownIcon}
       ChevronBackIcon={ChevronBackIcon}
       CrossIcon={CrossIcon}
+      cart={cart}
+      userEmail={user?.email}
+      shipping={data?.shipping_data}
+      billing={data?.billing_data}
+      // @ts-expect-error - virtual_wallet is not array, bug in supabase
+      virtualWallet={data?.virtual_wallet?.amount}
     />
   );
 };
@@ -28,7 +59,7 @@ const query = async (): Promise<QueryProps> => {
   const data = await sanityFetch<QueryProps>({
     query: /* groq */ `
       {
-        "global":  *[_id == 'global'][0] {
+        "global": *[_id == 'global'][0] {
           image_crochet {
             ${Img_Query}
           },
@@ -47,10 +78,57 @@ const query = async (): Promise<QueryProps> => {
               href,
             }[],
           }[],
+        },
+        "cart": *[_id == 'Cart'][0]{
+          highlighted_products[]->{
+            _id,
+            price,
+            discount,
+            name,
+            'slug': slug.current,
+            basis,
+            type,
+            _type,
+            course->{
+              complexity
+            },
+            gallery[0]{
+              asset -> {
+                url,
+                altText,
+                metadata {
+                  lqip,
+                  dimensions {
+                    width,
+                    height,
+                  }
+                }
+              }
+            },
+            variants[]{
+              _key,
+              name,
+              price,
+              discount,
+              gallery[0]{
+                asset -> {
+                  url,
+                  altText,
+                  metadata {
+                    lqip,
+                    dimensions {
+                      width,
+                      height,
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     `,
-    tags: ['global'],
+    tags: ['global', 'cart'],
   });
   return data;
 };

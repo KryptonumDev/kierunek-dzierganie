@@ -1,13 +1,14 @@
 'use client';
-import Link from 'next/link';
-import styles from './Header.module.scss';
-import Search from './_Search';
-import Annotation from './_Annotation';
-import Nav from './_Nav';
-import type { QueryProps } from './Header.types';
-import { useState } from 'react';
+import type { Discount } from '@/global/types';
 import { useCartItems } from '@/utils/useCartItems';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import { useState } from 'react';
+import styles from './Header.module.scss';
+import type { QueryProps } from './Header.types';
+import Search from './Search/Search';
+import Annotation from './_Annotation';
+import Nav from './_Nav';
 
 const Cart = dynamic(() => import('./_Cart'), { ssr: false });
 const Checkout = dynamic(() => import('./Checkout'), { ssr: false });
@@ -21,21 +22,21 @@ const Content = ({
   SearchIcon,
   CloseIcon,
   CrossIcon,
+  cart: { highlighted_products },
+  userEmail,
+  shipping,
+  billing,
+  virtualWallet,
 }: QueryProps) => {
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
-
+  const [showMenu, setShowMenu] = useState(false);
+  const [usedDiscount, setUsedDiscount] = useState<Discount | null>(null);
+  const [usedVirtualMoney, setUsedVirtualMoney] = useState<number | null>(null);
   const { cart, fetchedItems, updateItemQuantity, removeItem } = useCartItems();
 
   return (
     <>
-      <div
-        onClick={() => {
-          setShowCart(false);
-          setShowCheckout(false);
-        }}
-        className={`${styles['overlay']} ${showCart || showCheckout ? styles['active'] : ''}`}
-      />
       <Checkout
         CrossIcon={CrossIcon}
         setShowCheckout={() => setShowCheckout(false)}
@@ -45,6 +46,10 @@ const Content = ({
           setShowCart(true);
           setShowCheckout(false);
         }}
+        userEmail={userEmail}
+        shipping={shipping}
+        billing={billing}
+        virtualWallet={virtualWallet}
       />
       <Cart
         goToCheckout={() => {
@@ -60,6 +65,12 @@ const Content = ({
         fetchedItems={fetchedItems}
         updateItemQuantity={updateItemQuantity}
         removeItem={removeItem}
+        highlighted_products={highlighted_products}
+        virtualWallet={virtualWallet}
+        setUsedVirtualMoney={setUsedVirtualMoney}
+        usedVirtualMoney={usedVirtualMoney}
+        usedDiscount={usedDiscount}
+        setUsedDiscount={setUsedDiscount}
       />
       <a
         href='#main'
@@ -90,13 +101,15 @@ const Content = ({
             ChevronBackIcon={ChevronBackIcon}
             SearchIcon={SearchIcon}
             CloseIcon={CloseIcon}
+            showMenu={showMenu}
+            setShowMenu={setShowMenu}
           />
           <ul className={styles.quickLinks}>
             <li>
               <Link href='/kontakt'>Kontakt</Link>
             </li>
             <li>
-              <Link href='/moje-konto'>Mój profil</Link>
+              <Link href='/moje-konto/kursy'>Mój profil</Link>
             </li>
             <li>
               <button
@@ -104,7 +117,7 @@ const Content = ({
                   setShowCart(true);
                 }}
                 className={styles.basket}
-                data-basket-items='2'
+                // data-basket-items='2'
               >
                 Koszyk
               </button>
@@ -116,6 +129,16 @@ const Content = ({
           CloseIcon={CloseIcon}
         />
       </header>
+      <div
+        onClick={() => {
+          setShowCart(false);
+          setShowCheckout(false);
+          setShowMenu(false);
+        }}
+        className={styles['Overlay']}
+        data-visible={!!(showCart || showCheckout || showMenu)}
+        style={{ zIndex: showMenu ? 8 : undefined }}
+      />
     </>
   );
 };

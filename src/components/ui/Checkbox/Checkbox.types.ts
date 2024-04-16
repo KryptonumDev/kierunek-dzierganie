@@ -5,5 +5,5 @@ export type Props = {
   register: {
     name: string;
   };
-  errors: FieldErrors;
-};
+  errors?: FieldErrors;
+} & React.InputHTMLAttributes<HTMLInputElement>;
