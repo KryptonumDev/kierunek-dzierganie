@@ -4,18 +4,26 @@
     margin: 0 auto clamp(28px, calc(36vw / 7.68), 64px);
     text-align: center;
   }
-  header, .cta {
+
+  header,
+  .cta {
     position: relative;
     z-index: 2
   }
+
   .list {
     list-style-type: none;
     display: grid;
+
     @media (min-width: 900px) {
       grid-template-columns: 1fr 1fr;
+      max-width: 1000px;
+      margin: 0 auto;
     }
+
     align-items: center;
     gap: clamp(24px, calc(32vw / 7.68), 48px);
+
     .item {
       font-size: clamp(calc(14rem / 16), calc(14vw / 7.68), calc(18rem / 16));
       border-radius: 4px;
@@ -26,6 +34,7 @@
       text-align: center;
     }
   }
+
   .cta {
     margin: clamp(28px, calc(36vw / 7.68), 64px) auto 0;
   }
