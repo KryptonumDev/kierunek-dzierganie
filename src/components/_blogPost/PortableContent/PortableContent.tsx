@@ -1,4 +1,4 @@
-import { type Node } from '@/global/types';
+import { type ImgType, type Node } from '@/global/types';
 import { portableTextToMarkdown } from '@/utils/portable-text-to-markdown';
 import { slugify } from '@/utils/slugify';
 import { PortableText, toPlainText, type PortableTextReactComponents } from '@portabletext/react';
@@ -17,8 +17,19 @@ import QuoteSection, { QuoteSection_Query, type QuoteSectionTypes } from '../Quo
 import Standout, { Standout_Query, type StandoutTypes } from '../Standout';
 import TableSection, { TableSection_Query, type TableSectionTypes } from '../TableSection';
 import styles from './PortableContent.module.scss';
+import LargeImage, { LargeImage_Query } from '../LargeImage';
+import ArticleNavigation from '../ArticleNavigation';
+import { type PortableContentTypes } from './PortableContent.types';
+import ArticleGreetings, { type ArticleGreetingsTypes, ArticleGreetings_Query } from '../ArticleGreetings';
+import VideoSection, { type VideoSectionTypes, VideoSection_Query } from '../VideoSection';
+import { generateTableOfContent } from '@/utils/generate-table-of-content';
+import TableOfContent from '../TableOfContent/TableOfContent';
+import ShareArticle from '../ShareArticle';
+import ColorPicker, { ColorPickerTypes, ColorPicker_Query } from '../ColorPicker';
 
-export default function PortableContent({ data }: { data: [] }) {
+export default function PortableContent({ data, previousBlog, nextBlog, links }: PortableContentTypes) {
+  if (!data) return null;
+
   const components = {
     types: {
       ImageBadge: ({ value }: { value: ImageBadgeTypes }) => <ImageBadge {...value} />,
@@ -27,10 +38,14 @@ export default function PortableContent({ data }: { data: [] }) {
       BadgeSection: ({ value }: { value: BadgeSectionTypes }) => <BadgeSection {...value} />,
       HighlightedImage: ({ value }: { value: HighlightedImageTypes }) => <HighlightedImage {...value} />,
       ProcessComponent: ({ value }: { value: ProcessComponentTypes }) => <ProcessComponent {...value} />,
+      ArticleGreetings: ({ value }: { value: ArticleGreetingsTypes }) => <ArticleGreetings {...value} />,
       Standout: ({ value }: { value: StandoutTypes }) => <Standout {...value} />,
+      LargeImage: ({ value }: { value: ImgType }) => <LargeImage {...value} />,
       ProcessShowcase: ({ value }: { value: ProcessShowcaseTypes }) => <ProcessShowcase {...value} />,
       QuoteSection: ({ value }: { value: QuoteSectionTypes }) => <QuoteSection {...value} />,
       ConversationShowcase: ({ value }: { value: ConversationShowcaseTypes }) => <ConversationShowcase {...value} />,
+      VideoSection: ({ value }: { value: VideoSectionTypes }) => <VideoSection {...value} />,
+      ColorPicker: ({ value }: { value: ColorPickerTypes }) => <ColorPicker {...value} />,
     },
     block: {
       h2: ({ value }: { value: [] }) => (
@@ -42,13 +57,11 @@ export default function PortableContent({ data }: { data: [] }) {
       h4: ({ value }: { value: [] }) => (
         <Markdown.h4 id={slugify(toPlainText(value))}>{portableTextToMarkdown(value as Node)}</Markdown.h4>
       ),
-      largeParagraph: ({ children }: { children: React.ReactNode }) => (
-        <p className={styles.largeParagraph}>{children}</p>
-      ),
+      normal: ({ value }: { value: Node }) => <Markdown>{portableTextToMarkdown(value as Node)}</Markdown>,
     },
     listItem: {
-      number: ({ children }: { children: React.ReactNode }) => <li className={'orderedList'}>{children}</li>,
-      bullet: ({ children }: { children: React.ReactNode }) => (
+      number: ({ children }: { children: React.ReactNode[] }) => <Markdown.li>{children[0] as string}</Markdown.li>,
+      bullet: ({ children }: { children: React.ReactNode[] }) => (
         <li>
           <BulletList />
           {children}
@@ -56,8 +69,8 @@ export default function PortableContent({ data }: { data: [] }) {
       ),
     },
     list: {
-      bullet: ({ children }: { children: React.ReactNode }) => <ul className={'unorderedList'}>{children}</ul>,
-      number: ({ children }: { children: React.ReactNode }) => <ol className={styles.unorderedList}>{children}</ol>,
+      bullet: ({ children }: { children: React.ReactNode }) => <ul className={styles.unorderedList}>{children}</ul>,
+      number: ({ children }: { children: React.ReactNode }) => <ol className={styles.orderedList}>{children}</ol>,
     },
     marks: {
       link: ({ value, children }: { value: string; children: string }) => {
@@ -75,12 +88,22 @@ export default function PortableContent({ data }: { data: [] }) {
     },
   };
 
+  const content = generateTableOfContent(data);
+
   return (
     <section className={styles.PortableContent}>
-      <PortableText
-        value={data}
-        components={components as unknown as Partial<PortableTextReactComponents>}
-      />
+      <TableOfContent content={content} />
+      <div className={styles.blogContent}>
+        <PortableText
+          value={data}
+          components={components as unknown as Partial<PortableTextReactComponents>}
+        />
+        <ArticleNavigation
+          previousBlog={previousBlog}
+          nextBlog={nextBlog}
+        />
+        <ShareArticle {...links} />
+      </div>
     </section>
   );
 }
@@ -94,7 +117,7 @@ const Block_Query = /* groq */ `
   },`;
 
 export const PortableContent_Query = /* groq */ `
-  content[] {
+  portableText[] {
     _type,
     ${ImageBadge_Query}
     ${ImagesGrid_Query}
@@ -106,8 +129,12 @@ export const PortableContent_Query = /* groq */ `
     ${ProcessShowcase_Query}
     ${QuoteSection_Query}
     ${ConversationShowcase_Query}
+    ${LargeImage_Query}
+    ${ArticleGreetings_Query}
     ${Block_Query}
-  }`;
+    ${VideoSection_Query}
+    ${ColorPicker_Query}
+  },`;
 
 const BulletList = () => (
   <svg

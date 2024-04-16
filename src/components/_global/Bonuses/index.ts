@@ -5,7 +5,6 @@ export default Bonuses;
 
 export const Bonuses_Query = `
   _type == 'Bonuses' => {
-    _type,
     heading,
     list[] {
       description,

@@ -4,7 +4,6 @@ export default Opinions;
 
 export const Opinions_Query = `
   _type == 'Opinions' => {
-    _type,
     heading,
     list[] {
       author,

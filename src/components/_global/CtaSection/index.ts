@@ -4,7 +4,6 @@ export default CtaSection;
 
 export const CtaSection_Query = `
   _type == 'CtaSection' => {
-    _type,
     isReversed,
     isHighlighted,
     heading,

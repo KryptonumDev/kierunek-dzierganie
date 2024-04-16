@@ -5,7 +5,6 @@ export default Partners;
 
 export const Partners_Query = `
   _type == "Partners" => {
-    _type,
     heading,
     paragraph,
     cta {

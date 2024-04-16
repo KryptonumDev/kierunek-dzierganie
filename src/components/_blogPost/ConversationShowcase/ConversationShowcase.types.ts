@@ -4,7 +4,11 @@ export type ConversationShowcaseTypes = {
   list: {
     isRecipient: boolean;
     message?: string;
-    audioFile?: string;
+    audioFile?: {
+      asset: {
+        url: string;
+      };
+    };
   }[];
   sender: {
     img: ImgType;

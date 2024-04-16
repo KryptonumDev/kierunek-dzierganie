@@ -5,7 +5,6 @@ export default CustomerCaseStudy;
 
 export const CustomerCaseStudy_Query = `
   _type == "CustomerCaseStudy" => {
-    _type,
     heading,
     paragraph,
     list[] -> {

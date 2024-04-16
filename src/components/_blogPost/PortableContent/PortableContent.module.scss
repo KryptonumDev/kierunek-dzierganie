@@ -1,4 +1,125 @@
 .PortableContent {
   display: grid;
   gap: clamp(20px, calc(20vw/7.68), 28px);
+  grid-template-columns: 400px auto;
+  align-items: flex-start;
+
+  @media(max-width: 999px) {
+    grid-template-columns: 1fr;
+  }
+
+  nav {
+    position: sticky;
+    top: 121px;
+    width: 400px;
+
+    @media (max-width: 999px) {
+      position: relative;
+      top: 0;
+      width: 100%;
+    }
+  }
+
+  .blogContent {
+    display: grid;
+    gap: 16px;
+
+
+    h2:not(:first-child) {
+      margin-top: clamp(48px, calc(64vw/7.68), 128px);
+    }
+
+    h3 {
+      margin-top: clamp(20px, calc(48vw/7.68), 48px);
+    }
+
+    h4 {
+      margin-top: 32px;
+    }
+
+    p {
+      margin-top: clamp(4px, calc(12vw/7.68), 12px);
+    }
+  }
+
+  *+.unorderedList,
+  .unorderedList+* {
+    margin-top: clamp(12px, calc(20vw / 7.68), 20px);
+  }
+
+  .unorderedList {
+    list-style-type: none;
+
+    li {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: clamp(12px, calc(20vw/7.68), 20px);
+
+      svg {
+        height: 1.5em;
+        color: var(--primary-600);
+      }
+
+      &:not(:last-child) {
+        margin-bottom: 12px;
+      }
+    }
+  }
+
+  .orderedList {
+    display: grid;
+    list-style-type: none;
+    counter-reset: counter;
+    gap: clamp(20px, calc(20vw/7.68), 28px);
+
+    li {
+      display: grid;
+      gap: clamp(16px, calc(16vw/7.68), 12px);
+      grid-template-columns: auto 1fr;
+      align-items: flex-start;
+
+      strong {
+        background: linear-gradient(rgba(255, 255, 255, 0) 50%, var(--primary-300) 50%);
+        font-weight: inherit;
+        display: inline;
+      }
+
+      &::before {
+        counter-increment: counter;
+        content: counter(counter);
+        width: clamp(42px, calc(64vw/7.68), 80px);
+        height: clamp(42px, calc(64vw/7.68), 80px);
+        border-radius: 50%;
+        background: var(--primary-200);
+        color: var(--primary-700);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-city-streetwear);
+        font-size: clamp(calc(32rem/16), calc(48vw/7.68), calc(48rem/16));
+        font-weight: 400;
+        line-height: clamp(32px, calc(42vw/7.68), 42px);
+        padding-top: 12px;
+      }
+    }
+
+    li:nth-child(1n) {
+      &::before {
+        background: var(--primary-300);
+      }
+    }
+
+    li:nth-child(2n) {
+      &::before {
+        background: var(--primary-400);
+      }
+    }
+
+    li:nth-child(3n) {
+      &::before {
+        background: var(--primary-500);
+      }
+    }
+  }
+
 }

@@ -5,7 +5,6 @@ export default Newsletter;
 
 export const Newsletter_Query = `
   _type == 'Newsletter' => {
-    _type,
     heading,
     img {
       ${Img_Query}

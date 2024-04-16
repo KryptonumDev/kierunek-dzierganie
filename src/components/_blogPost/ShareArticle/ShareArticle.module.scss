@@ -1,0 +1,65 @@
+.ShareArticle {
+  display: flex;
+  justify-content: flex-end;
+  gap: 40px;
+  flex-wrap: wrap;
+  padding-top: 48px;
+
+  >* {
+    padding: 12px;
+    background: var(--primary-200);
+    border-radius: 50%;
+  }
+
+  .copyMessage {
+    border-radius: 4px;
+    background-color: var(--primary-300);
+    padding: 6px 8px;
+    font-size: calc(14rem/16);
+    line-height: 1.5;
+    transition: background-color .5s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    &:disabled {
+      pointer-events: none;
+    }
+
+    &:not(:has(svg)):hover {
+      background-color: var(--primary-200);
+    }
+
+    svg {
+      path {
+        animation: icon .8s var(--easing) forwards;
+
+        &:first-child {
+          stroke-dasharray: 38;
+          stroke-dashoffset: 38;
+          transform: rotate(-45deg);
+          transform-origin: center;
+        }
+
+        &:last-child {
+          stroke-dasharray: 10;
+          stroke-dashoffset: 10;
+          animation-delay: .5s;
+        }
+      }
+    }
+
+    &:has(svg) {
+      background-color: var(--primary-400);
+    }
+  }
+
+  @keyframes icon {
+
+    // 100% target doesn't work on Safari
+    99%,
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+}
