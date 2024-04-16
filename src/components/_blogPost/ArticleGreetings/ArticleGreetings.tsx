@@ -8,10 +8,10 @@ const ArticleGreetings = ({ author: { img, name }, text }: ArticleGreetingsTypes
     <div className={styles['ArticleGreetings']}>
       <Img
         data={img}
-        sizes=''
+        sizes='33vw'
       />
-      <p>{text}</p>
-      <Markdown.h2>{name}</Markdown.h2>
+      <p className={styles.text}>{text}</p>
+      <Markdown.h2 className={styles.name}>{name}</Markdown.h2>
     </div>
   );
 };

@@ -1,18 +1,15 @@
 import styles from './VideoSection.module.scss';
 import type { VideoSectionTypes } from './VideoSection.types';
 
-const VideoSection = ({ video }: VideoSectionTypes) => {
+const VideoSection = ({ title, video }: VideoSectionTypes) => {
   return (
     <section className={styles['VideoSection']}>
-      <video
-        controls
-        className={styles.video}
-      >
-        <source
-          src={video.asset.url}
-          type='video/mp4'
-        />
-      </video>
+      <iframe
+        style={{ width: '100%', height: '100%' }}
+        src={video}
+        title={title}
+        allow='fullscreen; picture-in-picture'
+      />
     </section>
   );
 };

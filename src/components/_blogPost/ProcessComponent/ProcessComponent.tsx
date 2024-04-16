@@ -17,7 +17,7 @@ const ProcessComponent = ({ list }: ProcessComponentTypes) => {
               sizes='(max-width: 499px) 50vw, 33vw'
             />
           )}
-          {paragraph && <Markdown className={img ? styles.parargraph : styles.centralized}>{paragraph}</Markdown>}
+          {paragraph && <Markdown className={img ? styles.paragraph : styles.centralized}>{paragraph}</Markdown>}
         </div>
       ))}
     </div>

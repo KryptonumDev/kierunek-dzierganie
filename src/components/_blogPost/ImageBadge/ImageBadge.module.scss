@@ -4,6 +4,7 @@
   width: 50%;
   border-radius: 4px;
   position: relative;
+  margin-top: clamp(48px, calc(64vw/7.68), 128px);
 
   @media (max-width: 499px) {
     width: 100%;

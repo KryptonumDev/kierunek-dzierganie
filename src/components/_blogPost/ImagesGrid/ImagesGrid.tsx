@@ -13,7 +13,7 @@ const ImagesGrid = ({ list }: ImagesGridTypes) => {
         >
           <Img
             data={img}
-            sizes=''
+            sizes='50vw'
           />
           {paragraph && <Markdown>{paragraph}</Markdown>}
         </div>

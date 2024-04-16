@@ -3,16 +3,19 @@ import styles from './Hero.module.scss';
 import type { HeroTypes } from './Hero.types';
 import Img from '@/components/ui/image';
 import Markdown from '@/components/ui/markdown';
+import ReadingTime from '@/components/ui/ReadingTime';
 
-const Hero = ({ paragraph, img, heading, author, date }: HeroTypes) => {
+const Hero = ({ paragraph, img, heading, author, date, portableText }: HeroTypes) => {
   date = formatDateToPolishLocale(date);
-
   return (
     <section className={styles['Hero']}>
-      <Img
-        data={img}
-        sizes=''
-      />
+      <div className={styles.imageWrapper}>
+        <Img
+          data={img}
+          sizes='(max-width: 999px) 100vw, 50vw'
+        />
+        <ReadingTime portableText={portableText} />
+      </div>
       <div className={styles.content}>
         <div>
           <Markdown>{date}</Markdown>
@@ -22,7 +25,7 @@ const Hero = ({ paragraph, img, heading, author, date }: HeroTypes) => {
         <div className={styles.author}>
           <Img
             data={author.img}
-            sizes='(max-width: 999px) 100vw, 50vw'
+            sizes='100px'
           />
           <div>
             <Markdown.h3>{'**Autor publikacji**'}</Markdown.h3>

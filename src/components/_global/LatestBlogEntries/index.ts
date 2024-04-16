@@ -15,6 +15,7 @@ export const LatestBlogEntries_Query = (inline = false) => `
           ${Img_Query}
         }
       },
+      portableText,
       "slug": slug.current,
     } | order(_createdAt desc)[0..2]
   },

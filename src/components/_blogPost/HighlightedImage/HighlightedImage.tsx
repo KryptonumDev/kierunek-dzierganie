@@ -11,7 +11,7 @@ const HighlightedImage = ({ img, isBackground, paragraph }: HighlightedImageType
     >
       <Img
         data={img}
-        sizes=''
+        sizes='250px'
       />
       <Markdown>{paragraph}</Markdown>
     </div>

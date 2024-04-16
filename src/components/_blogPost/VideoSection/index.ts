@@ -4,10 +4,7 @@ export type { VideoSectionTypes } from './VideoSection.types';
 
 export const VideoSection_Query = `
   _type == "VideoSection" => {
-    video {
-      asset -> {
-        url
-      }
-    },
+    video,
+    title
   },
 `;

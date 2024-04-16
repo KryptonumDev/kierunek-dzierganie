@@ -15,6 +15,7 @@ export default async function BlogPostPage({ params: { slug } }: { params: { slu
         {...hero}
         author={author}
         date={date}
+        portableText={portableText}
       />
       <PortableContent
         data={portableText}

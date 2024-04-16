@@ -3,6 +3,7 @@
     max-width: calc(584rem / 16);
     text-align: center;
     margin: 0 auto clamp(36px, calc(48vw / 7.68), 64px);
+
     h2 {
       margin-bottom: clamp(12px, calc(28vw / 7.68), 36px);
     }
@@ -13,6 +14,7 @@
     column-gap: 32px;
     row-gap: clamp(28px, calc(24vw / 7.68), 48px);
     grid-template-columns: 1fr 1fr 1fr;
+    align-items: flex-start;
 
     @media (max-width: 999px) {
       grid-template-columns: 1fr;
@@ -48,10 +50,16 @@
         font-size: calc(14 / 16) rem;
       }
 
-      >img {
-        width: 100%;
-        height: auto;
-        object-fit: cover;
+      .imageWrapper {
+        position: relative;
+
+        >img {
+          width: 100%;
+          height: auto;
+          object-fit: cover;
+          aspect-ratio: 16/9;
+          border-radius: 4px;
+        }
       }
 
       >div {
@@ -59,5 +67,9 @@
         gap: 16px;
       }
     }
+  }
+
+  a {
+    margin: clamp(36px, calc(48vw / 7.68), 64px) auto 0;
   }
 }

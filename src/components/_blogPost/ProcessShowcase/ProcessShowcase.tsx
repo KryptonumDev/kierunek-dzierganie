@@ -20,7 +20,7 @@ const ProcessShowcase = ({ list }: ProcessShowcaseTypes) => {
               >
                 <Img
                   data={img}
-                  sizes=''
+                  sizes='(max-width: 499px) 50vw, 33vw'
                 />
                 <Markdown>{paragraph}</Markdown>
               </div>

@@ -1,6 +1,10 @@
 .VideoSection {
-  .video {
-    height: auto;
-    width: 100%;
+  aspect-ratio: 16/9;
+  background-color: var(--background-300);
+  margin-bottom: clamp(16px, calc(16vw / 7.68), 24px);
+
+  iframe {
+    max-width: 100%;
+    max-height: 100%;
   }
 }

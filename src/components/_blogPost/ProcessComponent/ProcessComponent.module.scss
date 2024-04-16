@@ -3,6 +3,7 @@
   grid-template-columns: repeat(3, 1fr);
   row-gap: clamp(12px, calc(28vw/7.68), 28px);
   column-gap: clamp(12px, calc(24vw/7.68), 28px);
+  padding-top: 12px;
 
   @media (max-width: 499px) {
     grid-template-columns: repeat(2, 1fr);
@@ -11,6 +12,12 @@
   .item {
     display: grid;
     gap: 12px;
+
+    .paragraph {
+      >p {
+        margin-top: unset;
+      }
+    }
 
     >img {
       border-radius: 4px;
@@ -23,6 +30,10 @@
       display: grid;
       align-self: center;
       justify-self: center;
+
+      >p {
+        margin-top: unset;
+      }
     }
 
     @media (max-width: 499px) {

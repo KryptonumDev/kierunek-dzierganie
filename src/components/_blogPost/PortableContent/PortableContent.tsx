@@ -25,9 +25,9 @@ import VideoSection, { type VideoSectionTypes, VideoSection_Query } from '../Vid
 import { generateTableOfContent } from '@/utils/generate-table-of-content';
 import TableOfContent from '../TableOfContent/TableOfContent';
 import ShareArticle from '../ShareArticle';
+import ColorPicker, { ColorPickerTypes, ColorPicker_Query } from '../ColorPicker';
 
 export default function PortableContent({ data, previousBlog, nextBlog, links }: PortableContentTypes) {
-  
   if (!data) return null;
 
   const components = {
@@ -45,6 +45,7 @@ export default function PortableContent({ data, previousBlog, nextBlog, links }:
       QuoteSection: ({ value }: { value: QuoteSectionTypes }) => <QuoteSection {...value} />,
       ConversationShowcase: ({ value }: { value: ConversationShowcaseTypes }) => <ConversationShowcase {...value} />,
       VideoSection: ({ value }: { value: VideoSectionTypes }) => <VideoSection {...value} />,
+      ColorPicker: ({ value }: { value: ColorPickerTypes }) => <ColorPicker {...value} />,
     },
     block: {
       h2: ({ value }: { value: [] }) => (
@@ -56,9 +57,7 @@ export default function PortableContent({ data, previousBlog, nextBlog, links }:
       h4: ({ value }: { value: [] }) => (
         <Markdown.h4 id={slugify(toPlainText(value))}>{portableTextToMarkdown(value as Node)}</Markdown.h4>
       ),
-      largeParagraph: ({ children }: { children: React.ReactNode }) => (
-        <p className={styles.largeParagraph}>{children}</p>
-      ),
+      normal: ({ value }: { value: Node }) => <Markdown>{portableTextToMarkdown(value as Node)}</Markdown>,
     },
     listItem: {
       number: ({ children }: { children: React.ReactNode[] }) => <Markdown.li>{children[0] as string}</Markdown.li>,
@@ -70,7 +69,7 @@ export default function PortableContent({ data, previousBlog, nextBlog, links }:
       ),
     },
     list: {
-      bullet: ({ children }: { children: React.ReactNode }) => <ul className={'unorderedList'}>{children}</ul>,
+      bullet: ({ children }: { children: React.ReactNode }) => <ul className={styles.unorderedList}>{children}</ul>,
       number: ({ children }: { children: React.ReactNode }) => <ol className={styles.orderedList}>{children}</ol>,
     },
     marks: {
@@ -134,6 +133,7 @@ export const PortableContent_Query = /* groq */ `
     ${ArticleGreetings_Query}
     ${Block_Query}
     ${VideoSection_Query}
+    ${ColorPicker_Query}
   },`;
 
 const BulletList = () => (

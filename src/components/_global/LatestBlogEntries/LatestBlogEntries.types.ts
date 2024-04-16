@@ -10,5 +10,6 @@ export type LatestBlogEntriesTypes = {
       img: ImgType;
     };
     slug: string;
+    portableText: [];
   }[];
 };
