@@ -4,7 +4,6 @@ export default WordsCollection;
 
 export const WordsCollection_Query = `
   _type == "WordsCollection" => {
-    _type,
     heading,
     list[],
     cta {

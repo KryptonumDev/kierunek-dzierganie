@@ -123,12 +123,25 @@ export type BlogPostQueryProps = {
     paragraph: string;
   };
   content: [];
+  portableText: [];
   author: {
     img: ImgType;
     heading: string;
     paragraph: string;
   };
   date: string;
+  previousBlog?: {
+    slug: string;
+    name: string;
+  };
+  nextBlog?: {
+    slug: string;
+    name: string;
+  };
+  links: {
+    facebook: string;
+    pinterest: string;
+  } 
 };
 
 export type BlogCategoryPageQueryProps = {

@@ -8,7 +8,11 @@ export const ConversationShowcase_Query = `
     list[] {
       isRecipient,
       message,
-      audioFile
+      audioFile {
+        asset -> {
+          url
+        }
+      },
     },
     sender {
       img {

@@ -4,7 +4,6 @@ export default CourseModules;
 
 export const CourseModules_Query = `
   _type == 'CourseModules' => {
-    _type,
     heading,
     paragraph,
     list[] {

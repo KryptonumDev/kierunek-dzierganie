@@ -5,7 +5,6 @@ export default HeroColumn;
 
 export const HeroColumn_Query = `
   _type == 'HeroColumn' => {
-    _type,
     heading,
     paragraph,
     img {

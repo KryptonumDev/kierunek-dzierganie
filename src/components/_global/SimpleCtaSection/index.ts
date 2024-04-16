@@ -4,7 +4,6 @@ export default SimpleCtaSection;
 
 export const SimpleCtaSection_Query = `
   _type == 'SimpleCtaSection' => {
-    _type,
     heading,
     paragraph,
     cta {

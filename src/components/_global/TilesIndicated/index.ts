@@ -4,7 +4,6 @@ export default TilesIndicated;
 
 export const TilesIndicated_Query = `
   _type == "TilesIndicated" => {
-    _type,
     heading,
     list[] {
       title,
