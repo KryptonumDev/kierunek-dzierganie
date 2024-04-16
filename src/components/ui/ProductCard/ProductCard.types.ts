@@ -1,7 +1,7 @@
-import type { ProductCard } from '@/global/types';
+import type { ProductCard, CourseCard } from '@/global/types';
 
 export type Props = {
-  data: ProductCard;
+  data: ProductCard | CourseCard;
   inCart?: boolean;
   horizontal?: boolean;
 };

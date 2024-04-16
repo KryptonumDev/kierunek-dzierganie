@@ -1,7 +1,7 @@
 import type { HeroSimpleTypes } from '@/components/_global/HeroSimple';
 import type { StepsGridTypes } from '@/components/_global/StepsGrid';
 import type { LatestBlogEntriesTypes } from '@/components/_global/LatestBlogEntries';
-import type { ProductCard } from '@/global/types';
+import type { CourseCard } from '@/global/types';
 
 export type KnittingPage_QueryTypes = {
   page: {
@@ -11,8 +11,14 @@ export type KnittingPage_QueryTypes = {
     listing_title: string;
     listing_text: string;
   };
-  products: ProductCard[];
+  products: CourseCard[];
+  productsTotalCount: number;
   categories: {
+    name: string;
+    slug: string;
+    _id: string;
+  }[];
+  authors: {
     name: string;
     slug: string;
     _id: string;

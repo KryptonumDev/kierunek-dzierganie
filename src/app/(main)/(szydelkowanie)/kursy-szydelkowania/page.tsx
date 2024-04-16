@@ -7,7 +7,7 @@ import LatestBlogEntries, { LatestBlogEntries_Query } from '@/components/_global
 import type { CrochetingPage_QueryTypes } from '../page.types';
 import ProductsListing from '@/components/_global/ProductsListing';
 import Markdown from '@/components/ui/markdown';
-import { PRODUCT_CARD_QUERY } from '@/global/constants';
+import { COURSE_CARD_QUERY } from '@/global/constants';
 
 const page = { name: 'Szydełkowanie', path: '/kursy-szydelkowania' };
 
@@ -32,14 +32,8 @@ const CrochetingPage = async ({ searchParams }: { searchParams: { [key: string]:
   return (
     <>
       <Breadcrumbs data={[page]} />
-      {/* if searchParams have any param inside hide hero */}
-
-      {Object.keys(searchParams).length === 0 && (
-        <>
-          <HeroSimple {...HeroSimpleData} />
-          <StepsGrid {...StepsGridData} />
-        </>
-      )}
+      <HeroSimple {...HeroSimpleData} />
+      <StepsGrid {...StepsGridData} />
       <ProductsListing
         title={title}
         text={text}
@@ -58,7 +52,6 @@ const CrochetingPage = async ({ searchParams }: { searchParams: { [key: string]:
 export default CrochetingPage;
 
 const query = async (searchParams: { [key: string]: string }): Promise<CrochetingPage_QueryTypes> => {
-  console.log(searchParams);
   return await sanityFetch<CrochetingPage_QueryTypes>({
     query: /* groq */ `{
       "page": *[_type == "Crocheting_Page"][0] {
@@ -69,15 +62,29 @@ const query = async (searchParams: { [key: string]: string }): Promise<Crochetin
         "listing_text": listing_Paragraph,
       },
       "products": *[
-        _type == 'product' 
+        (_type == 'course' || _type == 'bundle' )
         && visible == true 
         && basis == 'crocheting' 
-        && type in ['digital', 'bundle'] 
-        && (!defined($category) || course->category->slug.current == $category)
+        && (!defined($bundle) || _type == 'bundle')
+        && (!defined($category) || _type == 'bundle' || category->slug.current == $category)
+        && (!defined($category) || _type == 'course' || $category in categories[]->slug.current)
+        && (!defined($complexity) || complexity == $complexity)
+        && (!defined($autor) || author->slug.current == $autor)
+        && (!defined($discount) || defined(discount))
       ][$before...$after]{
-        ${PRODUCT_CARD_QUERY}
+        ${COURSE_CARD_QUERY}
       },
-      "productsTotalCount": count(*[_type== 'product' && visible == true && basis == 'crocheting' && type in ['digital', 'bundle']]),
+      "productsTotalCount": count(*[
+        (_type == 'course' || _type == 'bundle' )
+        && visible == true 
+        && basis == 'crocheting' 
+        && (!defined($bundle) || _type == 'bundle')
+        && (!defined($category) || _type == 'bundle' || category->slug.current == $category)
+        && (!defined($category) || _type == 'course' || $category in categories[]->slug.current)
+        && (!defined($complexity) || complexity == $complexity)
+        && (!defined($autor) || author->slug.current == $autor)
+        && (!defined($discount) || defined(discount))
+      ]),
       "categories": *[_type == 'courseCategory'][]{
         name,
         "slug": slug.current,
@@ -94,8 +101,10 @@ const query = async (searchParams: { [key: string]: string }): Promise<Crochetin
       before: (Number(searchParams.strona ?? 1) - 1) * 10,
       after: Number(searchParams.strona ?? 1) * 10,
       category: searchParams.kategoria ?? null,
-      complexity: searchParams['poziom-trudnosci'] ?? '',
-      autor: searchParams.autor ?? '',
+      complexity: searchParams['poziom-trudnosci'] ?? null,
+      autor: searchParams.autor ?? null,
+      bundle: searchParams.pakiet ?? null,
+      discount: searchParams.promocja ?? null,
     },
     tags: ['Crocheting_Page'],
   });

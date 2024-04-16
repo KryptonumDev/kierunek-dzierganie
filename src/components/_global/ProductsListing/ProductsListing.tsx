@@ -14,6 +14,7 @@ const ProductsListing = ({
   productsTotalCount,
   authors
 }: ProductsListingTypes) => {
+
   return (
     <section
       id='produkty'
@@ -35,6 +36,7 @@ const ProductsListing = ({
           />
         ))}
       </div>
+      {/* TODO: Change no items text */}
       {products.length === 0 && <h2>Niestety teraz w tym rozdziale nic niema :( </h2>}
       {productsTotalCount > 10 && (
         <Pagination

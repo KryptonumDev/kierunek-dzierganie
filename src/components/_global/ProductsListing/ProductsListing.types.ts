@@ -1,7 +1,7 @@
-import type { ProductCard } from '@/global/types';
+import type { CourseCard } from '@/global/types';
 
 export type ProductsListingTypes = {
-  products: ProductCard[];
+  products: CourseCard[];
   title: JSX.Element;
   text: JSX.Element;
   basis: string;

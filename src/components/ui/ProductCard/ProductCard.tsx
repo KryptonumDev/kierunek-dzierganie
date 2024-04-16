@@ -16,7 +16,7 @@ const ProductCard = ({ data, inCart = false, horizontal }: Props) => {
   const mainVariant = useMemo(() => {
     const productData: {
       price: string;
-      discount?: number;
+      discount?: string;
       stock?: number;
       image?: ImgType;
       type?: 'normal' | 'variable';
@@ -30,17 +30,18 @@ const ProductCard = ({ data, inCart = false, horizontal }: Props) => {
       name: data.name,
     };
 
-    if (data.variants?.length > 0) {
+    if ('variants' in data && data.variants?.length > 0) {
       const minPrice = Math.min(...data.variants.map((variant) => variant.price));
       const maxPrice = Math.max(...data.variants.map((variant) => variant.price));
 
       productData['price'] = formatPrice(minPrice) + ' - ' + formatPrice(maxPrice);
+      productData['discount'] = formatPrice(data.variants[0]!.discount);
       productData['stock'] = data.variants[0]!.countInStock;
       productData['image'] = data.variants[0]!.gallery;
       productData['type'] = 'variable';
     } else {
       productData['price'] = formatPrice(data!.price!);
-      productData['discount'] = data!.discount;
+      productData['discount'] = data!.discount ? formatPrice(data!.discount) : undefined;
       productData['stock'] = data!.countInStock;
       productData['image'] = data!.gallery;
     }
@@ -60,15 +61,15 @@ const ProductCard = ({ data, inCart = false, horizontal }: Props) => {
       />
       {mainVariant.image && (
         <div className={styles['image-wrap']}>
-          {data.course?.complexity && (
+          {'complexity' in data && data.complexity && (
             <span
               style={{
-                color: courseComplexityEnum[data.course.complexity].color,
-                backgroundColor: courseComplexityEnum[data.course.complexity].background,
+                color: courseComplexityEnum[data.complexity].color,
+                backgroundColor: courseComplexityEnum[data.complexity].background,
               }}
               className={styles['badge']}
             >
-              <span>{courseComplexityEnum[data.course.complexity].name}</span>
+              <span>{courseComplexityEnum[data.complexity].name}</span>
             </span>
           )}
           <Img
@@ -79,19 +80,26 @@ const ProductCard = ({ data, inCart = false, horizontal }: Props) => {
       )}
       <div className={styles['data']}>
         <div>
-          {data.course?.rating !== undefined && data.course.reviewsCount > 0 && (
+          {data.rating !== undefined && data.reviewsCount > 0 ? (
             <p className={styles['rating']}>
               <Hearth />{' '}
               <span>
-                <b>{data.course.rating}</b>/5 ({data.course.reviewsCount})
+                <b>{data.rating}</b>/5 ({data.reviewsCount})
               </span>
+            </p>
+          ) : (
+            <p className={styles['rating']}>
+              <Hearth /> <span>Brak opinii</span>
             </p>
           )}
           <h3 className={styles['names']}>{mainVariant.name}</h3>
-          <p
-            className={styles['price']}
-            dangerouslySetInnerHTML={{ __html: mainVariant.price }}
-          />
+          <p className={styles['price']}>
+            <span
+              className={mainVariant.discount ? styles['discount'] : ''}
+              dangerouslySetInnerHTML={{ __html: mainVariant.price }}
+            />
+            {mainVariant.discount ? <span dangerouslySetInnerHTML={{ __html: mainVariant.discount }} /> : null}
+          </p>
         </div>
         {mainVariant.type === 'variable' ? (
           <Button href={`${pageUrls[data.basis]}/${data.slug}`}>Wybierz wariant</Button>

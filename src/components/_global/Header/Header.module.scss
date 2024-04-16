@@ -761,7 +761,7 @@
     .price {
       display: flex;
       align-items: center;
-      grid-area: 8px;
+      gap: 8px;
 
       span {
         color: var(--primary-800, #53423c);
