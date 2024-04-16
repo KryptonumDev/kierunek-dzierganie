@@ -24,3 +24,25 @@ export type CrochetingPage_QueryTypes = {
     _id: string;
   }[];
 };
+
+export type CrochetingProductsPage_QueryTypes = {
+  page: {
+    HeroSimple: HeroSimpleTypes;
+    StepsGrid: StepsGridTypes;
+    LatestBlogEntries: LatestBlogEntriesTypes;
+    listing_title: string;
+    listing_text: string;
+  };
+  productsTotalCount: number;
+  products: CourseCard[];
+  categories: {
+    name: string;
+    slug: string;
+    _id: string;
+  }[];
+  authors: {
+    name: string;
+    slug: string;
+    _id: string;
+  }[];
+};

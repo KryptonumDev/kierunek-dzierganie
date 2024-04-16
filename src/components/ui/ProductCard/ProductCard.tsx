@@ -34,8 +34,14 @@ const ProductCard = ({ data, inCart = false, horizontal }: Props) => {
       const minPrice = Math.min(...data.variants.map((variant) => variant.price));
       const maxPrice = Math.max(...data.variants.map((variant) => variant.price));
 
+      const minDiscount = Math.min(...data.variants.map((variant) => variant.discount ?? variant.price));
+      const maxDiscount = Math.max(...data.variants.map((variant) => variant.discount ?? variant.price));
+
       productData['price'] = formatPrice(minPrice) + ' - ' + formatPrice(maxPrice);
-      productData['discount'] = formatPrice(data.variants[0]!.discount);
+      productData['discount'] =
+        minPrice !== minDiscount || maxDiscount !== maxPrice
+          ? formatPrice(minDiscount) + ' - ' + formatPrice(maxDiscount)
+          : undefined;
       productData['stock'] = data.variants[0]!.countInStock;
       productData['image'] = data.variants[0]!.gallery;
       productData['type'] = 'variable';

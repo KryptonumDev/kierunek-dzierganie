@@ -12,7 +12,7 @@ export type ProductsListingTypes = {
     slug: string;
     _id: string;
   }[];
-  authors: {
+  authors?: {
     name: string;
     slug: string;
     _id: string;
