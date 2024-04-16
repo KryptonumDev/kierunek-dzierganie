@@ -6,7 +6,7 @@ import type { ImgType, Order, Product } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
-import { PRODUCT } from 'src/queries/PRODUCT';
+import { PRODUCT_CARD_QUERY } from 'src/global/constants';
 
 type QueryProps = {
   global: {
@@ -86,7 +86,7 @@ const query = async (): Promise<QueryProps> => {
         },
       },
       "products": *[_type == 'product' && _id in $products] {
-        ${PRODUCT}
+        ${PRODUCT_CARD_QUERY}
       },
     }`,
     params: {

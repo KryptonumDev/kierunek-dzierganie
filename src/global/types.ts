@@ -36,55 +36,19 @@ export type ProductCard = {
   countInStock?: number;
   featuredVideo?: string;
   gallery?: ImgType;
+  quantity: number | null;
+  complexity?: Complexity;
   reviewsCount: number;
   rating: number;
   variants: Array<{
+    _id: string;
     name: string;
     price: number;
     discount: number;
     countInStock: number;
     featuredVideo: string;
     gallery: ImgType;
-  }>;
-};
-
-export type CourseCard = {
-  _id: string;
-  basis: 'crocheting' | 'knitting';
-  slug: string;
-  name: string;
-  excerpt?: string;
-  price?: number;
-  discount?: number;
-  countInStock?: number;
-  featuredVideo?: string;
-  gallery?: ImgType;
-  complexity: Complexity;
-  reviewsCount: number;
-  rating: number;
-}
-
-export type Product = {
-  _id: string;
-  price: number;
-  discount: number;
-  name: string;
-  quantity: number;
-  type: 'physical' | 'variable' | 'digital' | 'bundle';
-  slug: {
-    current: string;
-  };
-  course?: {
-    complexity: Complexity;
-  };
-  variants: Array<{
-    _key: number;
-    name: string;
-    price: number;
-    discount: number;
-    gallery: ImgType;
-  }>;
-  gallery: ImgType;
+  }> | null;
 };
 
 export type ProductVariant = {

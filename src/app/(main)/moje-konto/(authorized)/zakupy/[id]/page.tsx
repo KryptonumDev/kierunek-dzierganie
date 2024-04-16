@@ -5,7 +5,7 @@ import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
-import { PRODUCT } from 'src/queries/PRODUCT';
+import { PRODUCT_CARD_QUERY } from 'src/global/constants';
 
 type QueryProps = {
   products: Product[];
@@ -47,7 +47,7 @@ const query = async (id: string): Promise<QueryProps> => {
   const data = await sanityFetch<QueryProps>({
     query: /* groq */ ` {
       "products": *[_type == 'product' && _id in $products] {
-        ${PRODUCT}
+        ${PRODUCT_CARD_QUERY}
       },
     }`,
     params: {

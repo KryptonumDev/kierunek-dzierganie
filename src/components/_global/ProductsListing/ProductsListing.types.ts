@@ -1,7 +1,7 @@
-import type { CourseCard } from '@/global/types';
+import type { ProductCard } from '@/global/types';
 
 export type ProductsListingTypes = {
-  products: CourseCard[];
+  products: ProductCard[];
   title: JSX.Element;
   text: JSX.Element;
   basis: string;
@@ -38,4 +38,9 @@ export type PaginationTypes = {
   allElementsCount: number;
   elementsPerPage: number;
   basis: string;
+};
+
+export type ListingProps = {
+  featuredProductExcerpt?: JSX.Element;
+  products: ProductCard[];
 };

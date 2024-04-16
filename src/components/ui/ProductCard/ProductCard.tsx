@@ -30,7 +30,7 @@ const ProductCard = ({ data, inCart = false, horizontal }: Props) => {
       name: data.name,
     };
 
-    if ('variants' in data && data.variants?.length > 0) {
+    if (data.variants && data.variants?.length > 0) {
       const minPrice = Math.min(...data.variants.map((variant) => variant.price));
       const maxPrice = Math.max(...data.variants.map((variant) => variant.price));
 
@@ -113,7 +113,7 @@ const ProductCard = ({ data, inCart = false, horizontal }: Props) => {
           <Button
             disabled={buttonText !== 'Dodaj do koszyka'}
             onClick={() => {
-              addItem({ quantity: 1, id: data._id, price: 0 });
+              addItem({ id: data._id, variant: null, price: 0 }, 1);
               setButtonText('Dodano do koszyka');
             }}
           >

@@ -3,14 +3,14 @@ import Button from '../Button';
 import styles from './AddToCart.module.scss';
 import type { Props } from './AddToCart.types';
 
-const AddToCart = ({ id, type, variant, disabled, quantity = 1 }: Props) => {
+const AddToCart = ({ id, variant, disabled, quantity = 1 }: Props) => {
   const { addItem } = useCart();
 
   return (
     <Button
       className={styles['addToCart']}
       disabled={disabled}
-      onClick={() => addItem({ id, type, variant, price: 0, quantity })}
+      onClick={() => addItem({ id, variant, price: 0}, quantity)}
     >
       Dodaj do koszyka
     </Button>

@@ -6,11 +6,12 @@ import type { QueryProps } from './Header.types';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { getServiceAccess } from '@/utils/supabase-admin';
 import { cookies } from 'next/headers';
+import { PRODUCT_CARD_QUERY } from '@/global/constants';
 
 const Header = async () => {
   const { global, cart } = await query();
   const nav_annotation = <Markdown>{global.nav_Annotation ?? ''}</Markdown>;
-
+  
   const supabase = createServerActionClient({ cookies });
   const adminbase = await getServiceAccess();
 
@@ -80,50 +81,8 @@ const query = async (): Promise<QueryProps> => {
           }[],
         },
         "cart": *[_id == 'Cart'][0]{
-          highlighted_products[]->{
-            _id,
-            price,
-            discount,
-            name,
-            'slug': slug.current,
-            basis,
-            type,
-            _type,
-            course->{
-              complexity
-            },
-            gallery[0]{
-              asset -> {
-                url,
-                altText,
-                metadata {
-                  lqip,
-                  dimensions {
-                    width,
-                    height,
-                  }
-                }
-              }
-            },
-            variants[]{
-              _key,
-              name,
-              price,
-              discount,
-              gallery[0]{
-                asset -> {
-                  url,
-                  altText,
-                  metadata {
-                    lqip,
-                    dimensions {
-                      width,
-                      height,
-                    }
-                  }
-                }
-              }
-            }
+          highlighted[]-> {
+            ${PRODUCT_CARD_QUERY}
           }
         }
       }
