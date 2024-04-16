@@ -224,6 +224,8 @@ const LessonHero = ({
                       href={el.asset.url}
                       className='link'
                       download
+                      target='_blank'
+                      rel='noreferrer noopener'
                     >
                       {el.asset.originalFilename} <small>({formatBytes(el.asset.size)})</small>
                     </a>
