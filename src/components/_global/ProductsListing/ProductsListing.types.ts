@@ -43,4 +43,5 @@ export type PaginationTypes = {
 export type ListingProps = {
   featuredProductExcerpt?: JSX.Element;
   products: ProductCard[];
+  basis: string;
 };

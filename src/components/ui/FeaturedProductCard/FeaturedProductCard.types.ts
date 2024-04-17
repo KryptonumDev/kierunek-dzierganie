@@ -4,4 +4,5 @@ export type Props = {
   data: ProductCard;
   inCart?: boolean;
   excerpt?: JSX.Element;
+  basis?: string;
 };

@@ -3,13 +3,14 @@ import FeaturedProductCard from '@/components/ui/FeaturedProductCard';
 import styles from './ProductsListing.module.scss';
 import { ListingProps } from './ProductsListing.types';
 
-export default function Listing({ featuredProductExcerpt, products }: ListingProps) {
+export default function Listing({ featuredProductExcerpt, products, basis }: ListingProps) {
   return (
     <div className={styles['products']}>
       {products.length > 0 && (
         <FeaturedProductCard
           excerpt={featuredProductExcerpt}
           data={products[0]!}
+          basis={basis}
         />
       )}
       <div className={styles['grid']}>
@@ -17,6 +18,7 @@ export default function Listing({ featuredProductExcerpt, products }: ListingPro
           <ProductCard
             key={product._id}
             data={product}
+            basis={basis}
           />
         ))}
       </div>

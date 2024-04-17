@@ -31,6 +31,7 @@ const ProductsListing = ({
         authors={authors}
       />
       <Listing
+        basis={basis}
         featuredProductExcerpt={featuredProductExcerpt}
         products={products}
       />
