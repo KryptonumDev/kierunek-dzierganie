@@ -5,6 +5,7 @@ import Img from '../image';
 import styles from './ChapterCard.module.scss';
 import type { Props } from './ChapterCard.types';
 import PercentChart from '../PercentChart';
+import Link from 'next/link';
 
 const ChapterCard = ({ name, image, description, lessons, courseSlug, number, progress }: Props) => {
   const completionPercentage = useMemo(() => {
@@ -32,18 +33,20 @@ const ChapterCard = ({ name, image, description, lessons, courseSlug, number, pr
   return (
     <div className={styles['chapterCard']}>
       <div>
-        <div className={styles['image-wrap']}>
-          <Img
-            data={image}
-            sizes='380px'
-          />
-          <span className={styles['badge']}>
-            {lessons.reduce((acc, lesson) => acc + lesson.lengthInMinutes, 0)} minut oglądania
-          </span>
-        </div>
-        <h2>
-          <span>Moduł {number}:</span> {name}
-        </h2>
+        <Link href={`/moje-konto/kursy/${courseSlug}/${firstUnendedLesson.slug}`}>
+          <div className={styles['image-wrap']}>
+            <Img
+              data={image}
+              sizes='380px'
+            />
+            <span className={styles['badge']}>
+              {lessons.reduce((acc, lesson) => acc + lesson.lengthInMinutes, 0)} minut oglądania
+            </span>
+          </div>
+          <h2>
+            <span>Moduł {number}:</span> {name}
+          </h2>
+        </Link>
         <p>{description}</p>
       </div>
       <div className={styles['flex']}>
