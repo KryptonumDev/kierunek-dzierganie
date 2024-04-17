@@ -166,23 +166,23 @@ const Search = ({ SearchIcon, CloseIcon }: { SearchIcon: React.ReactNode; CloseI
               searchResults?.blogPosts?.length ||
               searchResults?.physicalProducts?.length ||
               searchResults?.variableProducts?.length) != 0 ? (
-              <>
-                <Courses
-                  passedRef={ref}
-                  searchResults={searchResults}
-                />
-                <Products
-                  passedRef={ref}
-                  searchResults={searchResults}
-                />
-                <Articles
-                  passedRef={ref}
-                  searchResults={searchResults}
-                />
-              </>
-            ) : (
-              <NotFound />
-            )}
+                <>
+                  <Courses
+                    passedRef={ref}
+                    searchResults={searchResults}
+                  />
+                  <Products
+                    passedRef={ref}
+                    searchResults={searchResults}
+                  />
+                  <Articles
+                    passedRef={ref}
+                    searchResults={searchResults}
+                  />
+                </>
+              ) : (
+                <NotFound />
+              )}
           </div>
         </div>
       )}
