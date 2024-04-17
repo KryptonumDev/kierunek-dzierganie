@@ -36,7 +36,7 @@ const FilesHero = ({ id, left_handed }: FilesHeroTypes) => {
         >
           Jestem osobą leworęczną
         </Switch>
-        <p>Ustawienie te dostosowuje w jaki sposób wyświetlają Ci się kursy i pliki do lekcji</p>
+        <p>Ustawienie to dostosowuje w jaki sposób wyświetlają Ci się kursy i pliki do lekcji</p>
       </div>
     </section>
   );

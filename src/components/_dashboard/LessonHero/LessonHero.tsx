@@ -211,7 +211,7 @@ const LessonHero = ({
           <Switch inputProps={{ checked: leftHanded, onClick: () => setIsLeftHanded(!leftHanded) }}>
             Jestem osobą leworęczną
           </Switch>
-          <p>Ustawienie te dostosowuje w jaki sposób wyświetlają Ci się kursy i pliki do lekcji</p>
+          <p>Ustawienie to dostosowuje w jaki sposób wyświetlają Ci się kursy i pliki do lekcji</p>
         </div>
         <div className={styles['column']}>
           <h2>Pliki do pobrania</h2>
