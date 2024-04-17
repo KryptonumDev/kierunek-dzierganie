@@ -3,6 +3,7 @@
   flex-direction: column;
   justify-content: space-between;
   gap: 36px;
+  justify-content: flex-start;
 
   .image-wrap {
     position: relative;
@@ -53,6 +54,11 @@
     font-size: 14px;
     font-weight: 300;
     line-height: 150%;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .flex {
