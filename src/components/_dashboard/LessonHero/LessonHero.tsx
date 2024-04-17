@@ -171,14 +171,15 @@ const LessonHero = ({
               </Link>
             ) : (
               <>
-                {currentChapterIndex === course.chapters.length - 1 ? (
+                {currentChapterIndex === course.chapters.length - 1 && isCompleted && (
                   <Link
                     className={`${styles['next']} link`}
                     href={`/moje-konto/kursy/${course.slug}/certyfikat`}
                   >
                     Podsumowanie kursu
                   </Link>
-                ) : (
+                )}
+                {currentChapterIndex != course.chapters.length - 1 && (
                   <Link
                     className={`${styles['next']} link`}
                     href={`/moje-konto/kursy/${course.slug}/${course.chapters[currentChapterIndex + 1]!.lessons[0]!.slug}`}
