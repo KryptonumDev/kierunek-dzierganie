@@ -106,6 +106,13 @@ const LessonHero = ({
   return (
     <section className={styles['LessonHero']}>
       <div className={styles['grid']}>
+        <Link
+          className={`${styles.returnLink} link`}
+          href={'/moje-konto/kursy'}
+        >
+          <ChevronRight />
+          Wszystkie kursy
+        </Link>
         <div className={styles['content']}>
           <div className={styles.video}>
             {leftHanded ? (
@@ -256,3 +263,21 @@ const LessonHero = ({
 };
 
 export default LessonHero;
+
+function ChevronRight() {
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      width='20'
+      height='20'
+      fill='none'
+    >
+      <path
+        stroke='#B4A29C'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        d='M12.813 4.375L7.186 10l5.625 5.625'
+      ></path>
+    </svg>
+  );
+}
