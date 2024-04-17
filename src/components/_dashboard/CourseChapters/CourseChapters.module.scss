@@ -1,5 +1,5 @@
 .CourseChapters {
-  .title{
+  .title {
     margin-bottom: clamp(28px, calc(36vw/7.68), 48px);
     display: flex;
     align-items: center;
@@ -9,7 +9,7 @@
       justify-content: space-between;
     }
 
-    p{
+    p {
       color: var(--primary-800, #53423C);
       font-size: 18px;
       font-weight: 300;
@@ -20,7 +20,16 @@
     }
   }
 
-  .grid{
+  .grid {
+    .returnLink {
+      width: fit-content;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: 4px;
+      grid-column: 1/-1;
+    }
+
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 48px 32px;
@@ -38,5 +47,5 @@
       grid-template-columns: 1fr;
       gap: 24px;
     }
-  }  
+  }
 }

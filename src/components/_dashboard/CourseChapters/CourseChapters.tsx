@@ -3,6 +3,7 @@ import styles from './CourseChapters.module.scss';
 import type { Props } from './CourseChapters.types';
 import { useMemo } from 'react';
 import PercentChart from '@/components/ui/PercentChart';
+import Link from 'next/link';
 
 function CourseChapters({ courses_progress, course }: Props) {
   const completionPercentage = useMemo(() => {
@@ -37,6 +38,13 @@ function CourseChapters({ courses_progress, course }: Props) {
         </p>
       </div>
       <div className={styles['grid']}>
+        <Link
+          className={`${styles.returnLink} link`}
+          href={'/moje-konto/kursy'}
+        >
+          <ChevronRight />
+          Wszystkie kursy
+        </Link>
         {course.chapters.map((chapter, index) => (
           <ChapterCard
             key={index}
@@ -55,3 +63,21 @@ function CourseChapters({ courses_progress, course }: Props) {
 }
 
 export default CourseChapters;
+
+function ChevronRight() {
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      width='20'
+      height='20'
+      fill='none'
+    >
+      <path
+        stroke='#B4A29C'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        d='M12.813 4.375L7.186 10l5.625 5.625'
+      ></path>
+    </svg>
+  );
+}
