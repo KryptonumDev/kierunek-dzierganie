@@ -63,7 +63,10 @@ const Nav = ({ links, ChevronDownIcon, ChevronBackIcon, showMenu, setShowMenu }:
                   <BackBtn>{name}</BackBtn>
                   {sublinks.map(({ img, name, href }, i) => (
                     <li key={i}>
-                      <Link href={href}>
+                      <Link
+                        href={href}
+                        onClick={() => navToggle()}
+                      >
                         {img && (
                           <Img
                             data={img}
