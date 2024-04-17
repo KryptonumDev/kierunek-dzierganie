@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useCart } from 'react-use-cart';
 import sanityFetch from './sanity.fetch';
-import type { Product } from '@/global/types';
-import { PRODUCT } from 'src/queries/PRODUCT';
+import type { ProductCard } from '@/global/types';
+import { PRODUCT_CARD_QUERY } from 'src/global/constants';
 
 export const useCartItems = () => {
   const { items: rawCart, updateItemQuantity, updateItem, removeItem } = useCart();
-  const [fetchedItems, setFetchedItems] = useState<Product[] | null>(null);
+  const [fetchedItems, setFetchedItems] = useState<ProductCard[] | null>(null);
   const [sum, setSum] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -14,10 +14,10 @@ export const useCartItems = () => {
     const fetchCartItems = async () => {
       setLoading(true);
       try {
-        const res = await sanityFetch<Product[]>({
+        const res = await sanityFetch<ProductCard[]>({
           query: `
-            *[_type== 'product' && _id in $id]{
-              ${PRODUCT}
+            *[(_type == 'product' || _type == 'course' || _type == 'bundle') && _id in $id]{
+              ${PRODUCT_CARD_QUERY}
             }
           `,
           params: {
@@ -27,12 +27,18 @@ export const useCartItems = () => {
         let newSum = 0;
         const newArr = res
           .filter((_, i) => rawCart[i]?.quantity && Number(rawCart[i]?.quantity) > 0)
-          .map((el, index) => {
-            const itemQuantity = rawCart[index]!.quantity!;
-            newSum += (el.discount || el.price) * itemQuantity;
+          .map((el) => {
+            const itemInRawCart = rawCart.find((item) => item.id === el._id)!;
+            const variant = el.variants?.find((v) => v._id === itemInRawCart.variant) || null;
+            const price = variant ? variant.discount || variant.price! : el.discount || el.price!;
+
+            newSum += price * itemInRawCart.quantity!;
             return {
               ...el,
-              quantity: itemQuantity,
+              quantity: itemInRawCart.quantity!,
+              price: variant ? variant.price! : el.price!,
+              discount: variant ? variant.discount : el.discount,
+              variants: 'variants' in el ? el.variants : [],
             };
           });
 
@@ -59,12 +65,16 @@ export const useCartItems = () => {
       let newSum = 0;
       const newArr = fetchedItems
         .filter((_, i) => rawCart[i]?.quantity && rawCart[i]!.quantity! > 0)
-        .map((el, index) => {
-          const itemQuantity = rawCart[index]!.quantity!;
-          newSum += (el.discount || el.price) * itemQuantity;
+        .map((el) => {
+          const itemInRawCart = rawCart.find((item) => item.id === el._id)!;
+          const variant = el.variants?.find((v) => v._id === itemInRawCart.variant) || null;
+          const price = variant ? variant.discount || variant.price! : el.discount || el.price!;
+
+          newSum += price * itemInRawCart.quantity!;
           return {
             ...el,
-            quantity: itemQuantity,
+            quantity: itemInRawCart.quantity!,
+            variants: 'variants' in el ? el.variants : [],
           };
         });
 

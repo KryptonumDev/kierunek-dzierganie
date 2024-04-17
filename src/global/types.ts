@@ -36,58 +36,23 @@ export type ProductCard = {
   countInStock?: number;
   featuredVideo?: string;
   gallery?: ImgType;
+  quantity: number | null;
+  complexity?: Complexity;
   reviewsCount: number;
   rating: number;
   variants: Array<{
+    _id: string;
     name: string;
     price: number;
     discount: number;
     countInStock: number;
     featuredVideo: string;
     gallery: ImgType;
-  }>;
-};
-
-export type CourseCard = {
-  _id: string;
-  basis: 'crocheting' | 'knitting';
-  slug: string;
-  name: string;
-  excerpt?: string;
-  price?: number;
-  discount?: number;
-  countInStock?: number;
-  featuredVideo?: string;
-  gallery?: ImgType;
-  complexity: Complexity;
-  reviewsCount: number;
-  rating: number;
-}
-
-export type Product = {
-  _id: string;
-  price: number;
-  discount: number;
-  name: string;
-  quantity: number;
-  type: 'physical' | 'variable' | 'digital' | 'bundle';
-  slug: {
-    current: string;
-  };
-  course?: {
-    complexity: Complexity;
-  };
-  variants: Array<{
-    _key: number;
-    name: string;
-    price: number;
-    discount: number;
-    gallery: ImgType;
-  }>;
-  gallery: ImgType;
+  }> | null;
 };
 
 export type ProductVariant = {
+  _id: string;
   name: string;
   price: number;
   discount: number;
@@ -102,12 +67,15 @@ export type ProductVariant = {
 };
 
 export type ProductPhysical = {
+  _id: string;
   name: string;
-  price?: number;
+  price: number;
   discount?: number;
-  countInStock?: number;
+  countInStock: number;
   featuredVideo?: string;
-  gallery?: Array<ImgType>;
+  gallery: Array<ImgType>;
+  rating: number;
+  reviewsCount: number;
 };
 
 export type generateMetadataProps = {
@@ -157,12 +125,25 @@ export type BlogPostQueryProps = {
     paragraph: string;
   };
   content: [];
+  portableText: [];
   author: {
     img: ImgType;
     heading: string;
     paragraph: string;
   };
   date: string;
+  previousBlog?: {
+    slug: string;
+    name: string;
+  };
+  nextBlog?: {
+    slug: string;
+    name: string;
+  };
+  links: {
+    facebook: string;
+    pinterest: string;
+  };
 };
 
 export type BlogCategoryPageQueryProps = {
@@ -202,10 +183,41 @@ export type ProductPageQueryProps = {
       name: string;
       value: string;
     }>;
-    courses: ProductCard[];
+    rating: number;
+    reviewsCount: number;
     description: DescriptionTypes[];
-    course: TableOfContentTypes & ReviewsTypes;
-  };
+  } & ReviewsTypes;
+};
+
+export type CoursePageQueryProps = {
+  product: {
+    name: string;
+    slug: string;
+    _id: string;
+    type: string;
+    gallery?: Array<ImgType>;
+    featuredVideo?: string;
+    price?: number;
+    discount?: number;
+    countInStock?: number;
+    courses: ProductCard[];
+    rating: number;
+    reviewsCount: number;
+    description: DescriptionTypes[];
+    author: {
+      name: string;
+      slug: string;
+      image: ImgType;
+      description: string;
+      countOfCourse: number;
+    };
+    relatedBundle:
+      | null
+      | ({
+          courses: ProductCard[];
+        } & ProductCard);
+  } & TableOfContentTypes &
+    ReviewsTypes;
   card: ProductCard;
 };
 

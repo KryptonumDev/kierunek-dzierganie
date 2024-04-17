@@ -5,7 +5,6 @@ export default TilesFeatures;
 
 export const TilesFeatures_Query = `
   _type == "TilesFeatures" => {
-    _type,
     heading,
     paragraph,
     list[]{

@@ -4,7 +4,6 @@ export default TilesSticky;
 
 export const TilesSticky_Query = `
   _type == "TilesSticky" => {
-    _type,
     heading,
     paragraph,
     cta,

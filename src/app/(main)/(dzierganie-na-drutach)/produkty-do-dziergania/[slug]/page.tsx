@@ -7,16 +7,27 @@ import Parameters from '@/components/_product/Parameters';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
 import Informations from '@/components/_product/Informations';
 import Description, { Description_Query } from '@/components/_product/Description';
+import { Img_Query } from '@/components/ui/image';
+import Reviews from '@/components/_product/Reviews';
 
-const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) => {
-  const { name, _id, type, variants, price, discount, featuredVideo, countInStock, gallery, parameters, description } =
-    await query(slug);
-
-  const tabs = [];
-
-  if (description?.length > 0) tabs.push('Opis');
-
-  if (parameters?.length > 0) tabs.push('Parametry');
+const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
+  const {
+    product: {
+      name,
+      _id,
+      type,
+      variants,
+      price,
+      discount,
+      featuredVideo,
+      countInStock,
+      gallery,
+      parameters,
+      description,
+      reviews,
+      rating,
+    },
+  } = await query(slug);
 
   return (
     <>
@@ -39,25 +50,28 @@ const LandingPage = async ({ params: { slug } }: { params: { slug: string } }) =
         type={type}
         variants={variants}
         physical={{
+          _id,
           name,
-          price,
+          price: price!,
           discount,
-          countInStock,
+          countInStock: countInStock!,
           featuredVideo,
-          gallery,
+          gallery: gallery!,
+          rating,
+          reviewsCount: reviews.length,
         }}
       />
-
-      <Informations tabs={tabs}>
-        {tabs.includes('Opis') && <Description data={description} />}
-        {tabs.includes('Parametry') && <Parameters parameters={parameters} />}
+      <Informations tabs={['Opis', 'Parametry', 'Opinie']}>
+        {description?.length > 0 && <Description data={description} />}
+        {parameters?.length > 0 && <Parameters parameters={parameters} />}
+        {reviews?.length > 0 && <Reviews reviews={reviews} />}
       </Informations>
-      <h2>Tutaj będzie opis produktu</h2>
+      {/* TODO: Add featured courses */}
     </>
   );
 };
 
-export default LandingPage;
+export default Product;
 
 export async function generateMetadata({ params: { slug } }: { params: { slug: string } }) {
   return await QueryMetadata('product', `/kursy-dziergania-na-drutach/${slug}`, slug);
@@ -66,36 +80,26 @@ export async function generateMetadata({ params: { slug } }: { params: { slug: s
 const query = async (slug: string): Promise<ProductPageQueryProps> => {
   const data = await sanityFetch<ProductPageQueryProps>({
     query: /* groq */ `
-      *[_type == "product" && slug.current == $slug && basis == 'knitting' && type in ["physical", "variable"]][0] {
+    {
+      
+      "product": *[_type == "product" && slug.current == $slug && basis == 'knitting'][0] {
         name,
         'slug': slug.current,
         _id,
-
         basis,
         type,
-
         price,
         discount,
         featuredVideo,
         countInStock,
         gallery[]{
-          asset -> {
-            url,
-            altText,
-            metadata {
-              lqip,
-              dimensions {
-                width,
-                height,
-              }
-            }
-          }
+          ${Img_Query}
         },
+        ${Description_Query}
         parameters[]{
           name,
           value,
         },
-
         variants[]{
           name,
           price,
@@ -103,26 +107,23 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
           countInStock,
           featuredVideo,
           gallery[]{
-            asset -> {
-              url,
-              altText,
-              metadata {
-                lqip,
-                dimensions {
-                  width,
-                  height,
-                }
-              }
-            }
+            ${Img_Query}
           },
-          ${Description_Query}
           attributes[]{
             type,
             name,
             value
           }
         },
+        "reviews": *[_type == 'productReviewCollection' && references(^._id)][0...10]{
+          rating,
+          review,
+          nameOfReviewer,
+          _id
+        },
+        "rating": math::avg(*[_type == 'productReviewCollection' && references(^._id)]{rating}.rating),
       }
+    }
     `,
     params: { slug },
     tags: ['product'],
@@ -134,7 +135,7 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
 export async function generateStaticParams(): Promise<generateStaticParamsProps[]> {
   const data: generateStaticParamsProps[] = await sanityFetch({
     query: /* groq */ `
-      *[_type == "product" && basis == 'knitting' && type in ["physical", "variable"]] {
+      *[_type == "product" && basis == 'knitting'] {
         'slug': slug.current,
       }
     `,

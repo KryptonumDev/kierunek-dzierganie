@@ -114,13 +114,15 @@ export const PRODUCT_CARD_QUERY = `
   excerpt,
   'slug': slug.current,
   basis,
-  type,
   _type,
+  "reviewsCount": count(*[_type == 'productReviewCollection' && references(^._id)]),
+  "rating": math::avg(*[_type == 'productReviewCollection' && references(^._id)]{rating}.rating),
   gallery[0]{
     ${Img_Query}
   },
+  complexity,
   variants[]{
-    _key,
+    "_id": _key,
     name,
     price,
     discount,
@@ -128,25 +130,4 @@ export const PRODUCT_CARD_QUERY = `
       ${Img_Query}
     },
   },
-`;
-
-export const COURSE_CARD_QUERY = `
-  _id,
-  price,
-  discount,
-  excerpt,
-  name,
-  'slug': slug.current,
-  basis,
-  _type,
-  complexity,
-  "reviewsCount": count(*[_type == 'courseReviewCollection' && references(^._id)]),
-  "rating": math::avg(*[_type == 'courseReviewCollection' && references(^._id)]{rating}.rating),
-  gallery[0]{
-    ${Img_Query}
-  },
-`;
-
-export const BUNDLE_CARD_QUERY = `
-  
 `;

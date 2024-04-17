@@ -4,7 +4,6 @@ export default ImageShowcase;
 
 export const ImageShowcase_Query = `
   _type == 'ImageShowcase' => {
-    _type,
     isGrid,
     heading,
     paragraph,

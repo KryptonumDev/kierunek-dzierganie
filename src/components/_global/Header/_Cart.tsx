@@ -45,7 +45,7 @@ export default function Cart({
     return cart?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
   }, [cart]);
   const totalItemsPrice = useMemo(() => {
-    return fetchedItems?.reduce((acc, item) => acc + (item.discount ?? item.price * item.quantity), 0) ?? 0;
+    return fetchedItems?.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0) ?? 0;
   }, [fetchedItems]);
 
   const discountCode = watch('discount');
@@ -287,10 +287,12 @@ const CartGrid = ({ cart, fetchedItems, removeItem, updateItemQuantity }: Grid) 
           className={styles['product']}
           key={item._id + i}
         >
-          <Img
-            data={item.gallery}
-            sizes='175px'
-          />
+          {item.gallery && (
+            <Img
+              data={item.gallery}
+              sizes='175px'
+            />
+          )}
           <div>
             <h3>{item.name}</h3>
             <div>
@@ -310,13 +312,13 @@ const CartGrid = ({ cart, fetchedItems, removeItem, updateItemQuantity }: Grid) 
               <div className={styles['price']}>
                 <span
                   className={item.discount ? styles['discount'] : ''}
-                  dangerouslySetInnerHTML={{ __html: formatPrice(item.price) }}
+                  dangerouslySetInnerHTML={{ __html: formatPrice(item.price!) }}
                 />
                 {item.discount ? <span dangerouslySetInnerHTML={{ __html: formatPrice(item.discount) }} /> : null}
               </div>
               <span className={styles['omnibus']}>
                 Najniższa cena z 30 dni przed obniżką:{' '}
-                <span dangerouslySetInnerHTML={{ __html: formatPrice(item.discount ?? item.price) }} />
+                <span dangerouslySetInnerHTML={{ __html: formatPrice(item.discount ?? item.price!) }} />
               </span>
             </div>
             <button

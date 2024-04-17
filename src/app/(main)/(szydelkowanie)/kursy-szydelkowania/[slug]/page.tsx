@@ -2,33 +2,20 @@ import { notFound } from 'next/navigation';
 import sanityFetch from '@/utils/sanity.fetch';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
-import HeroPhysical from '@/components/_product/HeroPhysical';
-import Parameters from '@/components/_product/Parameters';
 import Informations from '@/components/_product/Informations';
 import Description, { Description_Query } from '@/components/_product/Description';
 import TableOfContent from '@/components/_product/TableOfContent';
-import type { ProductPageQueryProps, generateStaticParamsProps } from '@/global/types';
+import type { CoursePageQueryProps, generateStaticParamsProps } from '@/global/types';
 import Package, { Package_Query } from '@/components/_product/Package';
 import { PRODUCT_CARD_QUERY } from '@/global/constants';
 import Reviews from '@/components/_product/Reviews';
+import HeroVirtual from '@/components/_product/HeroVirtual';
+import { Img_Query } from '@/components/ui/image';
 
-const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
+const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
   const {
-    product: {
-      name,
-      _id,
-      type,
-      variants,
-      price,
-      discount,
-      featuredVideo,
-      countInStock,
-      gallery,
-      parameters,
-      description,
-      course,
-      courses,
-    },
+    product: { relatedBundle, name, description, chapters, reviews, courses },
+    product,
     card,
   } = await query(slug);
 
@@ -47,52 +34,48 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
         ]}
         visible={true}
       />
-      <HeroPhysical
-        name={name}
-        id={_id}
-        type={type}
-        variants={variants}
-        physical={{
-          name,
-          price,
-          discount,
-          countInStock,
-          featuredVideo,
-          gallery,
-        }}
-      />
-      <Informations tabs={['Spis treści', 'Pakiet', 'Opis', 'Parametry', 'Opinie']}>
-        {course && <TableOfContent chapters={course.chapters} />}
-        {courses && (
-          <Package
-            product={card}
-            heading={'Jeden pakiet – niezliczona ilość wiedzy'}
-            paragraph={
-              'Zdobądź niezbędne umiejętności i rozwijaj kreatywność z **pakietem kursów** – w korzystnej cenie!'
-            }
-            courses={courses}
-          />
-        )}
+      <HeroVirtual course={product} />
+      {relatedBundle && (
+        <Package
+          product={relatedBundle}
+          heading={'Jeden pakiet – niezliczona ilość wiedzy'}
+          paragraph={
+            'Zdobądź niezbędne umiejętności i rozwijaj kreatywność z **pakietem kursów** – w korzystnej cenie!'
+          }
+          courses={relatedBundle.courses}
+        />
+      )}
+      {courses && (
+        <Package
+          product={card}
+          heading={'Jeden pakiet – niezliczona ilość wiedzy'}
+          paragraph={
+            'Zdobądź niezbędne umiejętności i rozwijaj kreatywność z **pakietem kursów** – w korzystnej cenie!'
+          }
+          courses={courses}
+        />
+      )}
+      <Informations tabs={['Spis treści', 'Opis', 'Parametry', 'Opinie']}>
+        {chapters && <TableOfContent chapters={chapters} />}
         {description?.length > 0 && <Description data={description} />}
-        {parameters?.length > 0 && <Parameters parameters={parameters} />}
-        {course?.reviews && course?.reviews.length > 0 && <Reviews reviews={course.reviews} />}
+        {reviews.length > 0 && <Reviews reviews={reviews} />}
       </Informations>
       {/* TODO: Add featured courses */}
     </>
   );
 };
 
-export default Product;
+export default Course;
 
 export async function generateMetadata({ params: { slug } }: { params: { slug: string } }) {
-  return await QueryMetadata('product', `/kursy-szydelkowania/${slug}`, slug);
+  return await QueryMetadata(['course', 'bundle'], `/kursy-szydelkowania/${slug}`, slug);
 }
 
-const query = async (slug: string): Promise<ProductPageQueryProps> => {
-  const data = await sanityFetch<ProductPageQueryProps>({
+const query = async (slug: string): Promise<CoursePageQueryProps> => {
+  const data = await sanityFetch<CoursePageQueryProps>({
     query: /* groq */ `
     {
-      "product": *[_type == 'product' && basis == 'crocheting' && type in ['digital', 'bundle'] && slug.current == $slug][0] {
+      "product": *[(_type == 'course' || _type == 'bundle') && basis == 'crocheting' && slug.current == $slug][0] {
         name,
         'slug': slug.current,
         _id,
@@ -103,83 +86,57 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
         featuredVideo,
         countInStock,
         gallery[]{
-          asset -> {
-            url,
-            altText,
-            metadata {
-              lqip,
-              dimensions {
-                width,
-                height,
-              }
-            }
-          }
+          ${Img_Query}
         },
         ${Package_Query}
         ${Description_Query}
-        course -> {
-          chapters[] {
-            chapterName,
-            lessons[] -> {
-              title,
-              lengthInMinutes,
-            },
+        chapters[] {
+          chapterName,
+          lessons[] -> {
+            title,
+            lengthInMinutes,
           },
-          "reviews": *[_type == 'courseReviewCollection' && references(^._id)][0...10]{
-            rating,
-            review,
-            nameOfReviewer,
-            _id
-          },
-          "rating": math::avg(*[_type == 'courseReviewCollection' && references(^._id)]{rating}.rating)
         },
-        parameters[]{
-          name,
-          value,
+        "reviews": *[_type == 'productReviewCollection' && references(^._id)][0...10]{
+          rating,
+          review,
+          nameOfReviewer,
+          _id
         },
-        variants[]{
+        "rating": math::avg(*[_type == 'productReviewCollection' && references(^._id)]{rating}.rating),
+        author->{
+          _id,
           name,
-          price,
-          discount,
-          countInStock,
-          featuredVideo,
-          gallery[]{
-            asset -> {
-              url,
-              altText,
-              metadata {
-                lqip,
-                dimensions {
-                  width,
-                  height,
-                }
-              }
-            }
+          "slug": slug.current,
+          image {
+            ${Img_Query}
           },
-          attributes[]{
-            type,
-            name,
-            value
+          description,
+          "countOfCourse": count(*[_type == 'course' && references(^._id)]),
+        },
+        "relatedBundle": *[_type == 'bundle' && references(^._id)][0]{
+          ${PRODUCT_CARD_QUERY}
+          courses[]->{
+            ${PRODUCT_CARD_QUERY}
           }
         },
       },
-      "card": *[_type == 'product' && basis == 'crocheting' && type in ['digital', 'bundle'] && slug.current == $slug][0] {
+      "card": *[_type == 'bundle' && basis == 'crocheting' && slug.current == $slug][0] {
         ${PRODUCT_CARD_QUERY}
       }
     }
     `,
     params: { slug },
-    tags: ['product'],
+    tags: ['course', 'bundle'],
   });
-
-  !data?.product && notFound();
+  !data?.product?._id && notFound();
   return data;
 };
 
 export async function generateStaticParams(): Promise<generateStaticParamsProps[]> {
   const data: generateStaticParamsProps[] = await sanityFetch({
     query: /* groq */ `
-      *[_type == "product" && basis == 'crocheting' && type in ["physical", "variable"]] {
+      *[(_type == 'course' || _type == 'bundle') && basis == 'crocheting'] {
         'slug': slug.current,
       }
     `,

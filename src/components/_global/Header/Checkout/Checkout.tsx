@@ -66,22 +66,22 @@ export default function Checkout({
       return;
     }
 
-    setInput((prev) => ({
-      ...prev,
-      amount: fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price * item.quantity), 0),
-      needDelivery: fetchedItems.some((item) => item.type === 'physical' || item.type === 'variable'),
-      products: {
-        array: fetchedItems.map((item) => ({
-          id: item._id,
-          name: item.name,
-          price: item.price,
-          discount: item.discount,
-          quantity: item.quantity!,
-          image: item.variants?.[0]?.gallery ? item.variants[0].gallery : item.gallery,
-          complexity: item.course?.complexity || null,
-        })),
-      },
-    }));
+    // setInput((prev) => ({
+    //   ...prev,
+    //   amount: fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0),
+    //   needDelivery: fetchedItems.some((item) => item.type === 'physical' || item.type === 'variable'),
+    //   products: {
+    //     array: fetchedItems.map((item) => ({
+    //       id: item._id,
+    //       name: item.name,
+    //       price: item.price!,
+    //       discount: item.discount,
+    //       quantity: item.quantity!,
+    //       image: item.variants?.[0]?.gallery ? item.variants[0].gallery : item.gallery,
+    //       complexity: item.course?.complexity || null,
+    //     })),
+    //   },
+    // }));
   }, [fetchedItems, input.amount, setInput]);
 
   useEffect(() => {

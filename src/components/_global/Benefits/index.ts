@@ -4,7 +4,6 @@ export default Benefits;
 
 export const Benefits_Query = `
   _type == "Benefits" => {
-    _type,
     'benefits': list,
     claim,
     cta {

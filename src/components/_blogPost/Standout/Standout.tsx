@@ -1,9 +1,14 @@
+import Markdown from '@/components/ui/markdown';
 import styles from './Standout.module.scss';
 import type { StandoutTypes } from './Standout.types';
 
 const Standout = ({ heading, paragraph }: StandoutTypes) => {
-  console.log(heading, paragraph);
-  return <section className={styles['Standout']}></section>;
+  return (
+    <div className={styles['Standout']}>
+      <Markdown.h2>{heading}</Markdown.h2>
+      <Markdown>{paragraph}</Markdown>
+    </div>
+  );
 };
 
 export default Standout;

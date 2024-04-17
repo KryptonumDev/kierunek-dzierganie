@@ -5,7 +5,6 @@ export default Introduction;
 
 export const Introduction_Query = `
   _type == "Introduction" => {
-    _type,
     isReversed,
     heading,
     paragraph,

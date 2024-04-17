@@ -145,7 +145,7 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
           index={index}
         />
       ),
-      LatestBlogEntries: <LatestBlogEntries {...(item as PartnersProps)} />,
+      LatestBlogEntries: <LatestBlogEntries {...(item as LatestBlogEntriesTypes)} />,
     };
     const DynamicComponent = componentMap[componentType];
     if (!DynamicComponent) {
@@ -159,6 +159,7 @@ export default Components;
 
 export const Components_Query = /* groq */ `
   content[] {
+    _type,
     ${HeroBackgroundImg_Query}
     ${HeroColumn_Query}
     ${HeroSimple_Query(false)}

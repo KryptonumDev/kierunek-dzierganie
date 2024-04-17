@@ -7,7 +7,7 @@ import LatestBlogEntries, { LatestBlogEntries_Query } from '@/components/_global
 import type { CrochetingPage_QueryTypes } from '../page.types';
 import ProductsListing from '@/components/_global/ProductsListing';
 import Markdown from '@/components/ui/markdown';
-import { COURSE_CARD_QUERY } from '@/global/constants';
+import { PRODUCT_CARD_QUERY } from '@/global/constants';
 
 const page = { name: 'Szydełkowanie', path: '/kursy-szydelkowania' };
 
@@ -72,7 +72,7 @@ const query = async (searchParams: { [key: string]: string }): Promise<Crochetin
         && (!defined($autor) || author->slug.current == $autor)
         && (!defined($discount) || defined(discount))
       ][$before...$after]{
-        ${COURSE_CARD_QUERY}
+        ${PRODUCT_CARD_QUERY}
       },
       "productsTotalCount": count(*[
         (_type == 'course' || _type == 'bundle' )

@@ -22,7 +22,7 @@ const Content = ({
   SearchIcon,
   CloseIcon,
   CrossIcon,
-  cart: { highlighted_products },
+  cart: { highlighted },
   userEmail,
   shipping,
   billing,
@@ -37,7 +37,7 @@ const Content = ({
 
   return (
     <>
-      {/*<Checkout
+      <Checkout
         CrossIcon={CrossIcon}
         setShowCheckout={() => setShowCheckout(false)}
         showCheckout={showCheckout}
@@ -65,13 +65,13 @@ const Content = ({
         fetchedItems={fetchedItems}
         updateItemQuantity={updateItemQuantity}
         removeItem={removeItem}
-        highlighted_products={highlighted_products}
+        highlighted_products={highlighted}
         virtualWallet={virtualWallet}
         setUsedVirtualMoney={setUsedVirtualMoney}
         usedVirtualMoney={usedVirtualMoney}
         usedDiscount={usedDiscount}
         setUsedDiscount={setUsedDiscount}
-      />*/}
+      />
       <a
         href='#main'
         className={styles.skipToMainContent}

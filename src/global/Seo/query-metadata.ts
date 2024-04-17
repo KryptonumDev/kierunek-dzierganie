@@ -16,8 +16,14 @@ type QueryType = {
  * @param {string} [dynamicSlug] - Optional. Used to query dynamic pages, like blog posts.
  * @returns {Promise<Metadata>} Returns a promise of the SEO object.
  */
-export const QueryMetadata = async (name: string, path: string, dynamicSlug?: string): Promise<Metadata> => {
-  const customQuery = dynamicSlug ? `*[_type == '${name}' && slug.current == $slug][0]` : `*[_type == "${name}"][0]`;
+export const QueryMetadata = async (name: string | string[], path: string, dynamicSlug?: string): Promise<Metadata> => {
+  if (typeof name === 'string') {
+    name = [name];
+  }
+
+  const stringQuery = name.map((el) => `_type == '${el}'`).join(' || ');
+
+  const customQuery = dynamicSlug ? `*[(${stringQuery}) && slug.current == $slug][0]` : `*[(${stringQuery})][0]`;
 
   const { title, description, img } = await query(customQuery, name, dynamicSlug);
 
@@ -29,7 +35,7 @@ export const QueryMetadata = async (name: string, path: string, dynamicSlug?: st
   });
 };
 
-const query = async (customQuery: string, tag: string, dynamicSlug?: string): Promise<QueryType> => {
+const query = async (customQuery: string, tag: string[], dynamicSlug?: string): Promise<QueryType> => {
   const seo = await sanityFetch<QueryType>({
     query: /* groq */ `
       ${customQuery} {
@@ -38,9 +44,10 @@ const query = async (customQuery: string, tag: string, dynamicSlug?: string): Pr
         "img": seo.img.asset -> url + "?w=1200"
       }
     `,
-    tags: [tag],
+    tags: tag,
     ...(dynamicSlug && { params: { slug: dynamicSlug } }),
   });
+
   !seo && notFound();
   return { ...seo };
 };

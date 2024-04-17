@@ -2,18 +2,18 @@ import EmptyOrders from '@/components/_dashboard/EmptyOrders';
 import ListingOrders from '@/components/_dashboard/ListingOrders';
 import { Img_Query } from '@/components/ui/image';
 import Seo from '@/global/Seo';
-import type { ImgType, Order, Product } from '@/global/types';
+import type { ImgType, Order, ProductCard } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
-import { PRODUCT } from 'src/queries/PRODUCT';
+import { PRODUCT_CARD_QUERY } from 'src/global/constants';
 
 type QueryProps = {
   global: {
     image_knitting: ImgType;
     image_crochet: ImgType;
   };
-  products: Product[];
+  products: ProductCard[];
   orders: Order[];
 };
 
@@ -86,7 +86,7 @@ const query = async (): Promise<QueryProps> => {
         },
       },
       "products": *[_type == 'product' && _id in $products] {
-        ${PRODUCT}
+        ${PRODUCT_CARD_QUERY}
       },
     }`,
     params: {

@@ -4,7 +4,6 @@ export default TabSection;
 
 export const TabSection_Query = `
   _type == "TabSection" => {
-    _type,
     heading,
     paragraph,
     list[] {

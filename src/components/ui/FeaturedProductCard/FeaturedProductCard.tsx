@@ -10,7 +10,7 @@ import { useCart } from 'react-use-cart';
 import { courseComplexityEnum, pageUrls } from '@/global/constants';
 import Link from 'next/link';
 
-const FeaturedProductCard = ({ excerpt, data, inCart = false }: Props) => {
+const FeaturedProductCard = ({ excerpt, data, inCart = false, basis }: Props) => {
   const { addItem } = useCart();
   const [buttonText, setButtonText] = useState(inCart ? 'Już w koszyku' : 'Dodaj do koszyka');
   const mainVariant = useMemo(() => {
@@ -30,7 +30,7 @@ const FeaturedProductCard = ({ excerpt, data, inCart = false }: Props) => {
       name: data.name,
     };
 
-    if ('variants' in data && data.variants?.length > 0) {
+    if (data.variants && data.variants?.length > 0) {
       const minPrice = Math.min(...data.variants.map((variant) => variant.price));
       const maxPrice = Math.max(...data.variants.map((variant) => variant.price));
 
@@ -62,7 +62,7 @@ const FeaturedProductCard = ({ excerpt, data, inCart = false }: Props) => {
   return (
     <div className={`${styles['featuredProductCard']}`}>
       <Link
-        href={`${pageUrls[data.basis]}/${data.slug}`}
+        href={`${basis ? basis : pageUrls[data.basis]}/${data.slug}`}
         className={styles['link']}
       />
       {mainVariant.image && (
@@ -114,7 +114,7 @@ const FeaturedProductCard = ({ excerpt, data, inCart = false }: Props) => {
             {mainVariant.discount ? <span dangerouslySetInnerHTML={{ __html: mainVariant.discount }} /> : null}
           </p>
           {mainVariant.type === 'variable' ? (
-            <Button href={`${pageUrls[data.basis]}/${data.slug}`}>Wybierz wariant</Button>
+            <Button href={`${basis ? basis : pageUrls[data.basis]}/${data.slug}`}>Wybierz wariant</Button>
           ) : (
             <Button
               disabled={buttonText !== 'Dodaj do koszyka'}

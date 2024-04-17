@@ -4,7 +4,6 @@ export default Community;
 
 export const Community_Query = `
   _type == "Community" => {
-    _type,
     isHighlighted,
     heading,
     paragraph,

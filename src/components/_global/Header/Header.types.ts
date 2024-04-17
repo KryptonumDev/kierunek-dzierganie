@@ -1,9 +1,9 @@
-import type { Billing, Discount, ImgType, Product, ProductCard, Shipping } from '@/global/types';
+import type { Billing, Discount, ImgType, ProductCard, Shipping } from '@/global/types';
 import type { Item } from 'react-use-cart';
 
 export type useCartItems = {
   cart: Item[] | null;
-  fetchedItems: Array<Product> | null;
+  fetchedItems: Array<ProductCard> | null;
   updateItemQuantity: (id: string, quantity: number) => void;
   removeItem: (id: string) => void;
 };
@@ -25,7 +25,7 @@ export type QueryProps = {
     }[];
   };
   cart: {
-    highlighted_products: Array<ProductCard>;
+    highlighted: Array<ProductCard>;
   };
   ChevronDownIcon: React.ReactNode;
   ChevronBackIcon: React.ReactNode;
@@ -64,7 +64,7 @@ export type Grid = {
   updateItemQuantity: (id: string, quantity: number) => void;
   removeItem: (id: string) => void;
   cart: Item[] | null;
-  fetchedItems: Product[] | null;
+  fetchedItems: ProductCard[] | null;
 };
 
 export type CartForm = {

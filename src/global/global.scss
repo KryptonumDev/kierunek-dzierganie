@@ -74,6 +74,10 @@ body {
   outline-offset: 5px;
 }
 
+html {
+  scroll-padding-top: 114px;
+}
+
 main,
 .max-width {
   max-width: 1200px;
@@ -285,6 +289,17 @@ main {
     &:not(:last-child) {
       margin-bottom: 12px;
     }
+  }
+}
+
+.dashboard-wrapper {
+  display: grid;
+  grid-template-columns: 277px 1fr;
+  gap: 32px;
+
+  .main {
+    display: grid;
+    gap: clamp(48px, calc(96vw / 7.68), 144px);
   }
 }
 

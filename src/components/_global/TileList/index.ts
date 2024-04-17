@@ -4,7 +4,6 @@ export default TileList;
 
 export const TileList_Query = `
   _type == 'TileList' => {
-    _type,
     heading,
     list[] {
       title,
