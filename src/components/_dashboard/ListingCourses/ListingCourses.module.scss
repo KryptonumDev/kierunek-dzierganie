@@ -10,8 +10,9 @@
     grid-template-columns: 1fr 1fr;
     gap: 32px;
 
-    @media(max-width: 768px) {
+    @media(max-width: 479px) {
       grid-template-columns: 1fr;
     }
+
   }
 }
