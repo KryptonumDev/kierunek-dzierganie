@@ -108,3 +108,10 @@
     border-radius: 2px;
   }
 }
+
+.notFound {
+  grid-column: 1/-1;
+  text-align: center;
+  display: grid;
+  gap: clamp(20px, calc(28vw/7.68), 36px);
+}

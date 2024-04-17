@@ -6,6 +6,7 @@ import styles from '../Header.module.scss';
 import Courses from './Courses';
 import Articles from './Articles';
 import Products from './Products';
+import NotFound from './NotFound';
 
 const Search = ({ SearchIcon, CloseIcon }: { SearchIcon: React.ReactNode; CloseIcon: React.ReactNode }) => {
   const [isSearching, setIsSearching] = useState(false);
@@ -161,18 +162,27 @@ const Search = ({ SearchIcon, CloseIcon }: { SearchIcon: React.ReactNode; CloseI
             className={styles.resultsWrapper}
             data-visible={visible}
           >
-            <Courses
-              passedRef={ref}
-              searchResults={searchResults}
-            />
-            <Products
-              passedRef={ref}
-              searchResults={searchResults}
-            />
-            <Articles
-              passedRef={ref}
-              searchResults={searchResults}
-            />
+            {(searchResults?.courses?.length ||
+              searchResults?.blogPosts?.length ||
+              searchResults?.physicalProducts?.length ||
+              searchResults?.variableProducts?.length) != 0 ? (
+              <>
+                <Courses
+                  passedRef={ref}
+                  searchResults={searchResults}
+                />
+                <Products
+                  passedRef={ref}
+                  searchResults={searchResults}
+                />
+                <Articles
+                  passedRef={ref}
+                  searchResults={searchResults}
+                />
+              </>
+            ) : (
+              <NotFound />
+            )}
           </div>
         </div>
       )}
