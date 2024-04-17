@@ -29,7 +29,7 @@ export default function Products({
             <Link
               className={styles.item}
               key={index}
-              href={`${basis === 'crocheting' ? '/produkty-do-dziergania' : '/produkty-do-szydelkowania'}/${slug}`}
+              href={`${basis === 'crocheting' ? '/produkty-do-szydelkowania' : '/produkty-do-dziergania'}/${slug}`}
             >
               <Img
                 data={gallery}
@@ -50,7 +50,7 @@ export default function Products({
             <Link
               className={styles.item}
               key={index}
-              href={`${basis === 'crocheting' ? '/produkty-do-dziergania' : '/produkty-do-szydelkowania'}/${slug}`}
+              href={`${basis === 'crocheting' ? '/produkty-do-szydelkowania' : '/produkty-do-dziergania'}/${slug}`}
             >
               <Img
                 data={gallery}
