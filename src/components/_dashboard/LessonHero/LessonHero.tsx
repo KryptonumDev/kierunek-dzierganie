@@ -223,7 +223,7 @@ const LessonHero = ({
           <p>Ustawienie to dostosowuje w jaki sposób wyświetlają Ci się kursy i pliki do lekcji</p>
         </div>
         <div className={styles['column']}>
-          <h2>Pliki do pobrania</h2>
+          {(lesson.files_alter || lesson.files) && <h2>Pliki do pobrania</h2>}
           <ul className={styles['list']}>
             {leftHanded ? (
               <>
