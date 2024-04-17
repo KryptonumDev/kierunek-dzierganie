@@ -1,13 +1,17 @@
 .ListingCourses {
-  h1{
+  h1 {
     margin-bottom: 36px;
     text-align: center;
   }
-  
-  .grid{
+
+  .grid {
     margin-top: 96px;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 32px;
+
+    @media(max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
   }
 }
