@@ -65,7 +65,7 @@ const Nav = ({ links, ChevronDownIcon, ChevronBackIcon, showMenu, setShowMenu }:
                     <li key={i}>
                       <Link
                         href={href}
-                        onClick={() => navToggle()}
+                        onClick={() => setShowMenu(false)}
                       >
                         {img && (
                           <Img
