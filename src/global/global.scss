@@ -7,6 +7,7 @@
 }
 
 :root {
+
   --primary-100: #fdfbf8;
   --primary-200: #faf4f0;
   --primary-300: #efe8e7;
@@ -40,9 +41,11 @@
   --space-gap: clamp(96px, calc(148vw / 7.68), 200px);
 
   --pageMargin: clamp(16px, calc(40vw / 7.68), 40px);
+
   @media (max-width: 899px) and (min-width: 649px) {
     --pageMargin: clamp(40px, calc(80vw / 7.68), 80px);
   }
+
   --easing: cubic-bezier(0.46, 0.03, 0.52, 0.96);
 }
 
@@ -170,16 +173,19 @@ h6 {
     margin: -0.15em 4px;
   }
 }
+
 h1,
 .h1,
 h2,
 .h2 {
   font-size: clamp(calc(24rem / 16), calc(26vw / 7.68), calc(36rem / 16));
 }
+
 h3,
 .h3 {
   font-size: clamp(calc(18rem / 16), calc(28vw / 7.68), calc(28rem / 16));
 }
+
 h4,
 .h4 {
   font-size: clamp(calc(16rem / 16), calc(24vw / 7.68), calc(24rem / 16));
@@ -200,6 +206,7 @@ h4,
   }
 
   @keyframes link {
+
     0%,
     100% {
       transform: scaleX(1);
@@ -231,6 +238,7 @@ h4,
 
 .sec-wo-margin {
   position: relative;
+
   &::before {
     content: '';
     width: 100vw;
@@ -257,19 +265,23 @@ main {
   margin: clamp(48px, calc(64vw / 7.68), 96px) auto var(--space-gap);
 }
 
-* + .unorderedList,
-.unorderedList + * {
+*+.unorderedList,
+.unorderedList+* {
   margin-top: clamp(12px, calc(20vw / 7.68), 20px);
 }
+
 .unorderedList {
   list-style-type: none;
+
   li {
     display: grid;
     grid-template-columns: auto 1fr;
     gap: 8px;
+
     svg {
       height: 1.5em;
     }
+
     &:not(:last-child) {
       margin-bottom: 12px;
     }
@@ -280,13 +292,36 @@ main {
   display: grid;
   row-gap: clamp(12px, calc(16vw / 7.68), 16px);
   padding-left: 20px;
+
   li {
     h3 {
       margin-left: -20px;
       padding-top: clamp(36px, calc(48vw / 7.68), 48px);
     }
+
     svg {
       display: none;
     }
+  }
+}
+
+
+.Toastify__toast-container {
+  .Toastify__toast {
+    background-color: var(--primary-100);
+  }
+
+  .Toastify__progress-bar--bg {
+    opacity: 0;
+  }
+
+  .Toastify__progress-bar-theme--light {
+    background: var(--primary-500);
+  }
+
+  .Toastify__close-button--light {
+    height: 24px;
+    width: 24px;
+    align-self: center;
   }
 }
