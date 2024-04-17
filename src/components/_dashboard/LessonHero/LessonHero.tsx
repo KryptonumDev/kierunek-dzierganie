@@ -11,6 +11,7 @@ import { formatBytes } from '@/utils/format-bytes';
 import Switch from '@/components/ui/Switch';
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import parseFileName from '@/utils/parse-file-name';
 
 const LessonHero = ({
   progress,
@@ -227,7 +228,7 @@ const LessonHero = ({
                       target='_blank'
                       rel='noreferrer noopener'
                     >
-                      {el.asset.originalFilename} <small>({formatBytes(el.asset.size)})</small>
+                      {parseFileName(el.asset.originalFilename)} <small>({formatBytes(el.asset.size)})</small>
                     </a>
                   </li>
                 ))}
@@ -241,7 +242,7 @@ const LessonHero = ({
                       className='link'
                       download
                     >
-                      {el.asset.originalFilename} <small>({formatBytes(el.asset.size)})</small>
+                      {parseFileName(el.asset.originalFilename)} <small>({formatBytes(el.asset.size)})</small>
                     </a>
                   </li>
                 ))}

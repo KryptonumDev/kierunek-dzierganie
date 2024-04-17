@@ -4,6 +4,7 @@ import type { ListingFilesTypes } from './ListingFiles.types';
 import type { File } from '@/global/types';
 import { formatBytes } from '@/utils/format-bytes';
 import Link from 'next/link';
+import parseFileName from '@/utils/parse-file-name';
 
 const ListingFiles = ({ courses, left_handed, progress }: ListingFilesTypes) => {
   const transformFiles = useMemo(() => {
@@ -49,13 +50,6 @@ const ListingFiles = ({ courses, left_handed, progress }: ListingFilesTypes) => 
 
     return newArr;
   }, [courses, progress]);
-
-  function parseFileName(fileName: string) {
-    return fileName
-      .replace(/ /g, '-')
-      .toLowerCase()
-      .replace(/^(.)/, (match) => match.toUpperCase());
-  }
 
   return (
     <section className={styles['ListingFiles']}>
@@ -103,7 +97,7 @@ const ListingFiles = ({ courses, left_handed, progress }: ListingFilesTypes) => 
                       download
                     >
                       <Icon />
-                      {file.asset.originalFilename} <small>({formatBytes(file.asset.size)})</small>
+                      {parseFileName(file.asset.originalFilename)} <small>({formatBytes(file.asset.size)})</small>
                     </a>
                   </li>
                 ))}
