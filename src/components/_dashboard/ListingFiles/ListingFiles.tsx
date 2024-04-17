@@ -50,11 +50,18 @@ const ListingFiles = ({ courses, left_handed, progress }: ListingFilesTypes) => 
     return newArr;
   }, [courses, progress]);
 
+  function parseFileName(fileName: string) {
+    return fileName
+      .replace(/ /g, '-')
+      .toLowerCase()
+      .replace(/^(.)/, (match) => match.toUpperCase());
+  }
+
   return (
     <section className={styles['ListingFiles']}>
       {transformFiles.map((el, i) => {
-        if(left_handed && el.filesAlt.length === 0) return null;
-        if(!left_handed && el.files.length === 0) return null;
+        if (left_handed && el.filesAlt.length === 0) return null;
+        if (!left_handed && el.files.length === 0) return null;
 
         return (
           <div key={el.name + i}>
@@ -70,7 +77,7 @@ const ListingFiles = ({ courses, left_handed, progress }: ListingFilesTypes) => 
                       download
                     >
                       <Icon />
-                      {file.asset.originalFilename} <small>({formatBytes(file.asset.size)})</small>
+                      {parseFileName(file.asset.originalFilename)} <small>({formatBytes(file.asset.size)})</small>
                     </a>
                   </li>
                 ))}
