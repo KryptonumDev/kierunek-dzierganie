@@ -86,17 +86,7 @@ const query = async (slug: string): Promise<CoursePageQueryProps> => {
         featuredVideo,
         countInStock,
         gallery[]{
-          asset -> {
-            url,
-            altText,
-            metadata {
-              lqip,
-              dimensions {
-                width,
-                height,
-              }
-            }
-          }
+          ${Img_Query}
         },
         ${Package_Query}
         ${Description_Query}
@@ -137,7 +127,7 @@ const query = async (slug: string): Promise<CoursePageQueryProps> => {
     }
     `,
     params: { slug },
-    tags: ['product'],
+    tags: ['course', 'bundle'],
   });
   !data?.product?._id && notFound();
   return data;

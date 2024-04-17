@@ -69,11 +69,13 @@ export type ProductVariant = {
 export type ProductPhysical = {
   _id: string;
   name: string;
-  price?: number;
+  price: number;
   discount?: number;
-  countInStock?: number;
+  countInStock: number;
   featuredVideo?: string;
-  gallery?: Array<ImgType>;
+  gallery: Array<ImgType>;
+  rating: number;
+  reviewsCount: number;
 };
 
 export type generateMetadataProps = {

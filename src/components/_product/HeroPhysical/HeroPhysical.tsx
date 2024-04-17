@@ -7,6 +7,7 @@ import { ImgType } from '@/global/types';
 import AddToCart from '@/components/ui/AddToCart';
 import { formatPrice } from '@/utils/price-formatter';
 import Gallery from '@/components/ui/Gallery';
+import { Hearth } from '@/components/ui/Icons';
 
 const HeroPhysical = ({ name, id, variants, physical }: Props) => {
   const attributes = useMemo(() => {
@@ -80,7 +81,18 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
     <section className={styles['HeroPhysical']}>
       <Gallery images={images} />
       <div className={styles['info']}>
-        {/* <p>reviews</p> TODO: add reviews */}
+        {physical.rating !== undefined && physical.reviewsCount > 0 ? (
+          <p className={styles['rating']}>
+            <Hearth />{' '}
+            <span>
+              <b>{physical.rating}</b>/5 ({physical.reviewsCount})
+            </span>
+          </p>
+        ) : (
+          <p className={styles['rating']}>
+            <Hearth /> <span>Brak opinii</span>
+          </p>
+        )}
         <h1>{name}</h1>
         <div className={styles.attributes}>
           {attributes.map((el) => (
@@ -160,7 +172,7 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
               </span>{' '}
               {chosenVariant!.discount && <span>{chosenVariant!.discount / 100}&nbsp;zł</span>}
             </p>
-            <small>Najniższa cena z 30 dni przed obniżką: TODO zł</small>
+            <small>Najniższa cena z 30 dni przed obniżką: {formatPrice(chosenVariant!.discount ?? chosenVariant!.price!)}</small>
           </div>
         </div>
         <AddToCart

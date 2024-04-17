@@ -137,7 +137,7 @@ const query = async (slug: string): Promise<CoursePageQueryProps> => {
     }
     `,
     params: { slug },
-    tags: ['product'],
+    tags: ['course', 'bundle'],
   });
   !data && notFound();
   return data;

@@ -7,6 +7,23 @@
     grid-template-columns: 1fr;
   }
 
+  .rating {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 4px;
+
+    span {
+      font-size: 14px;
+      color: var(--primary-800, #53423c);
+
+      b {
+        font-weight: 300;
+        font-size: 32px;
+        font-family: var(--font-city-streetwear);
+      }
+    }
+  }
+
   .divider {
     height: 1px;
     background-color: var(--primary-400);
