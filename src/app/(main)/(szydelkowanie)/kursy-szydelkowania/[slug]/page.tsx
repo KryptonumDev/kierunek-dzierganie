@@ -31,7 +31,7 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
     },
     card,
   } = await query(slug);
-  console.log(course)
+
   return (
     <>
       <Breadcrumbs

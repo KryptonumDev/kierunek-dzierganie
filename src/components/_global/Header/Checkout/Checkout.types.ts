@@ -1,4 +1,4 @@
-import type { Billing, ImgType, Shipping } from '@/global/types';
+import type { Billing, Complexity, ImgType, Shipping } from '@/global/types';
 import type { useCartItems } from '../Header.types';
 
 export type Props = {
@@ -28,7 +28,7 @@ export type InputState = {
       quantity: number;
       discount: number;
       image: ImgType;
-      complexity: 1 | 2 | 3 | null;
+      complexity: Complexity | null;
     }[];
   };
   needDelivery: boolean;

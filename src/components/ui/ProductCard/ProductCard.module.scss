@@ -6,10 +6,11 @@
     display: flex;
     gap: 4px;
     justify-content: center;
+    margin-bottom: 4px;
 
     span {
       font-size: 14px;
-      color: var(--primary-800, #53423C);
+      color: var(--primary-800, #53423c);
 
       b {
         font-weight: 300;
@@ -38,6 +39,7 @@
     position: absolute;
     inset: 0;
     z-index: 2;
+    margin: 0 !important;
   }
 
   .image-wrap {
@@ -81,5 +83,26 @@
     position: relative;
     margin: 36px auto 0 auto;
     z-index: 3;
+  }
+
+  .price {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    span {
+      color: var(--primary-800, #53423c);
+      font-size: 18px;
+      font-weight: 300;
+      line-height: 150%;
+
+      &.discount {
+        color: var(--primary-600, #9a827a);
+        font-size: 14px;
+        line-height: 150%;
+        text-decoration: line-through;
+      }
+    }
   }
 }

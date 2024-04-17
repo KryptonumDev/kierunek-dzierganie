@@ -4,14 +4,14 @@ import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import HeroSimple, { HeroSimple_Query } from '@/components/_global/HeroSimple';
 import StepsGrid, { StepsGrid_Query } from '@/components/_global/StepsGrid';
 import LatestBlogEntries, { LatestBlogEntries_Query } from '@/components/_global/LatestBlogEntries';
-import type { KnittingPage_QueryTypes } from '../page.types';
+import type { KnittingProductsPage_QueryTypes } from '../page.types';
 import ProductsListing from '@/components/_global/ProductsListing';
 import Markdown from '@/components/ui/markdown';
 import { PRODUCT_CARD_QUERY } from '@/global/constants';
 
 const page = { name: 'Produkty do dziergania', path: '/produkty-do-dziergania' };
 
-const KnittingPage = async () => {
+const KnittingPage = async ({ searchParams }: { searchParams: { [key: string]: string } }) => {
   const {
     page: {
       HeroSimple: HeroSimpleData,
@@ -21,8 +21,9 @@ const KnittingPage = async () => {
       listing_text,
     },
     products,
-    categories
-  } = await query();
+    categories,
+    productsTotalCount,
+  } = await query(searchParams);
 
   const title = <Markdown.h2>{listing_title}</Markdown.h2>;
   const text = <Markdown>{listing_text}</Markdown>;
@@ -39,6 +40,7 @@ const KnittingPage = async () => {
         categories={categories}
         basis='/produkty-do-dziergania/'
         courses={false}
+        productsTotalCount={productsTotalCount}
       />
       <LatestBlogEntries {...LatestBlogEntriesData} />
     </>
@@ -47,8 +49,8 @@ const KnittingPage = async () => {
 
 export default KnittingPage;
 
-const query = async (): Promise<KnittingPage_QueryTypes> => {
-  return await sanityFetch<KnittingPage_QueryTypes>({
+const query = async (searchParams: { [key: string]: string }): Promise<KnittingProductsPage_QueryTypes> => {
+  return await sanityFetch<KnittingProductsPage_QueryTypes>({
     query: /* groq */ `
     {
       "page": *[_type == "Knitting_Page"][0] {
@@ -58,9 +60,24 @@ const query = async (): Promise<KnittingPage_QueryTypes> => {
         "listing_title" : listing_Heading_Products,
         "listing_text": listing_Paragraph_Products,
       },
-      "products": *[_type== 'product' && visible == true && basis == 'knitting' && type in ['variable', 'physical']][0...10]{
+      "products": *[
+        _type == 'product'
+        && visible == true 
+        && basis == 'knitting' 
+        && (!defined($category) || category->slug.current == $category)
+        && (!defined($discount) || type =='variable' || defined(discount))
+        && (!defined($discount) || type =='physical' || defined(math::avg(variants[].discount)) )
+      ][$before...$after]{
         ${PRODUCT_CARD_QUERY}
       },
+      "productsTotalCount": count(*[
+        _type == 'product'
+        && visible == true 
+        && basis == 'knitting' 
+        && (!defined($category) || category->slug.current == $category)
+        && (!defined($discount) || type =='variable' || defined(discount))
+        && (!defined($discount) || type =='physical' || defined(math::avg(variants[].discount)) )
+      ]),
       "categories": *[_type == 'productCategory'][]{
         name,
         "slug": slug.current,
@@ -68,6 +85,12 @@ const query = async (): Promise<KnittingPage_QueryTypes> => {
       }
     }
     `,
+    params: {
+      before: (Number(searchParams.strona ?? 1) - 1) * 10,
+      after: Number(searchParams.strona ?? 1) * 10,
+      category: searchParams.kategoria ?? null,
+      discount: searchParams.promocja ?? null,
+    },
     tags: ['Knitting_Page'],
   });
 };

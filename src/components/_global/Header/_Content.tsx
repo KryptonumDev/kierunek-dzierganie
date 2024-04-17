@@ -37,7 +37,7 @@ const Content = ({
 
   return (
     <>
-      <Checkout
+      {/*<Checkout
         CrossIcon={CrossIcon}
         setShowCheckout={() => setShowCheckout(false)}
         showCheckout={showCheckout}
@@ -71,7 +71,7 @@ const Content = ({
         usedVirtualMoney={usedVirtualMoney}
         usedDiscount={usedDiscount}
         setUsedDiscount={setUsedDiscount}
-      />
+      />*/}
       <a
         href='#main'
         className={styles.skipToMainContent}

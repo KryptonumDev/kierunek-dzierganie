@@ -7,11 +7,11 @@ import LatestBlogEntries, { LatestBlogEntries_Query } from '@/components/_global
 import type { CrochetingPage_QueryTypes } from '../page.types';
 import ProductsListing from '@/components/_global/ProductsListing';
 import Markdown from '@/components/ui/markdown';
-import { PRODUCT_CARD_QUERY } from '@/global/constants';
+import { COURSE_CARD_QUERY } from '@/global/constants';
 
 const page = { name: 'Szydełkowanie', path: '/kursy-szydelkowania' };
 
-const CrochetingPage = async () => {
+const CrochetingPage = async ({ searchParams }: { searchParams: { [key: string]: string } }) => {
   const {
     page: {
       HeroSimple: HeroSimpleData,
@@ -21,8 +21,10 @@ const CrochetingPage = async () => {
       listing_text,
     },
     products,
-    categories
-  } = await query();
+    categories,
+    productsTotalCount,
+    authors,
+  } = await query(searchParams);
 
   const title = <Markdown.h2>{listing_title}</Markdown.h2>;
   const text = <Markdown>{listing_text}</Markdown>;
@@ -39,6 +41,8 @@ const CrochetingPage = async () => {
         categories={categories}
         basis='/kursy-szydelkowania/'
         courses={true}
+        productsTotalCount={productsTotalCount}
+        authors={authors}
       />
       <LatestBlogEntries {...LatestBlogEntriesData} />
     </>
@@ -47,7 +51,7 @@ const CrochetingPage = async () => {
 
 export default CrochetingPage;
 
-const query = async (): Promise<CrochetingPage_QueryTypes> => {
+const query = async (searchParams: { [key: string]: string }): Promise<CrochetingPage_QueryTypes> => {
   return await sanityFetch<CrochetingPage_QueryTypes>({
     query: /* groq */ `{
       "page": *[_type == "Crocheting_Page"][0] {
@@ -57,16 +61,51 @@ const query = async (): Promise<CrochetingPage_QueryTypes> => {
         "listing_title" : listing_Heading_Courses,
         "listing_text": listing_Paragraph,
       },
-      "products": *[_type== 'product' && visible == true && basis == 'crocheting' && type in ['digital', 'bundle']][0...10]{
-        ${PRODUCT_CARD_QUERY}
+      "products": *[
+        (_type == 'course' || _type == 'bundle' )
+        && visible == true 
+        && basis == 'crocheting' 
+        && (!defined($bundle) || _type == 'bundle')
+        && (!defined($category) || _type == 'bundle' || category->slug.current == $category)
+        && (!defined($category) || _type == 'course' || $category in categories[]->slug.current)
+        && (!defined($complexity) || complexity == $complexity)
+        && (!defined($autor) || author->slug.current == $autor)
+        && (!defined($discount) || defined(discount))
+      ][$before...$after]{
+        ${COURSE_CARD_QUERY}
       },
+      "productsTotalCount": count(*[
+        (_type == 'course' || _type == 'bundle' )
+        && visible == true 
+        && basis == 'crocheting' 
+        && (!defined($bundle) || _type == 'bundle')
+        && (!defined($category) || _type == 'bundle' || category->slug.current == $category)
+        && (!defined($category) || _type == 'course' || $category in categories[]->slug.current)
+        && (!defined($complexity) || complexity == $complexity)
+        && (!defined($autor) || author->slug.current == $autor)
+        && (!defined($discount) || defined(discount))
+      ]),
       "categories": *[_type == 'courseCategory'][]{
+        name,
+        "slug": slug.current,
+        _id
+      },
+      "authors": *[_type == 'CourseAuthor_Collection'][]{
         name,
         "slug": slug.current,
         _id
       }
     }
     `,
+    params: {
+      before: (Number(searchParams.strona ?? 1) - 1) * 10,
+      after: Number(searchParams.strona ?? 1) * 10,
+      category: searchParams.kategoria ?? null,
+      complexity: searchParams['poziom-trudnosci'] ?? null,
+      autor: searchParams.autor ?? null,
+      bundle: searchParams.pakiet ?? null,
+      discount: searchParams.promocja ?? null,
+    },
     tags: ['Crocheting_Page'],
   });
 };

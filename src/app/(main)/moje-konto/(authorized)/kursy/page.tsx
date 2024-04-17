@@ -2,7 +2,7 @@ import EmptyCourses from '@/components/_dashboard/EmptyCourses';
 import ListingCourses from '@/components/_dashboard/ListingCourses';
 import { Img_Query } from '@/components/ui/image';
 import Seo from '@/global/Seo';
-import type { ImgType } from '@/global/types';
+import type { Complexity, ImgType } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
@@ -17,7 +17,7 @@ type QueryProps = {
     name: string;
     slug: string;
     image: ImgType;
-    complexity: 1 | 2 | 3;
+    complexity: Complexity;
     courseLength: string;
     progressPercentage: number;
   }[];

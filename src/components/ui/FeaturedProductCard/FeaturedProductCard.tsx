@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useMemo, useState } from 'react';
-import styles from './ProductCard.module.scss';
-import type { Props } from './ProductCard.types';
+import styles from './FeaturedProductCard.module.scss';
+import type { Props } from './FeaturedProductCard.types';
 import { ImgType } from '@/global/types';
 import Img from '../image';
 import { formatPrice } from '@/utils/price-formatter';
@@ -10,7 +10,7 @@ import { useCart } from 'react-use-cart';
 import { courseComplexityEnum, pageUrls } from '@/global/constants';
 import Link from 'next/link';
 
-const ProductCard = ({ data, inCart = false, horizontal }: Props) => {
+const FeaturedProductCard = ({ excerpt, data, inCart = false }: Props) => {
   const { addItem } = useCart();
   const [buttonText, setButtonText] = useState(inCart ? 'Już w koszyku' : 'Dodaj do koszyka');
   const mainVariant = useMemo(() => {
@@ -60,7 +60,7 @@ const ProductCard = ({ data, inCart = false, horizontal }: Props) => {
   }, [inCart, buttonText]);
 
   return (
-    <div className={`${styles['productCard']} ${horizontal ? styles['horizontal'] : ''}`}>
+    <div className={`${styles['featuredProductCard']}`}>
       <Link
         href={`${pageUrls[data.basis]}/${data.slug}`}
         className={styles['link']}
@@ -84,21 +84,28 @@ const ProductCard = ({ data, inCart = false, horizontal }: Props) => {
           />
         </div>
       )}
+      <div className={styles['bestseller']}>
+        <BestSeller />
+        <h3>
+          <strong>Bestseller</strong>
+        </h3>
+      </div>
       <div className={styles['data']}>
-        <div>
-          {data.rating !== undefined && data.reviewsCount > 0 ? (
-            <p className={styles['rating']}>
-              <Hearth />{' '}
-              <span>
-                <b>{data.rating}</b>/5 ({data.reviewsCount})
-              </span>
-            </p>
-          ) : (
-            <p className={styles['rating']}>
-              <Hearth /> <span>Brak opinii</span>
-            </p>
-          )}
-          <h3 className={styles['names']}>{mainVariant.name}</h3>
+        {data.rating !== undefined && data.reviewsCount > 0 ? (
+          <p className={styles['rating']}>
+            <Hearth />{' '}
+            <span>
+              <b>{data.rating}</b>/5 ({data.reviewsCount})
+            </span>
+          </p>
+        ) : (
+          <p className={styles['rating']}>
+            <Hearth /> <span>Brak opinii</span>
+          </p>
+        )}
+        <h3 className={styles['names']}>{mainVariant.name}</h3>
+        {excerpt && <div className={styles['excerpt']}>{excerpt}</div>}
+        <div className={styles['flex']}>
           <p className={styles['price']}>
             <span
               className={mainVariant.discount ? styles['discount'] : ''}
@@ -106,26 +113,26 @@ const ProductCard = ({ data, inCart = false, horizontal }: Props) => {
             />
             {mainVariant.discount ? <span dangerouslySetInnerHTML={{ __html: mainVariant.discount }} /> : null}
           </p>
+          {mainVariant.type === 'variable' ? (
+            <Button href={`${pageUrls[data.basis]}/${data.slug}`}>Wybierz wariant</Button>
+          ) : (
+            <Button
+              disabled={buttonText !== 'Dodaj do koszyka'}
+              onClick={() => {
+                addItem({ quantity: 1, id: data._id, price: 0 });
+                setButtonText('Dodano do koszyka');
+              }}
+            >
+              {buttonText}
+            </Button>
+          )}
         </div>
-        {mainVariant.type === 'variable' ? (
-          <Button href={`${pageUrls[data.basis]}/${data.slug}`}>Wybierz wariant</Button>
-        ) : (
-          <Button
-            disabled={buttonText !== 'Dodaj do koszyka'}
-            onClick={() => {
-              addItem({ quantity: 1, id: data._id, price: 0 });
-              setButtonText('Dodano do koszyka');
-            }}
-          >
-            {buttonText}
-          </Button>
-        )}
       </div>
     </div>
   );
 };
 
-export default ProductCard;
+export default FeaturedProductCard;
 
 const Hearth = () => (
   <svg
@@ -139,6 +146,21 @@ const Hearth = () => (
       strokeLinecap='round'
       strokeLinejoin='round'
       d='M13.378 19.691c2.61-.846 10.89-7.363 10.615-13.27C23.7.06 18.137 1.202 15.61 3.551c-3.09 2.87-5.359 8.365-3.457 9.048 2.353.844 2.465-1.361 1.986-2.794C13.55 8.039 8.684-1.293 3.107 2.303c-6.43 4.146 3.521 13.42 7.689 18.814.56.724 1.297.884 1.356 0'
+    />
+  </svg>
+);
+
+const BestSeller = () => (
+  <svg
+    xmlns='http://www.w3.org/2000/svg'
+    width='249'
+    height='44'
+    viewBox='0 0 249 44'
+    fill='none'
+  >
+    <path
+      d='M0 39.2357V4.73572C0 2.52658 1.79086 0.735718 4 0.735718H246.248C248.144 0.735718 248.975 3.12804 247.488 4.30433L226.825 20.6486C225.805 21.4551 225.814 23.005 226.843 23.7999L247.363 39.653C248.872 40.8193 248.048 43.2357 246.14 43.2357H4C1.79086 43.2357 0 41.4449 0 39.2357Z'
+      fill='#EFE8E7'
     />
   </svg>
 );

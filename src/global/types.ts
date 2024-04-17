@@ -4,6 +4,8 @@ import type { DescriptionTypes } from '@/components/_product/Description/Descrip
 import { ReviewsTypes } from '@/components/_product/Reviews';
 import { TableOfContentTypes } from '@/components/_product/TableOfContent/TableOfContent.types';
 
+export type Complexity = 'dla-poczatkujacych' | 'dla-srednio-zaawansowanych' | 'dla-zaawansowanych';
+
 export type CtaType = {
   href: string;
   text: string | React.ReactNode;
@@ -28,16 +30,14 @@ export type ProductCard = {
   basis: 'crocheting' | 'knitting';
   slug: string;
   name: string;
+  excerpt?: string;
   price?: number;
   discount?: number;
   countInStock?: number;
   featuredVideo?: string;
   gallery?: ImgType;
-  course?: {
-    complexity: 1 | 2 | 3;
-    reviewsCount: number;
-    rating: number;
-  };
+  reviewsCount: number;
+  rating: number;
   variants: Array<{
     name: string;
     price: number;
@@ -47,6 +47,22 @@ export type ProductCard = {
     gallery: ImgType;
   }>;
 };
+
+export type CourseCard = {
+  _id: string;
+  basis: 'crocheting' | 'knitting';
+  slug: string;
+  name: string;
+  excerpt?: string;
+  price?: number;
+  discount?: number;
+  countInStock?: number;
+  featuredVideo?: string;
+  gallery?: ImgType;
+  complexity: Complexity;
+  reviewsCount: number;
+  rating: number;
+}
 
 export type Product = {
   _id: string;
@@ -59,7 +75,7 @@ export type Product = {
     current: string;
   };
   course?: {
-    complexity: 1 | 2 | 3;
+    complexity: Complexity;
   };
   variants: Array<{
     _key: number;
@@ -186,7 +202,7 @@ export type ProductPageQueryProps = {
       name: string;
       value: string;
     }>;
-    courses: ProductCard[]
+    courses: ProductCard[];
     description: DescriptionTypes[];
     course: TableOfContentTypes & ReviewsTypes;
   };

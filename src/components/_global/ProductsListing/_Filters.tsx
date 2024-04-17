@@ -1,64 +1,100 @@
 'use client';
-import toast from 'react-hot-toast';
 import styles from './ProductsListing.module.scss';
 import type { FiltersTypes } from './ProductsListing.types';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Checkbox from '@/components/ui/Checkbox';
+import { courseComplexityEnum } from '@/global/constants';
+import type { Complexity } from '@/global/types';
 
-export default function Filters({ basis, categories, courses }: FiltersTypes) {
+export default function Filters({ basis, categories, courses, authors }: FiltersTypes) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const newParams = new URLSearchParams(searchParams.toString());
 
   const [open, setOpen] = useState(!!searchParams.toString());
+  const [discount, setDiscount] = useState(searchParams.get('promocja') === 'true');
+  const [bundle, setBundle] = useState(searchParams.get('pakiet') === 'true');
+
+  useEffect(() => {
+    setDiscount(searchParams.get('promocja') === 'true');
+    setBundle(searchParams.get('pakiet') === 'true');
+  }, [searchParams]);
 
   const handleCategoryClick = (slug: string) => {
     if (!slug) {
-      toast.error('Kategoria źle skonfigurowana, proszę skontaktować się z obsługą sklepu', { icon: '❌' });
+      newParams.delete('strona');
+      newParams.delete('kategoria');
+      router.push(`${basis}?${newParams.toString()}`, { scroll: false });
       return;
     }
 
+    newParams.delete('strona');
     newParams.set('kategoria', slug);
-    router.push(`${basis}?${newParams.toString()}`);
-  };
-
-  const handleBundleClick = (checked: boolean) => {
-    if (newParams.get('bundle')) {
-      newParams.delete('bundle');
-    } else if (!checked) {
-      // skip if unchecked but param doesn't exist
-    } else {
-      newParams.set('bundle', String(checked));
-    }
-
-    router.push(`${basis}?${newParams.toString()}`);
-  };
-
-  const handleDiscountedClick = (checked: boolean) => {
-    if (newParams.get('discounted')) {
-      newParams.delete('discounted');
-    } else if (!checked) {
-      // skip if unchecked but param doesn't exist
-    } else {
-      newParams.set('discounted', String(checked));
-    }
-
-    router.push(`${basis}?${newParams.toString()}`);
+    router.push(`${basis}?${newParams.toString()}`, { scroll: false });
   };
 
   const handleComplexityClick = (slug: string) => {
     if (!slug) {
-      toast.error('Poziom trudności źle skonfigurowany, proszę skontaktować się z obsługą sklepu', { icon: '❌' });
+      newParams.delete('strona');
+      newParams.delete('poziom-trudnosci');
+      router.push(`${basis}?${newParams.toString()}`, { scroll: false });
       return;
     }
 
+    newParams.delete('strona');
     newParams.set('poziom-trudnosci', slug);
-    router.push(`${basis}?${newParams.toString()}`);
+    router.push(`${basis}?${newParams.toString()}`, { scroll: false });
+  };
+
+  const handleAuthorClick = (slug: string) => {
+    if (!slug) {
+      newParams.delete('strona');
+      newParams.delete('autor');
+      router.push(`${basis}?${newParams.toString()}`, { scroll: false });
+      return;
+    }
+
+    newParams.delete('strona');
+    newParams.set('autor', slug);
+    router.push(`${basis}?${newParams.toString()}`, { scroll: false });
+  };
+
+  const handleBundleClick = (checked: boolean) => {
+    if (newParams.get('pakiet')) {
+      newParams.delete('pakiet');
+    }
+
+    if (checked) {
+      newParams.set('pakiet', String(checked));
+    }
+
+    newParams.delete('strona');
+    router.push(`${basis}?${newParams.toString()}`, { scroll: false });
+  };
+
+  const handleDiscountedClick = (checked: boolean) => {
+    if (newParams.get('promocja')) {
+      newParams.delete('promocja');
+    }
+
+    if (checked) {
+      newParams.set('promocja', String(checked));
+    }
+
+    newParams.delete('strona');
+    router.push(`${basis}?${newParams.toString()}`, { scroll: false });
+  };
+
+  const handleRemoveFilters = () => {
+    router.push(basis, { scroll: false });
   };
 
   return (
-    <div className={styles['filters']}>
+    <div
+      id='listing'
+      className={styles['filters']}
+    >
       <div className={styles['filters-button-wrap']}>
         <button
           className={styles['filters-button']}
@@ -87,9 +123,38 @@ export default function Filters({ basis, categories, courses }: FiltersTypes) {
         {courses && (
           <div>
             <h3>Poziom trudności</h3>
-            <button onClick={() => handleComplexityClick('1')}>Dla początkujących</button>
-            <button onClick={() => handleComplexityClick('2')}>Dla średnio zaawansowanych</button>
-            <button onClick={() => handleComplexityClick('3')}>Dla zaawansowanych</button>
+            <button
+              data-active={searchParams.get('poziom-trudnosci') === 'dla-poczatkujacych'}
+              onClick={() => handleComplexityClick('dla-poczatkujacych')}
+            >
+              Dla początkujących
+            </button>
+            <button
+              data-active={searchParams.get('poziom-trudnosci') === 'dla-srednio-zaawansowanych'}
+              onClick={() => handleComplexityClick('dla-srednio-zaawansowanych')}
+            >
+              Dla średnio zaawansowanych
+            </button>
+            <button
+              data-active={searchParams.get('poziom-trudnosci') === 'dla-zaawansowanych'}
+              onClick={() => handleComplexityClick('dla-zaawansowanych')}
+            >
+              Dla zaawansowanych
+            </button>
+          </div>
+        )}
+        {authors && (
+          <div>
+            <h3>Twórca</h3>
+            {authors.map((author) => (
+              <button
+                data-active={author.slug === searchParams.get('autor')}
+                key={author._id}
+                onClick={() => handleAuthorClick(author.slug)}
+              >
+                {author.name}
+              </button>
+            ))}
           </div>
         )}
       </div>
@@ -97,25 +162,76 @@ export default function Filters({ basis, categories, courses }: FiltersTypes) {
         data-open={open}
         className={styles['checkboxes']}
       >
+        {courses && (
+          <Checkbox
+            checked={bundle}
+            onChange={(e) => {
+              setBundle(e.currentTarget.checked);
+              handleBundleClick(e.target.checked);
+            }}
+            label='Pakiet'
+            register={{
+              name: 'bundle',
+            }}
+          />
+        )}
         <Checkbox
-          // TODO: button prev page in browser not working after clicking, checkbox not setting to false
-          defaultChecked={!!searchParams.get('bundle')}
-          onChange={(e) => handleBundleClick(e.target.checked)}
-          label='Pakiet'
-          register={{
-            name: 'bundle',
+          checked={discount}
+          onChange={(e) => {
+            setDiscount(e.currentTarget.checked);
+            handleDiscountedClick(e.target.checked);
           }}
-        />
-        <Checkbox
-          // TODO: button prev page in browser not working after clicking, checkbox not setting to false
-          defaultChecked={!!searchParams.get('discounted')}
-          onChange={(e) => handleDiscountedClick(e.target.checked)}
           label='W promocji'
           register={{
             name: 'discounted',
           }}
         />
       </div>
+      {searchParams.toString() &&
+        (!searchParams.toString().includes('strona') || searchParams.toString().includes('&')) 
+        && (
+          <div className={styles['active-filters']}>
+            <div>
+              <p>Aktywne filtry:</p>
+              {searchParams.get('kategoria') && (
+                <button onClick={() => handleCategoryClick('')}>
+                  Kategoria: {categories.find((category) => category.slug === searchParams.get('kategoria'))?.name}
+                  <CrossIcon />
+                </button>
+              )}
+              {searchParams.get('poziom-trudnosci') && (
+                <button onClick={() => handleComplexityClick('')}>
+                  Poziom trudności: {courseComplexityEnum[searchParams.get('poziom-trudnosci') as Complexity]?.name}
+                  <CrossIcon />
+                </button>
+              )}
+              {searchParams.get('autor') && (
+                <button onClick={() => handleAuthorClick('')}>
+                  Twórca: {authors!.find((author) => author.slug === searchParams.get('autor'))?.name}
+                  <CrossIcon />
+                </button>
+              )}
+              {searchParams.get('pakiet') && (
+                <button onClick={() => handleBundleClick(false)}>
+                  Tylko pakiety
+                  <CrossIcon />
+                </button>
+              )}
+              {searchParams.get('promocja') && (
+                <button onClick={() => handleDiscountedClick(false)}>
+                  Tylko promocje
+                  <CrossIcon />
+                </button>
+              )}
+            </div>
+            <button
+              onClick={handleRemoveFilters}
+              className='link'
+            >
+              Usuń filtry
+            </button>
+          </div>
+        )}
     </div>
   );
 }
@@ -130,6 +246,23 @@ const Chevron = () => (
   >
     <path
       d='M5.25 15.8607L12 9.11072L18.75 15.8607'
+      stroke='#9A827A'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    />
+  </svg>
+);
+
+const CrossIcon = () => (
+  <svg
+    width='24'
+    height='25'
+    viewBox='0 0 24 25'
+    fill='none'
+    xmlns='http://www.w3.org/2000/svg'
+  >
+    <path
+      d='M17.25 17.5171L6.75 7.01709M17.25 7.01709L6.75 17.5171'
       stroke='#9A827A'
       strokeLinecap='round'
       strokeLinejoin='round'
