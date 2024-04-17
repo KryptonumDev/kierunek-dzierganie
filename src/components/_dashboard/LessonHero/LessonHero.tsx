@@ -137,7 +137,7 @@ const LessonHero = ({
                       ]!.slug
                     }`}
                   >
-                    Poprzedni rozdział
+                    Poprzedni moduł
                   </Link>
                 )}
               </>
@@ -175,7 +175,7 @@ const LessonHero = ({
                     className={`${styles['next']} link`}
                     href={`/moje-konto/kursy/${course.slug}/${course.chapters[currentChapterIndex + 1]!.lessons[0]!.slug}`}
                   >
-                    Następny rozdział
+                    Następny moduł
                   </Link>
                 )}
               </>
