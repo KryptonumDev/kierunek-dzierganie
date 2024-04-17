@@ -1,0 +1,96 @@
+.AddReview {
+  position: fixed;
+  z-index: 10;
+  opacity: 0;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  max-width: calc(100% - 500px);
+  max-height: calc(100% - 200px);
+  pointer-events: none;
+  transition: opacity 0.5s;
+  width: 100%;
+
+  &[data-active='true'] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  border-radius: 4px;
+  border: 1px solid var(--primary-500, #b4a29c);
+  background: var(--primary-100, #fdfbf8);
+  padding: 48px 80px;
+
+  display: grid;
+  grid-template-columns: 240fr 420fr;
+  gap: 80px;
+
+  h2 {
+    margin: 0 !important;
+    margin-left: auto !important;
+  }
+
+  form {
+    text-align: left;
+    display: grid;
+    gap: 8px;
+    max-width: 380px;
+
+    p {
+      text-align: left;
+      margin: 0;
+    }
+
+    button {
+      margin-top: 24px;
+    }
+
+    .group {
+      display: flex;
+      margin-top: -8px;
+
+      .mark {
+        padding: 16px 8px;
+        position: relative;
+        cursor: pointer;
+
+        &[data-active='true'] {
+          svg path {
+            stroke: var(--error-700);
+          }
+        }
+
+        svg path {
+          transition: stroke 0.3s var(--easing);
+        }
+
+        input {
+          position: absolute;
+          opacity: 0;
+          left: 0;
+          top: 0;
+        }
+      }
+    }
+  }
+}
+
+.overlay {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(180, 162, 156, 0.42);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  z-index: 9;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s;
+
+  &[data-active='true'] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}

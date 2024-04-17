@@ -1,6 +1,7 @@
+import type { ProductCard } from '@/global/types';
+
 export type RelatedProductsTypes = {
-  _id: string;
   title: string;
   text: string;
-  basis: string;
-}
+  relatedCourses: ProductCard[];
+};

@@ -1,8 +1,9 @@
 import type { ComponentProps } from '@/components/Components';
 import type { HeroSimpleTypes } from '@/components/_global/HeroSimple';
 import type { DescriptionTypes } from '@/components/_product/Description/Description';
-import { ReviewsTypes } from '@/components/_product/Reviews';
-import { TableOfContentTypes } from '@/components/_product/TableOfContent/TableOfContent.types';
+import type { ReviewsTypes } from '@/components/_product/Reviews';
+import type { TableOfContentTypes } from '@/components/_product/TableOfContent/TableOfContent.types';
+import type { User } from '@supabase/supabase-js';
 
 export type Complexity = 'dla-poczatkujacych' | 'dla-srednio-zaawansowanych' | 'dla-zaawansowanych';
 
@@ -189,6 +190,11 @@ export type ProductPageQueryProps = {
   } & ReviewsTypes;
 };
 
+export type ProductPageQuery = {
+  data: ProductPageQueryProps;
+  user: User | null;
+}
+
 export type CoursePageQueryProps = {
   product: {
     basis: string;
@@ -220,7 +226,14 @@ export type CoursePageQueryProps = {
   } & TableOfContentTypes &
     ReviewsTypes;
   card: ProductCard;
+  relatedCourses: ProductCard[];
 };
+
+export type CoursePageQuery = {
+  data: CoursePageQueryProps;
+  user: User | null
+  courses_progress?: CoursesProgress[];
+}
 
 export type generateStaticParamsProps = {
   slug: string;

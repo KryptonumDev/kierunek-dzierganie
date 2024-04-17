@@ -8,8 +8,9 @@ import { formatPrice } from '@/utils/price-formatter';
 import AddToCart from '@/components/ui/AddToCart';
 import { Hearth, PayPo } from '@/components/ui/Icons';
 import Img from '@/components/ui/image';
+import Button from '@/components/ui/Button';
 
-const HeroVirtual = ({ course }: HeroVirtualTypes) => {
+const HeroVirtual = ({ alreadyBought, course }: HeroVirtualTypes) => {
   const images = useMemo(() => {
     const images: Array<{ data: ImgType | string; type: 'video' | 'image' }> = [];
     // add video as first element if exists
@@ -45,9 +46,13 @@ const HeroVirtual = ({ course }: HeroVirtualTypes) => {
           </div>
         </div>
         <div className={styles['flex']}>
-          <button className='link'>Obejrzyj pierwszy moduł za darmo</button>
+          {/* <button className='link'>Obejrzyj pierwszy moduł za darmo</button> */}
           {/* TODO: check is course already bought by user and show link to dashboard */}
-          <AddToCart id={course._id} />
+          {alreadyBought ? (
+            <Button href={`/moje-konto/kursy/${course.slug}`}>Przejdź do kursu</Button>
+          ) : (
+            <AddToCart id={course._id} />
+          )}
         </div>
         <p className={styles['pay-po']}>
           Kup dzisiaj i zapłać za 30 dni z PayPo

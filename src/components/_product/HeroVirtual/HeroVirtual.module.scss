@@ -3,6 +3,10 @@
   grid-template-columns: 1fr 1fr;
   gap: 32px;
 
+  @media (max-width: 840px) {
+    grid-template-columns: 1fr;
+  }
+
   .rating {
     display: flex;
     gap: 4px;
@@ -26,7 +30,7 @@
     gap: 24px;
     justify-content: space-between;
     align-items: center;
-    margin-top: 36px;
+    margin-top: clamp(16px, calc(28vw/7.68), 36px);
   }
 
   .pay-po {
@@ -48,7 +52,7 @@
     grid-template-columns: 60px 1fr;
     gap: 16px;
     align-items: center;
-    margin-top: 36px;
+    margin-top: clamp(20px, calc(28vw/7.68), 36px);
 
     > div {
       > p {

@@ -6,27 +6,32 @@ import HeroPhysical from '@/components/_product/HeroPhysical';
 import Parameters from '@/components/_product/Parameters';
 import Informations from '@/components/_product/Informations';
 import Description, { Description_Query } from '@/components/_product/Description';
-import type { ProductPageQueryProps, generateStaticParamsProps } from '@/global/types';
+import type { ProductPageQuery, ProductPageQueryProps, generateStaticParamsProps } from '@/global/types';
 import { Img_Query } from '@/components/ui/image';
 import Reviews from '@/components/_product/Reviews';
+import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 
 const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
   const {
-    product: {
-      name,
-      _id,
-      type,
-      variants,
-      price,
-      discount,
-      featuredVideo,
-      countInStock,
-      gallery,
-      parameters,
-      description,
-      reviews,
-      rating,
+    data: {
+      product: {
+        name,
+        _id,
+        type,
+        variants,
+        price,
+        discount,
+        featuredVideo,
+        countInStock,
+        gallery,
+        parameters,
+        description,
+        reviews,
+        rating,
+      },
     },
+    user,
   } = await query(slug);
 
   return (
@@ -64,7 +69,11 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
       <Informations tabs={['Opis', 'Parametry', 'Opinie']}>
         {description?.length > 0 && <Description data={description} />}
         {parameters?.length > 0 && <Parameters parameters={parameters} />}
-        {reviews?.length > 0 && <Reviews reviews={reviews} />}
+        <Reviews
+          logged={!!user}
+          alreadyBought={true}
+          reviews={reviews}
+        />
       </Informations>
     </>
   );
@@ -76,7 +85,28 @@ export async function generateMetadata({ params: { slug } }: { params: { slug: s
   return await QueryMetadata('product', `/kursy-szydelkowania/${slug}`, slug);
 }
 
-const query = async (slug: string): Promise<ProductPageQueryProps> => {
+const query = async (slug: string): Promise<ProductPageQuery> => {
+  const supabase = createServerActionClient({ cookies });
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // const res = await supabase
+  //   .from('profiles')
+  //   .select(
+  //     `
+  //       id,
+  //       courses_progress (
+  //         id,
+  //         course_id,
+  //         owner_id,
+  //         progress
+  //       )
+  //     `
+  //   )
+  //   .eq('id', user?.id)
+  //   .single();
+
   const data = await sanityFetch<ProductPageQueryProps>({
     query: /* groq */ `
     {
@@ -128,7 +158,7 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
     tags: ['product'],
   });
   !data && notFound();
-  return data;
+  return { data: data, user: user };
 };
 
 export async function generateStaticParams(): Promise<generateStaticParamsProps[]> {
