@@ -66,7 +66,6 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
         {parameters?.length > 0 && <Parameters parameters={parameters} />}
         {reviews?.length > 0 && <Reviews reviews={reviews} />}
       </Informations>
-      {/* TODO: Add featured courses */}
     </>
   );
 };

@@ -11,10 +11,12 @@ import TableOfContent from '@/components/_product/TableOfContent';
 import Reviews from '@/components/_product/Reviews';
 import HeroVirtual from '@/components/_product/HeroVirtual';
 import { Img_Query } from '@/components/ui/image';
+import RelatedProducts from '@/components/_product/RelatedProducts';
+import { Suspense } from 'react';
 
 const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
   const {
-    product: { relatedBundle, name, description, chapters, reviews, courses },
+    product: { relatedBundle, name, description, chapters, reviews, courses, basis, _id },
     product,
     card,
   } = await query(slug);
@@ -60,7 +62,14 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
         {description?.length > 0 && <Description data={description} />}
         {reviews.length > 0 && <Reviews reviews={reviews} />}
       </Informations>
-      {/* TODO: Add featured courses */}
+      <Suspense>
+        <RelatedProducts
+          basis={basis}
+          title={'Pozwól sobie na <strong>chwilę relaksu!</strong>'}
+          text={'Rozwijaj swoją wyobraźnię z innymi kursami szydełkowania'}
+          _id={_id}
+        />
+      </Suspense>
     </>
   );
 };

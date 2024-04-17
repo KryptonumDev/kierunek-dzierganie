@@ -1,0 +1,21 @@
+.RelatedProducts {
+  .title{
+    margin-bottom: 28px;
+    text-align: center;
+  }
+
+  .text{
+    margin-bottom: 48px;
+    text-align: center;
+  }
+
+  .grid{
+    display: grid;
+    gap: 32px;
+    grid-template-columns: 1fr 1fr 1fr;
+
+    @media (max-width: 899px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}

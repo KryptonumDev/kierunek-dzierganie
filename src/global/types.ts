@@ -191,6 +191,7 @@ export type ProductPageQueryProps = {
 
 export type CoursePageQueryProps = {
   product: {
+    basis: string;
     name: string;
     slug: string;
     _id: string;
