@@ -1,6 +1,7 @@
 import CourseCard from '@/components/ui/CourseCard';
 import styles from './ListingCourses.module.scss';
 import type { Props } from './ListingCourses.types';
+import FeaturedCourseCard from '@/components/ui/FeaturedCourseCard';
 
 const ListingCourses = ({ courses }: Props) => {
   return (
@@ -8,6 +9,15 @@ const ListingCourses = ({ courses }: Props) => {
       <h1>
         Moje <strong>kursy</strong>
       </h1>
+      <FeaturedCourseCard
+        name={courses[0]!.name}
+        slug={courses[0]!.slug}
+        image={courses[0]!.image}
+        complexity={courses[0]!.complexity}
+        courseLength={courses[0]!.courseLength}
+        progressPercentage={courses[0]!.progressPercentage}
+        excerpt={courses[0]!.excerpt}
+      />
       {/* TODO: ostatni oglądany kurs */}
       {/* TODO: filters */}
       <div className={styles['grid']}>

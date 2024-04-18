@@ -1,13 +1,13 @@
 .ListingCourses {
-  h1{
-    margin-bottom: 36px;
+  h1 {
+    margin-bottom: clamp(20px, calc(28vw / 7.68), 36px);
     text-align: center;
   }
-  
-  .grid{
-    margin-top: 96px;
+
+  .grid {
+    margin-top: clamp(48px, calc(80vw / 7.68), 96px);
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 32px;
+    gap: clamp(20px, calc(20vw / 7.68), 32px);
   }
 }

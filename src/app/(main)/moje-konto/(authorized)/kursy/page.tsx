@@ -20,6 +20,7 @@ type QueryProps = {
     complexity: Complexity;
     courseLength: string;
     progressPercentage: number;
+    excerpt: string;
   }[];
 };
 
@@ -58,6 +59,7 @@ const query = async (): Promise<QueryProps> => {
     .select(
       `
         id,
+        last_watched_course,
         courses_progress (
           id,
           course_id,
@@ -95,42 +97,62 @@ const query = async (): Promise<QueryProps> => {
         "slug": slug.current,
         complexity,
         courseLength,
+        excerpt,
         "image": gallery {
           ${Img_Query}
         }[0],
       },
+      "lastWatchedCourse": *[_type == "course" && _id == $last_watched_course] {
+        _id,
+        name,
+        "slug": slug.current,
+        complexity,
+        courseLength,
+        excerpt,
+        "image": gallery {
+          ${Img_Query}
+        }[0],
+      }[0]
     }`,
     params: {
-      id: res.data!.courses_progress.map((course) => course.course_id),
+      id: res
+        .data!.courses_progress.map((course) => course.course_id)
+        .filter((el) => el !== res.data!.last_watched_course),
+      last_watched_course: res.data!.last_watched_course,
     },
   });
 
   return {
     ...data,
+    lastWatchedCourse: data.lastWatchedCourse,
     courses: data.courses.map((course) => {
       const progress = res.data!.courses_progress.find((el) => el.course_id === course._id)!;
 
-      let totalLessons = 0;
-      let completedLessons = 0;
-
-      for (const sectionId in progress.progress) {
-        const lessons = progress.progress[sectionId];
-        for (const lessonId in lessons) {
-          totalLessons++;
-          if (lessons[lessonId]!.ended) {
-            completedLessons++;
-          }
-        }
-      }
-
-      // if 0 lessons, return to avoid division by 0
-      if (totalLessons === 0) {
-        return { ...course, progressPercentage: 0 };
-      }
-
-      const completionPercentage = (completedLessons / totalLessons) * 100;
-
-      return { ...course, progressPercentage: completionPercentage };
+      return { ...course, progressPercentage: calculateProgress(progress) };
     }),
   };
+};
+
+const calculateProgress = (progress: any) => {
+  let totalLessons = 0;
+  let completedLessons = 0;
+
+  for (const sectionId in progress) {
+    const lessons = progress[sectionId];
+    for (const lessonId in lessons) {
+      totalLessons++;
+      if (lessons[lessonId]!.ended) {
+        completedLessons++;
+      }
+    }
+  }
+
+  // if 0 lessons, return to avoid division by 0
+  if (totalLessons === 0) {
+    return 0;
+  }
+
+  const completionPercentage = (completedLessons / totalLessons) * 100;
+
+  return completionPercentage;
 };

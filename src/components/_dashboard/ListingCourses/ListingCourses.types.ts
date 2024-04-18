@@ -9,5 +9,6 @@ export type Props = {
     complexity:  Complexity;
     courseLength: string;
     progressPercentage: number;
+    excerpt: string;
   }[];
 };

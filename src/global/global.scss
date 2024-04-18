@@ -291,17 +291,6 @@ main {
   }
 }
 
-.dashboard-wrapper {
-  display: grid;
-  grid-template-columns: 277px 1fr;
-  gap: 32px;
-
-  .main {
-    display: grid;
-    gap: clamp(48px, calc(96vw / 7.68), 144px);
-  }
-}
-
 .orderedList {
   display: grid;
   row-gap: clamp(12px, calc(16vw / 7.68), 16px);
