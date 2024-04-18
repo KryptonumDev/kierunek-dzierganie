@@ -9,9 +9,20 @@ import { cookies } from 'next/headers';
 
 type QueryProps = {
   lastWatchedCourse: string;
+  totalCourses: number;
   global: {
     image_knitting: ImgType;
     image_crochet: ImgType;
+  };
+  lastWatched: {
+    _id: string;
+    name: string;
+    slug: string;
+    image: ImgType;
+    complexity: Complexity;
+    progressPercentage: number;
+    courseLength: string;
+    excerpt: string;
   };
   courses: {
     _id: string;
@@ -23,15 +34,32 @@ type QueryProps = {
     progressPercentage: number;
     excerpt: string;
   }[];
+  categories: {
+    name: string;
+    slug: string;
+    _id: string;
+  }[];
+  authors: {
+    name: string;
+    slug: string;
+    _id: string;
+  }[];
 };
 
-export default async function Courses() {
-  const { global, courses, lastWatchedCourse }: QueryProps = await query();
+export default async function Courses({ searchParams }: { searchParams: { [key: string]: string } }) {
+  const { global, courses, lastWatchedCourse, categories, authors, totalCourses }: QueryProps =
+    await query(searchParams);
 
   return (
     <div>
-      {courses.length > 0 ? (
-        <ListingCourses lastWatchedCourse={lastWatchedCourse} courses={courses} />
+      {courses.length > 0 || Object.keys(searchParams).length > 0 ? (
+        <ListingCourses
+          totalCourses={totalCourses}
+          lastWatchedCourse={lastWatchedCourse}
+          courses={courses}
+          categories={categories}
+          authors={authors}
+        />
       ) : (
         <EmptyCourses
           image_crochet={global.image_crochet}
@@ -49,7 +77,7 @@ export async function generateMetadata() {
   });
 }
 
-const query = async (): Promise<QueryProps> => {
+const query = async (searchParams: { [key: string]: string }): Promise<QueryProps> => {
   const supabase = createServerActionClient({ cookies });
   const {
     data: { user },
@@ -92,7 +120,14 @@ const query = async (): Promise<QueryProps> => {
           ${Img_Query}
         },
       },
-      "courses": *[_type == "course" && _id in $id] {
+      "courses": *[
+        _type == "course" 
+          && _id in $id
+          && (!defined($category) || category->slug.current == $category)
+          && (!defined($complexity) || complexity == $complexity)
+          && (!defined($autor) || author->slug.current == $autor)
+          && (!defined($type) || basis == $type)
+        ] {
         _id,
         name,
         "slug": slug.current,
@@ -103,16 +138,46 @@ const query = async (): Promise<QueryProps> => {
           ${Img_Query}
         }[0],
       },
+      'totalCourses': count(*[_type == "course"&& _id in $totalCourses]),
+      "lastWatched": *[_type == "course" && _id == $last_watched_course] {
+        _id,
+        name,
+        "slug": slug.current,
+        complexity,
+        courseLength,
+        excerpt,
+        "image": gallery {
+          ${Img_Query}
+        }[0],
+      }[0],
+      "categories": *[_type == 'courseCategory'][]{
+        name,
+        "slug": slug.current,
+        _id
+      },
+      "authors": *[_type == 'CourseAuthor_Collection'][]{
+        name,
+        "slug": slug.current,
+        _id
+      }
     }`,
     params: {
-      id: res.data!.courses_progress.map((course) => course.course_id),
+      totalCourses: res.data!.courses_progress.map((course) => course.course_id),
+      id: res
+        .data!.courses_progress.filter((el) => el.course_id !== res.data!.last_watched_course)
+        .map((course) => course.course_id),
+      last_watched_course: res.data!.last_watched_course,
+      category: searchParams.rodzaj ?? null,
+      complexity: searchParams['poziom-trudnosci'] ?? null,
+      autor: searchParams.autor ?? null,
+      type: searchParams.kategoria ?? null,
     },
   });
 
   return {
     ...data,
     lastWatchedCourse: res.data!.last_watched_course,
-    courses: data.courses.map((course) => {
+    courses: data.courses.concat(data.lastWatched).map((course) => {
       const progress = res.data!.courses_progress.find((el) => el.course_id === course._id)!;
 
       let totalLessons = 0;

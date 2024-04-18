@@ -16,7 +16,7 @@ const CourseCard = ({ name, slug, image, complexity, progressPercentage }: Props
           }}
           className={styles['badge']}
         >
-          {courseComplexityEnum[complexity].name}
+          <span>{courseComplexityEnum[complexity].name}</span>
         </span>
         <Img
           data={image}

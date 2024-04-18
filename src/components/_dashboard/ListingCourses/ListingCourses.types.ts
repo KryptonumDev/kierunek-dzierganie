@@ -1,6 +1,7 @@
 import type { Complexity, ImgType } from '@/global/types';
 
 export type Props = {
+  totalCourses: number;
   lastWatchedCourse: string;
   courses: {
     _id: string;
@@ -12,10 +13,19 @@ export type Props = {
     progressPercentage: number;
     excerpt: string;
   }[];
+  categories: {
+    name: string;
+    slug: string;
+    _id: string;
+  }[];
+  authors: {
+    name: string;
+    slug: string;
+    _id: string;
+  }[];
 };
 
 export type FiltersTypes = {
-  basis: string;
   categories: {
     name: string;
     slug: string;

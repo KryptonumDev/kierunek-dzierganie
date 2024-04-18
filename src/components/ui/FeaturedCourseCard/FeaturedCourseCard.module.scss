@@ -8,14 +8,25 @@
   grid-template-columns: 587fr 619fr;
   gap: 32px;
   padding: 20px;
+  grid-template-areas: 
+  'image data'
+  'image flex';
 
   @media (max-width: 840px) {
     gap: 36px 24px;
-    grid-template-columns: 252fr 300fr;
+    grid-template-columns: 1fr 1fr;
+    align-items: flex-start;
+    grid-template-areas: 
+    'image data'
+    'flex flex';
   }
 
   @media (max-width: 580px) {
     grid-template-columns: 1fr;
+    grid-template-areas: 
+    'image '
+    'data'
+    'flex';
   }
 
   .rating {
@@ -36,15 +47,19 @@
   }
 
   .data {
+    margin-top: auto;
+    grid-area: data;
+
     @media (max-width: 840px) {
-      margin-bottom: 0;
-      padding: 0;
+      margin-top: 0;
     }
   }
 
   .flex {
-    margin-top: 28px;
+    margin-bottom: auto;
+    grid-area: flex;
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     gap: 12px;
@@ -80,6 +95,7 @@
   }
 
   .image-wrap {
+    grid-area: image;
     position: relative;
     margin-bottom: 24px;
 

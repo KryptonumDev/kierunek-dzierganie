@@ -33,12 +33,12 @@ const FeaturedCourseCard = ({ name, slug, image, complexity, progressPercentage,
         {/* <small>Długość kursu: {courseLength}</small> */}
         <h3 className={styles['names']}>{name}</h3>
         {excerpt && <div className={styles['excerpt']}>{excerpt}</div>}
-        <div className={styles['flex']}>
-          <p>
-            Ukończono <PercentChart p={progressPercentage} />
-          </p>
-          <Button href={`/moje-konto/kursy/${slug}`}>Oglądaj</Button>
-        </div>
+      </div>
+      <div className={styles['flex']}>
+        <p>
+          Ukończono <PercentChart p={progressPercentage} />
+        </p>
+        <Button href={`/moje-konto/kursy/${slug}`}>Oglądaj</Button>
       </div>
     </div>
   );

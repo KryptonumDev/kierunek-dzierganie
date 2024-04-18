@@ -101,7 +101,7 @@ const query = async (searchParams: { [key: string]: string }): Promise<KnittingP
     params: {
       before: (Number(searchParams.strona ?? 1) - 1) * 10,
       after: Number(searchParams.strona ?? 1) * 10,
-      category: searchParams.kategoria ?? null,
+      category: searchParams.rodzaj ?? null,
       complexity: searchParams['poziom-trudnosci'] ?? null,
       autor: searchParams.autor ?? null,
       bundle: searchParams.pakiet ?? null,
