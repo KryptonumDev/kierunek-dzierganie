@@ -13,6 +13,7 @@ import type { EmptyCart, Grid, Cart, CartForm } from './Header.types';
 import PickQuantity from '@/components/ui/PickQuantity';
 import toast from 'react-hot-toast';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
+import Link from 'next/link';
 
 export default function Cart({
   goToCheckout,
@@ -260,10 +261,15 @@ const EmptyLayout = ({ image_crochet, image_knitting, setShowCart }: EmptyCart) 
       <p>Zapraszamy do zakupów 😉</p>
       <div className={styles['grid']}>
         <div>
-          <Img
-            data={image_knitting}
-            sizes='(max-width: 640px) 150px, 300px'
-          />
+          <Link
+            href='/kursy-dziergania-na-drutach'
+            onClick={() => setShowCart(false)}
+          >
+            <Img
+              data={image_knitting}
+              sizes='(max-width: 640px) 150px, 300px'
+            />
+          </Link>
           <Button
             href='/kursy-dziergania-na-drutach'
             onClick={() => setShowCart(false)}
@@ -272,10 +278,15 @@ const EmptyLayout = ({ image_crochet, image_knitting, setShowCart }: EmptyCart) 
           </Button>
         </div>
         <div>
-          <Img
-            data={image_crochet}
-            sizes='(max-width: 640px) 150px, 300px'
-          />
+          <Link
+            href='/kursy-szydelkowania'
+            onClick={() => setShowCart(false)}
+          >
+            <Img
+              data={image_crochet}
+              sizes='(max-width: 640px) 150px, 300px'
+            />
+          </Link>
           <Button
             href='/kursy-szydelkowania'
             onClick={() => setShowCart(false)}
