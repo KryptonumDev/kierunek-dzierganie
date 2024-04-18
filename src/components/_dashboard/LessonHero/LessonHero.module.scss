@@ -144,7 +144,40 @@
     }
   }
 
+  .lessonsWrapper {
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 45px;
+      background: linear-gradient(to top, var(--primary-100), transparent);
+    }
+  }
+
   .lessons {
+    overflow-y: scroll;
+    max-height: 300px;
+
+    &::-webkit-scrollbar {
+      width: 3px;
+      height: 16px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: var(--primary-300);
+      border-radius: 2px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--primary-600);
+      border-radius: 2px;
+    }
+
+
     a {
       margin-top: 4px;
       display: grid;

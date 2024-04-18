@@ -201,16 +201,18 @@ const LessonHero = ({
           <p className={styles['chapter']}>
             <span>Moduł {currentChapterIndex + 1}:</span> {currentChapter.chapterName}
           </p>
-          <div className={styles.lessons}>
-            {currentChapter.lessons.map((el, i) => (
-              <Link
-                href={`/moje-konto/kursy/${course.slug}/${el.slug}`}
-                key={i}
-                aria-current={el.slug === lesson.slug}
-              >
-                <small>Lekcja {i + 1}</small> {el.title}
-              </Link>
-            ))}
+          <div className={styles.lessonsWrapper}>
+            <div className={styles.lessons}>
+              {currentChapter.lessons.map((el, i) => (
+                <Link
+                  href={`/moje-konto/kursy/${course.slug}/${el.slug}`}
+                  key={i}
+                  aria-current={el.slug === lesson.slug}
+                >
+                  <small>Lekcja {i + 1}</small> {el.title}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </div>
