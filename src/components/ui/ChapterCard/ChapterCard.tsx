@@ -6,6 +6,7 @@ import styles from './ChapterCard.module.scss';
 import type { Props } from './ChapterCard.types';
 import PercentChart from '../PercentChart';
 import Link from 'next/link';
+import { prettifyDuration } from '@/utils/prettify-duration';
 
 const ChapterCard = ({ name, image, description, lessons, courseSlug, number, progress }: Props) => {
   const completionPercentage = useMemo(() => {
@@ -40,7 +41,7 @@ const ChapterCard = ({ name, image, description, lessons, courseSlug, number, pr
               sizes='380px'
             />
             <span className={styles['badge']}>
-              {lessons.reduce((acc, lesson) => acc + lesson.lengthInMinutes, 0)} minut oglądania
+              {prettifyDuration(lessons.reduce((acc, lesson) => acc + lesson.lengthInMinutes, 0))}
             </span>
           </div>
           <h2>
