@@ -90,10 +90,12 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
             value: true,
             message: 'Pole wymagane',
           },
-          minLength: {
-            value: 12,
-            message: 'Co najmniej 12 znaków',
-          },
+          ...(isRegister && {
+            minLength: {
+              value: 12,
+              message: 'Co najmniej 12 znaków',
+            },
+          }),
         })}
         errors={errors}
       />
