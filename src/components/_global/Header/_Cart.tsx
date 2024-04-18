@@ -115,6 +115,7 @@ export default function Cart({
             <EmptyLayout
               image_crochet={image_crochet}
               image_knitting={image_knitting}
+              setShowCart={setShowCart}
             />
           )}
           <form
@@ -250,7 +251,7 @@ export default function Cart({
   );
 }
 
-const EmptyLayout = ({ image_crochet, image_knitting }: EmptyCart) => {
+const EmptyLayout = ({ image_crochet, image_knitting, setShowCart }: EmptyCart) => {
   return (
     <div className={styles['empty']}>
       <h2 className='h1'>
@@ -263,14 +264,24 @@ const EmptyLayout = ({ image_crochet, image_knitting }: EmptyCart) => {
             data={image_knitting}
             sizes='(max-width: 640px) 150px, 300px'
           />
-          <Button href='/kursy-dziergania-na-drutach'>Dzierganie</Button>
+          <Button
+            href='/kursy-dziergania-na-drutach'
+            onClick={() => setShowCart(false)}
+          >
+            Dzierganie
+          </Button>
         </div>
         <div>
           <Img
             data={image_crochet}
             sizes='(max-width: 640px) 150px, 300px'
           />
-          <Button href='/kursy-szydelkowania'>Szydełkowanie</Button>
+          <Button
+            href='/kursy-szydelkowania'
+            onClick={() => setShowCart(false)}
+          >
+            Szydełkowanie
+          </Button>
         </div>
       </div>
     </div>
