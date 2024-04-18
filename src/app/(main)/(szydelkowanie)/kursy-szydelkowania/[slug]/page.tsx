@@ -12,7 +12,6 @@ import Reviews from '@/components/_product/Reviews';
 import HeroVirtual from '@/components/_product/HeroVirtual';
 import { Img_Query } from '@/components/ui/image';
 import RelatedProducts from '@/components/_product/RelatedProducts';
-import { Suspense } from 'react';
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 
@@ -67,7 +66,7 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
           courses={courses}
         />
       )}
-      <Informations tabs={['Spis treści', 'Opis', 'Parametry', 'Opinie']}>
+      <Informations tabs={['Spis treści', 'Opis', 'Opinie']}>
         {chapters && <TableOfContent chapters={chapters} />}
         {description?.length > 0 && <Description data={description} />}
         <Reviews
@@ -76,13 +75,11 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
           reviews={reviews}
         />
       </Informations>
-      <Suspense>
-        <RelatedProducts
-          relatedCourses={relatedCourses}
-          title={'Pozwól sobie na <strong>chwilę relaksu!</strong>'}
-          text={'Rozwijaj swoją wyobraźnię z innymi kursami szydełkowania'}
-        />
-      </Suspense>
+      <RelatedProducts
+        relatedCourses={relatedCourses}
+        title={'Pozwól sobie na <strong>chwilę relaksu!</strong>'}
+        text={'Rozwijaj swoją wyobraźnię z innymi kursami szydełkowania'}
+      />
     </>
   );
 };
@@ -173,12 +170,12 @@ const query = async (slug: string): Promise<CoursePageQuery> => {
       "card": *[_type == 'bundle' && basis == 'crocheting' && slug.current == $slug][0] {
         ${PRODUCT_CARD_QUERY}
       },
-      "relatedCourses": *[_type == "course" && basis == $basis && !(_id in $id) && !(slug.current == $slug)][0...3] {
+      "relatedCourses": *[_type == "course" && basis == 'crocheting' && !(_id in $id) && !(slug.current == $slug)][0...3] {
         ${PRODUCT_CARD_QUERY}
       }
     }
     `,
-    params: { slug },
+    params: { slug, id },
     tags: ['course', 'bundle'],
   });
   !data?.product?._id && notFound();

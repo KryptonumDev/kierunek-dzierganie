@@ -1,12 +1,12 @@
 'use client';
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import styles from './Informations.module.scss';
 import type { Props } from './Informations.types';
 
 const Informations = ({ tabs, children }: Props) => {
   const [selectedTab, setSelectedTab] = useState(children.findIndex((item) => item));
   return (
-    <>
+    <section className={styles['Informations']}>
       <div className={styles['tabs']}>
         {children.map(
           (item, i) =>
@@ -22,10 +22,8 @@ const Informations = ({ tabs, children }: Props) => {
             )
         )}
       </div>
-      {children.map((item, i) => (
-        <Fragment key={i}>{item}</Fragment>
-      ))}
-    </>
+      <div>{children[selectedTab]}</div>
+    </section>
   );
 };
 
