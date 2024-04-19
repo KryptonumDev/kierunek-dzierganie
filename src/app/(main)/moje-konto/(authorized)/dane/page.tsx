@@ -1,8 +1,7 @@
 import UserData from '@/components/_dashboard/UserData';
 import type { QueryProps } from '@/components/_dashboard/UserData/UserData.types';
 import Seo from '@/global/Seo';
-import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@/utils/supabase-server';
 
 const MyDataPage = async () => {
   const data: QueryProps = await query();
@@ -20,8 +19,7 @@ export async function generateMetadata() {
 export default MyDataPage;
 
 const query = async (): Promise<QueryProps> => {
-  const cookieStore = cookies();
-  const supabase = createServerActionClient({ cookies: () => cookieStore });
+  const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

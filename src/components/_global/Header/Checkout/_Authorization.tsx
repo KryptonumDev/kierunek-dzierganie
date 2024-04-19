@@ -1,7 +1,7 @@
+'use client';
 import { useRouter } from 'next/navigation';
 import styles from './Checkout.module.scss';
 import type { MappingProps } from './Checkout.types';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import Checkbox from '@/components/ui/Checkbox';
@@ -10,6 +10,7 @@ import { REGEX } from '@/global/constants';
 import PasswordInput from '@/components/ui/PasswordInput';
 import { useState } from 'react';
 import Input from '@/components/ui/Input';
+import { createClient } from '@/utils/supabase-client';
 // import OAuthMethods from "@/components/organisms/oAuth-methods";
 
 type FormValues = {
@@ -20,7 +21,8 @@ type FormValues = {
 
 export default function Authorization({ setStep, goToCart }: MappingProps) {
   const [isRegister, setRegister] = useState(true);
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
+
   const router = useRouter();
   const {
     register,

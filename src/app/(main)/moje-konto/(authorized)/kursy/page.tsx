@@ -4,8 +4,7 @@ import { Img_Query } from '@/components/ui/image';
 import Seo from '@/global/Seo';
 import type { Complexity, ImgType } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
-import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@/utils/supabase-server';
 
 type QueryProps = {
   lastWatchedCourse: string;
@@ -78,8 +77,7 @@ export async function generateMetadata() {
 }
 
 const query = async (searchParams: { [key: string]: string }): Promise<QueryProps> => {
-  const cookieStore = cookies();
-  const supabase = createServerActionClient({ cookies: () => cookieStore });
+  const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

@@ -1,7 +1,6 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { toast } from 'react-toastify';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import type { FormValues, FormProps } from './authorization.types';
@@ -9,9 +8,10 @@ import Input from '@/components/ui/PasswordInput';
 import { REGEX } from '@/global/constants';
 import Checkbox from '@/components/ui/Checkbox';
 import { useState } from 'react';
+import { createClient } from '@/utils/supabase-client';
 
 const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
   const router = useRouter();
   const {
     register,

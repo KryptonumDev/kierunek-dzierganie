@@ -6,8 +6,7 @@ import Seo from '@/global/Seo';
 import type { Chapter, Course, CoursesProgress, File, ImgType } from '@/global/types';
 import { checkCourseProgress } from '@/utils/check-course-progress';
 import sanityFetch from '@/utils/sanity.fetch';
-import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@/utils/supabase-server';
 import { notFound } from 'next/navigation';
 
 type QueryProps = {
@@ -129,8 +128,8 @@ export async function generateMetadata({
 }
 
 const query = async (courseSlug: string, lessonSlug: string) => {
-  const cookieStore = cookies();
-  const supabase = createServerActionClient({ cookies: () => cookieStore });
+  const supabase = createClient();
+
   const {
     data: { user },
   } = await supabase.auth.getUser();

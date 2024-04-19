@@ -4,9 +4,7 @@ import Balance from '@/components/_dashboard/_AffiliatePage/Balance';
 import AffiliateCode, { AffiliateCode_Query } from '@/components/_dashboard/_AffiliatePage/AffiliateCode';
 import TextSection, { TextSection_Query } from '@/components/_dashboard/_AffiliatePage/TextSection';
 import type { AffiliatePage_QueryTypes } from './page.types';
-import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { getServiceAccess } from '@/utils/supabase-admin';
+import { createClient } from '@/utils/supabase-server';
 
 const currentPath = '/moje-konto/pomoc';
 
@@ -64,15 +62,13 @@ export default async function AffiliatePage() {
 }
 
 async function query(): Promise<AffiliatePage_QueryTypes> {
-  const cookieStore = cookies();
-  const supabase = createServerActionClient({ cookies: () => cookieStore });
-  const adminbase = await getServiceAccess();
+  const supabase = createClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data } = await adminbase
+  const { data } = await supabase
     .from('profiles')
     .select(
       `

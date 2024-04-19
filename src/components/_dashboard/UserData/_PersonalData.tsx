@@ -5,12 +5,12 @@ import Input from '@/components/ui/PasswordInput';
 import Button from '@/components/ui/Button';
 import countryList from 'react-select-country-list';
 import Radio from '@/components/ui/Radio';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { toast } from 'react-toastify';
 import Select from '@/components/ui/Select';
+import { createClient } from '@/utils/supabase-client';
 
 export default function PersonalData({ billing_data, id }: PersonalDataTypes) {
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
 
   const {
     control,

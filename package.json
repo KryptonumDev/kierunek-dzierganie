@@ -14,7 +14,7 @@
     "@next/third-parties": "^14.1.4",
     "@portabletext/react": "^3.0.15",
     "@react-pdf/renderer": "^3.4.2",
-    "@supabase/auth-helpers-nextjs": "^0.9.0",
+    "@supabase/ssr": "^0.3.0",
     "@supabase/supabase-js": "^2.39.3",
     "@u-wave/react-vimeo": "^0.9.10",
     "framer-motion": "^10.18.0",

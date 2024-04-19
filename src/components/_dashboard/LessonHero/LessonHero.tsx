@@ -10,7 +10,7 @@ import PercentChart from '@/components/ui/PercentChart';
 import { formatBytes } from '@/utils/format-bytes';
 import Switch from '@/components/ui/Switch';
 import { useRouter } from 'next/navigation';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClientComponentClient } from '';
 import parseFileName from '@/utils/parse-file-name';
 
 const LessonHero = ({

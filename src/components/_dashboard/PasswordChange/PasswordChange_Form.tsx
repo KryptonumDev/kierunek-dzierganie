@@ -7,13 +7,13 @@ import Input from '@/components/ui/PasswordInput';
 import Button from '@/components/ui/Button';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useRouter } from 'next/navigation';
+import { createClient } from '@/utils/supabase-client';
 
 const PasswordChangeForm = () => {
   const [fetching, setFetching] = useState(false);
   const router = useRouter();
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
 
   const {
     register,

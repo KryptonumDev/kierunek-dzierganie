@@ -4,11 +4,11 @@ import type { AuthorizationDataFormTypes, AuthorizationDataTypes } from './UserD
 import Input from '@/components/ui/PasswordInput';
 import { REGEX } from '@/global/constants';
 import Button from '@/components/ui/Button';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { toast } from 'react-toastify';
+import { createClient } from '@/utils/supabase-client';
 
 export default function AuthorizationData({ email }: AuthorizationDataTypes) {
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
 
   const {
     register,

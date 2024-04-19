@@ -9,8 +9,7 @@ import Description, { Description_Query } from '@/components/_product/Descriptio
 import type { ProductPageQuery, ProductPageQueryProps, generateStaticParamsProps } from '@/global/types';
 import { Img_Query } from '@/components/ui/image';
 import Reviews from '@/components/_product/Reviews';
-import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@/utils/supabase-server';
 
 const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
   const {
@@ -86,8 +85,7 @@ export async function generateMetadata({ params: { slug } }: { params: { slug: s
 }
 
 const query = async (slug: string): Promise<ProductPageQuery> => {
-  const cookieStore = cookies();
-  const supabase = createServerActionClient({ cookies: () => cookieStore });
+  const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
