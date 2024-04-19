@@ -125,7 +125,7 @@ const query = async (searchParams: { [key: string]: string }): Promise<QueryProp
           && _id in $id
           && (!defined($category) || category->slug.current == $category)
           && (!defined($complexity) || complexity == $complexity)
-          && (!defined($autor) || author->slug.current == $autor)
+          && (!defined($author) || author->slug.current == $author)
           && (!defined($type) || basis == $type)
         ] {
         _id,
@@ -169,7 +169,7 @@ const query = async (searchParams: { [key: string]: string }): Promise<QueryProp
       last_watched_course: res.data!.last_watched_course,
       category: searchParams.rodzaj ?? null,
       complexity: searchParams['poziom-trudnosci'] ?? null,
-      autor: searchParams.autor ?? null,
+      author: searchParams.autor ?? null,
       type: searchParams.kategoria ?? null,
     },
   });

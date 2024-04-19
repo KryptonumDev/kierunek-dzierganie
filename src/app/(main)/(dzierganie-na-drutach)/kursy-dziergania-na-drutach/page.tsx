@@ -70,7 +70,7 @@ const query = async (searchParams: { [key: string]: string }): Promise<KnittingP
         && (!defined($category) || _type == 'bundle' || category->slug.current == $category)
         && (!defined($category) || _type == 'course' || $category in categories[]->slug.current)
         && (!defined($complexity) || complexity == $complexity)
-        && (!defined($autor) || author->slug.current == $autor)
+        && (!defined($author) || author->slug.current == $author)
         && (!defined($discount) || defined(discount))
       ][$before...$after]{
         ${PRODUCT_CARD_QUERY}
@@ -83,7 +83,7 @@ const query = async (searchParams: { [key: string]: string }): Promise<KnittingP
         && (!defined($category) || _type == 'bundle' || category->slug.current == $category)
         && (!defined($category) || _type == 'course' || $category in categories[]->slug.current)
         && (!defined($complexity) || complexity == $complexity)
-        && (!defined($autor) || author->slug.current == $autor)
+        && (!defined($author) || author->slug.current == $author)
         && (!defined($discount) || defined(discount))
       ]),
       "categories": *[_type == 'courseCategory'][]{
@@ -103,7 +103,7 @@ const query = async (searchParams: { [key: string]: string }): Promise<KnittingP
       after: Number(searchParams.strona ?? 1) * 10,
       category: searchParams.rodzaj ?? null,
       complexity: searchParams['poziom-trudnosci'] ?? null,
-      autor: searchParams.autor ?? null,
+      author: searchParams.autor ?? null,
       bundle: searchParams.pakiet ?? null,
       discount: searchParams.promocja ?? null,
     },
