@@ -4,6 +4,7 @@ import type { ListingFilesTypes } from './ListingFiles.types';
 import type { File } from '@/global/types';
 import { formatBytes } from '@/utils/format-bytes';
 import Link from 'next/link';
+import parseFileName from '@/utils/parse-file-name';
 
 const ListingFiles = ({ courses, left_handed, progress }: ListingFilesTypes) => {
   const transformFiles = useMemo(() => {
@@ -53,8 +54,8 @@ const ListingFiles = ({ courses, left_handed, progress }: ListingFilesTypes) => 
   return (
     <section className={styles['ListingFiles']}>
       {transformFiles.map((el, i) => {
-        if(left_handed && el.filesAlt.length === 0) return null;
-        if(!left_handed && el.files.length === 0) return null;
+        if (left_handed && el.filesAlt.length === 0) return null;
+        if (!left_handed && el.files.length === 0) return null;
 
         return (
           <div key={el.name + i}>
@@ -70,7 +71,7 @@ const ListingFiles = ({ courses, left_handed, progress }: ListingFilesTypes) => 
                       download
                     >
                       <Icon />
-                      {file.asset.originalFilename} <small>({formatBytes(file.asset.size)})</small>
+                      {parseFileName(file.asset.originalFilename)} <small>({formatBytes(file.asset.size)})</small>
                     </a>
                   </li>
                 ))}
@@ -96,7 +97,7 @@ const ListingFiles = ({ courses, left_handed, progress }: ListingFilesTypes) => 
                       download
                     >
                       <Icon />
-                      {file.asset.originalFilename} <small>({formatBytes(file.asset.size)})</small>
+                      {parseFileName(file.asset.originalFilename)} <small>({formatBytes(file.asset.size)})</small>
                     </a>
                   </li>
                 ))}

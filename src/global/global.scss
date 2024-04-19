@@ -7,6 +7,7 @@
 }
 
 :root {
+
   --primary-100: #fdfbf8;
   --primary-200: #faf4f0;
   --primary-300: #efe8e7;
@@ -59,7 +60,7 @@ body {
   -webkit-tap-highlight-color: transparent;
   font-family: 'Erode', serif;
   background-color: var(--primary-100);
-  color: var(--primary-800);
+  color: var(--primary-900);
   line-height: 150%;
   font-size: clamp(1rem, calc(18vw / 7.68), calc(18rem / 16));
 }
@@ -305,5 +306,26 @@ main {
     svg {
       display: none;
     }
+  }
+}
+
+
+.Toastify__toast-container {
+  .Toastify__toast {
+    background-color: var(--primary-100);
+  }
+
+  .Toastify__progress-bar--bg {
+    opacity: 0;
+  }
+
+  .Toastify__progress-bar-theme--light {
+    background: var(--primary-500);
+  }
+
+  .Toastify__close-button--light {
+    height: 24px;
+    width: 24px;
+    align-self: center;
   }
 }

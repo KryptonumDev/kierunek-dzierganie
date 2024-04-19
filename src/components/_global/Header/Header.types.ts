@@ -43,6 +43,7 @@ export type QueryProps = {
 export type EmptyCart = {
   image_crochet: ImgType;
   image_knitting: ImgType;
+  setShowCart: (variable:boolean) => void;
 };
 
 export type Cart = {

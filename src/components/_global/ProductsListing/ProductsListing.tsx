@@ -36,7 +36,7 @@ const ProductsListing = ({
         products={products}
       />
       {/* TODO: Change no items text */}
-      {products.length === 0 && <h2>Niestety teraz w tym rozdziale nic niema :( </h2>}
+      {products.length === 0 && <h2>Niestety teraz w tym rozdziale nic nie ma :( </h2>}
       {productsTotalCount > 10 && (
         <Pagination
           basis={basis}

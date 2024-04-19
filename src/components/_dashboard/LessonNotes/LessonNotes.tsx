@@ -5,6 +5,8 @@ import type { FormTypes, LessonNotesTypes } from './LessonNotes.types';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import Button from '@/components/ui/Button';
 import { updateElement } from '@/utils/update-progress';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const LessonNotes = ({ progress, currentChapter, currentLessonIndex }: LessonNotesTypes) => {
   const {
@@ -17,6 +19,18 @@ const LessonNotes = ({ progress, currentChapter, currentLessonIndex }: LessonNot
       notes: progress.progress[currentChapter._id]![currentChapter.lessons[currentLessonIndex]!._id]?.notes || '',
     },
   });
+
+  const handleSave = () => {
+    toast('Notatki zostały pomyślnie zapisane w plikach do pobrania', {
+      position: 'top-right',
+      autoClose: 5000,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: false,
+      theme: 'light',
+      progress: undefined,
+    });
+  };
 
   const onSubmit: SubmitHandler<FormTypes> = async (data) => {
     const currentChapterId = currentChapter._id;
@@ -35,7 +49,9 @@ const LessonNotes = ({ progress, currentChapter, currentLessonIndex }: LessonNot
         },
       },
     })
-      .then(() => {})
+      .then(() => {
+        handleSave();
+      })
       .catch(() => {});
   };
 

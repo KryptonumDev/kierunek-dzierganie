@@ -22,6 +22,7 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [value, setValue] = useState('');
 
   const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
     setIsSubmitting(true);
@@ -90,11 +91,17 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
             value: true,
             message: 'Pole wymagane',
           },
-          minLength: {
-            value: 12,
-            message: 'Co najmniej 12 znaków',
+          onChange: (e) => {
+            setValue(e.target.value);
           },
+          ...(isRegister && {
+            minLength: {
+              value: 12,
+              message: 'Co najmniej 12 znaków',
+            },
+          }),
         })}
+        value={value}
         errors={errors}
       />
       {isRegister && (

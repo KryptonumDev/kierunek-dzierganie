@@ -11,6 +11,7 @@ import { formatBytes } from '@/utils/format-bytes';
 import Switch from '@/components/ui/Switch';
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import parseFileName from '@/utils/parse-file-name';
 
 const LessonHero = ({
   progress,
@@ -105,6 +106,13 @@ const LessonHero = ({
   return (
     <section className={styles['LessonHero']}>
       <div className={styles['grid']}>
+        <Link
+          className={`${styles.returnLink} link`}
+          href={'/moje-konto/kursy'}
+        >
+          <ChevronRight />
+          Wszystkie kursy
+        </Link>
         <div className={styles['content']}>
           <div className={styles.video}>
             {leftHanded ? (
@@ -137,7 +145,7 @@ const LessonHero = ({
                       ]!.slug
                     }`}
                   >
-                    Poprzedni rozdział
+                    Poprzedni moduł
                   </Link>
                 )}
               </>
@@ -163,19 +171,20 @@ const LessonHero = ({
               </Link>
             ) : (
               <>
-                {currentChapterIndex === course.chapters.length - 1 ? (
+                {currentChapterIndex === course.chapters.length - 1 && isCompleted && (
                   <Link
                     className={`${styles['next']} link`}
                     href={`/moje-konto/kursy/${course.slug}/certyfikat`}
                   >
                     Podsumowanie kursu
                   </Link>
-                ) : (
+                )}
+                {currentChapterIndex != course.chapters.length - 1 && (
                   <Link
                     className={`${styles['next']} link`}
                     href={`/moje-konto/kursy/${course.slug}/${course.chapters[currentChapterIndex + 1]!.lessons[0]!.slug}`}
                   >
-                    Następny rozdział
+                    Następny moduł
                   </Link>
                 )}
               </>
@@ -192,16 +201,18 @@ const LessonHero = ({
           <p className={styles['chapter']}>
             <span>Moduł {currentChapterIndex + 1}:</span> {currentChapter.chapterName}
           </p>
-          <div className={styles.lessons}>
-            {currentChapter.lessons.map((el, i) => (
-              <Link
-                href={`/moje-konto/kursy/${course.slug}/${el.slug}`}
-                key={i}
-                aria-current={el.slug === lesson.slug}
-              >
-                <small>Lekcja {i + 1}</small> {el.title}
-              </Link>
-            ))}
+          <div className={styles.lessonsWrapper}>
+            <div className={styles.lessons}>
+              {currentChapter.lessons.map((el, i) => (
+                <Link
+                  href={`/moje-konto/kursy/${course.slug}/${el.slug}`}
+                  key={i}
+                  aria-current={el.slug === lesson.slug}
+                >
+                  <small>Lekcja {i + 1}</small> {el.title}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -211,10 +222,10 @@ const LessonHero = ({
           <Switch inputProps={{ checked: leftHanded, onClick: () => setIsLeftHanded(!leftHanded) }}>
             Jestem osobą leworęczną
           </Switch>
-          <p>Ustawienie te dostosowuje w jaki sposób wyświetlają Ci się kursy i pliki do lekcji</p>
+          <p>Ustawienie to dostosowuje w jaki sposób wyświetlają Ci się kursy i pliki do lekcji</p>
         </div>
         <div className={styles['column']}>
-          <h2>Pliki do pobrania</h2>
+          {(lesson.files_alter || lesson.files) && <h2>Pliki do pobrania</h2>}
           <ul className={styles['list']}>
             {leftHanded ? (
               <>
@@ -224,8 +235,10 @@ const LessonHero = ({
                       href={el.asset.url}
                       className='link'
                       download
+                      target='_blank'
+                      rel='noreferrer noopener'
                     >
-                      {el.asset.originalFilename} <small>({formatBytes(el.asset.size)})</small>
+                      {parseFileName(el.asset.originalFilename)} <small>({formatBytes(el.asset.size)})</small>
                     </a>
                   </li>
                 ))}
@@ -239,7 +252,7 @@ const LessonHero = ({
                       className='link'
                       download
                     >
-                      {el.asset.originalFilename} <small>({formatBytes(el.asset.size)})</small>
+                      {parseFileName(el.asset.originalFilename)} <small>({formatBytes(el.asset.size)})</small>
                     </a>
                   </li>
                 ))}
@@ -253,3 +266,21 @@ const LessonHero = ({
 };
 
 export default LessonHero;
+
+function ChevronRight() {
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      width='20'
+      height='20'
+      fill='none'
+    >
+      <path
+        stroke='#B4A29C'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        d='M12.813 4.375L7.186 10l5.625 5.625'
+      ></path>
+    </svg>
+  );
+}

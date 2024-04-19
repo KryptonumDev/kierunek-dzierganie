@@ -10,7 +10,7 @@ const Contents = ({ data, isPrivacyPolicy }: Props) => {
           <div
             key={index}
             className={styles.content}
-            data-isPrivacyPolicy={isPrivacyPolicy}
+            data-isprivacypolicy={isPrivacyPolicy}
           >
             <h2 className={styles.title}>
               <Markdown.span>{title}</Markdown.span>

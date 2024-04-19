@@ -8,6 +8,7 @@ export type Props = {
   register: {
     name: string;
   };
+  value?: string;
   errors: FieldErrors;
 } & React.InputHTMLAttributes<HTMLInputElement> &
   React.TextareaHTMLAttributes<HTMLTextAreaElement>;

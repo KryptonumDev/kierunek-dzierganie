@@ -1,6 +1,7 @@
 import { formatBytes } from '@/utils/format-bytes';
 import styles from './FilesComponent.module.scss';
 import type { Props } from './FilesComponent.types';
+import parseFileName from '@/utils/parse-file-name';
 
 const FilesComponent = ({ data }: Props) => {
   return (
@@ -11,7 +12,7 @@ const FilesComponent = ({ data }: Props) => {
           key={index}
         >
           <a
-            href={`${url}?dl=${originalFilename}`}
+            href={`${parseFileName(url)}?dl=${parseFileName(originalFilename)}`}
             className='link'
           >
             {originalFilename}
