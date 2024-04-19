@@ -91,7 +91,8 @@ export async function generateMetadata({ params: { slug } }: { params: { slug: s
 }
 
 const query = async (slug: string): Promise<CoursePageQuery> => {
-  const supabase = createServerActionClient({ cookies });
+  const cookieStore = cookies();
+  const supabase = createServerActionClient({ cookies: () => cookieStore });
   const {
     data: { user },
   } = await supabase.auth.getUser();

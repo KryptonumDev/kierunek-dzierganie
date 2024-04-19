@@ -37,7 +37,8 @@ export async function generateMetadata({ params: { courseSlug } }: { params: { c
 }
 
 const query = async (slug: string): Promise<QueryProps> => {
-  const supabase = createServerActionClient({ cookies });
+  const cookieStore = cookies();
+  const supabase = createServerActionClient({ cookies: () => cookieStore });
   const {
     data: { user },
   } = await supabase.auth.getUser();

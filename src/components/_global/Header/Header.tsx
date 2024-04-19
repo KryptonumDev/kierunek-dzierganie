@@ -12,7 +12,8 @@ const Header = async () => {
   const { global, cart } = await query();
   const nav_annotation = <Markdown>{global.nav_Annotation ?? ''}</Markdown>;
   
-  const supabase = createServerActionClient({ cookies });
+  const cookieStore = cookies();
+  const supabase = createServerActionClient({ cookies: () => cookieStore });
   const adminbase = await getServiceAccess();
 
   const {

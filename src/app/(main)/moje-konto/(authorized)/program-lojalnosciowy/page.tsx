@@ -64,7 +64,8 @@ export default async function AffiliatePage() {
 }
 
 async function query(): Promise<AffiliatePage_QueryTypes> {
-  const supabase = createServerActionClient({ cookies });
+  const cookieStore = cookies();
+  const supabase = createServerActionClient({ cookies: () => cookieStore });
   const adminbase = await getServiceAccess();
 
   const {

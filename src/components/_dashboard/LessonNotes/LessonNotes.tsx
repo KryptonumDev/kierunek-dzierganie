@@ -6,7 +6,6 @@ import { useForm, type SubmitHandler } from 'react-hook-form';
 import Button from '@/components/ui/Button';
 import { updateElement } from '@/utils/update-progress';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 const LessonNotes = ({ progress, currentChapter, currentLessonIndex }: LessonNotesTypes) => {
   const {

@@ -11,7 +11,7 @@ import { formatPrice } from '@/utils/price-formatter';
 import { formatToOnlyDigits } from '@/utils/format-to-only-digits';
 import type { EmptyCart, Grid, Cart, CartForm } from './Header.types';
 import PickQuantity from '@/components/ui/PickQuantity';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 import Link from 'next/link';
 
@@ -71,10 +71,10 @@ export default function Cart({
       .then((res) => res.json())
       .then((data) => {
         if (data.error?.code === 'PGRST116') {
-          toast.error('Kod rabatowy jest nieprawidłowy');
+          toast('Kod rabatowy jest nieprawidłowy');
           return;
         } else if (data.error) {
-          toast.error(data.error.message);
+          toast(data.error.message);
         }
 
         setUsedDiscount({
@@ -85,7 +85,7 @@ export default function Cart({
         });
       })
       .catch((error) => {
-        toast.error(error.message);
+        toast(error.message);
       });
   };
 

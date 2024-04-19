@@ -71,7 +71,8 @@ export async function generateMetadata() {
 }
 
 const query = async (): Promise<QueryProps> => {
-  const supabase = createServerActionClient({ cookies });
+  const cookieStore = cookies();
+  const supabase = createServerActionClient({ cookies: () => cookieStore });
   const {
     data: { user },
   } = await supabase.auth.getUser();

@@ -2,8 +2,9 @@
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 
-export default async function getUserData(query: string){
-  const supabase = createServerActionClient({ cookies });
+export default async function getUserData(query: string) {
+  const cookieStore = cookies();
+  const supabase = createServerActionClient({ cookies: () => cookieStore });
   const {
     data: { user },
   } = await supabase.auth.getUser();

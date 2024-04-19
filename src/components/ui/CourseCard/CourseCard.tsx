@@ -4,7 +4,6 @@ import Img from '../image';
 import styles from './CourseCard.module.scss';
 import type { Props } from './CourseCard.types';
 import PercentChart from '../PercentChart';
-import Link from 'next/link';
 
 const CourseCard = ({ name, slug, image, complexity, progressPercentage }: Props) => {
   return (

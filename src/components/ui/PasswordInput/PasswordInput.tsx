@@ -63,7 +63,7 @@ const PasswordInput = ({ textarea, label, register, errors, password, isRegister
 
           {isRegister && !props.disabled && (
             <p
-              className={`${styles['input-info']}  ${value?.length >= 12 ? styles['success'] : ''} ${errors[register.name] && value?.length < 12 ? styles['errored'] : ''}`}
+              className={`${styles['input-info']}  ${value!.length >= 12 ? styles['success'] : ''} ${errors[register.name] && value!.length < 12 ? styles['errored'] : ''}`}
             >
               <span
                 // @ts-expect-error - Using css variables

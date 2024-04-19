@@ -6,7 +6,7 @@ import type { FormTypes } from './PasswordChange.types';
 import Input from '@/components/ui/PasswordInput';
 import Button from '@/components/ui/Button';
 import { useState } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useRouter } from 'next/navigation';
 
@@ -34,7 +34,7 @@ const PasswordChangeForm = () => {
       router.push('/moje-konto/potwierdzenie-zmiany-hasla');
       setFetching(false);
     } catch (err) {
-      if (err instanceof Error) toast.error(err.message);
+      if (err instanceof Error) toast(err.message);
       setFetching(false);
     }
   };

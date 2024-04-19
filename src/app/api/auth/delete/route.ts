@@ -11,7 +11,8 @@ const adminClient = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.
 });
 
 export async function GET() {
-  const supabase = createRouteHandlerClient({ cookies });
+  const cookieStore = cookies();
+  const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
 
   const {
     data: { user },

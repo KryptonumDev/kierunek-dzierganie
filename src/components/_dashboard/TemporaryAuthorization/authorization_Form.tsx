@@ -2,7 +2,7 @@
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import type { FormValues, FormProps } from './authorization.types';
 import Input from '@/components/ui/PasswordInput';

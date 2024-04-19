@@ -3,7 +3,7 @@ import styles from './Checkout.module.scss';
 import type { MappingProps } from './Checkout.types';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 import Checkbox from '@/components/ui/Checkbox';
 import Button from '@/components/ui/Button';
 import { REGEX } from '@/global/constants';

@@ -7,7 +7,7 @@ import Input from '@/components/ui/PasswordInput';
 import Button from '@/components/ui/Button';
 import { REGEX } from '@/global/constants';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 import { useState } from 'react';
 // import { useRouter } from 'next/navigation';
 
@@ -34,7 +34,7 @@ const PasswordChangeEmailForm = () => {
       toast('Link do zmiany hasła został wysłany na podany adres e-mail');
       setFetching(false);
     } catch (err) {
-      if (err instanceof Error) toast.error(err.message);
+      if (err instanceof Error) toast(err.message);
       setFetching(false);
     }
   };
