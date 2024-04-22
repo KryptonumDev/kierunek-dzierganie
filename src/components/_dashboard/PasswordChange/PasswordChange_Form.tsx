@@ -6,14 +6,14 @@ import type { FormTypes } from './PasswordChange.types';
 import Input from '@/components/ui/PasswordInput';
 import Button from '@/components/ui/Button';
 import { useState } from 'react';
-import toast from 'react-hot-toast';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
+import { createClient } from '@/utils/supabase-client';
 
 const PasswordChangeForm = () => {
   const [fetching, setFetching] = useState(false);
   const router = useRouter();
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
 
   const {
     register,
@@ -34,7 +34,7 @@ const PasswordChangeForm = () => {
       router.push('/moje-konto/potwierdzenie-zmiany-hasla');
       setFetching(false);
     } catch (err) {
-      if (err instanceof Error) toast.error(err.message);
+      if (err instanceof Error) toast(err.message);
       setFetching(false);
     }
   };

@@ -5,12 +5,12 @@ import Input from '@/components/ui/PasswordInput';
 import Button from '@/components/ui/Button';
 import countryList from 'react-select-country-list';
 import Radio from '@/components/ui/Radio';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 import Select from '@/components/ui/Select';
+import { createClient } from '@/utils/supabase-client';
 
 export default function PersonalData({ billing_data, id }: PersonalDataTypes) {
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
 
   const {
     control,
@@ -22,7 +22,7 @@ export default function PersonalData({ billing_data, id }: PersonalDataTypes) {
     mode: 'all',
     defaultValues: {
       firstName: billing_data.firstName,
-      address: billing_data.address,
+      address: billing_data.address1,
       postcode: billing_data.postcode,
       city: billing_data.city,
       country: billing_data.country,
@@ -38,10 +38,10 @@ export default function PersonalData({ billing_data, id }: PersonalDataTypes) {
     const res = await supabase.from('profiles').update({ billing_data: data }).eq('id', id);
 
     if (res.error) {
-      toast.error('Wystąpił błąd podczas zapisywania danych');
+      toast('Wystąpił błąd podczas zapisywania danych');
     }
 
-    toast.success('Dane zostały zapisane');
+    toast('Dane zostały zapisane');
   };
 
   const invoiceType = watch('invoiceType');

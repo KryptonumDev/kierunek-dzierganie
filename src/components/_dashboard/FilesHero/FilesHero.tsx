@@ -3,11 +3,11 @@ import { useRouter } from 'next/navigation';
 import styles from './FilesHero.module.scss';
 import type { FilesHeroTypes } from './FilesHero.types';
 import Switch from '@/components/ui/Switch';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { createClient } from '@/utils/supabase-client';
 
 const FilesHero = ({ id, left_handed }: FilesHeroTypes) => {
   const router = useRouter();
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
 
   const setLeftHanded = async (leftHanded: boolean) => {
     await supabase

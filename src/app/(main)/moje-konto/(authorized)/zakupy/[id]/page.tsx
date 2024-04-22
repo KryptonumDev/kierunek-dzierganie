@@ -2,8 +2,7 @@ import OrderData from '@/components/_dashboard/OrderData';
 import Seo from '@/global/Seo';
 import type { Order, ProductCard } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
-import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@/utils/supabase-server';
 import { notFound } from 'next/navigation';
 import { PRODUCT_CARD_QUERY } from 'src/global/constants';
 
@@ -31,7 +30,8 @@ export async function generateMetadata({ params: { id } }: { params: { id: strin
 }
 
 const query = async (id: string): Promise<QueryProps> => {
-  const supabase = createServerActionClient({ cookies });
+  const supabase = createClient();
+
 
   const res = await supabase
     .from('orders')

@@ -3,16 +3,16 @@ import Content from './_Content';
 import Markdown from '@/components/ui/markdown';
 import { Img_Query } from '@/components/ui/image';
 import type { QueryProps } from './Header.types';
-import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { getServiceAccess } from '@/utils/supabase-admin';
-import { cookies } from 'next/headers';
 import { PRODUCT_CARD_QUERY } from '@/global/constants';
+import { createClient } from '@/utils/supabase-server';
 
 const Header = async () => {
   const { global, cart } = await query();
   const nav_annotation = <Markdown>{global.nav_Annotation ?? ''}</Markdown>;
   
-  const supabase = createServerActionClient({ cookies });
+  const supabase = createClient();
+
   const adminbase = await getServiceAccess();
 
   const {

@@ -21,16 +21,16 @@ export default function Filters({ basis, categories, courses, authors }: Filters
     setBundle(searchParams.get('pakiet') === 'true');
   }, [searchParams]);
 
-  const handleCategoryClick = (slug: string) => {
+  const handleTypeClick = (slug: string) => {
     if (!slug) {
       newParams.delete('strona');
-      newParams.delete('kategoria');
+      newParams.delete('rodzaj');
       router.push(`${basis}?${newParams.toString()}`, { scroll: false });
       return;
     }
 
     newParams.delete('strona');
-    newParams.set('kategoria', slug);
+    newParams.set('rodzaj', slug);
     router.push(`${basis}?${newParams.toString()}`, { scroll: false });
   };
 
@@ -112,9 +112,9 @@ export default function Filters({ basis, categories, courses, authors }: Filters
           <h3>Rodzaj produktu</h3>
           {categories.map((category) => (
             <button
-              data-active={category.slug === searchParams.get('kategoria')}
+              data-active={category.slug === searchParams.get('rodzaj')}
               key={category._id}
-              onClick={() => handleCategoryClick(category.slug)}
+              onClick={() => handleTypeClick(category.slug)}
             >
               {category.name}
             </button>
@@ -193,9 +193,9 @@ export default function Filters({ basis, categories, courses, authors }: Filters
           <div className={styles['active-filters']}>
             <div>
               <p>Aktywne filtry:</p>
-              {searchParams.get('kategoria') && (
-                <button onClick={() => handleCategoryClick('')}>
-                  Kategoria: {categories.find((category) => category.slug === searchParams.get('kategoria'))?.name}
+              {searchParams.get('rodzaj') && (
+                <button onClick={() => handleTypeClick('')}>
+                  Rodzaj: {categories.find((category) => category.slug === searchParams.get('rodzaj'))?.name}
                   <CrossIcon />
                 </button>
               )}

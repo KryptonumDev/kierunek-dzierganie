@@ -1,16 +1,9 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
+import { updateSession } from './utils/supabase-middleware';
+import { type User } from '@supabase/supabase-js';
 
 export async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
-
-  // Create a Supabase client configured to use cookies
-  const supabase = createMiddlewareClient({ req, res });
-
-  // Refresh session if expired - required for Server Components
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { response, user }: { response: NextResponse; user: User | null } = await updateSession(req);
 
   if (
     !user &&
@@ -27,7 +20,8 @@ export async function middleware(req: NextRequest) {
   if (user && req.nextUrl.pathname === '/moje-konto')
     return NextResponse.redirect(new URL('/moje-konto/kursy', req.url));
 
-  return res;
+  // update user session
+  return response;
 }
 
 export const config = {

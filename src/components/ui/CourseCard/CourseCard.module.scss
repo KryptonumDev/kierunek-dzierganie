@@ -1,10 +1,7 @@
 .CourseCard {
-  > p {
-  }
-
   .image-wrap {
     position: relative;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
 
     .badge {
       position: absolute;
@@ -13,6 +10,14 @@
       left: 0;
       padding: 8px 16px 8px 20px;
       border-radius: 0px 0px 4px 0px;
+      max-width: 100%;
+
+      span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+      }
     }
 
     img {
@@ -27,6 +32,7 @@
   .flex {
     margin-top: 28px;
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;

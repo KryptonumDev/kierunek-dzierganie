@@ -57,6 +57,8 @@ export async function checkCourseProgress(course: Course, progress: CoursesProgr
     await adminClient.from('courses_progress').update({ progress: newProgress.progress }).eq('id', newProgress.id);
   }
 
+  await adminClient.from('profiles').update({ last_watched_course: course._id }).eq('id', progress.owner_id);
+
   return newProgress;
 }
 

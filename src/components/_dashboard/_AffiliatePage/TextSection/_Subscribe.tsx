@@ -1,7 +1,7 @@
 'use client';
 import Button from '@/components/ui/Button';
 import styles from './TextSection.module.scss';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 
 export default function Subscribe({ userId, children }: { userId: string; children: React.ReactNode }) {
@@ -15,7 +15,7 @@ export default function Subscribe({ userId, children }: { userId: string; childr
         router.refresh();
       })
       .catch((err) => {
-        toast.error(err.message);
+        toast(err.message);
       });
   };
 

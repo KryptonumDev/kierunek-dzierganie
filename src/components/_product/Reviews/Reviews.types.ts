@@ -5,4 +5,6 @@ export type ReviewsTypes = {
     nameOfReviewer: string;
     _id: string;
   }[];
+  logged: boolean;
+  alreadyBought: boolean;
 };

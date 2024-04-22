@@ -4,8 +4,7 @@ import { Img_Query } from '@/components/ui/image';
 import Seo from '@/global/Seo';
 import type { ImgType, Order, ProductCard } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
-import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@/utils/supabase-server';
 import { PRODUCT_CARD_QUERY } from 'src/global/constants';
 
 type QueryProps = {
@@ -45,7 +44,8 @@ export async function generateMetadata() {
 }
 
 const query = async (): Promise<QueryProps> => {
-  const supabase = createServerActionClient({ cookies });
+  const supabase = createClient();
+
   const {
     data: { user },
   } = await supabase.auth.getUser();

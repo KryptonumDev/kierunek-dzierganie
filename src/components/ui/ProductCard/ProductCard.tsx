@@ -11,7 +11,7 @@ import { courseComplexityEnum, pageUrls } from '@/global/constants';
 import Link from 'next/link';
 import { Hearth } from '../Icons';
 
-const ProductCard = ({ data, inCart = false, horizontal, basis }: Props) => {
+const ProductCard = ({ data, inCart = false, horizontal, tabletHorizontal, basis }: Props) => {
   const { addItem } = useCart();
   const [buttonText, setButtonText] = useState(inCart ? 'Już w koszyku' : 'Dodaj do koszyka');
   const mainVariant = useMemo(() => {
@@ -61,7 +61,9 @@ const ProductCard = ({ data, inCart = false, horizontal, basis }: Props) => {
   }, [inCart, buttonText]);
 
   return (
-    <div className={`${styles['productCard']} ${horizontal ? styles['horizontal'] : ''}`}>
+    <div
+      className={`${styles['productCard']} ${horizontal ? styles['horizontal'] : ''} ${tabletHorizontal ? styles['tablet-horizontal'] : ''}`}
+    >
       <Link
         href={`${basis ? basis : pageUrls[data.basis]}/${data.slug}`}
         className={styles['link']}

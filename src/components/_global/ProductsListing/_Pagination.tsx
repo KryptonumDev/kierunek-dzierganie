@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import styles from './ProductsListing.module.scss';
 import type { PaginationTypes } from './ProductsListing.types';
 import { useRouter, useSearchParams } from 'next/navigation';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 
 const Pagination = ({ allElementsCount, elementsPerPage, basis }: PaginationTypes) => {
   const router = useRouter();
@@ -85,7 +85,7 @@ const Pagination = ({ allElementsCount, elementsPerPage, basis }: PaginationType
 
   const handleButtonClick = (page: number) => {
     if (!page) {
-      toast.error('Poziom trudności źle skonfigurowany, proszę skontaktować się z obsługą sklepu', { icon: '❌' });
+      toast('Poziom trudności źle skonfigurowany, proszę skontaktować się z obsługą sklepu');
       return;
     }
 

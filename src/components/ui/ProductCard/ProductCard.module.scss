@@ -22,6 +22,7 @@
 
   &.horizontal {
     display: grid;
+    align-items: center;
     grid-template-columns: 292fr 374fr;
     gap: 24px;
     text-align: left;
@@ -30,12 +31,42 @@
       margin-left: 0;
     }
 
+    img {
+      margin-bottom: 0 !important;
+    }
+
     .rating {
       justify-content: flex-start;
     }
 
     .price {
       justify-content: flex-start;
+    }
+  }
+
+  &.tablet-horizontal {
+    @media (max-width: 899px) and (min-width: 600px) {
+      display: grid;
+      align-items: center;
+      grid-template-columns: 292fr 374fr;
+      gap: 24px;
+      text-align: left;
+
+      img {
+        margin-bottom: 0 !important;
+      }
+
+      button {
+        margin-left: 0;
+      }
+
+      .rating {
+        justify-content: flex-start;
+      }
+
+      .price {
+        justify-content: flex-start;
+      }
     }
   }
 

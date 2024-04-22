@@ -4,5 +4,6 @@ export type Props = {
   data: ProductCard;
   inCart?: boolean;
   horizontal?: boolean;
+  tabletHorizontal?: boolean;  
   basis?: string;
 };

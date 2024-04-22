@@ -5,18 +5,25 @@ import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import Informations from '@/components/_product/Informations';
 import Description, { Description_Query } from '@/components/_product/Description';
 import TableOfContent from '@/components/_product/TableOfContent';
-import type { CoursePageQueryProps, generateStaticParamsProps } from '@/global/types';
+import type { CoursePageQuery, CoursePageQueryProps, generateStaticParamsProps } from '@/global/types';
 import Package, { Package_Query } from '@/components/_product/Package';
 import { PRODUCT_CARD_QUERY } from '@/global/constants';
 import Reviews from '@/components/_product/Reviews';
 import HeroVirtual from '@/components/_product/HeroVirtual';
 import { Img_Query } from '@/components/ui/image';
+import RelatedProducts from '@/components/_product/RelatedProducts';
+import { createClient } from '@/utils/supabase-server';
 
 const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
   const {
-    product: { relatedBundle, name, description, chapters, reviews, courses },
-    product,
-    card,
+    data: {
+      product: { relatedBundle, name, description, chapters, reviews, courses },
+      product,
+      card,
+      relatedCourses,
+    },
+    user,
+    courses_progress,
   } = await query(slug);
 
   return (
@@ -34,7 +41,10 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
         ]}
         visible={true}
       />
-      <HeroVirtual course={product} />
+      <HeroVirtual
+        alreadyBought={!!courses_progress?.find((course) => course.course_id === product._id)}
+        course={product}
+      />
       {relatedBundle && (
         <Package
           product={relatedBundle}
@@ -55,12 +65,20 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
           courses={courses}
         />
       )}
-      <Informations tabs={['Spis treści', 'Opis', 'Parametry', 'Opinie']}>
+      <Informations tabs={['Spis treści', 'Opis', 'Opinie']}>
         {chapters && <TableOfContent chapters={chapters} />}
         {description?.length > 0 && <Description data={description} />}
-        {reviews.length > 0 && <Reviews reviews={reviews} />}
+        <Reviews
+          logged={!!user}
+          alreadyBought={!!courses_progress?.find((course) => course.course_id === product._id)}
+          reviews={reviews}
+        />
       </Informations>
-      {/* TODO: Add featured courses */}
+      <RelatedProducts
+        relatedCourses={relatedCourses}
+        title={'Pozwól sobie na <strong>chwilę relaksu!</strong>'}
+        text={'Rozwijaj swoją wyobraźnię z innymi kursami szydełkowania'}
+      />
     </>
   );
 };
@@ -71,7 +89,34 @@ export async function generateMetadata({ params: { slug } }: { params: { slug: s
   return await QueryMetadata(['course', 'bundle'], `/kursy-szydelkowania/${slug}`, slug);
 }
 
-const query = async (slug: string): Promise<CoursePageQueryProps> => {
+const query = async (slug: string): Promise<CoursePageQuery> => {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const id = [];
+
+  const res = await supabase
+    .from('profiles')
+    .select(
+      `
+        id,
+        courses_progress (
+          id,
+          course_id,
+          owner_id,
+          progress
+        )
+      `
+    )
+    .eq('id', user?.id)
+    .single();
+
+  if (res.data?.courses_progress) {
+    id.push(...res.data!.courses_progress.map((course) => course.course_id));
+  }
+
   const data = await sanityFetch<CoursePageQueryProps>({
     query: /* groq */ `
     {
@@ -123,14 +168,17 @@ const query = async (slug: string): Promise<CoursePageQueryProps> => {
       },
       "card": *[_type == 'bundle' && basis == 'crocheting' && slug.current == $slug][0] {
         ${PRODUCT_CARD_QUERY}
+      },
+      "relatedCourses": *[_type == "course" && basis == 'crocheting' && !(_id in $id) && !(slug.current == $slug)][0...3] {
+        ${PRODUCT_CARD_QUERY}
       }
     }
     `,
-    params: { slug },
+    params: { slug, id },
     tags: ['course', 'bundle'],
   });
   !data?.product?._id && notFound();
-  return data;
+  return { data: data, user: user, courses_progress: res.data?.courses_progress };
 };
 
 export async function generateStaticParams(): Promise<generateStaticParamsProps[]> {

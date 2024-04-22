@@ -1,5 +1,5 @@
 .Reviews {
-  h2{
+  h2 {
     max-width: 585px;
     margin: 0 auto 56px;
     text-align: center;
@@ -17,5 +17,29 @@
         margin-top: 0;
       }
     }
+  }
+}
+
+.Reviews-empty {
+  text-align: center;
+
+  h2 {
+    max-width: 585px;
+    margin: 0 auto 28px;
+    text-align: center;
+  }
+
+  p {
+    max-width: 585px;
+    margin: 0 auto;
+
+    &:nth-child(3) {
+      margin-top: 20px;
+    }
+  }
+
+  > button,
+  > a {
+    margin: 36px auto 0 auto;
   }
 }
