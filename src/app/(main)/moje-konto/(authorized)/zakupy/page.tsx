@@ -85,7 +85,7 @@ const query = async (): Promise<QueryProps> => {
           ${Img_Query}
         },
       },
-      "products": *[_type == 'product' && _id in $products] {
+      "products": *[(_type == 'product' || _type == 'course' || _type == 'bundle') && _id in $products] {
         ${PRODUCT_CARD_QUERY}
       },
     }`,
