@@ -20,7 +20,7 @@ const Hero = ({ paragraph, img, heading, author, date, portableText }: HeroTypes
         <div>
           <Markdown>{date}</Markdown>
           <Markdown.h3>{heading}</Markdown.h3>
-          <Markdown>{paragraph}</Markdown>
+          <Markdown className={styles.paragraph}>{paragraph}</Markdown>
         </div>
         <div className={styles.author}>
           <Img

@@ -6,6 +6,7 @@ export type ProcessShowcaseTypes = {
     process: {
       paragraph: string;
       img: ImgType;
+      isReversed: boolean;
     }[];
   }[];
 };

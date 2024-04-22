@@ -44,11 +44,32 @@
         gap: clamp(24px, calc(24vw/7.68), 32px);
         align-items: center;
 
+        @media (max-width: 599px) {
+          grid-template-columns: 1fr;
+        }
 
         img {
-          aspect-ratio: 1/1;
+          width: 100%;
+          height: auto;
           object-fit: cover;
           border-radius: 4px;
+          min-width: 250px;
+        }
+
+        &[data-reversed='true'] {
+          grid-template-columns: 5fr 3fr;
+
+          @media (max-width: 599px) {
+            grid-template-columns: 1fr;
+          }
+
+          img {
+            order: 2;
+          }
+        }
+
+        [data-fullWidth='true'] {
+          grid-column: 1/-1;
         }
       }
     }

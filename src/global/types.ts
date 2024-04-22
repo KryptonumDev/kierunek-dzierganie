@@ -106,6 +106,7 @@ export type BlogPageQueryProps = {
   blog_Heading: string;
   blog_Paragraph: string;
   blog_HighlightedPost: {
+    portableText: [];
     hero: {
       heading: string;
       img: ImgType;
