@@ -10,8 +10,8 @@ import PercentChart from '@/components/ui/PercentChart';
 import { formatBytes } from '@/utils/format-bytes';
 import Switch from '@/components/ui/Switch';
 import { useRouter } from 'next/navigation';
-import { createClientComponentClient } from '';
 import parseFileName from '@/utils/parse-file-name';
+import { createClient } from '@/utils/supabase-client';
 
 const LessonHero = ({
   progress,
@@ -24,7 +24,7 @@ const LessonHero = ({
   id,
 }: Props) => {
   const router = useRouter();
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
   const [leftHanded, setLeftHanded] = useState(left_handed);
   const [autoplay, setAutoplay] = useState(false);
   const [isCompleted, setIsCompleted] = useState(
