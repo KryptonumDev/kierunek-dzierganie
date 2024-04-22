@@ -1,11 +1,11 @@
 'use server';
 import { createClient, type QueryParams } from 'next-sanity';
-import { isPreviewDeployment } from './is-preview-deployment';
+import { isPreviewDeployment, isProductionDeployment } from './is-preview-deployment';
 
 const projectId = process.env.SANITY_PROJECT_ID;
 const token = process.env.SANITY_API_TOKEN;
 const dataset = 'production';
-const apiVersion = '2024-03-20';
+const apiVersion = '2024-04-22';
 
 if (isPreviewDeployment && !token) {
   throw new Error('The `SANITY_API_TOKEN` environment variable is required.');
@@ -37,9 +37,19 @@ export default async function sanityFetch<QueryResponse>({
   params?: QueryParams;
 }): Promise<QueryResponse> {
   return await client.fetch<QueryResponse>(query, params, {
-    cache: isPreviewDeployment || !tags ? 'no-cache' : 'default',
-    next: {
-      tags: tags,
-    },
+    ...!isProductionDeployment ? {
+      cache: 'reload',
+    } : {
+      ...(isPreviewDeployment || !tags) ? {
+        cache: 'no-cache',
+      } : {
+        cache: 'force-cache',
+        next: {
+          tags,
+          // 1 month time revalidation
+          revalidate: 2592000
+        }
+      }
+    }
   });
 }
