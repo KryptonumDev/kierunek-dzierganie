@@ -24,11 +24,15 @@
       width: 100%;
     }
 
-    >img {
-      width: 100%;
-      height: auto;
-      object-fit: contain;
-      border-radius: 4px;
+    .imageWrapper {
+      position: relative;
+
+      >img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 4px;
+      }
     }
 
     .highlightedPostContent {
@@ -82,6 +86,17 @@
       gap: 16px;
       align-items: flex-start;
 
+      .imageWrapper {
+        position: relative;
+
+        >img {
+          width: 100%;
+          object-fit: cover;
+          aspect-ratio: 381/239;
+          border-radius: 4px;
+        }
+      }
+
       @media (max-width: 999px) {
         grid-template-columns: 1fr 0.8fr;
       }
@@ -106,11 +121,7 @@
         font-size: calc(14 / 16) rem;
       }
 
-      >img {
-        width: 100%;
-        height: auto;
-        object-fit: cover;
-      }
+
 
       >div {
         display: grid;

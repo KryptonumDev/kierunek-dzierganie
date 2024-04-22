@@ -6,6 +6,7 @@ import styles from './BlogSection.module.scss';
 import { type BlogPostsType } from './BlogSection.types';
 import Link from 'next/link';
 import { POSTS_PER_PAGE } from '@/global/constants';
+import ReadingTime from '@/components/ui/ReadingTime';
 
 export default async function BlogPosts({ slug, number }: { slug?: string; number?: number }) {
   if (number == 1) {
@@ -22,16 +23,19 @@ export default async function BlogPosts({ slug, number }: { slug?: string; numbe
       className={styles.blogPosts}
       id='wpisy'
     >
-      {blogPosts.map(({ hero: { heading, img, paragraph }, slug }, i) => (
+      {blogPosts.map(({ hero: { heading, img, paragraph }, portableText, slug }, i) => (
         <Link
           key={i}
           className={styles.item}
           href={`/blog/${slug}`}
         >
-          <Img
-            data={img}
-            sizes='(max-width: 499px) 100vw, (max-width: 999px) 50vw, 33vw'
-          />
+          <div className={styles.imageWrapper}>
+            <Img
+              data={img}
+              sizes='(max-width: 499px) 100vw, (max-width: 999px) 50vw, 33vw'
+            />
+            <ReadingTime portableText={portableText} />
+          </div>
           <div>
             <Markdown.h3>{heading}</Markdown.h3>
             <Markdown>{paragraph}</Markdown>
@@ -49,6 +53,7 @@ async function getBlogPostData(selectedPage?: number) {
       [$POSTS_PER_PAGE * ($selectedPage-1)
       ...
       $POSTS_PER_PAGE+ ($POSTS_PER_PAGE * ($selectedPage-1))] {
+        portableText,
         hero {
           img {
             ${Img_Query}
@@ -76,6 +81,7 @@ async function getCategoryBlogPostData(selectedPage?: number, slug?: string) {
       ...
       $POSTS_PER_PAGE+ ($POSTS_PER_PAGE * ($selectedPage-1))]
        {
+        portableText,
         hero {
           img {
             ${Img_Query}

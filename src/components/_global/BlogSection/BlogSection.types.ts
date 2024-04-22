@@ -16,6 +16,7 @@ export type BlogSectionTypes = {
 };
 
 export type HighlightedPostType = {
+  portableText: [];
   hero: {
     img: ImgType;
     heading: string;
@@ -30,6 +31,7 @@ export type HighlightedPostType = {
 };
 
 export type BlogPostsType = {
+  portableText: [];
   hero: {
     img: ImgType;
     heading: string;
