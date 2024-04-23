@@ -46,7 +46,7 @@ export async function POST(request: Request) {
       .single();
 
     // check if discount was used
-    error: if (data && data.used_discount.id) {
+    error: if (data && data.used_discount?.id) {
       // create new coupons_uses record
       const newRecord = await supabase.from('coupons_uses').insert({
         used_at: data.created_at,

@@ -13,13 +13,15 @@ const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env
   },
 });
 
-
 export async function POST(request: Request) {
   const { input, description }: { input: InputState; description: string } = await request.json();
   // const supabase = createClient();
 
   // update user default data for next orders
-  await supabase.from('profiles').update({ billing_data: input.billing, shipping_data: input.shipping }).eq('id', input.user_id);
+  await supabase
+    .from('profiles')
+    .update({ billing_data: input.billing, shipping_data: input.shipping })
+    .eq('id', input.user_id);
 
   try {
     const p24 = new P24(
