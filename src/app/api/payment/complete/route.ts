@@ -64,6 +64,7 @@ export async function POST(request: Request) {
         .eq('id', data.used_discount.id)
         .single();
 
+      console.log(couponData);
       // check if used discount was affiliated by some user
       if (couponData.data && couponData.data.affiliation_of) {
         // get current amount of affiliation discount code owner
@@ -73,6 +74,7 @@ export async function POST(request: Request) {
           .eq('owner', couponData.data.affiliation_of)
           .single();
 
+        console.log(prevValueResult);
         // check if error occurred during select of code owner
         if (prevValueResult.error) break error;
 

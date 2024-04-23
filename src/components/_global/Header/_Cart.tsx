@@ -75,9 +75,19 @@ export default function Cart({
         if (data.error?.code === 'PGRST116') {
           toast('Kod rabatowy jest nieprawidłowy');
           return;
-        } else if (data.error) {
+        }
+
+        if (data.error) {
           toast(data.error.message);
         }
+
+        if (data.affiliation_of === '') {
+          toast('Nie możesz użyć swojego kodu afiliacyjnego');
+          return;
+        }
+
+        // check is affiliation code is already used
+
         setUsedDiscount({
           amount: data.amount,
           code: discountCode,
