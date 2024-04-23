@@ -1,4 +1,4 @@
-import type { Billing, Complexity, ImgType, Shipping } from '@/global/types';
+import type { Billing, Complexity, Discount, ImgType, Shipping } from '@/global/types';
 import type { useCartItems } from '../Header.types';
 
 export type Props = {
@@ -10,7 +10,10 @@ export type Props = {
   userEmail?: string;
   shipping?: Shipping;
   billing?: Billing;
+  userId?: string;
   virtualWallet: number;
+  usedDiscount: Discount | null;
+  usedVirtualMoney: number | null;
 };
 
 export type InputState = {
@@ -31,11 +34,13 @@ export type InputState = {
       complexity: Complexity | null;
     }[];
   };
+  virtualMoney?: number | null;
+  discount?: Discount | null;
   needDelivery: boolean;
   user_id?: string;
   amount: number;
+  totalAmount: number;
   paid_at?: string;
-  usedDiscount?: string;
   payment_id?: string;
   paymentMethod?: string;
 };

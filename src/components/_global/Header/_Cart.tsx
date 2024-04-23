@@ -37,6 +37,7 @@ export default function Cart({
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<CartForm>();
 
@@ -46,7 +47,8 @@ export default function Cart({
     return cart?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
   }, [cart]);
   const totalItemsPrice = useMemo(() => {
-    return fetchedItems?.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0) ?? 0;
+    if (!fetchedItems) return null;
+    return fetchedItems?.reduce((acc, item) => acc + (item.discount ?? item.price!) * item.quantity!, 0) ?? 0;
   }, [fetchedItems]);
 
   const discountCode = watch('discount');
@@ -76,7 +78,6 @@ export default function Cart({
         } else if (data.error) {
           toast(data.error.message);
         }
-
         setUsedDiscount({
           amount: data.amount,
           code: discountCode,
@@ -109,7 +110,6 @@ export default function Cart({
             <CartGrid
               updateItemQuantity={updateItemQuantity}
               removeItem={removeItem}
-              cart={cart}
               fetchedItems={fetchedItems}
             />
           ) : (
@@ -120,114 +120,150 @@ export default function Cart({
             />
           )}
           {cart?.length != 0 && (
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className={cart?.length ? '' : styles['empty']}
-            >
-              <div className={styles['line']} />
-              <div className={styles['additional-info']}>
-                <div>
-                  {isPromoCode ? (
-                    <div className={styles.promoCode}>
-                      <div className={styles.inputWrapper}>
-                        <Input
-                          label='Wpisz kod rabatowy'
-                          type='text'
-                          register={register('discount')}
-                          errors={errors}
-                        />
-                        <button onClick={() => setIsPromoCode((prev) => !prev)}>{CrossIcon}</button>
-                      </div>
-                      {/* TODO: Add logic for Apply Button */}
-                      <button
-                        type='button'
-                        onClick={verifyCoupon}
-                        className={`link ${styles.apply}`}
-                      >
-                        Zastosuj
-                      </button>
-                    </div>
-                  ) : (
-                    <Checkbox
-                      register={register('isDiscount')}
-                      label='Posiadam kod rabatowy'
-                      errors={errors}
-                      onChange={() => setIsPromoCode((prev) => !prev)}
-                    />
-                  )}
-                  {virtualWallet ? (
-                    <>
-                      {isVirtualCoins ? (
-                        <div className={styles.virtualCoins}>
+            <>
+              {fetchedItems && totalItemsPrice ? (
+                <form
+                  onSubmit={handleSubmit(onSubmit)}
+                  className={cart?.length ? '' : styles['empty']}
+                >
+                  <div className={styles['line']} />
+                  <div className={styles['additional-info']}>
+                    <div className={styles['left-side']}>
+                      {isPromoCode ? (
+                        <div className={styles.promoCode}>
                           <div className={styles.inputWrapper}>
                             <Input
-                              label='Wpisz ile wirtualnych złotówek chcesz wykorzystać'
+                              label='Wpisz kod rabatowy'
                               type='text'
-                              max={virtualWallet}
-                              maxLength={virtualWallet.toString().length}
-                              register={register('virtual', {
-                                min: { value: 0, message: 'Wpisz poprawną ilość wirtualnych złotówek' },
-                                max: { value: virtualWallet, message: 'Nie masz tyle wirtualnych złotówek' },
-                                onChange: (e) => {
-                                  formatToOnlyDigits(e);
-                                  setUsedVirtualMoney(e.target.value);
-                                },
-                              })}
+                              register={register('discount')}
                               errors={errors}
                             />
-                            <div className={styles.mask}>
-                              <span className={styles.hide}>{usedVirtualMoney}</span>
-                              <span>&nbsp;/{virtualWallet}</span>
-                            </div>
-                            <button onClick={() => setIsVirtualCoins((prev) => !prev)}>{CrossIcon}</button>
+                            <button
+                              onClick={() => {
+                                setIsPromoCode((prev) => !prev);
+                                setUsedDiscount(null);
+                                setValue('discount', '');
+                              }}
+                            >
+                              {CrossIcon}
+                            </button>
                           </div>
+                          {/* TODO: Add logic for Apply Button */}
+                          <button
+                            type='button'
+                            onClick={verifyCoupon}
+                            className={`link ${styles.apply}`}
+                          >
+                            Zastosuj
+                          </button>
                         </div>
                       ) : (
                         <Checkbox
-                          register={register('isVirtual')}
-                          label='Chcę wykorzystać wirtualne złotówki'
+                          register={register('isDiscount')}
+                          label='Posiadam kod rabatowy'
                           errors={errors}
-                          onChange={() => setIsVirtualCoins((prev) => !prev)}
+                          onChange={() => setIsPromoCode((prev) => !prev)}
                         />
                       )}
-                    </>
-                  ) : null}
-                </div>
-                <div>
-                  <p>
-                    <span>
-                      {totalItemsCount}{' '}
-                      {totalItemsCount === 1 ? 'produkt' : totalItemsCount < 5 ? 'produkty' : 'produktów'}
-                    </span>
-                    <span>{formatPrice(totalItemsPrice)}</span>
-                  </p>
-                  {usedDiscount && (
-                    <p>
-                      <span>Kupon: {usedDiscount.code}</span>
-                      <span>{formatPrice(calculateDiscountAmount(totalItemsPrice, usedDiscount))}</span>
-                    </p>
-                  )}
-                  <p>
-                    <span>Razem</span>
-                    <span>
-                      {formatPrice(
-                        totalItemsPrice + (usedDiscount ? calculateDiscountAmount(totalItemsPrice, usedDiscount) : 0)
+                      {virtualWallet ? (
+                        <>
+                          {isVirtualCoins ? (
+                            <div className={styles.virtualCoins}>
+                              <div className={styles.inputWrapper}>
+                                <Input
+                                  label='Wpisz ile wirtualnych złotówek chcesz wykorzystać'
+                                  type='text'
+                                  max={virtualWallet}
+                                  min={11}
+                                  maxLength={virtualWallet.toString().length}
+                                  register={register('virtual', {
+                                    min: { value: 1, message: 'Wpisz poprawną ilość wirtualnych złotówek' },
+                                    max: { value: virtualWallet, message: 'Nie masz tyle wirtualnych złotówek' },
+                                    onChange: (e) => {
+                                      formatToOnlyDigits(e);
+                                      setUsedVirtualMoney(e.target.value);
+                                    },
+                                  })}
+                                  errors={errors}
+                                />
+                                <div className={styles.mask}>
+                                  <span className={styles.hide}>{usedVirtualMoney}</span>
+                                  <span>&nbsp;/{virtualWallet}</span>
+                                </div>
+                                <button
+                                  onClick={() => {
+                                    setIsVirtualCoins((prev) => !prev);
+                                    setUsedVirtualMoney(null);
+                                    setValue('virtual', '');
+                                  }}
+                                >
+                                  {CrossIcon}
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <Checkbox
+                              register={register('isVirtual')}
+                              label='Chcę wykorzystać wirtualne złotówki'
+                              errors={errors}
+                              onChange={() => setIsVirtualCoins((prev) => !prev)}
+                            />
+                          )}
+                        </>
+                      ) : null}
+                    </div>
+                    <div className={styles['right-side']}>
+                      <p>
+                        <span>
+                          {totalItemsCount}{' '}
+                          {totalItemsCount === 1 ? 'produkt' : totalItemsCount < 5 ? 'produkty' : 'produktów'}
+                        </span>
+                        <span>{formatPrice(totalItemsPrice)}</span>
+                      </p>
+                      {usedDiscount && (
+                        <p>
+                          <span>Kupon: {usedDiscount.code}</span>
+                          <span>{formatPrice(calculateDiscountAmount(totalItemsPrice, usedDiscount))}</span>
+                        </p>
                       )}
-                    </span>
-                  </p>
+                      {usedVirtualMoney && usedVirtualMoney > 0 && (
+                        <p>
+                          <span>Wykorzystane WZ</span>
+                          <span>-{formatPrice(usedVirtualMoney * 100)}</span>
+                        </p>
+                      )}
+                      <p>
+                        <span>Razem</span>
+                        <span>
+                          {formatPrice(
+                            totalItemsPrice +
+                              (usedDiscount ? calculateDiscountAmount(totalItemsPrice, usedDiscount) : 0) -
+                              (usedVirtualMoney ? usedVirtualMoney * 100 : 0)
+                          )}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                  <div className={styles['flex']}>
+                    <button
+                      onClick={setShowCart}
+                      type='button'
+                      className='link'
+                    >
+                      Kontynuuj zakupy
+                    </button>
+                    <Button type='submit'>Zamawiam</Button>
+                  </div>
+                </form>
+              ) : (
+                <div className={styles['empty']}>
+                  <h2 className='h1'>
+                    Ładowanie <strong>koszyka</strong>
+                  </h2>
+                  <p>Proszę czekać...</p>
                 </div>
-              </div>
-              <div className={styles['flex']}>
-                <button
-                  onClick={setShowCart}
-                  type='button'
-                  className='link'
-                >
-                  Kontynuuj zakupy
-                </button>
-                <Button type='submit'>Zamawiam</Button>
-              </div>
-            </form>
+              )}
+            </>
           )}
         </div>
         {highlighted_products && (
@@ -285,7 +321,7 @@ const EmptyLayout = ({ image_crochet, image_knitting, setShowCart }: EmptyCart) 
   );
 };
 
-const CartGrid = ({ cart, fetchedItems, removeItem, updateItemQuantity }: Grid) => {
+const CartGrid = ({ fetchedItems, removeItem, updateItemQuantity }: Grid) => {
   if (!fetchedItems) return;
 
   return (
@@ -295,25 +331,34 @@ const CartGrid = ({ cart, fetchedItems, removeItem, updateItemQuantity }: Grid) 
           className={styles['product']}
           key={item._id + i}
         >
-          {item.gallery && (
+          {(item.gallery || item.variant?.gallery) && (
             <Img
-              data={item.gallery}
+              data={item.gallery ?? item.variant!.gallery}
               sizes='175px'
             />
           )}
+
           <div>
-            <h3>{item.name}</h3>
-            <div>
-              <div className={styles['calculator']}>
-                {/* TODO: remove if course */}
-                <PickQuantity
-                  defaultValue={cart!.find((cartItem) => cartItem.id === item._id)?.quantity}
-                  onChange={(e) => updateItemQuantity(item._id, Number(e.target.value))}
-                />
+            <h3>
+              {item.name} {item.variant ? `- ${item.variant.name}` : ''}
+            </h3>
+            {item._type === 'product' && (
+              <div>
+                <div className={styles['calculator']}>
+                  <PickQuantity
+                    min={1}
+                    max={item.countInStock ?? item.variant!.countInStock}
+                    defaultValue={item.quantity!}
+                    change={(count) => {
+                      const productId = item.variant ? item._id + 'variant:' + item.variant._id : item._id;
+                      updateItemQuantity(productId, count);
+                    }}
+                  />
+                </div>
+                {/* TODO: add attributes */}
+                <div></div>
               </div>
-              {/* TODO: add attributes */}
-              <div></div>
-            </div>
+            )}
           </div>
           <div className={styles['right-column']}>
             <div>
@@ -331,7 +376,7 @@ const CartGrid = ({ cart, fetchedItems, removeItem, updateItemQuantity }: Grid) 
             </div>
             <button
               className={`link ${styles['remove']}`}
-              onClick={() => removeItem(item._id)}
+              onClick={() => removeItem(item.variant ? item._id + 'variant:' + item.variant._id : item._id)}
             >
               Usuń
             </button>

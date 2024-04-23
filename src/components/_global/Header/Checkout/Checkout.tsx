@@ -4,6 +4,7 @@ import SummaryAside from './_SummaryAside';
 import PersonalData from './_PersonalData';
 import { useEffect, useState } from 'react';
 import Authorization from './_Authorization';
+import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 
 const stepContent = (props: MappingProps) => ({
   1: <Authorization {...props} />,
@@ -19,6 +20,9 @@ export default function Checkout({
   userEmail,
   billing,
   shipping,
+  usedDiscount,
+  usedVirtualMoney,
+  userId,
   // virtualWallet,
 }: Props) {
   const [step, setStep] = useState(1);
@@ -27,6 +31,7 @@ export default function Checkout({
     firmOrder: false,
     shippingSameAsBilling: true,
     amount: 0,
+    totalAmount: 0,
     needDelivery: false,
     shipping: {
       firstName: shipping?.firstName ?? '',
@@ -66,23 +71,30 @@ export default function Checkout({
       return;
     }
 
-    // setInput((prev) => ({
-    //   ...prev,
-    //   amount: fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0),
-    //   needDelivery: fetchedItems.some((item) => item.type === 'physical' || item.type === 'variable'),
-    //   products: {
-    //     array: fetchedItems.map((item) => ({
-    //       id: item._id,
-    //       name: item.name,
-    //       price: item.price!,
-    //       discount: item.discount,
-    //       quantity: item.quantity!,
-    //       image: item.variants?.[0]?.gallery ? item.variants[0].gallery : item.gallery,
-    //       complexity: item.course?.complexity || null,
-    //     })),
-    //   },
-    // }));
-  }, [fetchedItems, input.amount, setInput]);
+    setInput((prev) => ({
+      ...prev,
+      amount: fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0),
+      totalAmount:
+        fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0) +
+        (usedDiscount ? calculateDiscountAmount(input.amount, usedDiscount) : 0) -
+        (usedVirtualMoney ? usedVirtualMoney * 100 : 0),
+      needDelivery: fetchedItems.some((item) => item._type === 'product'),
+      discount: usedDiscount,
+      virtualMoney: usedVirtualMoney,
+      user_id: userId,
+      products: {
+        array: fetchedItems.map((item) => ({
+          id: item._id,
+          name: item.name,
+          price: item.price!,
+          discount: item.discount!,
+          quantity: item.quantity!,
+          image: item.variants?.[0]?.gallery ? item.variants[0].gallery : item.gallery!,
+          complexity: item.complexity || null,
+        })),
+      },
+    }));
+  }, [fetchedItems, input.amount, setInput, usedDiscount, usedVirtualMoney, userId]);
 
   useEffect(() => {
     addEventListener('keydown', (e) => {
@@ -106,7 +118,9 @@ export default function Checkout({
         </button>
         <div className={styles['content']}>
           {stepContent({ goToCart, setStep, input, setInput })[step as keyof typeof stepContent]}
-          <SummaryAside input={input} />
+          <SummaryAside
+            input={input}
+          />
         </div>
       </div>
     </>

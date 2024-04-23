@@ -120,7 +120,7 @@ const FeaturedProductCard = ({ excerpt, data, inCart = false, basis }: Props) =>
             <Button
               disabled={buttonText !== 'Dodaj do koszyka'}
               onClick={() => {
-                addItem({ quantity: 1, id: data._id, price: 0 });
+                addItem({ quantity: 1, id: data._id, product: data._id, price: 0 });
                 setButtonText('Dodano do koszyka');
               }}
             >

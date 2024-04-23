@@ -48,6 +48,7 @@ const Header = async () => {
       userEmail={user?.email}
       shipping={data?.shipping_data}
       billing={data?.billing_data}
+      userId={user?.id}
       // @ts-expect-error - virtual_wallet is not array, bug in supabase
       virtualWallet={data?.virtual_wallet?.amount}
     />

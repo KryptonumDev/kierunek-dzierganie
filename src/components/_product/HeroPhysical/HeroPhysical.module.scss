@@ -51,9 +51,10 @@
     gap: 24px;
 
     > p {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 32px;
+      span{
+        display: block;
+        margin-bottom: 8px;
+      }
     }
   }
 

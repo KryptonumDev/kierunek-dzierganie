@@ -27,6 +27,7 @@ export type ImgType = {
 };
 
 export type ProductCard = {
+  _type: 'product' | 'course' | 'bundle';
   _id: string;
   basis: 'crocheting' | 'knitting';
   slug: string;
@@ -41,6 +42,15 @@ export type ProductCard = {
   complexity?: Complexity;
   reviewsCount: number;
   rating: number;
+  variant: {
+    _id: string;
+    name: string;
+    price: number;
+    discount: number;
+    countInStock: number;
+    featuredVideo: string;
+    gallery: ImgType;
+  } | null;
   variants: Array<{
     _id: string;
     name: string;
@@ -193,7 +203,7 @@ export type ProductPageQueryProps = {
 export type ProductPageQuery = {
   data: ProductPageQueryProps;
   user: User | null;
-}
+};
 
 export type CoursePageQueryProps = {
   product: {
@@ -231,9 +241,9 @@ export type CoursePageQueryProps = {
 
 export type CoursePageQuery = {
   data: CoursePageQueryProps;
-  user: User | null
+  user: User | null;
   courses_progress?: CoursesProgress[];
-}
+};
 
 export type generateStaticParamsProps = {
   slug: string;

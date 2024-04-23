@@ -116,7 +116,7 @@ const ProductCard = ({ data, inCart = false, horizontal, tabletHorizontal, basis
           <Button
             disabled={buttonText !== 'Dodaj do koszyka'}
             onClick={() => {
-              addItem({ id: data._id, variant: null, price: 0 }, 1);
+              addItem({ quantity: 1, id: data._id, product: data._id, price: 0 }, 1);
               setButtonText('Dodano do koszyka');
             }}
           >

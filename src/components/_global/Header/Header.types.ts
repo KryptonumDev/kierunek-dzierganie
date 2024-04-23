@@ -34,6 +34,7 @@ export type QueryProps = {
   Logo: React.ReactNode;
   CrossIcon: React.ReactNode;
 
+  userId?: string;
   userEmail?: string;
   shipping?: Shipping;
   billing?: Billing;
@@ -64,7 +65,6 @@ export type Cart = {
 export type Grid = {
   updateItemQuantity: (id: string, quantity: number) => void;
   removeItem: (id: string) => void;
-  cart: Item[] | null;
   fetchedItems: ProductCard[] | null;
 };
 

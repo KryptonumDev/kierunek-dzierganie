@@ -27,6 +27,7 @@ const Content = ({
   shipping,
   billing,
   virtualWallet,
+  userId,
 }: QueryProps) => {
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
@@ -46,10 +47,13 @@ const Content = ({
           setShowCart(true);
           setShowCheckout(false);
         }}
+        usedDiscount={usedDiscount}
         userEmail={userEmail}
         shipping={shipping}
         billing={billing}
         virtualWallet={virtualWallet}
+        usedVirtualMoney={usedVirtualMoney}
+        userId={userId}
       />
       <Cart
         goToCheckout={() => {

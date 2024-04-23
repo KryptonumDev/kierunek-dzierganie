@@ -120,12 +120,14 @@ export const PRODUCT_CARD_QUERY = `
   gallery[0]{
     ${Img_Query}
   },
+  countInStock,
   complexity,
   variants[]{
     "_id": _key,
     name,
     price,
     discount,
+    countInStock,
     gallery[0]{
       ${Img_Query}
     },

@@ -1,17 +1,11 @@
 import { NextResponse } from 'next/server';
 import { P24 } from '@ingameltd/node-przelewy24';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_KEY!, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
-  },
-});
+import { createClient } from '@/utils/supabase-server';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
+  const supabase = createClient();
   try {
     const { sessionId, amount, currency, orderId } = await request.json();
     const { searchParams } = new URL(request.url);
@@ -27,6 +21,7 @@ export async function POST(request: Request) {
       }
     );
 
+    // verify transaction in P24 service
     await p24.verifyTransaction({
       amount,
       currency,
@@ -34,13 +29,81 @@ export async function POST(request: Request) {
       sessionId,
     });
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('orders')
       .update({
         paid_at: new Date(),
         payment_id: sessionId,
+        status: 2,
       })
-      .eq('id', id);
+      .eq('id', id)
+      .select(
+        `
+        created_at,
+        user_id,
+        used_discount,
+        used_virtual_money
+      `
+      )
+      .single();
+
+    // check if discount was used
+    error: if (data && data.used_discount.id) {
+      // create new coupons_uses record
+      const newRecord = await supabase.from('coupons_uses').insert({
+        used_at: data.created_at,
+        used_coupon: data.used_discount.id,
+        used_by: data.user_id,
+      });
+
+      // check if error occurred during insert
+      if (newRecord.error) break error;
+
+      // get information about affiliation of used discount
+      const couponData = await supabase
+        .from('coupons')
+        .select('affiliation_of')
+        .eq('id', data.used_discount.id)
+        .single();
+
+      // check if used discount was affiliated by some user
+      if (couponData.data && couponData.data.affiliation_of) {
+        // get current amount of affiliation discount code owner
+        const prevValueResult = await supabase
+          .from('virtual_wallet')
+          .select('amount')
+          .eq('owner', couponData.data.affiliation_of)
+          .single();
+
+        // check if error occurred during select of code owner
+        if (prevValueResult.error) break error;
+
+        // add 25zł to affiliation discount code owner
+        await supabase
+          .from('virtual_wallet')
+          .update({
+            amount: prevValueResult.data!.amount + 25,
+          })
+          .eq('id', couponData.data.affiliation_of);
+      }
+    }
+
+    // check if virtual money was used
+    error: if (data && data.used_virtual_money) {
+      // get current amount of user virtual money
+      const prevValueResult = await supabase.from('virtual_wallet').select('amount').eq('owner', data.user_id).single();
+
+      // check if error occurred during selecting of user virtual money
+      if (prevValueResult.error) break error;
+
+      // decrease user virtual money by used amount
+      await supabase
+        .from('virtual_wallet')
+        .update({
+          amount: prevValueResult.data!.amount - data.used_virtual_money,
+        })
+        .eq('owner', data.user_id);
+    }
 
     if (error) throw new Error(error.message);
 

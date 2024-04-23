@@ -6,6 +6,8 @@ import { useEffect } from 'react';
 import Button from '@/components/ui/Button';
 import type { InputState, MappingProps } from './Checkout.types';
 import Radio from '@/components/ui/Radio';
+import { useCart } from 'react-use-cart';
+import { toast } from 'react-toastify';
 
 type FormValues = {
   fullName?: string;
@@ -89,6 +91,7 @@ const generateDefaults = (input: InputState) => {
 };
 
 export default function PersonalData({ goToCart, setInput, input }: MappingProps) {
+  const { emptyCart } = useCart();
   const {
     register,
     handleSubmit,
@@ -100,22 +103,25 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
   const onSubmit = handleSubmit(async (data) => {
     const newInput = generateNewInput(data, input);
     setInput(newInput as InputState);
-
     await fetch('/api/payment/create', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        input: input,
+        input: newInput,
         description: 'Example description',
       }),
     })
       .then((res) => res.json())
       .then(({ link }) => {
+        if (!link) throw new Error('Błąd podczas tworzenia zamówienia');
+
+        emptyCart();
         window.location.href = link;
       })
       .catch((err) => {
+        toast('Błąd podczas tworzenia zamówienia');
         console.log(err);
       });
   });
@@ -133,6 +139,7 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
   return (
     <>
       <form
+        id='hook-form'
         className={styles['main']}
         onSubmit={onSubmit}
       >
@@ -299,7 +306,12 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
         >
           Wróć do koszyka
         </button>
-        <Button>płatności</Button>
+        <Button
+          form='hook-form'
+          type='submit'
+        >
+          Przechodzę do płatności
+        </Button>
         <div className={styles['payment-inform']}>
           <div>
             <Przelewy24Icon />

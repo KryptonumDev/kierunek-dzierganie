@@ -129,6 +129,7 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
           value,
         },
         variants[]{
+          "_id": _key,
           name,
           price,
           discount,

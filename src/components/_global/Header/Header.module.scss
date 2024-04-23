@@ -58,17 +58,16 @@
     align-items: center;
     gap: clamp(20px, calc(36vw / 7.68), 36px);
 
-    >li {
-
-      >button,
-      >a {
+    > li {
+      > button,
+      > a {
         display: flex;
         align-items: center;
         gap: 4px;
         cursor: pointer;
       }
 
-      >button {
+      > button {
         width: 100%;
 
         &::after {
@@ -88,7 +87,7 @@
 
       position: relative;
 
-      >ul {
+      > ul {
         .back-btn {
           flex-shrink: 0;
           display: none;
@@ -130,7 +129,7 @@
         flex-direction: column;
         gap: 8px;
 
-        >li {
+        > li {
           width: 100%;
 
           a {
@@ -159,13 +158,13 @@
   &[data-tab='2'] .Nav__item[data-id='2'],
   &[data-tab='3'] .Nav__item[data-id='3'],
   &[data-tab='4'] .Nav__item[data-id='4'] {
-    >button {
+    > button {
       &::after {
         transform: skewX(0) scaleX(1);
       }
     }
 
-    >ul {
+    > ul {
       display: flex;
     }
   }
@@ -197,10 +196,9 @@
       max-width: 360px;
       padding: 16px;
 
-      >li {
-
-        >button,
-        >a {
+      > li {
+        > button,
+        > a {
           height: 48px;
           justify-content: space-between;
 
@@ -213,7 +211,7 @@
           }
         }
 
-        >button {
+        > button {
           &::after {
             display: none;
           }
@@ -221,7 +219,7 @@
 
         position: static;
 
-        >ul {
+        > ul {
           z-index: 2;
 
           .back-btn {
@@ -304,10 +302,9 @@
 }
 
 .Nav[data-opened='true'] {
-  +.Nav__Toggle {
+  + .Nav__Toggle {
     svg {
       path {
-
         &:nth-child(1),
         &:nth-child(2) {
           stroke-dashoffset: -24;
@@ -354,7 +351,7 @@
   background-color: var(--primary-200);
   padding: 8px 0 12px;
 
-  >div {
+  > div {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -363,7 +360,7 @@
   }
 }
 
-.Header>.Search {
+.Header > .Search {
   &[data-visible='false'] {
     transform: translateY(-100%);
     visibility: hidden;
@@ -444,7 +441,9 @@
   justify-items: center;
 
   .resultsWrapper {
-    transition: visibility 0.5s, transform 0.5s var(--easing);
+    transition:
+      visibility 0.5s,
+      transform 0.5s var(--easing);
 
     &[data-visible='false'] {
       transform: translateY(-46px);
@@ -471,7 +470,7 @@
       padding: 10px 8px 16px;
       border-bottom: 1px solid var(--primary-300);
 
-      >p {
+      > p {
         border-radius: 50%;
         background-color: var(--primary-300);
         width: 24px;
@@ -482,10 +481,10 @@
       }
     }
 
-    @media(max-width: 849px) {
+    @media (max-width: 849px) {
       grid-template-columns: 1fr;
       overflow-y: auto;
-      max-height: calc(100vh - clamp(96px, calc(140vw/7.68), 140px));
+      max-height: calc(100vh - clamp(96px, calc(140vw / 7.68), 140px));
 
       &::-webkit-scrollbar {
         width: 3px;
@@ -540,6 +539,40 @@
 
   &[data-visible='true'] {
     transform: translateX(0);
+  }
+
+  .additional-info {
+    display: flex;
+    justify-content: space-between;
+
+    .left-side{
+      min-width: 310px;
+      display: grid;
+      height: fit-content;
+      gap: 12px;
+    }
+
+    .right-side {
+      min-width: 310px;
+      display: grid;
+      height: fit-content;
+      gap: 12px;
+
+      > p {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: var(--primary-700, #766965);
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 150%;
+
+        span:last-child {
+          color: var(--primary-800, #53423c);
+          font-size: 18px;
+        }
+      }
+    }
   }
 
   form {
@@ -659,12 +692,12 @@
   }
 
   .highlighted {
-    >h3 {
+    > h3 {
       margin-top: 128px;
       text-align: center;
     }
 
-    >p {
+    > p {
       text-align: center;
       margin-top: 36px;
     }
@@ -682,13 +715,13 @@
   }
 
   .empty {
-    >h2 {
+    > h2 {
       margin-top: clamp(48px, calc(48vw / 7.68), 64px);
       margin-bottom: clamp(16px, calc(16vw / 7.68), 28px);
       text-align: center;
     }
 
-    >p {
+    > p {
       text-align: center;
     }
 
@@ -700,7 +733,7 @@
       width: fit-content;
       margin-top: clamp(20px, calc(48vw / 7.68), 48px);
 
-      >div {
+      > div {
         max-width: 292px;
         width: 100%;
 
