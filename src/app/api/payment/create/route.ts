@@ -21,7 +21,7 @@ export async function POST(request: Request) {
   // update user default data
   const res = await supabase.from('profiles').update({ billing_data: input.billing, shipping_data: input.shipping }).eq('id', input.user_id);
   console.log(res);
-  
+
   try {
     const p24 = new P24(
       Number(process.env.P24_MERCHANT_ID!),
@@ -65,8 +65,8 @@ export async function POST(request: Request) {
       email: input.billing.email,
       country: Country.Poland,
       language: Language.PL,
-      urlReturn: `http://localhost:3000/api/payment/verify/?session=${data.id}`,
-      urlStatus: `http://localhost:3000/api/payment/complete/?session=${data.id}`,
+      urlReturn: `https://kierunek-dzierganie-git-dev-kryptonum.vercel.app/api/payment/verify/?session=${data.id}`,
+      urlStatus: `https://kierunek-dzierganie-git-dev-kryptonum.vercel.app/api/payment/complete/?session=${data.id}`,
       timeLimit: 60,
       encoding: Encoding.UTF8,
       city: input.billing.city,
