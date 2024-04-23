@@ -7,11 +7,7 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: Request) {
   const supabase = createClient();
   try {
-    const requestData = await request.json();
-    console.log(requestData);
-    const { sessionId, amount, currency, orderId }  = requestData;
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
+    const { sessionId, amount, currency, orderId } = await request.json();
 
     const p24 = new P24(
       Number(process.env.P24_MERCHANT_ID!),
@@ -38,7 +34,7 @@ export async function POST(request: Request) {
         payment_id: sessionId,
         status: 2,
       })
-      .eq('id', id)
+      .eq('id', sessionId)
       .select(
         `
         created_at,
