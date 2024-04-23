@@ -3,7 +3,6 @@ import Content from './_Content';
 import Markdown from '@/components/ui/markdown';
 import { Img_Query } from '@/components/ui/image';
 import type { QueryProps } from './Header.types';
-import { getServiceAccess } from '@/utils/supabase-admin';
 import { PRODUCT_CARD_QUERY } from '@/global/constants';
 import { createClient } from '@/utils/supabase-server';
 
@@ -13,13 +12,11 @@ const Header = async () => {
   
   const supabase = createClient();
 
-  const adminbase = await getServiceAccess();
-
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data } = await adminbase
+  const { data } = await supabase
     .from('profiles')
     .select(
       `

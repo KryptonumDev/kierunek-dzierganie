@@ -5,6 +5,35 @@ import PersonalData from './_PersonalData';
 import { useEffect, useState } from 'react';
 import Authorization from './_Authorization';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
+import type { Billing, Shipping } from '@/global/types';
+
+const createInputState = (billing?: Billing, shipping?: Shipping, userEmail?: string) => ({
+  firmOrder: false,
+  shippingSameAsBilling: true,
+  amount: 0,
+  totalAmount: 0,
+  needDelivery: false,
+  shipping: {
+    firstName: shipping?.firstName ?? '',
+    address1: shipping?.address1 ?? '',
+    city: shipping?.city ?? '',
+    country: shipping?.country ?? '',
+    postcode: shipping?.postcode ?? '',
+    phone: shipping?.phone ?? '',
+  },
+  billing: {
+    nip: billing?.nip ?? '',
+    firstName: billing?.firstName ?? '',
+    address1: billing?.address1 ?? '',
+    city: billing?.city ?? '',
+    country: billing?.country ?? '',
+    postcode: billing?.postcode ?? '',
+    email: userEmail ?? '',
+    phone: billing?.phone ?? '',
+    company: billing?.company ?? '',
+    invoiceType: billing?.invoiceType ?? 'Osoba prywatna',
+  },
+});
 
 const stepContent = (props: MappingProps) => ({
   1: <Authorization {...props} />,
@@ -27,33 +56,7 @@ export default function Checkout({
 }: Props) {
   const [step, setStep] = useState(1);
 
-  const [input, setInput] = useState<InputState>({
-    firmOrder: false,
-    shippingSameAsBilling: true,
-    amount: 0,
-    totalAmount: 0,
-    needDelivery: false,
-    shipping: {
-      firstName: shipping?.firstName ?? '',
-      address1: shipping?.address1 ?? '',
-      city: shipping?.city ?? '',
-      country: shipping?.country ?? '',
-      postcode: shipping?.postcode ?? '',
-      phone: shipping?.phone ?? '',
-    },
-    billing: {
-      nip: billing?.nip ?? '',
-      firstName: billing?.firstName ?? '',
-      address1: billing?.address1 ?? '',
-      city: billing?.city ?? '',
-      country: billing?.country ?? '',
-      postcode: billing?.postcode ?? '',
-      email: userEmail ?? '',
-      phone: billing?.phone ?? '',
-      company: billing?.company ?? '',
-      invoiceType: billing?.invoiceType ?? 'Osoba prywatna',
-    },
-  });
+  const [input, setInput] = useState<InputState>(createInputState(billing, shipping, userEmail));
 
   useEffect(() => {
     if (userEmail) setStep(2);
@@ -118,9 +121,7 @@ export default function Checkout({
         </button>
         <div className={styles['content']}>
           {stepContent({ goToCart, setStep, input, setInput })[step as keyof typeof stepContent]}
-          <SummaryAside
-            input={input}
-          />
+          <SummaryAside input={input} />
         </div>
       </div>
     </>

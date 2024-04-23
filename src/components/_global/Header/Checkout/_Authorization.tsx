@@ -1,7 +1,6 @@
 'use client';
-import { useRouter } from 'next/navigation';
 import styles from './Checkout.module.scss';
-import type { MappingProps } from './Checkout.types';
+import type { InputState, MappingProps } from './Checkout.types';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import Checkbox from '@/components/ui/Checkbox';
@@ -19,11 +18,10 @@ type FormValues = {
   accept: boolean;
 };
 
-export default function Authorization({ setStep, goToCart }: MappingProps) {
+export default function Authorization({ setStep, goToCart, setInput }: MappingProps) {
   const [isRegister, setRegister] = useState(true);
   const supabase = createClient();
 
-  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -42,15 +40,60 @@ export default function Authorization({ setStep, goToCart }: MappingProps) {
             emailRedirectTo: `${location.origin}/api/auth/callback`,
           },
         })
-        .then((res) => {
+        .then(async (res) => {
           if (res.error) throw res.error;
-          // TODO: check is account created before activation
-          toast('Na podany adres e-mail został wysłany link aktywacyjny');
+
+          if (res.data.user) {
+            const { data } = await supabase
+              .from('profiles')
+              .select(
+                `
+                id,
+                billing_data,
+                shipping_data
+              `
+              )
+              .eq('id', res.data.user!.id)
+              .single();
+
+            setInput((prev: InputState) => {
+              return {
+                ...prev,
+                shipping: {
+                  firstName: data!.shipping_data?.firstName ?? '',
+                  address1: data!.shipping_data?.address1 ?? '',
+                  city: data!.shipping_data?.city ?? '',
+                  country: data!.shipping_data?.country ?? '',
+                  postcode: data!.shipping_data?.postcode ?? '',
+                  phone: data!.shipping_data?.phone ?? '',
+                },
+                billing: {
+                  nip: data!.billing_data?.nip ?? '',
+                  firstName: data!.billing_data?.firstName ?? '',
+                  address1: data!.billing_data?.address1 ?? '',
+                  city: data!.billing_data?.city ?? '',
+                  country: data!.billing_data?.country ?? '',
+                  postcode: data!.billing_data?.postcode ?? '',
+                  email: res.data.user?.email ?? '',
+                  phone: data!.billing_data?.phone ?? '',
+                  company: data!.billing_data?.company ?? '',
+                  invoiceType: data!.billing_data?.invoiceType ?? 'Osoba prywatna',
+                },
+              };
+            });
+
+            if (!res.data.session) {
+              toast('Na podany adres e-mail został wysłany link aktywacyjny');
+            }
+
+            setStep(2);
+            return;
+          }
           setStep(2);
         })
         .catch((error) => {
           toast(error.message);
-          console.error(error); // TODO: Add error handling
+          console.error(error);
         });
     } else {
       await supabase.auth
@@ -58,14 +101,51 @@ export default function Authorization({ setStep, goToCart }: MappingProps) {
           email: data.email,
           password: data.password,
         })
-        .then((res) => {
-          setStep(2);
+        .then(async (res) => {
           if (res.error) throw res.error;
-          router.refresh();
+
+          const { data } = await supabase
+            .from('profiles')
+            .select(
+              `
+              id,
+              billing_data,
+              shipping_data
+            `
+            )
+            .eq('id', res.data.user!.id)
+            .single();
+
+          setInput((prev: InputState) => {
+            return {
+              ...prev,
+              shipping: {
+                firstName: data!.shipping_data?.firstName ?? '',
+                address1: data!.shipping_data?.address1 ?? '',
+                city: data!.shipping_data?.city ?? '',
+                country: data!.shipping_data?.country ?? '',
+                postcode: data!.shipping_data?.postcode ?? '',
+                phone: data!.shipping_data?.phone ?? '',
+              },
+              billing: {
+                nip: data!.billing_data?.nip ?? '',
+                firstName: data!.billing_data?.firstName ?? '',
+                address1: data!.billing_data?.address1 ?? '',
+                city: data!.billing_data?.city ?? '',
+                country: data!.billing_data?.country ?? '',
+                postcode: data!.billing_data?.postcode ?? '',
+                email: res.data.user?.email ?? '',
+                phone: data!.billing_data?.phone ?? '',
+                company: data!.billing_data?.company ?? '',
+                invoiceType: data!.billing_data?.invoiceType ?? 'Osoba prywatna',
+              },
+            };
+          });
+          setStep(2);
         })
         .catch((error) => {
           toast(error.message);
-          console.error(error); // TODO: Add error handling
+          console.error(error);
         });
     }
   };

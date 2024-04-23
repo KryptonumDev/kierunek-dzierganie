@@ -18,9 +18,8 @@ export async function POST(request: Request) {
   const { input, description }: { input: InputState; description: string } = await request.json();
   // const supabase = createClient();
 
-  // update user default data
-  const res = await supabase.from('profiles').update({ billing_data: input.billing, shipping_data: input.shipping }).eq('id', input.user_id);
-  console.log(res);
+  // update user default data for next orders
+  await supabase.from('profiles').update({ billing_data: input.billing, shipping_data: input.shipping }).eq('id', input.user_id);
 
   try {
     const p24 = new P24(

@@ -1,5 +1,6 @@
 import type { Billing, Complexity, Discount, ImgType, Shipping } from '@/global/types';
 import type { useCartItems } from '../Header.types';
+import type { Dispatch, SetStateAction } from 'react';
 
 export type Props = {
   setShowCheckout: () => void;
@@ -49,7 +50,7 @@ export type MappingProps = {
   goToCart: () => void;
   setStep: (step: number) => void;
   input: InputState;
-  setInput: (input: InputState) => void;
+  setInput: Dispatch<SetStateAction<InputState>>;
 };
 
 export type AsideProps = {
