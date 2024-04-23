@@ -44,9 +44,9 @@ export async function POST(request: Request) {
         amount: input.amount,
         used_discount: input.discount
           ? {
-            amount: input.discount.amount,
-            id: input.discount.id,
-          }
+              amount: input.discount.amount,
+              id: input.discount.id,
+            }
           : null,
         used_virtual_money: input.virtualMoney,
         paid_at: null,

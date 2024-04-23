@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import Authorization from './_Authorization';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 import type { Billing, Shipping } from '@/global/types';
+import { toast } from 'react-toastify';
 
 const createInputState = (billing?: Billing, shipping?: Shipping, userEmail?: string) => ({
   firmOrder: false,
@@ -52,6 +53,7 @@ export default function Checkout({
   usedDiscount,
   usedVirtualMoney,
   userId,
+  setUsedDiscount,
   // virtualWallet,
 }: Props) {
   const [step, setStep] = useState(1);
@@ -74,6 +76,14 @@ export default function Checkout({
       return;
     }
 
+    if (usedDiscount?.affiliatedBy === userId) {
+      setUsedDiscount(null);
+      toast('Nie możesz użyć własnego kodu afiliacyjnego');
+    }
+
+    //TODO: revalidate coupon after login,
+    // can be problem with per_user_limit if coupon code entered before login
+
     setInput((prev) => ({
       ...prev,
       amount: fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0),
@@ -82,7 +92,7 @@ export default function Checkout({
         (usedDiscount ? calculateDiscountAmount(input.amount, usedDiscount) : 0) -
         (usedVirtualMoney ? usedVirtualMoney * 100 : 0),
       needDelivery: fetchedItems.some((item) => item._type === 'product'),
-      discount: usedDiscount,
+      discount: usedDiscount?.affiliatedBy === userId ? null : usedDiscount,
       virtualMoney: usedVirtualMoney,
       user_id: userId,
       products: {
@@ -97,7 +107,7 @@ export default function Checkout({
         })),
       },
     }));
-  }, [fetchedItems, input.amount, setInput, usedDiscount, usedVirtualMoney, userId]);
+  }, [fetchedItems, input.amount, setInput, usedDiscount, usedVirtualMoney, userId, setUsedDiscount]);
 
   useEffect(() => {
     addEventListener('keydown', (e) => {

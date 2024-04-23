@@ -60,6 +60,7 @@ export type Cart = {
   setUsedDiscount: React.Dispatch<React.SetStateAction<Discount | null>>;
   usedVirtualMoney: number | null;
   usedDiscount: Discount | null;
+  userId?: string;
 } & useCartItems;
 
 export type Grid = {

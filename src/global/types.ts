@@ -384,4 +384,5 @@ export type Discount = {
   code: string;
   id: string;
   type: string;
+  affiliatedBy: string | null;
 };

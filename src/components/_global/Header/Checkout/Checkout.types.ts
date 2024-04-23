@@ -15,6 +15,7 @@ export type Props = {
   virtualWallet: number;
   usedDiscount: Discount | null;
   usedVirtualMoney: number | null;
+  setUsedDiscount: Dispatch<SetStateAction<Discount | null>>;
 };
 
 export type InputState = {

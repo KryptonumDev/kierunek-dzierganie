@@ -32,6 +32,7 @@ export default function Cart({
   usedVirtualMoney,
   usedDiscount,
   setUsedDiscount,
+  userId,
 }: Cart) {
   const {
     register,
@@ -65,34 +66,23 @@ export default function Cart({
   };
 
   const verifyCoupon = async () => {
-    // ug9gbd
     await fetch('/api/coupon/verify', {
       method: 'POST',
-      body: JSON.stringify({ code: discountCode }),
+      body: JSON.stringify({ code: discountCode, userId }),
     })
       .then((res) => res.json())
       .then((data) => {
-        if (data.error?.code === 'PGRST116') {
-          toast('Kod rabatowy jest nieprawidłowy');
-          return;
-        }
-
         if (data.error) {
-          toast(data.error.message);
-        }
-
-        if (data.affiliation_of === '') {
-          toast('Nie możesz użyć swojego kodu afiliacyjnego');
+          toast(data.error);
           return;
         }
-
-        // check is affiliation code is already used
 
         setUsedDiscount({
           amount: data.amount,
           code: discountCode,
           id: data.id,
           type: data.coupons_types.coupon_type,
+          affiliatedBy: data.affiliation_of,
         });
       })
       .catch((error) => {

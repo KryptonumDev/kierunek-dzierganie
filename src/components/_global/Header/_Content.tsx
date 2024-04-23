@@ -47,6 +47,7 @@ const Content = ({
           setShowCart(true);
           setShowCheckout(false);
         }}
+        setUsedDiscount={setUsedDiscount}
         usedDiscount={usedDiscount}
         userEmail={userEmail}
         shipping={shipping}
@@ -75,6 +76,7 @@ const Content = ({
         usedVirtualMoney={usedVirtualMoney}
         usedDiscount={usedDiscount}
         setUsedDiscount={setUsedDiscount}
+        userId={userId}
       />
       <a
         href='#main'
