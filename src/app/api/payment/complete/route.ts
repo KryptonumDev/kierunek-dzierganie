@@ -7,7 +7,9 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: Request) {
   const supabase = createClient();
   try {
-    const { sessionId, amount, currency, orderId } = await request.json();
+    const requestData = await request.json();
+    console.log(requestData);
+    const { sessionId, amount, currency, orderId }  = requestData;
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 
