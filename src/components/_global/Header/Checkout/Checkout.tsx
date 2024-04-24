@@ -76,7 +76,7 @@ export default function Checkout({
       return;
     }
 
-    if (usedDiscount?.affiliatedBy === userId) {
+    if (usedDiscount && usedDiscount.affiliatedBy === userId) {
       setUsedDiscount(null);
       toast('Nie możesz użyć własnego kodu afiliacyjnego');
     }
