@@ -4,8 +4,6 @@ import { P24 } from '@ingameltd/node-przelewy24';
 import { createClient as createSupabaseClient } from '@/utils/supabase-server';
 import { createClient } from 'next-sanity';
 
-export const dynamic = 'force-dynamic';
-
 const client = createClient({
   projectId: process.env.SANITY_PROJECT_ID,
   dataset: 'production',
