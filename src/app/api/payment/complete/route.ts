@@ -1,3 +1,4 @@
+'use server';
 import { NextResponse } from 'next/server';
 import { P24 } from '@ingameltd/node-przelewy24';
 import { createClient as createSupabaseClient } from '@/utils/supabase-server';
@@ -163,6 +164,16 @@ export async function POST(request: Request) {
         }
       }
     );
+
+    client.fetch(`
+      *[_id == 'global'][0] {
+        nav_Annotation,
+      },
+    `).then((res) => {
+      console.log(res);
+    }).catch((error) => {
+      console.log(error);
+    });
 
     if (error) throw new Error(error.message);
 
