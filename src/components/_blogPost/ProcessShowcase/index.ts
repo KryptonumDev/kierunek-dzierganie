@@ -12,6 +12,7 @@ export const ProcessShowcase_Query = `
           ${Img_Query}
         },
         paragraph,
+        isReversed,
       },
     },
   },

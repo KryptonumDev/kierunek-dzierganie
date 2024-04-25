@@ -146,6 +146,7 @@
 
   .lessonsWrapper {
     position: relative;
+    height: 300px;
 
     &::after {
       content: "";
@@ -159,8 +160,9 @@
   }
 
   .lessons {
-    overflow-y: scroll;
+    overflow-y: auto;
     max-height: 300px;
+    padding-right: 16px;
 
     &::-webkit-scrollbar {
       width: 3px;
@@ -177,11 +179,9 @@
       border-radius: 2px;
     }
 
-
     a {
       margin-top: 4px;
-      display: grid;
-      grid-template-columns: auto 1fr;
+      display: flex;
       gap: 16px;
       align-items: center;
       padding: 10px 8px;
@@ -195,15 +195,20 @@
       font-weight: 300;
       line-height: 27px;
 
+      p {
+        display: flex;
+        gap: 4px;
+        align-items: center
+      }
+
       small {
         color: var(--primary-500, #b4a29c);
         font-size: 14px;
         font-weight: 300;
       }
 
-      &:hover {
-        background: var(--primary-200, #faf4f0);
-        color: var(--primary-800, #53423c);
+      &[aria-checked='true'] {
+        background: #D0DAD2;
       }
 
       &[aria-current='true'] {
@@ -211,6 +216,12 @@
         color: var(--primary-800, #53423c);
         font-size: 18px;
       }
+
+      &:hover {
+        background: var(--primary-200, #faf4f0);
+        color: var(--primary-800, #53423c);
+      }
+
     }
   }
 }

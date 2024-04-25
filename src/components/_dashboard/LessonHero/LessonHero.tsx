@@ -203,15 +203,22 @@ const LessonHero = ({
           </p>
           <div className={styles.lessonsWrapper}>
             <div className={styles.lessons}>
-              {currentChapter.lessons.map((el, i) => (
-                <Link
-                  href={`/moje-konto/kursy/${course.slug}/${el.slug}`}
-                  key={i}
-                  aria-current={el.slug === lesson.slug}
-                >
-                  <small>Lekcja {i + 1}</small> {el.title}
-                </Link>
-              ))}
+              {currentChapter.lessons.map((el, i) => {
+                return (
+                  <Link
+                    href={`/moje-konto/kursy/${course.slug}/${el.slug}`}
+                    key={i}
+                    aria-current={el.slug === lesson.slug}
+                    aria-checked={progress.progress[currentChapter._id]![el._id]?.ended}
+                  >
+                    <p>
+                      {progress.progress[currentChapter._id]![el._id]?.ended && <CheckIcon />}
+                      <small>Lekcja {i + 1}</small>
+                    </p>{' '}
+                    {el.title}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -280,6 +287,24 @@ function ChevronRight() {
         strokeLinecap='round'
         strokeLinejoin='round'
         d='M12.813 4.375L7.186 10l5.625 5.625'
+      ></path>
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      width='20'
+      height='21'
+      fill='none'
+    >
+      <path
+        stroke='#5C7360'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        d='M16.25 5.97l-8.75 10-3.75-3.75'
       ></path>
     </svg>
   );

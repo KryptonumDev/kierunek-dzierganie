@@ -13,16 +13,19 @@ const ProcessShowcase = ({ list }: ProcessShowcaseTypes) => {
         >
           <Markdown.h2 className={styles.heading}>{heading}</Markdown.h2>
           <div className={styles.process}>
-            {process.map(({ img, paragraph }, index) => (
+            {process.map(({ img, paragraph, isReversed }, index) => (
               <div
                 key={index}
                 className={styles.processItem}
+                data-reversed={isReversed}
               >
-                <Img
-                  data={img}
-                  sizes='(max-width: 499px) 50vw, 33vw'
-                />
-                <Markdown>{paragraph}</Markdown>
+                {img && (
+                  <Img
+                    data={img}
+                    sizes='(max-width: 499px) 50vw, 33vw'
+                  />
+                )}
+                <Markdown data-fullWidth={img == undefined}>{paragraph}</Markdown>
               </div>
             ))}
           </div>
