@@ -52,8 +52,5 @@ export async function sanityPatchQuantityInVariant(id: string, key: string, quan
 }
 
 export async function sanityPatchQuantity(id: string, quantity: number) {
-  console.log('sanityPatchQuantity', id, quantity);
-  const res = await client.patch(id).dec({ countInStock: quantity }).commit();
-  console.log(res);
-  return res;
+  return await client.patch(id).dec({ countInStock: quantity }).commit();
 }
