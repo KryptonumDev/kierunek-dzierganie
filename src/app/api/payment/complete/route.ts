@@ -105,6 +105,7 @@ export async function POST(request: Request) {
         .eq('owner', data.user_id);
     }
 
+    // TODO: maybe move this to create step??
     data?.products.array.forEach(
       async (product: { quantity: number; variantId: string; id: string; courses: { _id: string }[] }) => {
         // create courses_progress record for each course
