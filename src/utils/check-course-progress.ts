@@ -1,15 +1,9 @@
 'use server';
 import type { Course, CoursesProgress } from '@/global/types';
-import { createClient } from '@supabase/supabase-js';
-
-const adminClient = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_KEY!, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
-  },
-});
+import { createClient } from './supabase-server';
 
 export async function checkCourseProgress(course: Course, progress: CoursesProgress) {
+  const supabase = createClient();
   // check if there is new lessons/chapters or some lessons/chapters were removed and update progress
   const newProgress = {
     ...progress,
@@ -54,10 +48,10 @@ export async function checkCourseProgress(course: Course, progress: CoursesProgr
     }
   }
   if (different) {
-    await adminClient.from('courses_progress').update({ progress: newProgress.progress }).eq('id', newProgress.id);
+    await supabase.from('courses_progress').update({ progress: newProgress.progress }).eq('id', newProgress.id);
   }
 
-  await adminClient.from('profiles').update({ last_watched_course: course._id }).eq('id', progress.owner_id);
+  await supabase.from('profiles').update({ last_watched_course: course._id }).eq('id', progress.owner_id);
 
   return newProgress;
 }

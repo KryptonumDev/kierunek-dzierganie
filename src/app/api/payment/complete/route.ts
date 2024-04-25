@@ -105,7 +105,6 @@ export async function POST(request: Request) {
         .eq('owner', data.user_id);
     }
 
-    console.log(data);
     // TODO: maybe move this to create step??
     data?.products.array.forEach(
       async (product: {
@@ -115,16 +114,17 @@ export async function POST(request: Request) {
         id: string;
         courses: null | { _id: string }[];
       }) => {
-        console.log(product.courses);
         // create courses_progress record for each course
         // TODO: test is course already exists in courses_progress ??
-        product.courses?.map((el) => {
-          supabase.from('courses_progress').insert({
+        if (product.courses) {
+          const newCourses = product.courses.map((el) => ({
             owner_id: data.user_id,
             course_id: el._id,
             progress: null,
-          });
-        });
+          }));
+          const res = supabase.from('courses_progress').insert(newCourses);
+          console.log(res);
+        }
 
         if (product.variantId) {
           // decrease quantity of chosen variant of variable product
