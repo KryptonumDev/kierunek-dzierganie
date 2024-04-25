@@ -22,6 +22,7 @@ const ProductCard = ({ data, inCart = false, horizontal, tabletHorizontal, basis
       image?: ImgType;
       type?: 'normal' | 'variable';
       name?: string;
+      countInStock?: number | null;
     } = {
       price: '',
       discount: undefined,
@@ -29,6 +30,7 @@ const ProductCard = ({ data, inCart = false, horizontal, tabletHorizontal, basis
       image: undefined,
       type: 'normal',
       name: data.name,
+      countInStock: data._type === 'product' ? data.countInStock : 1,
     };
 
     if (data.variants && data.variants?.length > 0) {
@@ -112,7 +114,7 @@ const ProductCard = ({ data, inCart = false, horizontal, tabletHorizontal, basis
         </div>
         {mainVariant.type === 'variable' ? (
           <Button href={`${basis ? basis : pageUrls[data.basis]}/${data.slug}`}>Wybierz wariant</Button>
-        ) : (
+        ) : mainVariant.countInStock! > 0 ? (
           <Button
             disabled={buttonText !== 'Dodaj do koszyka'}
             onClick={() => {
@@ -122,6 +124,8 @@ const ProductCard = ({ data, inCart = false, horizontal, tabletHorizontal, basis
           >
             {buttonText}
           </Button>
+        ) : (
+          <Button disabled={true}>Brak na stanie</Button>
         )}
       </div>
     </div>

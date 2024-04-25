@@ -180,7 +180,7 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
         <AddToCart
           id={id}
           variant={chosenVariant?._id}
-          disabled={!count}
+          disabled={!count || chosenVariant!.countInStock === 0}
           quantity={count}
         />
         <div className={styles['divider']} />
