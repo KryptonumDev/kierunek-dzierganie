@@ -165,7 +165,7 @@ export async function POST(request: Request) {
       }
     );
 
-    client.fetch(`
+    await client.fetch(`
       *[_id == 'global'][0] {
         nav_Annotation,
       },
