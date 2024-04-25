@@ -26,8 +26,10 @@ export const useCartItems = () => {
 
         const newArr = rawCart
           .filter((el) => el.quantity && Number(el.quantity) > 0)
+          .filter((el) => res.find((item) => item._id === el.product))
           .map((el) => {
             const item = res.find((item) => item._id === el.product)!;
+
             const variant = item.variants?.find((v) => v._id === el.variant) || null;
 
             return {

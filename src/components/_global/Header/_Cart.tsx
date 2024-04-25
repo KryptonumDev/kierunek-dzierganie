@@ -89,7 +89,6 @@ export default function Cart({
         toast(error.message);
       });
   };
-
   return (
     <>
       <div
