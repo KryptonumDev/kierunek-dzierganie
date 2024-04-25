@@ -105,6 +105,7 @@ export default function Checkout({
           complexity: item.complexity || null,
           courses: item._type === 'course' ? [{ _id: item._id }] : item.courses ?? null,
           variantId: item.variant?._id ?? null,
+          type: item._type,
         })),
       },
     }));
