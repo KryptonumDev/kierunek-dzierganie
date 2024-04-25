@@ -143,14 +143,20 @@ export async function POST(request: Request) {
               console.log(error);
             });
         } else if (product.type === 'product') {
-          console.log(client);
+          console.log('start request')
           // decrease quantity of each physical product
           const res = await client
             .patch(product.id)
             .dec({ countInStock: product.quantity })
             .commit()
+            .then((res) => {
+              console.log('res', res);
+            })
             .catch((error) => {
-              console.log(error);
+              console.log('err', error);
+            })
+            .finally(() => {
+              console.log('finally');
             });
 
           console.log(res);
