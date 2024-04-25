@@ -34,10 +34,12 @@ export const useCartItems = () => {
             const variant = item.variants?.find((v) => v._id === el.variant) || null;
 
             if (variant) {
-              return variant.countInStock >= el.quantity!;
+              // check if quantity is not higher than 0
+              return variant.countInStock > 0;
             }
 
-            return item.countInStock! >= el.quantity!;
+            // check if quantity is not higher than 0
+            return item.countInStock! > 0;
           })
           .filter((el) => res.find((item) => item._id === el.product))
           .map((el) => {
