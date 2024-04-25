@@ -129,11 +129,11 @@ export async function POST(request: Request) {
 
         if (product.variantId) {
           // decrease quantity of chosen variant of variable product
-          const res = sanityPatchQuantityInVariant(product.id, product.variantId, product.quantity);
+          const res = await sanityPatchQuantityInVariant(product.id, product.variantId, product.quantity);
           console.log('decrease quantity of chosen variant ', res);
         } else if (product.type === 'product') {
           // decrease quantity of each physical product
-          const res =  sanityPatchQuantity(product.id, product.quantity);
+          const res = await sanityPatchQuantity(product.id, product.quantity);
           console.log('decrease quantity of chosen product ', res);
         }
       }
