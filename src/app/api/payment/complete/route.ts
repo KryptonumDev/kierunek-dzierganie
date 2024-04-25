@@ -1,7 +1,7 @@
 'use server';
 import { NextResponse } from 'next/server';
 import { P24 } from '@ingameltd/node-przelewy24';
-import { createClient } from '@/utils/supabase-server';
+import { createClient } from '@/utils/supabase-admin';
 import { sanityPatchQuantity, sanityPatchQuantityInVariant } from '@/utils/sanity.fetch';
 
 export async function POST(request: Request) {

@@ -1,6 +1,6 @@
 'use server';
 import type { Course, CoursesProgress } from '@/global/types';
-import { createClient } from './supabase-server';
+import { createClient } from './supabase-admin';
 
 export async function checkCourseProgress(course: Course, progress: CoursesProgress) {
   const supabase = createClient();

@@ -179,6 +179,12 @@ const query = async (searchParams: { [key: string]: string }): Promise<QueryProp
     courses: data.courses.concat(data.lastWatched).map((course) => {
       const progress = res.data!.courses_progress.find((el) => el.course_id === course._id)!;
 
+      if (!progress)
+        return {
+          ...course,
+          progressPercentage: 0,
+        };
+
       let totalLessons = 0;
       let completedLessons = 0;
 
@@ -193,12 +199,11 @@ const query = async (searchParams: { [key: string]: string }): Promise<QueryProp
       }
 
       // if 0 lessons, return to avoid division by 0
-      if (totalLessons === 0) {
+      if (totalLessons === 0)
         return {
           ...course,
           progressPercentage: 0,
         };
-      }
 
       const completionPercentage = (completedLessons / totalLessons) * 100;
 
