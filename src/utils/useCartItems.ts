@@ -48,9 +48,12 @@ export const useCartItems = () => {
             const variant = item.variants?.find((v) => v._id === el.variant) || null;
 
             // check if quantity is not higher than countInStock
-            const quantity = variant
-              ? Math.min(el.quantity!, variant.countInStock)
-              : Math.min(el.quantity!, item.countInStock!);
+            const quantity =
+              item._type === 'course' || item._type === 'bundle'
+                ? 1
+                : variant
+                  ? Math.min(el.quantity!, variant.countInStock)
+                  : Math.min(el.quantity!, item.countInStock!);
 
             return {
               ...item,

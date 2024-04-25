@@ -119,20 +119,21 @@ export async function POST(request: Request) {
         // create courses_progress record for each course
         // TODO: test is course already exists in courses_progress ??
         product.courses?.map((el) => {
-          const res = supabase.from('courses_progress').insert({
+          supabase.from('courses_progress').insert({
             owner_id: data.user_id,
             course_id: el._id,
             progress: null,
           });
-          console.log('add course progress ', res);
         });
 
         if (product.variantId) {
           // decrease quantity of chosen variant of variable product
+          console.log('start decrease quantity of chosen variant')
           const res = await sanityPatchQuantityInVariant(product.id, product.variantId, product.quantity);
           console.log('decrease quantity of chosen variant ', res);
         } else if (product.type === 'product') {
           // decrease quantity of each physical product
+          console.log('start decrease quantity of chosen product')
           const res = await sanityPatchQuantity(product.id, product.quantity);
           console.log('decrease quantity of chosen product ', res);
         }
