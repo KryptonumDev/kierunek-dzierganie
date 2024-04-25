@@ -134,13 +134,26 @@ export async function POST(request: Request) {
         // TODO: maybe move this to create step??
         if (product.variantId) {
           // decrease quantity of chosen variant of variable product
+
           await client
             .patch(product.id)
             .dec({ [`variants[_key == "${product.variantId}"].countInStock`]: product.quantity })
-            .commit();
+            .commit()
+            .catch((error) => {
+              console.log(error);
+            });
         } else if (product.type === 'product') {
+          console.log(client);
           // decrease quantity of each physical product
-          await client.patch(product.id).dec({ countInStock: product.quantity }).commit();
+          const res = await client
+            .patch(product.id)
+            .dec({ countInStock: product.quantity })
+            .commit()
+            .catch((error) => {
+              console.log(error);
+            });
+
+          console.log(res);
         }
       }
     );
