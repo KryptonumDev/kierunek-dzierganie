@@ -5,11 +5,7 @@ import { createClient } from './supabase-admin';
 
 export async function updateElement(progress: CoursesProgress) {
   const supabase = createClient();
-  const updateDataQuery = supabase
-    .from('courses_progress')
-    .update({ progress: progress })
-    .eq('id', progress.id)
-    .select('*');
+  const updateDataQuery = supabase.from('courses_progress').update(progress).eq('id', progress.id).select('*');
 
   type UpdateData = QueryData<typeof updateDataQuery>;
 

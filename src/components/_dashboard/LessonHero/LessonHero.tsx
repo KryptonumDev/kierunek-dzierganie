@@ -21,12 +21,13 @@ const LessonHero = ({
   currentChapterIndex,
   currentLessonIndex,
   left_handed,
+  auto_play,
   id,
 }: Props) => {
   const router = useRouter();
   const supabase = createClient();
   const [leftHanded, setLeftHanded] = useState(left_handed);
-  const [autoplay, setAutoplay] = useState(false);
+  const [autoplay, setAutoplay] = useState(auto_play);
   const [isCompleted, setIsCompleted] = useState(
     () => progress.progress[currentChapter._id]![lesson._id]?.ended ?? false
   );
@@ -51,7 +52,7 @@ const LessonHero = ({
         [currentChapterId]: {
           ...progress.progress[currentChapterId],
           [currentLessonId]: {
-            notes: '',
+            notes: progress.progress[currentChapterId]![currentLessonId]?.notes || null,
             ended: ended,
           },
         },
@@ -61,7 +62,6 @@ const LessonHero = ({
         setIsCompleted(ended);
 
         // check if  course progress is 100%
-
         if (ended) {
           let completedChapters = 0;
           for (const chapterId in progress.progress) {
@@ -101,6 +101,17 @@ const LessonHero = ({
       .eq('id', id);
 
     setLeftHanded(isLeftHanded);
+  };
+
+  const setIsAutoplay = async (isAutoplay: boolean) => {
+    await supabase
+      .from('profiles')
+      .update({
+        auto_play: isAutoplay,
+      })
+      .eq('id', id);
+
+    setAutoplay(isAutoplay);
   };
 
   return (
@@ -171,7 +182,7 @@ const LessonHero = ({
               </Link>
             ) : (
               <>
-                {currentChapterIndex === course.chapters.length - 1 && isCompleted && (
+                {currentChapterIndex === course.chapters.length - 1 && isCompleted && completePercentage === 100 && (
                   <Link
                     className={`${styles['next']} link`}
                     href={`/moje-konto/kursy/${course.slug}/certyfikat`}
@@ -225,8 +236,8 @@ const LessonHero = ({
       </div>
       <div className={styles['columns']}>
         <div className={styles['column']}>
-          <Switch inputProps={{ onClick: () => setAutoplay(!autoplay) }}>Autoodtwarzanie</Switch>
-          <Switch inputProps={{ checked: leftHanded, onClick: () => setIsLeftHanded(!leftHanded) }}>
+          <Switch inputProps={{ checked: autoplay, onChange: () => setIsAutoplay(!autoplay)}}>Autoodtwarzanie</Switch>
+          <Switch inputProps={{ checked: leftHanded, onChange: () => setIsLeftHanded(!leftHanded) }}>
             Jestem osobą leworęczną
           </Switch>
           <p>Ustawienie to dostosowuje w jaki sposób wyświetlają Ci się kursy i pliki do lekcji</p>

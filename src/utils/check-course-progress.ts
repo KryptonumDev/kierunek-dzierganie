@@ -47,6 +47,7 @@ export async function checkCourseProgress(course: Course, progress: CoursesProgr
       }
     }
   }
+
   if (different) {
     await supabase.from('courses_progress').update({ progress: newProgress.progress }).eq('id', newProgress.id);
   }

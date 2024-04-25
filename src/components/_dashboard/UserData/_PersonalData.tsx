@@ -22,7 +22,7 @@ export default function PersonalData({ billing_data, id }: PersonalDataTypes) {
     mode: 'all',
     defaultValues: {
       firstName: billing_data.firstName,
-      address: billing_data.address1,
+      address1: billing_data.address1,
       postcode: billing_data.postcode,
       city: billing_data.city,
       country: billing_data.country,
@@ -101,7 +101,7 @@ export default function PersonalData({ billing_data, id }: PersonalDataTypes) {
         />
       )}
       <Input
-        register={register('address', {
+        register={register('address1', {
           required: {
             value: true,
             message: 'Pole wymagane',

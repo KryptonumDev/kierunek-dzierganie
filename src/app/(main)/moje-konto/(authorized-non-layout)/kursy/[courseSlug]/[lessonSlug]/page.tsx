@@ -30,12 +30,14 @@ type QueryProps = {
   };
   courses_progress: SupabaseData['courses_progress'][0];
   left_handed: boolean;
+  auto_play: boolean;
   id: string;
 };
 
 type SupabaseData = {
   id: string;
   left_handed: boolean;
+  auto_play: boolean;
   courses_progress: CoursesProgress[];
 };
 
@@ -44,7 +46,7 @@ export default async function Course({
 }: {
   params: { courseSlug: string; lessonSlug: string };
 }) {
-  const { course, lesson, courses_progress, left_handed, id }: QueryProps = await query(courseSlug, lessonSlug);
+  const { course, lesson, courses_progress, left_handed, id, auto_play }: QueryProps = await query(courseSlug, lessonSlug);
 
   const currentChapterInfo = (() => {
     let currentChapter = course.chapters[0]!;
@@ -87,6 +89,7 @@ export default async function Course({
       <LessonHero
         id={id}
         left_handed={left_handed}
+        auto_play={auto_play}
         course={course}
         lesson={lesson}
         currentChapter={currentChapterInfo.currentChapter as Chapter}
@@ -140,6 +143,7 @@ const query = async (courseSlug: string, lessonSlug: string) => {
       `
         id, 
         left_handed,
+        auto_play,
         courses_progress (
           id,
           course_id,
@@ -263,6 +267,7 @@ const query = async (courseSlug: string, lessonSlug: string) => {
     ...data,
     courses_progress: progress,
     left_handed: res.data.left_handed,
+    auto_play: res.data.auto_play,
     id: user!.id,
   };
 };

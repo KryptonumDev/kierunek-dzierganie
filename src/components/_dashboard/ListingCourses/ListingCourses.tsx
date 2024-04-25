@@ -3,9 +3,12 @@ import styles from './ListingCourses.module.scss';
 import type { Props } from './ListingCourses.types';
 import FeaturedCourseCard from '@/components/ui/FeaturedCourseCard';
 import Filters from './_Filters';
+import Markdown from '@/components/ui/markdown';
 
 const ListingCourses = ({ categories, authors, courses, lastWatchedCourse, totalCourses }: Props) => {
   const lastWatched = courses.find((course) => course._id === lastWatchedCourse);
+
+  const featuredProductExcerpt = lastWatched?.excerpt ? <Markdown>{lastWatched.excerpt}</Markdown> : undefined;
 
   return (
     <section className={styles['ListingCourses']}>
@@ -20,7 +23,7 @@ const ListingCourses = ({ categories, authors, courses, lastWatchedCourse, total
           complexity={lastWatched.complexity}
           courseLength={lastWatched.courseLength}
           progressPercentage={lastWatched.progressPercentage}
-          excerpt={lastWatched.excerpt}
+          excerpt={featuredProductExcerpt}
         />
       )}
       <Filters

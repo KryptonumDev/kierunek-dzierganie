@@ -7,5 +7,5 @@ export type Props = {
   courseLength: string;
   complexity: Complexity;
   progressPercentage: number;
-  excerpt: string;
+  excerpt?: JSX.Element;
 };

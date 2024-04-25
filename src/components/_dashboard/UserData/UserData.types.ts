@@ -24,7 +24,7 @@ export type AuthorizationDataTypes = {
 
 export type PersonalDataFormTypes = {
   firstName: string;
-  address: string;
+  address1: string;
   postcode: string;
   city: string;
   country: string;
