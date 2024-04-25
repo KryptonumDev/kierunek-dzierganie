@@ -336,7 +336,6 @@ const CartGrid = ({ fetchedItems, removeItem, updateItemQuantity }: Grid) => {
               sizes='175px'
             />
           )}
-
           <div>
             <h3>
               {item.name} {item.variant ? `- ${item.variant.name}` : ''}
@@ -354,8 +353,6 @@ const CartGrid = ({ fetchedItems, removeItem, updateItemQuantity }: Grid) => {
                     }}
                   />
                 </div>
-                {/* TODO: add attributes */}
-                <div></div>
               </div>
             )}
           </div>
