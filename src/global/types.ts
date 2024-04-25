@@ -60,6 +60,9 @@ export type ProductCard = {
     featuredVideo: string;
     gallery: ImgType;
   }> | null;
+  courses: Array<{
+    _id: string;
+  }>;
 };
 
 export type ProductVariant = {

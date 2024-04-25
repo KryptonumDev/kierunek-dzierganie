@@ -9,7 +9,7 @@ import { createClient } from '@/utils/supabase-server';
 const Header = async () => {
   const { global, cart } = await query();
   const nav_annotation = <Markdown>{global.nav_Annotation ?? ''}</Markdown>;
-  
+
   const supabase = createClient();
 
   const {

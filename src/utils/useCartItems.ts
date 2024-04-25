@@ -26,15 +26,33 @@ export const useCartItems = () => {
 
         const newArr = rawCart
           .filter((el) => el.quantity && Number(el.quantity) > 0)
+          .filter((el) => {
+            const item = res.find((item) => item._id === el.product)!;
+
+            if (item._type === 'course' || item._type === 'bundle') return true;
+
+            const variant = item.variants?.find((v) => v._id === el.variant) || null;
+
+            if (variant) {
+              return variant.countInStock >= el.quantity!;
+            }
+
+            return item.countInStock! >= el.quantity!;
+          })
           .filter((el) => res.find((item) => item._id === el.product))
           .map((el) => {
             const item = res.find((item) => item._id === el.product)!;
 
             const variant = item.variants?.find((v) => v._id === el.variant) || null;
 
+            // check if quantity is not higher than countInStock
+            const quantity = variant
+              ? Math.min(el.quantity!, variant.countInStock)
+              : Math.min(el.quantity!, item.countInStock!);
+
             return {
               ...item,
-              quantity: el.quantity!,
+              quantity: quantity,
               price: variant ? variant.price! : item.price!,
               discount: variant ? variant.discount : item.discount,
               variant: variant,
@@ -43,7 +61,10 @@ export const useCartItems = () => {
           });
 
         rawCart.forEach((el) => {
-          if (!res.find((item) => item._id === el.product)) {
+          if (
+            !res.find((item) => item._id === el.product) || // check if product still exists
+            !newArr.find((item) => item._id === el.product) // check if product isn't filtrated in newArr
+          ) {
             removeItem(el.id);
           }
         });

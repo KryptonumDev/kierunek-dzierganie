@@ -132,4 +132,7 @@ export const PRODUCT_CARD_QUERY = `
       ${Img_Query}
     },
   },
+  courses[]->{
+    _id,
+  }
 `;

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { P24 } from '@ingameltd/node-przelewy24';
 import { createClient } from '@/utils/supabase-server';
+import { sanityPatchQuantity, sanityPatchQuantityInVariant } from '@/utils/sanity.fetch';
 
 export const dynamic = 'force-dynamic';
 
@@ -40,7 +41,8 @@ export async function POST(request: Request) {
         created_at,
         user_id,
         used_discount,
-        used_virtual_money
+        used_virtual_money,
+        products
       `
       )
       .single();
@@ -102,6 +104,27 @@ export async function POST(request: Request) {
         })
         .eq('owner', data.user_id);
     }
+
+    data?.products.array.forEach(
+      async (product: { quantity: number; variantId: string; id: string; courses: { _id: string }[] }) => {
+        // create courses_progress record for each course
+        product.courses.map((el) => {
+          supabase.from('courses_progress').insert({
+            owner_id: data.user_id,
+            course_id: el._id,
+            progress: null,
+          });
+        });
+
+        if (product.variantId) {
+          // decrease quantity of chosen variant of variable product
+          sanityPatchQuantityInVariant(product.id, product.variantId, product.quantity);
+        } else {
+          // decrease quantity of each physical product
+          sanityPatchQuantity(product.id, product.quantity);
+        }
+      }
+    );
 
     if (error) throw new Error(error.message);
 
