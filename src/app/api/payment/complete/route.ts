@@ -1,19 +1,11 @@
 'use server';
 import { NextResponse } from 'next/server';
 import { P24 } from '@ingameltd/node-przelewy24';
-import { createClient as createSupabaseClient } from '@/utils/supabase-server';
-import { createClient } from 'next-sanity';
-
-const client = createClient({
-  projectId: process.env.SANITY_PROJECT_ID,
-  dataset: 'production',
-  apiVersion: '2024-03-20',
-  useCdn: false,
-  perspective: 'published',
-});
+import { createClient } from '@/utils/supabase-server';
+import { sanityPatchQuantity, sanityPatchQuantityInVariant } from '@/utils/sanity.fetch';
 
 export async function POST(request: Request) {
-  const supabase = createSupabaseClient();
+  const supabase = createClient();
   try {
     const { sessionId, amount, currency, orderId } = await request.json();
 
@@ -133,45 +125,13 @@ export async function POST(request: Request) {
         // TODO: maybe move this to create step??
         if (product.variantId) {
           // decrease quantity of chosen variant of variable product
-
-          await client
-            .patch(product.id)
-            .dec({ [`variants[_key == "${product.variantId}"].countInStock`]: product.quantity })
-            .commit()
-            .catch((error) => {
-              console.log(error);
-            });
+          await sanityPatchQuantityInVariant(product.id, product.variantId, product.quantity);
         } else if (product.type === 'product') {
-          console.log('start request');
           // decrease quantity of each physical product
-          const res = await client
-            .patch(product.id)
-            .dec({ countInStock: product.quantity })
-            .commit()
-            .then((res) => {
-              console.log('res', res);
-            })
-            .catch((error) => {
-              console.log('err', error);
-            })
-            .finally(() => {
-              console.log('finally');
-            });
-
-          console.log(res);
+          await sanityPatchQuantity(product.id, product.quantity);
         }
       }
     );
-
-    await client.fetch(`
-      *[_id == 'global'][0] {
-        nav_Annotation,
-      },
-    `).then((res) => {
-      console.log(res);
-    }).catch((error) => {
-      console.log(error);
-    });
 
     if (error) throw new Error(error.message);
 
