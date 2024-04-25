@@ -83,6 +83,7 @@ export default function Checkout({
 
     //TODO: revalidate coupon after login,
     // can be problem with per_user_limit if coupon code entered before loginx
+
     setInput((prev) => ({
       ...prev,
       amount: fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0),

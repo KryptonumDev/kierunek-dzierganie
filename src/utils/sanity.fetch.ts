@@ -44,13 +44,6 @@ export default async function sanityFetch<QueryResponse>({
   });
 }
 
-/**
- * Performs a Sanity query in GROQ for fetching data.
- * @param {string} id - Id of product that should be patched.
- * @param {string} key - Key of patched variant.
- * @param {number} quantity - Quantity to be patched.
- * @returns {Promise<SanityDocument<Record<string, any>>>} Returns a patched sanity record.
- */
 export async function sanityPatchQuantityInVariant(id: string, key: string, quantity: number) {
   return await client
     .patch(id)
@@ -58,12 +51,9 @@ export async function sanityPatchQuantityInVariant(id: string, key: string, quan
     .commit();
 }
 
-/**
- * Performs a Sanity query in GROQ for fetching data.
- * @param {string} id - Id of product that should be patched.
- * @param {number} quantity - Quantity to be patched.
- * @returns {Promise<SanityDocument<Record<string, any>>>} Returns a patched sanity record.
- */
 export async function sanityPatchQuantity(id: string, quantity: number) {
-  return await client.patch(id).dec({ countInStock: quantity }).commit();
+  console.log('sanityPatchQuantity', id, quantity);
+  const res = await client.patch(id).dec({ countInStock: quantity }).commit();
+  console.log(res);
+  return res;
 }
