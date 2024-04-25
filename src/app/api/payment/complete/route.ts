@@ -122,7 +122,7 @@ export async function POST(request: Request) {
             course_id: el._id,
             progress: null,
           }));
-          const res = supabase.from('courses_progress').insert(newCourses);
+          const res = await supabase.from('courses_progress').insert(newCourses);
           console.log(res);
         }
 
