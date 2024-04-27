@@ -19,9 +19,16 @@
       padding: 10px 14px 10px 16px;
       border: 1px solid var(--primary-400);
       border-radius: 4px;
+      transition: border-color 0.3s ease, background 0.3s ease, color 0.3 ease;
 
       >span {
         color: var(--primary-600);
+      }
+
+      &:hover {
+        border-color: 1px solid var(--primary-600);
+        background: var(--primary-100);
+        color: var(--primary-900);
       }
 
       &[data-highlighted="true"] {
@@ -29,6 +36,5 @@
         border: 1px solid var(--primary-500);
       }
     }
-
   }
 }
