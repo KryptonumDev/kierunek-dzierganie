@@ -1,17 +1,20 @@
-import styles from './Search.module.scss';
-import Loader from './Loader';
-import Link from 'next/link';
 import Img from '@/components/ui/image';
-import findSearchedName from './find-searched-name';
-import Placeholder from './Placeholder';
+import Link from 'next/link';
 import { type SearchResultType } from '../Header.types';
+import Loader from './Loader';
+import Placeholder from './Placeholder';
+import styles from './Search.module.scss';
+import findSearchedName from './find-searched-name';
+import handleItemClick from './handle-item-click';
 
 export default function Products({
   searchResults,
   passedRef,
+  setIsSearching,
 }: {
   searchResults: SearchResultType | null;
   passedRef: React.RefObject<HTMLInputElement>;
+  setIsSearching: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   return (
     <div className={styles.physicalProducts}>
@@ -30,6 +33,7 @@ export default function Products({
               className={styles.item}
               key={index}
               href={`${basis === 'crocheting' ? '/produkty-do-szydelkowania' : '/produkty-do-dziergania'}/${slug}`}
+              onClick={() => handleItemClick(passedRef, setIsSearching)}
             >
               <Img
                 data={gallery}
@@ -51,6 +55,7 @@ export default function Products({
               className={styles.item}
               key={index}
               href={`${basis === 'crocheting' ? '/produkty-do-szydelkowania' : '/produkty-do-dziergania'}/${slug}`}
+              onClick={() => handleItemClick(passedRef, setIsSearching)}
             >
               <Img
                 data={gallery}

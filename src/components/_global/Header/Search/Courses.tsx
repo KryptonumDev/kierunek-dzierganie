@@ -1,17 +1,19 @@
-import { SearchResultType } from '../Header.types';
-import styles from './Search.module.scss';
-import Link from 'next/link';
-import Placeholder from './Placeholder';
-import Loader from './Loader';
-import findSearchedName from './find-searched-name';
 import Img from '@/components/ui/image';
-
+import Link from 'next/link';
+import { SearchResultType } from '../Header.types';
+import Loader from './Loader';
+import Placeholder from './Placeholder';
+import styles from './Search.module.scss';
+import findSearchedName from './find-searched-name';
+import handleItemClick from './handle-item-click';
 export default function Courses({
   searchResults,
   passedRef,
+  setIsSearching,
 }: {
   searchResults: SearchResultType | null;
   passedRef: React.RefObject<HTMLInputElement>;
+  setIsSearching: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   return (
     <div className={styles.courses}>
@@ -26,6 +28,7 @@ export default function Courses({
               className={styles.item}
               key={index}
               href={`${basis === 'crocheting' ? '/kursy-dziergania-na-drutach' : '/kursy-szydelkowania'}/${slug}`}
+              onClick={() => handleItemClick(passedRef, setIsSearching)}
             >
               <Img
                 data={image}
