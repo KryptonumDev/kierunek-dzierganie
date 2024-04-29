@@ -54,6 +54,7 @@ const query = async (): Promise<QueryProps> => {
     .from('profiles')
     .select('id, orders ( products, id, amount, payment_method, created_at, status, orders_statuses( * ) )')
     .eq('id', user!.id)
+    .order('id', { referencedTable: 'orders', ascending: false })
     .returns<{ id: string; orders: Order[] }[]>()
     .single();
 

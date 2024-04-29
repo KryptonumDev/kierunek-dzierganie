@@ -330,12 +330,25 @@ export type Order = {
   payment_method: string;
   products: {
     array: {
+      complexity: Complexity;
+      courses: ProductCard;
+      discount: number;
+      image: ImgType;
+      type: 'product' | 'course' | 'bundle';
+      variantId: string;
       id: string;
       name: string;
       price: number;
       quantity: number;
     }[];
   };
+  shippingMethod: {
+    inpostPointData: InpostPoint | null;
+    name: string;
+    price: number;
+  };
+  virtualMoney?: number | null;
+  discount?: Discount | null;
   billing: Billing;
   shipping: Shipping;
   orders_statuses: {
@@ -397,4 +410,4 @@ export type InpostPoint = {
     line2: string;
   };
   name: string;
-}
+};

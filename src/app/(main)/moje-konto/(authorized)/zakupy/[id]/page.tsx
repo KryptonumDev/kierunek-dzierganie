@@ -15,6 +15,7 @@ export default async function Order({ params: { id } }: { params: { id: string }
   const { order, products }: QueryProps = await query(id);
 
   return (
+    // TODO: remove products prop?
     <OrderData
       order={order}
       products={products}
@@ -32,10 +33,23 @@ export async function generateMetadata({ params: { id } }: { params: { id: strin
 const query = async (id: string): Promise<QueryProps> => {
   const supabase = createClient();
 
-
   const res = await supabase
     .from('orders')
-    .select('products, id, amount, payment_method, created_at, billing, shipping, orders_statuses( * )')
+    .select(
+      `
+        products, 
+        id, 
+        amount, 
+        payment_method, 
+        created_at, 
+        billing, 
+        shipping, 
+        discount:used_discount, 
+        shippingMethod:shipping_method, 
+        virtualMoney:used_virtual_money, 
+        orders_statuses( * )
+      `
+    )
     .eq('id', id)
     .returns<Order[]>()
     .single();
