@@ -37,6 +37,10 @@ export default async function BlogPage() {
   );
 }
 
+export const generateMetadata = async () => {
+  return await QueryMetadata('Blog_Page', page.path);
+};
+
 const query = async (): Promise<BlogPageQueryProps> => {
   return await sanityFetch<BlogPageQueryProps>({
     query: /* groq */ `
@@ -48,8 +52,4 @@ const query = async (): Promise<BlogPageQueryProps> => {
     `,
     tags: ['Blog_Page'],
   });
-};
-
-export const generateMetadata = async () => {
-  return await QueryMetadata('Blog_Page', page.path);
 };

@@ -22,7 +22,7 @@ export type InputState = {
   firmOrder: boolean;
   shippingSameAsBilling: boolean;
   shipping: Shipping;
-  shippingMethod: {
+  shippingMethod?: {
     inpostPointData: string | InpostPoint | null;
     name: string;
     price: number;

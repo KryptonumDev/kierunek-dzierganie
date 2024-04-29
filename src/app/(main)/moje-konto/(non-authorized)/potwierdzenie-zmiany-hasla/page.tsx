@@ -1,15 +1,21 @@
 import SuccessPasswordChange from '@/components/_dashboard/SuccessPasswordChange';
-import Seo from '@/global/Seo';
+import Breadcrumbs from '@/components/_global/Breadcrumbs';
+import { QueryMetadata } from '@/global/Seo/query-metadata';
+
+const currentUrl = '/moje-konto/potwierdzenie-zmiany-hasla';
+const page = [{ name: 'Potwierdzenie zmiany hasła', path: currentUrl }];
 
 const SuccessPasswordChangePage = async () => {
-  return <SuccessPasswordChange />;
+  return (
+    <>
+      <Breadcrumbs data={page} />
+      <SuccessPasswordChange />
+    </>
+  );
 };
 
 export async function generateMetadata() {
-  return Seo({
-    title: 'Hasło pomyślnie zmienione | Kierunek dzierganie',
-    path: '/moje-konto/potwierdzenie-zmiany-hasla',
-  });
+  return await QueryMetadata('ChangePasswordSuccess_Page', currentUrl);
 }
 
 export default SuccessPasswordChangePage;

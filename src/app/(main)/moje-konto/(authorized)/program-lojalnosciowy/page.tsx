@@ -6,14 +6,20 @@ import TextSection, { TextSection_Query } from '@/components/_dashboard/_Affilia
 import type { AffiliatePage_QueryTypes } from './page.types';
 import { createClient } from '@/utils/supabase-server';
 import { createClient as createAdminClient } from '@/utils/supabase-admin';
+import Breadcrumbs from '@/components/_global/Breadcrumbs';
 
-const currentPath = '/moje-konto/pomoc';
+const currentPath = '/moje-konto/program-lojalnosciowy';
+const page = [{ name: 'Program lojalnościowy', path: currentPath }];
 
 export default async function AffiliatePage() {
   const { subscribed, unsubscribed, userId, isSubscribed, name, affiliateCode, balance } = await query();
 
   return (
     <div className='main'>
+      <Breadcrumbs
+        visible={false}
+        data={page}
+      />
       {isSubscribed ? (
         <>
           <Balance
@@ -60,6 +66,10 @@ export default async function AffiliatePage() {
       )}
     </div>
   );
+}
+
+export async function generateMetadata() {
+  return await QueryMetadata('AffiliateDashboard_Page', currentPath);
 }
 
 async function query(): Promise<AffiliatePage_QueryTypes> {
@@ -121,8 +131,6 @@ async function query(): Promise<AffiliatePage_QueryTypes> {
     tags: ['AffiliateDashboard_Page'],
   });
 
-  console.log(data);
-
   return {
     ...res,
     userId: user!.id,
@@ -134,8 +142,4 @@ async function query(): Promise<AffiliatePage_QueryTypes> {
     // @ts-expect-error - virtual_wallet is not array, bug in supabase
     balance: data!.virtual_wallet.amount,
   };
-}
-
-export async function generateMetadata() {
-  return await QueryMetadata('AffiliateDashboard_Page', currentPath);
 }

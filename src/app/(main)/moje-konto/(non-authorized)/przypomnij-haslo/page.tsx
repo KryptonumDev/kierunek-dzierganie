@@ -1,15 +1,21 @@
 import PasswordChangeEmail from '@/components/_dashboard/PasswordChangeEmail';
-import Seo from '@/global/Seo';
+import Breadcrumbs from '@/components/_global/Breadcrumbs';
+import { QueryMetadata } from '@/global/Seo/query-metadata';
+
+const currentUrl = '/moje-konto/przypomnij-haslo';
+const page = [{ name: 'Przypomnij hasło', path: currentUrl }];
 
 const PasswordChangePage = async () => {
-  return <PasswordChangeEmail />;
+  return (
+    <>
+      <Breadcrumbs data={page} />
+      <PasswordChangeEmail />
+    </>
+  );
 };
 
 export async function generateMetadata() {
-  return Seo({
-    title: 'Przypomnij hasło | Kierunek dzierganie',
-    path: '/moje-konto/przypomnij-haslo',
-  });
+  return await QueryMetadata('ResetPassword_Page', currentUrl);
 }
 
 export default PasswordChangePage;

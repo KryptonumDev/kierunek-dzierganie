@@ -1,11 +1,15 @@
 import EmptyOrders from '@/components/_dashboard/EmptyOrders';
 import ListingOrders from '@/components/_dashboard/ListingOrders';
+import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import { Img_Query } from '@/components/ui/image';
-import Seo from '@/global/Seo';
+import { QueryMetadata } from '@/global/Seo/query-metadata';
 import type { ImgType, Order, ProductCard } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createClient } from '@/utils/supabase-server';
 import { PRODUCT_CARD_QUERY } from 'src/global/constants';
+
+const currentUrl = '/moje-konto/zakupy';
+const page = [{ name: 'Historia zakupów', path: currentUrl }];
 
 type QueryProps = {
   global: {
@@ -21,6 +25,10 @@ export default async function Orders() {
 
   return (
     <div>
+      <Breadcrumbs
+        visible={false}
+        data={page}
+      />
       {orders.length > 0 ? (
         <ListingOrders
           orders={orders}
@@ -37,10 +45,7 @@ export default async function Orders() {
 }
 
 export async function generateMetadata() {
-  return Seo({
-    title: 'Historia zakupów | Kierunek dzierganie',
-    path: '/moje-konto/zakupy',
-  });
+  return await QueryMetadata('Orders_Page', currentUrl);
 }
 
 const query = async (): Promise<QueryProps> => {
