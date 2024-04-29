@@ -28,6 +28,7 @@
       position: relative;
       display: flex;
       align-self: center;
+      overflow: hidden;
 
       >img {
         aspect-ratio: 1.6/1;
@@ -35,6 +36,11 @@
         width: 100%;
         height: auto;
         border-radius: 4px;
+        transition: transform 0.3s;
+
+        &:hover {
+          transform: scale(1.05);
+        }
       }
     }
 
@@ -92,13 +98,19 @@
 
       .imageWrapper {
         position: relative;
+        overflow: hidden;
 
         >img {
           width: 100%;
           object-fit: cover;
           aspect-ratio: 381/239;
           border-radius: 4px;
+          transition: transform 0.3s;
         }
+      }
+
+      &:hover .imageWrapper>img {
+        transform: scale(1.05);
       }
 
       @media (max-width: 999px) {

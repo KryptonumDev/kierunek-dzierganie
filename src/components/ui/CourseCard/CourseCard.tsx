@@ -4,10 +4,14 @@ import Img from '../image';
 import styles from './CourseCard.module.scss';
 import type { Props } from './CourseCard.types';
 import PercentChart from '../PercentChart';
+import Link from 'next/link';
 
 const CourseCard = ({ name, slug, image, complexity, progressPercentage }: Props) => {
   return (
-    <div className={styles['CourseCard']}>
+    <Link
+      className={styles['CourseCard']}
+      href={`/moje-konto/kursy/${slug}`}
+    >
       <div className={styles['image-wrap']}>
         <span
           style={{
@@ -18,10 +22,12 @@ const CourseCard = ({ name, slug, image, complexity, progressPercentage }: Props
         >
           <span>{courseComplexityEnum[complexity].name}</span>
         </span>
-        <Img
-          data={image}
-          sizes='380px'
-        />
+        <div className={styles.imageWrapper}>
+          <Img
+            data={image}
+            sizes='380px'
+          />
+        </div>
       </div>
       {/* <small>Długość kursu: {courseLength}</small> */}
       <h3>{name}</h3>
@@ -31,7 +37,7 @@ const CourseCard = ({ name, slug, image, complexity, progressPercentage }: Props
         </p>
         <Button href={`/moje-konto/kursy/${slug}`}>Oglądaj</Button>
       </div>
-    </div>
+    </Link>
   );
 };
 
