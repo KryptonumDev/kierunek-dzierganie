@@ -123,7 +123,7 @@ const Content = ({
                   setShowCart(true);
                 }}
                 className={styles.basket}
-                // data-basket-items='2'
+              // data-basket-items='2'
               >
                 Koszyk
               </button>

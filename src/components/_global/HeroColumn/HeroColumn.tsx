@@ -1,7 +1,7 @@
 import Img from '@/components/ui/image';
+import Markdown from '@/components/ui/markdown';
 import styles from './HeroColumn.module.scss';
 import type { Props } from './HeroColumn.types';
-import Markdown from '@/components/ui/markdown';
 
 const HeroColumn = ({ heading, paragraph, img, index }: Props) => {
   const HeadingComponent = index === 0 ? Markdown.h1 : Markdown.h2;
@@ -14,7 +14,7 @@ const HeroColumn = ({ heading, paragraph, img, index }: Props) => {
       </header>
       <Img
         data={img}
-        sizes='(max-width: 999px) 100vw, (min-width: 1280px) 50vw, 600px'
+        sizes='(max-width: 649px) 100vw, (max-width: 999px) 600px, (max-width: 1279px) 50vw, 584px'
         priority={index === 0}
       />
     </section>

@@ -2,8 +2,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import styles from './Header.module.scss';
-import type { _NavProps } from './Header.types';
 import Img from '@/components/ui/image';
+import type { _NavProps } from './Header.types';
 
 const Nav = ({ links, ChevronDownIcon, ChevronBackIcon, showMenu, setShowMenu }: _NavProps) => {
   const [tab, setTab] = useState<number | null>(null);

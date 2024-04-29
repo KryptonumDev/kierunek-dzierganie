@@ -1,7 +1,8 @@
 import Markdown from '@/components/ui/markdown';
+import Img from '@/components/ui/image';
 import styles from './TilesFeatures.module.scss';
 import type { Props } from './TilesFeatures.types';
-import Img from '@/components/ui/image';
+import { TilesItem } from './_TilesItem';
 
 const TilesFeatures = ({ heading, paragraph, list }: Props) => {
   return (
@@ -12,15 +13,15 @@ const TilesFeatures = ({ heading, paragraph, list }: Props) => {
           <Markdown className={styles.paragraph}>{paragraph}</Markdown>
         )}
       </header>
-      <div className={styles.wrapper}>
+      <div className={styles.tiles}>
         {list.map(({ img, heading, paragraph }, i) => (
-          <div className={styles.item} key={i}>
+          <TilesItem className={styles.item} key={i}>
             <Img data={img} sizes='274px' />
             <div>
               <Markdown.h3>{heading}</Markdown.h3>
               <Markdown>{paragraph}</Markdown>
             </div>
-          </div>
+          </TilesItem>
         ))}
       </div>
     </section>

@@ -2,9 +2,9 @@ import sanityFetch from '@/utils/sanity.fetch';
 import Content from './_Content';
 import Markdown from '@/components/ui/markdown';
 import { Img_Query } from '@/components/ui/image';
-import type { QueryProps } from './Header.types';
 import { PRODUCT_CARD_QUERY } from '@/global/constants';
 import { createClient } from '@/utils/supabase-server';
+import type { QueryProps } from './Header.types';
 
 const Header = async () => {
   const { global, cart } = await query();
