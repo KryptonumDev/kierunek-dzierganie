@@ -49,18 +49,28 @@
       height: 50px;
 
       iframe {
-        height: 0;
-        opacity: 0;
-        pointer-events: none;
+        display: none !important;
       }
 
-      &.active {
+      .inpost-data{
+        display: none;
+      }
+
+      &[data-active='true'] {
         height: 500px;
 
         iframe {
-          height: 450px;
-          opacity: 1;
-          pointer-events: all;
+          height: 450px !important;
+          display: block !important;
+        }
+      }
+
+      &[data-selected='true'] {
+        height: auto;
+
+        .inpost-data{
+          display: block;
+          margin-top: 12px;
         }
       }
     }

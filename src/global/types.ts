@@ -390,3 +390,11 @@ export type Discount = {
   type: string;
   affiliatedBy: string | null;
 };
+
+export type InpostPoint = {
+  address: {
+    line1: string;
+    line2: string;
+  };
+  name: string;
+}

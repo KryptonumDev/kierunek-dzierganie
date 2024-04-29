@@ -7,7 +7,6 @@ import { courseComplexityEnum } from '@/global/constants';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 
 export default function SummaryAside({ input }: AsideProps) {
-  const delivery = true;
   const productCount = useMemo(
     () => input.products?.array?.reduce((acc, curr) => acc + curr.quantity, 0) || 0,
     [input.products?.array]
@@ -33,10 +32,10 @@ export default function SummaryAside({ input }: AsideProps) {
           <span>-{formatPrice(input.virtualMoney * 100)}</span>
         </p>
       )}
-      {delivery && (
+      {input.needDelivery && (
         <p>
           <span>Dostawa</span>
-          <span>Za darmo!</span>
+          <span>{formatPrice(input.delivery * 100)}</span>
         </p>
       )}
       <p>
@@ -45,7 +44,8 @@ export default function SummaryAside({ input }: AsideProps) {
           {formatPrice(
             input.amount +
               (input.discount ? calculateDiscountAmount(input.amount, input.discount) : 0) -
-              (input.virtualMoney ? input.virtualMoney * 100 : 0)
+              (input.virtualMoney ? input.virtualMoney * 100 : 0) +
+              (input.needDelivery ? input.delivery * 100 : 0)
           )}
         </span>
       </p>

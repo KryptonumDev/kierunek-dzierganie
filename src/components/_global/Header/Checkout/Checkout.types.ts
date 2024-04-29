@@ -36,6 +36,7 @@ export type InputState = {
       complexity: Complexity | null;
     }[];
   };
+  delivery: number;
   virtualMoney?: number | null;
   discount?: Discount | null;
   needDelivery: boolean;
