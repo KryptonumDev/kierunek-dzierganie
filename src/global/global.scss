@@ -263,7 +263,7 @@ h4,
 main {
   display: grid;
   grid-template-columns: 1fr;
-  margin: clamp(48px, calc(64vw / 7.68), 96px) auto var(--space-gap);
+  margin: clamp(36px, calc(52vw / 7.68), 64px) auto var(--space-gap);
   & > *:not(:last-child) {
     margin-bottom: var(--space-gap);
   }
