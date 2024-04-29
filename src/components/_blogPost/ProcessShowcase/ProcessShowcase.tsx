@@ -25,7 +25,7 @@ const ProcessShowcase = ({ list }: ProcessShowcaseTypes) => {
                     sizes='(max-width: 499px) 50vw, 33vw'
                   />
                 )}
-                <Markdown data-fullWidth={img == undefined}>{paragraph}</Markdown>
+                <Markdown data-fullwidth={img == undefined}>{paragraph}</Markdown>
               </div>
             ))}
           </div>
