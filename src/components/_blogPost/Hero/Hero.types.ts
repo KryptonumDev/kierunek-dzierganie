@@ -10,4 +10,5 @@ export type HeroTypes = {
     img: ImgType;
   };
   date: string;
+  portableText: [];
 };

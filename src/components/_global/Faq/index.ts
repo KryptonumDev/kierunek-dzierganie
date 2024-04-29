@@ -4,7 +4,6 @@ export type { FaqTypes } from './Faq.types';
 
 export const Faq_Query = `
   _type == 'Faq' => {
-    _type,
     heading,
     paragraph,
     list[] -> {

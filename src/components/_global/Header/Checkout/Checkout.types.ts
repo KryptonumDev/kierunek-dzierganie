@@ -1,5 +1,6 @@
-import type { Billing, ImgType, Shipping } from '@/global/types';
+import type { Billing, Complexity, Discount, ImgType, Shipping } from '@/global/types';
 import type { useCartItems } from '../Header.types';
+import type { Dispatch, SetStateAction } from 'react';
 
 export type Props = {
   setShowCheckout: () => void;
@@ -10,7 +11,11 @@ export type Props = {
   userEmail?: string;
   shipping?: Shipping;
   billing?: Billing;
+  userId?: string;
   virtualWallet: number;
+  usedDiscount: Discount | null;
+  usedVirtualMoney: number | null;
+  setUsedDiscount: Dispatch<SetStateAction<Discount | null>>;
 };
 
 export type InputState = {
@@ -28,14 +33,16 @@ export type InputState = {
       quantity: number;
       discount: number;
       image: ImgType;
-      complexity: 1 | 2 | 3 | null;
+      complexity: Complexity | null;
     }[];
   };
+  virtualMoney?: number | null;
+  discount?: Discount | null;
   needDelivery: boolean;
   user_id?: string;
   amount: number;
+  totalAmount: number;
   paid_at?: string;
-  usedDiscount?: string;
   payment_id?: string;
   paymentMethod?: string;
 };
@@ -44,7 +51,7 @@ export type MappingProps = {
   goToCart: () => void;
   setStep: (step: number) => void;
   input: InputState;
-  setInput: (input: InputState) => void;
+  setInput: Dispatch<SetStateAction<InputState>>;
 };
 
 export type AsideProps = {

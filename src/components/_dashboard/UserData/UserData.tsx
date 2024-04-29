@@ -2,15 +2,15 @@
 import Switch from '@/components/ui/Switch';
 import styles from './UserData.module.scss';
 import type { UserDataTypes } from './UserData.types';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 // import AuthorizationData from './_AuthorizationData';
 import PersonalData from './_PersonalData';
 import DeletePopup from './_DeletePopup';
 import { useState } from 'react';
+import { createClient } from '@/utils/supabase-client';
 
 const UserData = ({ data }: UserDataTypes) => {
   const [openDeletePopup, setOpenDeletePopup] = useState(false);
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
 
   const setLeftHanded = async (leftHanded: boolean) => {
     await supabase

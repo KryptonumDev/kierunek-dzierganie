@@ -1,3 +1,105 @@
 .ConversationShowcase {
-  
+  display: grid;
+  gap: clamp(32px, calc(48vw/7.68), 64px);
+
+  .item {
+    display: grid;
+
+    .cloudWrapper {
+      position: relative;
+      margin-bottom: 30px;
+
+      .cloud {
+        padding: clamp(16px, calc(32vw/7.68), 32px);
+        background: var(--primary-200);
+        max-width: 700px;
+        border-radius: 8px;
+      }
+
+      .cloudBeggining {
+        position: absolute;
+        bottom: -27.5px;
+      }
+    }
+
+    img {
+      width: clamp(32px, calc(48vw/7.68), 48px);
+      height: auto;
+      object-fit: cover;
+      display: block;
+      border-radius: 2px;
+    }
+
+    .recipientMessage {
+      display: grid;
+      justify-items: flex-end;
+
+      .recipient {
+        display: grid;
+        justify-items: flex-end;
+        gap: clamp(8px, calc(12vw/7.68), 12px);
+        grid-template-columns: auto auto;
+        width: fit-content;
+        align-items: center;
+      }
+
+      .cloud {
+        justify-self: flex-start;
+      }
+
+      .cloudBeggining {
+        right: 150px;
+      }
+    }
+
+    .senderMessage {
+      display: grid;
+      justify-items: flex-start;
+
+      .sender {
+        display: grid;
+        justify-items: flex-start;
+        gap: clamp(8px, calc(12vw/7.68), 12px);
+        grid-template-columns: auto auto;
+        width: fit-content;
+        align-items: center;
+      }
+
+      .cloud {
+        justify-self: flex-end;
+      }
+
+      .cloudBeggining {
+        left: 150px;
+        transform: rotateY(180deg);
+      }
+    }
+  }
+}
+
+.visualizer {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  row-gap: 12px;
+  column-gap: 8px;
+  align-items: center;
+
+  .audioVisualizer {
+    overflow: hidden;
+  }
+
+  .controls {
+    grid-column: 2;
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+.loading {
+  width: 300px;
+  text-align: center;
+
+  @media (max-width: 499px) {
+    width: 100%;
+  }
 }

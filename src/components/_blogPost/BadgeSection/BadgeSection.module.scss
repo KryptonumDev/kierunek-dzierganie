@@ -1,3 +1,8 @@
 .BadgeSection {
-  
+  p {
+    padding: 8px 16px 8px 20px;
+    background: var(--primary-400);
+    border-radius: 0px 0px 4px 0px;
+    width: fit-content;
+  }
 }

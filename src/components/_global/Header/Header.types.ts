@@ -1,9 +1,9 @@
-import type { Billing, Discount, ImgType, Product, ProductCard, Shipping } from '@/global/types';
+import type { Billing, Discount, ImgType, ProductCard, Shipping } from '@/global/types';
 import type { Item } from 'react-use-cart';
 
 export type useCartItems = {
   cart: Item[] | null;
-  fetchedItems: Array<Product> | null;
+  fetchedItems: Array<ProductCard> | null;
   updateItemQuantity: (id: string, quantity: number) => void;
   removeItem: (id: string) => void;
 };
@@ -25,7 +25,7 @@ export type QueryProps = {
     }[];
   };
   cart: {
-    highlighted_products: Array<ProductCard>;
+    highlighted: Array<ProductCard>;
   };
   ChevronDownIcon: React.ReactNode;
   ChevronBackIcon: React.ReactNode;
@@ -34,6 +34,7 @@ export type QueryProps = {
   Logo: React.ReactNode;
   CrossIcon: React.ReactNode;
 
+  userId?: string;
   userEmail?: string;
   shipping?: Shipping;
   billing?: Billing;
@@ -43,6 +44,7 @@ export type QueryProps = {
 export type EmptyCart = {
   image_crochet: ImgType;
   image_knitting: ImgType;
+  setShowCart: (variable:boolean) => void;
 };
 
 export type Cart = {
@@ -58,13 +60,13 @@ export type Cart = {
   setUsedDiscount: React.Dispatch<React.SetStateAction<Discount | null>>;
   usedVirtualMoney: number | null;
   usedDiscount: Discount | null;
+  userId?: string;
 } & useCartItems;
 
 export type Grid = {
   updateItemQuantity: (id: string, quantity: number) => void;
   removeItem: (id: string) => void;
-  cart: Item[] | null;
-  fetchedItems: Product[] | null;
+  fetchedItems: ProductCard[] | null;
 };
 
 export type CartForm = {
@@ -90,4 +92,36 @@ export type _NavProps = {
   CloseIcon: React.ReactNode;
   showMenu: boolean;
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export type SearchResultType = {
+  courses: {
+    course: {
+      image: ImgType;
+    };
+    name: string;
+    basis: 'crocheting' | 'knitting';
+    slug: string;
+  }[];
+  physicalProducts: {
+    gallery: ImgType;
+    name: string;
+    slug: string;
+    basis: 'crocheting' | 'knitting';
+  }[];
+  variableProducts: {
+    variants: {
+      gallery: ImgType;
+    };
+    name: string;
+    slug: string;
+    basis: 'crocheting' | 'knitting';
+  }[];
+  blogPosts: {
+    hero: {
+      img: ImgType;
+      heading: string;
+    };
+    slug: string;
+  }[];
 };

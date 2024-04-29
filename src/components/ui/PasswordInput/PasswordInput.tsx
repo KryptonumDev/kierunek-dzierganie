@@ -5,9 +5,8 @@ import type { Props } from './PasswordInput.types';
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 
-const PasswordInput = ({ textarea, label, register, errors, password, isRegister, ...props }: Props) => {
+const PasswordInput = ({ textarea, label, register, errors, password, isRegister, value, ...props }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [value, setValue] = useState('');
 
   return (
     <label
@@ -49,9 +48,6 @@ const PasswordInput = ({ textarea, label, register, errors, password, isRegister
             {...props}
             name={register.name}
             type={password && !showPassword ? 'password' : 'text'}
-            onChange={(e) => {
-              setValue(e.target.value);
-            }}
           />
           {password && (
             <button
@@ -67,11 +63,11 @@ const PasswordInput = ({ textarea, label, register, errors, password, isRegister
 
           {isRegister && !props.disabled && (
             <p
-              className={`${styles['input-info']}  ${value.length >= 12 ? styles['success'] : ''} ${errors[register.name] && value.length < 12 ? styles['errored'] : ''}`}
+              className={`${styles['input-info']}  ${value && value.length >= 12 ? styles['success'] : ''} ${errors[register.name] && value && value.length < 12 ? styles['errored'] : ''}`}
             >
               <span
                 // @ts-expect-error - Using css variables
-                style={{ '--progress': (value.length / 12) * 100 + '%' }}
+                style={{ '--progress': (value?.length / 12) * 100 + '%' }}
                 className={`${styles.progress}`}
               />
               Co najmniej 12 znaków

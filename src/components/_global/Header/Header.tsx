@@ -3,22 +3,20 @@ import Content from './_Content';
 import Markdown from '@/components/ui/markdown';
 import { Img_Query } from '@/components/ui/image';
 import type { QueryProps } from './Header.types';
-import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
-import { getServiceAccess } from '@/utils/supabase-admin';
-import { cookies } from 'next/headers';
+import { PRODUCT_CARD_QUERY } from '@/global/constants';
+import { createClient } from '@/utils/supabase-server';
 
 const Header = async () => {
   const { global, cart } = await query();
   const nav_annotation = <Markdown>{global.nav_Annotation ?? ''}</Markdown>;
 
-  const supabase = createServerActionClient({ cookies });
-  const adminbase = await getServiceAccess();
+  const supabase = createClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data } = await adminbase
+  const { data } = await supabase
     .from('profiles')
     .select(
       `
@@ -47,6 +45,7 @@ const Header = async () => {
       userEmail={user?.email}
       shipping={data?.shipping_data}
       billing={data?.billing_data}
+      userId={user?.id}
       // @ts-expect-error - virtual_wallet is not array, bug in supabase
       virtualWallet={data?.virtual_wallet?.amount}
     />
@@ -80,50 +79,8 @@ const query = async (): Promise<QueryProps> => {
           }[],
         },
         "cart": *[_id == 'Cart'][0]{
-          highlighted_products[]->{
-            _id,
-            price,
-            discount,
-            name,
-            'slug': slug.current,
-            basis,
-            type,
-            _type,
-            course->{
-              complexity
-            },
-            gallery[0]{
-              asset -> {
-                url,
-                altText,
-                metadata {
-                  lqip,
-                  dimensions {
-                    width,
-                    height,
-                  }
-                }
-              }
-            },
-            variants[]{
-              _key,
-              name,
-              price,
-              discount,
-              gallery[0]{
-                asset -> {
-                  url,
-                  altText,
-                  metadata {
-                    lqip,
-                    dimensions {
-                      width,
-                      height,
-                    }
-                  }
-                }
-              }
-            }
+          highlighted[]-> {
+            ${PRODUCT_CARD_QUERY}
           }
         }
       }

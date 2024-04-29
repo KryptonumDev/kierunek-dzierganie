@@ -3,10 +3,9 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import styles from './Header.module.scss';
 import type { _NavProps } from './Header.types';
-import Search from './_Search';
 import Img from '@/components/ui/image';
 
-const Nav = ({ links, ChevronDownIcon, ChevronBackIcon, SearchIcon, CloseIcon, showMenu, setShowMenu }: _NavProps) => {
+const Nav = ({ links, ChevronDownIcon, ChevronBackIcon, showMenu, setShowMenu }: _NavProps) => {
   const [tab, setTab] = useState<number | null>(null);
 
   const handleEscapeKey = (e: KeyboardEvent) => {
@@ -45,12 +44,6 @@ const Nav = ({ links, ChevronDownIcon, ChevronBackIcon, SearchIcon, CloseIcon, s
         data-tab={tab}
       >
         <ul>
-          <li>
-            <Search
-              SearchIcon={SearchIcon}
-              CloseIcon={CloseIcon}
-            />
-          </li>
           {links.map(({ name, href, sublinks }, i) => (
             <li
               className={styles['Nav__item']}
@@ -70,7 +63,10 @@ const Nav = ({ links, ChevronDownIcon, ChevronBackIcon, SearchIcon, CloseIcon, s
                   <BackBtn>{name}</BackBtn>
                   {sublinks.map(({ img, name, href }, i) => (
                     <li key={i}>
-                      <Link href={href}>
+                      <Link
+                        href={href}
+                        onClick={() => setShowMenu(false)}
+                      >
                         {img && (
                           <Img
                             data={img}

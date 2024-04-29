@@ -6,17 +6,32 @@ import HeroPhysical from '@/components/_product/HeroPhysical';
 import Parameters from '@/components/_product/Parameters';
 import Informations from '@/components/_product/Informations';
 import Description, { Description_Query } from '@/components/_product/Description';
-import type { ProductPageQueryProps, generateStaticParamsProps } from '@/global/types';
+import type { ProductPageQuery, ProductPageQueryProps, generateStaticParamsProps } from '@/global/types';
+import { Img_Query } from '@/components/ui/image';
+import Reviews from '@/components/_product/Reviews';
+import { createClient } from '@/utils/supabase-server';
 
 const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
-  const { name, _id, type, variants, price, discount, featuredVideo, countInStock, gallery, parameters, description } =
-    await query(slug);
-
-  const tabs = [];
-
-  if (description?.length > 0) tabs.push('Opis');
-
-  if (parameters?.length > 0) tabs.push('Parametry');
+  const {
+    data: {
+      product: {
+        name,
+        _id,
+        type,
+        variants,
+        price,
+        discount,
+        featuredVideo,
+        countInStock,
+        gallery,
+        parameters,
+        description,
+        reviews,
+        rating,
+      },
+    },
+    user,
+  } = await query(slug);
 
   return (
     <>
@@ -39,20 +54,26 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
         type={type}
         variants={variants}
         physical={{
+          _id,
           name,
-          price,
+          price: price!,
           discount,
-          countInStock,
+          countInStock: countInStock!,
           featuredVideo,
-          gallery,
+          gallery: gallery!,
+          rating,
+          reviewsCount: reviews.length,
         }}
       />
-
-      <Informations tabs={tabs}>
-        {tabs.includes('Opis') && <Description data={description} />}
-        {tabs.includes('Parametry') && <Parameters parameters={parameters} />}
+      <Informations tabs={['Opis', 'Parametry', 'Opinie']}>
+        {description?.length > 0 && <Description data={description} />}
+        {parameters?.length > 0 && <Parameters parameters={parameters} />}
+        <Reviews
+          logged={!!user}
+          alreadyBought={true}
+          reviews={reviews}
+        />
       </Informations>
-      <h2>Tutaj będzie opis produktu</h2>
     </>
   );
 };
@@ -63,10 +84,33 @@ export async function generateMetadata({ params: { slug } }: { params: { slug: s
   return await QueryMetadata('product', `/kursy-szydelkowania/${slug}`, slug);
 }
 
-const query = async (slug: string): Promise<ProductPageQueryProps> => {
+const query = async (slug: string): Promise<ProductPageQuery> => {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // const res = await supabase
+  //   .from('profiles')
+  //   .select(
+  //     `
+  //       id,
+  //       courses_progress (
+  //         id,
+  //         course_id,
+  //         owner_id,
+  //         progress
+  //       )
+  //     `
+  //   )
+  //   .eq('id', user?.id)
+  //   .single();
+
   const data = await sanityFetch<ProductPageQueryProps>({
     query: /* groq */ `
-      *[_type == "product" && slug.current == $slug && basis == 'crocheting' && type in ["physical", "variable"]][0] {
+    {
+      
+      "product": *[_type == "product" && slug.current == $slug && basis == 'crocheting'][0] {
         name,
         'slug': slug.current,
         _id,
@@ -77,62 +121,50 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
         featuredVideo,
         countInStock,
         gallery[]{
-          asset -> {
-            url,
-            altText,
-            metadata {
-              lqip,
-              dimensions {
-                width,
-                height,
-              }
-            }
-          }
+          ${Img_Query}
         },
         ${Description_Query}
         parameters[]{
           name,
           value,
         },
-
         variants[]{
+          "_id": _key,
           name,
           price,
           discount,
           countInStock,
           featuredVideo,
           gallery[]{
-            asset -> {
-              url,
-              altText,
-              metadata {
-                lqip,
-                dimensions {
-                  width,
-                  height,
-                }
-              }
-            }
+            ${Img_Query}
           },
           attributes[]{
             type,
             name,
             value
           }
-        }
+        },
+        "reviews": *[_type == 'productReviewCollection' && references(^._id)][0...10]{
+          rating,
+          review,
+          nameOfReviewer,
+          _id
+        },
+        "rating": math::avg(*[_type == 'productReviewCollection' && references(^._id)]{rating}.rating),
       }
+    }
     `,
     params: { slug },
     tags: ['product'],
   });
   !data && notFound();
-  return data;
+  return { data: data, user: user };
 };
 
 export async function generateStaticParams(): Promise<generateStaticParamsProps[]> {
   const data: generateStaticParamsProps[] = await sanityFetch({
     query: /* groq */ `
-      *[_type == "product" && basis == 'crocheting' && type in ["physical", "variable"]] {
+      *[_type == "product" && basis == 'crocheting'] {
         'slug': slug.current,
       }
     `,

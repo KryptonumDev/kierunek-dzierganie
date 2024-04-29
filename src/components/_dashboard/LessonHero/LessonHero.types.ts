@@ -14,6 +14,7 @@ export type Props = {
   };
   left_handed: boolean;
   progress: CoursesProgress;
+  auto_play: boolean;
   currentChapterIndex: number;
   currentLessonIndex: number;
   currentChapter: Chapter;

@@ -4,7 +4,6 @@ export default Reviews;
 
 export const Reviews_Query = `
   _type == "Reviews" => {
-    _type,
     heading,
     list[] -> {
       rating,

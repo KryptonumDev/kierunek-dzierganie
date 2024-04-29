@@ -12,6 +12,7 @@ const Informations = ({ tabs, children }: Props) => {
           (item, i) =>
             item && (
               <button
+                data-active={i === selectedTab}
                 key={i}
                 onClick={() => setSelectedTab(i)}
                 className={i === selectedTab ? styles['active'] : ''}

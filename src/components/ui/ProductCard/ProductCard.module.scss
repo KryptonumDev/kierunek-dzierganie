@@ -2,33 +2,87 @@
   text-align: center;
   position: relative;
 
-  &.horizontal{
+  .rating {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    margin-bottom: 4px;
+
+    span {
+      font-size: 14px;
+      color: var(--primary-800, #53423c);
+
+      b {
+        font-weight: 300;
+        font-size: 32px;
+        font-family: var(--font-city-streetwear);
+      }
+    }
+  }
+
+  &.horizontal {
     display: grid;
+    align-items: center;
     grid-template-columns: 292fr 374fr;
     gap: 24px;
     text-align: left;
 
-    button{
+    button {
       margin-left: 0;
+    }
+
+    img {
+      margin-bottom: 0 !important;
+    }
+
+    .rating {
+      justify-content: flex-start;
+    }
+
+    .price {
+      justify-content: flex-start;
     }
   }
 
-  .data{
+  &.tablet-horizontal {
+    @media (max-width: 899px) and (min-width: 600px) {
+      display: grid;
+      align-items: center;
+      grid-template-columns: 292fr 374fr;
+      gap: 24px;
+      text-align: left;
+
+      img {
+        margin-bottom: 0 !important;
+      }
+
+      button {
+        margin-left: 0;
+      }
+
+      .rating {
+        justify-content: flex-start;
+      }
+
+      .price {
+        justify-content: flex-start;
+      }
+    }
   }
 
-  h3{
-    font-size: clamp(18px, calc(24vw/7.68), 24px);
+  h3 {
+    font-size: clamp(18px, calc(24vw / 7.68), 24px);
   }
 
-  .link{
+  .link {
     position: absolute;
     inset: 0;
     z-index: 2;
+    margin: 0 !important;
   }
 
   .image-wrap {
     position: relative;
-
 
     .badge {
       font-size: 14px;
@@ -47,7 +101,7 @@
         display: block;
       }
     }
-    
+
     img {
       max-width: 100%;
       width: 100%;
@@ -68,5 +122,26 @@
     position: relative;
     margin: 36px auto 0 auto;
     z-index: 3;
+  }
+
+  .price {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    span {
+      color: var(--primary-800, #53423c);
+      font-size: 18px;
+      font-weight: 300;
+      line-height: 150%;
+
+      &.discount {
+        color: var(--primary-600, #9a827a);
+        font-size: 14px;
+        line-height: 150%;
+        text-decoration: line-through;
+      }
+    }
   }
 }

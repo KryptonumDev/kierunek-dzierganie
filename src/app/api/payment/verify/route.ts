@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -18,7 +20,8 @@ export async function GET(request: Request) {
     });
 
     const responseData = await response.json();
-
+    console.log(responseData);
+    // Cannot read properties of undefined (reading 'status')
     if (responseData.data.status == 1 || responseData.data.status == 2) {
       // TODO: payment success status
       return NextResponse.redirect('https://kierunekdzierganie.pl/');

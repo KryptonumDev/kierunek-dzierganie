@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import Button from '@/components/ui/Button';
 import { useCallback, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 
 export default function DeletePopup({ openDeletePopup, setOpenDeletePopup }: DeletePopupDataTypes) {
@@ -23,7 +23,7 @@ export default function DeletePopup({ openDeletePopup, setOpenDeletePopup }: Del
     fetch('/api/auth/delete')
       .then((res) => res.json())
       .then(() => {
-        // TODO: Redirect to deleted account page, currently after deleting account user is redirected to login page by middleware :\ 
+        // TODO: Redirect to deleted account page, currently after deleting account user is redirected to login page by middleware :\
         router.push('/moje-konto/usuniete');
       })
       .catch((err) => {

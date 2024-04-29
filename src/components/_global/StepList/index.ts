@@ -4,7 +4,6 @@ export default StepList;
 
 export const StepList_Query = `
   _type == "StepList" => {
-    _type,
     heading,
     paragraph,
     list[] {

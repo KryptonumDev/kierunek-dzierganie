@@ -1,9 +1,10 @@
 'use server';
-import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
 
-export default async function getUserData(query: string){
-  const supabase = createServerActionClient({ cookies });
+import { createClient } from './supabase-server';
+
+export default async function getUserData(query: string) {
+  const supabase = createClient();
+
   const {
     data: { user },
   } = await supabase.auth.getUser();

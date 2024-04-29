@@ -24,7 +24,7 @@ const nextConfig = {
         source: '/dzierganie-na-drutach',
         destination: '/kursy-dziergania-na-drutach',
         permanent: true,
-      }
+      },
     ];
   },
 };

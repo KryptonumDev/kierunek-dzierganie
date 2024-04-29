@@ -1,14 +1,14 @@
 'use client';
-import { useState } from 'react';
-import Link from 'next/link';
+import type { Discount } from '@/global/types';
+import { useCartItems } from '@/utils/useCartItems';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import { useState } from 'react';
 import styles from './Header.module.scss';
-// import Search from './_Search';
+import type { QueryProps } from './Header.types';
+import Search from './Search/Search';
 import Annotation from './_Annotation';
 import Nav from './_Nav';
-import { useCartItems } from '@/utils/useCartItems';
-import type { QueryProps } from './Header.types';
-import type { Discount } from '@/global/types';
 
 const Cart = dynamic(() => import('./_Cart'), { ssr: false });
 const Checkout = dynamic(() => import('./Checkout'), { ssr: false });
@@ -22,11 +22,12 @@ const Content = ({
   SearchIcon,
   CloseIcon,
   CrossIcon,
-  cart: { highlighted_products },
+  cart: { highlighted },
   userEmail,
   shipping,
   billing,
   virtualWallet,
+  userId,
 }: QueryProps) => {
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
@@ -46,10 +47,14 @@ const Content = ({
           setShowCart(true);
           setShowCheckout(false);
         }}
+        setUsedDiscount={setUsedDiscount}
+        usedDiscount={usedDiscount}
         userEmail={userEmail}
         shipping={shipping}
         billing={billing}
         virtualWallet={virtualWallet}
+        usedVirtualMoney={usedVirtualMoney}
+        userId={userId}
       />
       <Cart
         goToCheckout={() => {
@@ -65,12 +70,13 @@ const Content = ({
         fetchedItems={fetchedItems}
         updateItemQuantity={updateItemQuantity}
         removeItem={removeItem}
-        highlighted_products={highlighted_products}
+        highlighted_products={highlighted}
         virtualWallet={virtualWallet}
         setUsedVirtualMoney={setUsedVirtualMoney}
         usedVirtualMoney={usedVirtualMoney}
         usedDiscount={usedDiscount}
         setUsedDiscount={setUsedDiscount}
+        userId={userId}
       />
       <a
         href='#main'
@@ -124,10 +130,10 @@ const Content = ({
             </li>
           </ul>
         </div>
-        {/* <Search
+        <Search
           SearchIcon={SearchIcon}
           CloseIcon={CloseIcon}
-        /> */}
+        />
       </header>
       <div
         onClick={() => {

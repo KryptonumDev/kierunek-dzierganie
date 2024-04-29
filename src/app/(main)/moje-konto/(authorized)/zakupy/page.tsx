@@ -2,18 +2,17 @@ import EmptyOrders from '@/components/_dashboard/EmptyOrders';
 import ListingOrders from '@/components/_dashboard/ListingOrders';
 import { Img_Query } from '@/components/ui/image';
 import Seo from '@/global/Seo';
-import type { ImgType, Order, Product } from '@/global/types';
+import type { ImgType, Order, ProductCard } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
-import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
-import { PRODUCT } from 'src/queries/PRODUCT';
+import { createClient } from '@/utils/supabase-server';
+import { PRODUCT_CARD_QUERY } from 'src/global/constants';
 
 type QueryProps = {
   global: {
     image_knitting: ImgType;
     image_crochet: ImgType;
   };
-  products: Product[];
+  products: ProductCard[];
   orders: Order[];
 };
 
@@ -45,7 +44,8 @@ export async function generateMetadata() {
 }
 
 const query = async (): Promise<QueryProps> => {
-  const supabase = createServerActionClient({ cookies });
+  const supabase = createClient();
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -85,8 +85,8 @@ const query = async (): Promise<QueryProps> => {
           ${Img_Query}
         },
       },
-      "products": *[_type == 'product' && _id in $products] {
-        ${PRODUCT}
+      "products": *[(_type == 'product' || _type == 'course' || _type == 'bundle') && _id in $products] {
+        ${PRODUCT_CARD_QUERY}
       },
     }`,
     params: {

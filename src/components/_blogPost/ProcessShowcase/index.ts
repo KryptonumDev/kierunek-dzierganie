@@ -6,9 +6,13 @@ export type { ProcessShowcaseTypes } from './ProcessShowcase.types';
 export const ProcessShowcase_Query = `
   _type == "ProcessShowcase" => {
     list[] {
-      paragraph,
-      img {
-        ${Img_Query}
+      heading,
+      process[] {
+        img {
+          ${Img_Query}
+        },
+        paragraph,
+        isReversed,
       },
     },
   },

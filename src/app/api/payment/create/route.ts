@@ -1,19 +1,19 @@
 import { P24, Currency, Country, Language, Encoding } from '@ingameltd/node-przelewy24';
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import type { InputState } from '@/components/_global/Header/Checkout/Checkout.types';
-
-const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_KEY!, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
-  },
-});
+import { createClient } from '@/utils/supabase-admin';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   const { input, description }: { input: InputState; description: string } = await request.json();
+  const supabase = createClient();
+
+  // update user default data for next orders
+  await supabase
+    .from('profiles')
+    .update({ billing_data: input.billing, shipping_data: input.shipping })
+    .eq('id', input.user_id);
 
   try {
     const p24 = new P24(
@@ -34,12 +34,13 @@ export async function POST(request: Request) {
         billing: input.billing,
         shipping: input.shipping,
         amount: input.amount,
-        used_discount: input.usedDiscount
+        used_discount: input.discount
           ? {
-            amount: input.usedDiscount,
-            id: input.usedDiscount,
-          }
+              amount: input.discount.amount,
+              id: input.discount.id,
+            }
           : null,
+        used_virtual_money: input.virtualMoney,
         paid_at: null,
         payment_id: null,
         payment_method: 'Przelewy24',
@@ -51,14 +52,14 @@ export async function POST(request: Request) {
 
     const order = {
       sessionId: `${data.id}`,
-      amount: Number(input.amount),
+      amount: Number(input.totalAmount),
       currency: Currency.PLN,
       description: description,
       email: input.billing.email,
       country: Country.Poland,
       language: Language.PL,
-      urlReturn: `https://kierunekdzierganie.pl/api/payment/verify/?session=${data.id}`,
-      urlStatus: `https://kierunekdzierganie.pl/api/payment/complete/?session=${data.id}`,
+      urlReturn: `https://kierunek-dzierganie-git-dev-kryptonum.vercel.app/api/payment/verify/?session=${data.id}`,
+      urlStatus: `https://kierunek-dzierganie-git-dev-kryptonum.vercel.app/api/payment/complete/?session=${data.id}`,
       timeLimit: 60,
       encoding: Encoding.UTF8,
       city: input.billing.city,

@@ -27,10 +27,10 @@
   },
   "plugins": ["@typescript-eslint", "react"],
   "rules": {
-    "indent": ["error", 2],
     "quotes": ["error", "single"],
     "semi": ["error", "always"],
     "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off",
     "no-irregular-whitespace": [
       "error",
       { "skipStrings": true, "skipComments": false, "skipRegExps": false, "skipTemplates": true, "skipJSXText": true }

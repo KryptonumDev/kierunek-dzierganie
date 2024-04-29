@@ -9,10 +9,7 @@ import Link from 'next/link';
 import { courseComplexityEnum, statusesSwitch } from '@/global/constants';
 
 const OrderCard = ({ order, product }: OrderCardTypes) => {
-  const mainImage = useMemo(
-    () => (product.variants?.length > 0 ? product.variants[0]!.gallery : product.gallery),
-    [product]
-  );
+  const mainImage = useMemo(() => (product?.variants ? product.variants[0]!.gallery : product.gallery!), [product]);
 
   return (
     <Link
@@ -20,15 +17,15 @@ const OrderCard = ({ order, product }: OrderCardTypes) => {
       className={styles['orderCard']}
     >
       <div className={styles['image-wrap']}>
-        {product.course && (
+        {product.complexity && (
           <span
             style={{
-              color: courseComplexityEnum[product.course.complexity].color,
-              backgroundColor: courseComplexityEnum[product.course.complexity].background,
+              color: courseComplexityEnum[product.complexity].color,
+              backgroundColor: courseComplexityEnum[product.complexity].background,
             }}
             className={styles['badge']}
           >
-            {courseComplexityEnum[product.course.complexity].name}
+            {courseComplexityEnum[product.complexity].name}
           </span>
         )}
         <Img

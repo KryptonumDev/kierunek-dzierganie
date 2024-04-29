@@ -4,6 +4,7 @@ import { type HighlightedPostType } from './BlogSection.types';
 import Markdown from '@/components/ui/markdown';
 import sanityFetch from '@/utils/sanity.fetch';
 import Link from 'next/link';
+import ReadingTime from '@/components/ui/ReadingTime';
 
 export default async function HighlightedPost({
   highlightedPost,
@@ -18,16 +19,21 @@ export default async function HighlightedPost({
   const {
     hero,
     href,
-    author: { heading, img, paragraph },
+    author: { img, paragraph },
+    portableText,
   } = highlightedPost;
 
   return (
     <div className={styles.highlightedPost}>
-      <Link href={`/blog/${href}`}>
+      <Link
+        href={`/blog/${href}`}
+        className={styles.imageWrapper}
+      >
         <Img
           data={hero.img}
-          sizes=''
+          sizes='(max-width: 999px) 100vw, 50vw'
         />
+        <ReadingTime portableText={portableText} />
       </Link>
       <div className={styles.highlightedPostContent}>
         <div>
@@ -37,10 +43,10 @@ export default async function HighlightedPost({
         <div className={styles.author}>
           <Img
             data={img}
-            sizes='(max-width: 999px) 100vw, 50vw'
+            sizes='64px'
           />
           <div>
-            <Markdown.h3>{heading}</Markdown.h3>
+            <Markdown.h3>{'**Autor publikacji**'}</Markdown.h3>
             <Markdown>{paragraph}</Markdown>
           </div>
         </div>
@@ -53,6 +59,7 @@ async function getNewestBlogData() {
   const data = await sanityFetch<HighlightedPostType>({
     query: /* groq */ `
       *[_type == "BlogPost_Collection"] | order(publishedAt desc) [0] {
+        portableText,
         hero {
           img {
             ${Img_Query}
@@ -79,6 +86,7 @@ async function getNewestCategoryBlogData(slug: string) {
   const data = await sanityFetch<HighlightedPostType>({
     query: /* groq */ `
       *[_type == "BlogPost_Collection" && $slug in category[]->slug.current] | order(publishedAt desc) [0] {
+        portableText,
         hero {
           img {
             ${Img_Query}

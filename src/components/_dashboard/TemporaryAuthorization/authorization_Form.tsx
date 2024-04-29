@@ -1,17 +1,17 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import type { FormValues, FormProps } from './authorization.types';
 import Input from '@/components/ui/PasswordInput';
 import { REGEX } from '@/global/constants';
 import Checkbox from '@/components/ui/Checkbox';
 import { useState } from 'react';
+import { createClient } from '@/utils/supabase-client';
 
 const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
   const router = useRouter();
   const {
     register,
@@ -22,6 +22,7 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [value, setValue] = useState('');
 
   const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
     setIsSubmitting(true);
@@ -90,11 +91,17 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
             value: true,
             message: 'Pole wymagane',
           },
-          minLength: {
-            value: 12,
-            message: 'Co najmniej 12 znaków',
+          onChange: (e) => {
+            setValue(e.target.value);
           },
+          ...(isRegister && {
+            minLength: {
+              value: 12,
+              message: 'Co najmniej 12 znaków',
+            },
+          }),
         })}
+        value={value}
         errors={errors}
       />
       {isRegister && (

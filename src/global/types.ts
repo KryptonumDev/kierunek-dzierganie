@@ -1,7 +1,11 @@
 import type { ComponentProps } from '@/components/Components';
 import type { HeroSimpleTypes } from '@/components/_global/HeroSimple';
 import type { DescriptionTypes } from '@/components/_product/Description/Description';
-import { TableOfContentTypes } from '@/components/_product/TableOfContent/TableOfContent.types';
+import type { ReviewsTypes } from '@/components/_product/Reviews';
+import type { TableOfContentTypes } from '@/components/_product/TableOfContent/TableOfContent.types';
+import type { User } from '@supabase/supabase-js';
+
+export type Complexity = 'dla-poczatkujacych' | 'dla-srednio-zaawansowanych' | 'dla-zaawansowanych';
 
 export type CtaType = {
   href: string;
@@ -23,52 +27,46 @@ export type ImgType = {
 };
 
 export type ProductCard = {
+  _type: 'product' | 'course' | 'bundle';
   _id: string;
   basis: 'crocheting' | 'knitting';
   slug: string;
   name: string;
+  excerpt?: string;
   price?: number;
   discount?: number;
   countInStock?: number;
   featuredVideo?: string;
   gallery?: ImgType;
-  course?: {
-    complexity: 1 | 2 | 3;
-  };
-  variants: Array<{
+  quantity: number | null;
+  complexity?: Complexity;
+  reviewsCount: number;
+  rating: number;
+  variant: {
+    _id: string;
     name: string;
     price: number;
     discount: number;
     countInStock: number;
     featuredVideo: string;
     gallery: ImgType;
-  }>;
-};
-
-export type Product = {
-  _id: string;
-  price: number;
-  discount: number;
-  name: string;
-  quantity: number;
-  type: 'physical' | 'variable' | 'digital' | 'bundle';
-  slug: {
-    current: string;
-  };
-  course?: {
-    complexity: 1 | 2 | 3;
-  };
+  } | null;
   variants: Array<{
-    _key: number;
+    _id: string;
     name: string;
     price: number;
     discount: number;
+    countInStock: number;
+    featuredVideo: string;
     gallery: ImgType;
+  }> | null;
+  courses: Array<{
+    _id: string;
   }>;
-  gallery: ImgType;
 };
 
 export type ProductVariant = {
+  _id: string;
   name: string;
   price: number;
   discount: number;
@@ -83,12 +81,15 @@ export type ProductVariant = {
 };
 
 export type ProductPhysical = {
+  _id: string;
   name: string;
-  price?: number;
+  price: number;
   discount?: number;
-  countInStock?: number;
+  countInStock: number;
   featuredVideo?: string;
-  gallery?: Array<ImgType>;
+  gallery: Array<ImgType>;
+  rating: number;
+  reviewsCount: number;
 };
 
 export type generateMetadataProps = {
@@ -118,6 +119,7 @@ export type BlogPageQueryProps = {
   blog_Heading: string;
   blog_Paragraph: string;
   blog_HighlightedPost: {
+    portableText: [];
     hero: {
       heading: string;
       img: ImgType;
@@ -138,12 +140,25 @@ export type BlogPostQueryProps = {
     paragraph: string;
   };
   content: [];
+  portableText: [];
   author: {
     img: ImgType;
     heading: string;
     paragraph: string;
   };
   date: string;
+  previousBlog?: {
+    slug: string;
+    name: string;
+  };
+  nextBlog?: {
+    slug: string;
+    name: string;
+  };
+  links: {
+    facebook: string;
+    pinterest: string;
+  };
 };
 
 export type BlogCategoryPageQueryProps = {
@@ -183,11 +198,55 @@ export type ProductPageQueryProps = {
       name: string;
       value: string;
     }>;
-    courses: ProductCard[];
+    rating: number;
+    reviewsCount: number;
     description: DescriptionTypes[];
-    course: TableOfContentTypes;
-  };
+  } & ReviewsTypes;
+};
+
+export type ProductPageQuery = {
+  data: ProductPageQueryProps;
+  user: User | null;
+};
+
+export type CoursePageQueryProps = {
+  product: {
+    basis: string;
+    name: string;
+    slug: string;
+    _id: string;
+    type: string;
+    gallery?: Array<ImgType>;
+    featuredVideo?: string;
+    price?: number;
+    discount?: number;
+    countInStock?: number;
+    courses: ProductCard[];
+    rating: number;
+    reviewsCount: number;
+    description: DescriptionTypes[];
+    author: {
+      name: string;
+      slug: string;
+      image: ImgType;
+      description: string;
+      countOfCourse: number;
+    };
+    relatedBundle:
+      | null
+      | ({
+          courses: ProductCard[];
+        } & ProductCard);
+  } & TableOfContentTypes &
+    ReviewsTypes;
   card: ProductCard;
+  relatedCourses: ProductCard[];
+};
+
+export type CoursePageQuery = {
+  data: CoursePageQueryProps;
+  user: User | null;
+  courses_progress?: CoursesProgress[];
 };
 
 export type generateStaticParamsProps = {
@@ -329,4 +388,5 @@ export type Discount = {
   code: string;
   id: string;
   type: string;
+  affiliatedBy: string | null;
 };

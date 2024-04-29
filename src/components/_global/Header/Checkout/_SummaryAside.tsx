@@ -4,6 +4,7 @@ import type { AsideProps } from './Checkout.types';
 import { useMemo } from 'react';
 import Img from '@/components/ui/image';
 import { courseComplexityEnum } from '@/global/constants';
+import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 
 export default function SummaryAside({ input }: AsideProps) {
   const delivery = true;
@@ -16,28 +17,43 @@ export default function SummaryAside({ input }: AsideProps) {
       <h3>Twoje zamówienie</h3>
       <p>
         <span>
-          {productCount}
-          {productCount === 1 ? ' produkt' : productCount > 1 && productCount < 5 ? ' produkty' : ' produktów'}
+          {productCount} {productCount === 1 ? 'produkt' : productCount < 5 ? 'produkty' : 'produktów'}
         </span>
-        <span dangerouslySetInnerHTML={{ __html: formatPrice(input.amount) }} />
+        <span>{formatPrice(input.amount)}</span>
       </p>
+      {input.discount && (
+        <p>
+          <span>Kupon: {input.discount.code}</span>
+          <span>{formatPrice(calculateDiscountAmount(input.amount, input.discount))}</span>
+        </p>
+      )}
+      {input.virtualMoney && input.virtualMoney > 0 && (
+        <p>
+          <span>Wykorzystane WZ</span>
+          <span>-{formatPrice(input.virtualMoney * 100)}</span>
+        </p>
+      )}
       {delivery && (
         <p>
           <span>Dostawa</span>
           <span>Za darmo!</span>
         </p>
       )}
-      {delivery && (
-        <p>
-          <span>Razem</span>
-          <span dangerouslySetInnerHTML={{ __html: formatPrice(input.amount) }} />
-        </p>
-      )}
+      <p>
+        <span>Razem</span>
+        <span>
+          {formatPrice(
+            input.amount +
+              (input.discount ? calculateDiscountAmount(input.amount, input.discount) : 0) -
+              (input.virtualMoney ? input.virtualMoney * 100 : 0)
+          )}
+        </span>
+      </p>
       <h3>Szczegóły zamówienia</h3>
-      {input.products?.array?.map((product) => (
+      {input.products?.array?.map((product, i) => (
         <div
           className={styles['item']}
-          key={product.id}
+          key={product.id + i}
         >
           <div className={styles['image-wrap']}>
             {product.complexity && (

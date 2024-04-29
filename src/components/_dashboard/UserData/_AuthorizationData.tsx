@@ -4,11 +4,11 @@ import type { AuthorizationDataFormTypes, AuthorizationDataTypes } from './UserD
 import Input from '@/components/ui/PasswordInput';
 import { REGEX } from '@/global/constants';
 import Button from '@/components/ui/Button';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
+import { createClient } from '@/utils/supabase-client';
 
 export default function AuthorizationData({ email }: AuthorizationDataTypes) {
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
 
   const {
     register,
@@ -39,14 +39,14 @@ export default function AuthorizationData({ email }: AuthorizationDataTypes) {
 
       if (newData.email) {
         // await supabase.from('profiles').update({ email: newData.email }).eq('id', id);
-        toast.success('E-mail z potwierdzeniem zmiany został wysłany na podany adres');
+        toast('E-mail z potwierdzeniem zmiany został wysłany na podany adres');
       }
 
       if (newData.password) {
-        toast.success('Hasło zostało zmienione');
+        toast('Hasło zostało zmienione');
       }
     } catch (error) {
-      toast.error('Wystąpił błąd podczas zapisywania danych');
+      toast('Wystąpił błąd podczas zapisywania danych');
     }
   };
 

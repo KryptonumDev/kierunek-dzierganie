@@ -4,8 +4,7 @@ import { QueryMetadata } from '@/global/Seo/query-metadata';
 import type { CoursesProgress, Course } from '@/global/types';
 import { checkCourseProgress } from '@/utils/check-course-progress';
 import sanityFetch from '@/utils/sanity.fetch';
-import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@/utils/supabase-server';
 import { notFound } from 'next/navigation';
 
 interface QueryProps {
@@ -37,7 +36,8 @@ export async function generateMetadata({ params: { courseSlug } }: { params: { c
 }
 
 const query = async (slug: string): Promise<QueryProps> => {
-  const supabase = createServerActionClient({ cookies });
+  const supabase = createClient();
+
   const {
     data: { user },
   } = await supabase.auth.getUser();

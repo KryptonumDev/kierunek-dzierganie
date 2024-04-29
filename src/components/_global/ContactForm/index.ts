@@ -4,7 +4,6 @@ export default ContactForm;
 
 export const ContactForm_Query = `
   _type == 'ContactForm' => {
-    _type,
     heading,
     paragraph,
   },

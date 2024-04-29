@@ -43,7 +43,7 @@
     }
     max-width: 413px;
     border-radius: 4px;
-    margin-top: calc(clamp(58px, calc(118vw/7.68), 118px) * -1);
+    margin-top: calc(clamp(20px, calc(30vw/7.68), 118px) * -1);
   }
   &[data-reversed="true"] {
     img {

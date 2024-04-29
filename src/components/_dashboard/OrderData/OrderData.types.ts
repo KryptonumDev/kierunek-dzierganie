@@ -1,6 +1,6 @@
-import type { Order, Product } from '@/global/types';
+import type { Order, ProductCard } from '@/global/types';
 
 export type OrderDataTypes = {
-  products: Product[];
+  products: ProductCard[];
   order: Order;
 };

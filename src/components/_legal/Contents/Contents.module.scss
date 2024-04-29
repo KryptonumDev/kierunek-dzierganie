@@ -26,7 +26,7 @@
         line-height: 2;
       }
     }
-    &[data-isPrivacyPolicy='true'] {
+    &[data-isprivacypolicy='true'] {
       .title {
         &::before {
           content: counter(counter);

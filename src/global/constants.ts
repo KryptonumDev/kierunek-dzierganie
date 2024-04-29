@@ -74,17 +74,17 @@ export const POSTS_PER_PAGE = 12;
  * @constant
  */
 export const courseComplexityEnum = {
-  1: {
+  'dla-poczatkujacych': {
     name: 'Dla początkujących',
     background: 'var(--primary-300)',
     color: 'var(--primary-800)',
   },
-  2: {
+  'dla-srednio-zaawansowanych': {
     name: 'Dla średnio zaawansowanych',
     background: 'var(--primary-400)',
     color: 'var(--primary-800)',
   },
-  3: {
+  'dla-zaawansowanych': {
     name: 'Dla zaawansowanych',
     background: 'var(--primary-700)',
     color: 'var(--primary-100)',
@@ -111,23 +111,28 @@ export const PRODUCT_CARD_QUERY = `
   price,
   discount,
   name,
+  excerpt,
   'slug': slug.current,
   basis,
-  type,
   _type,
-  course->{
-    complexity
-  },
+  "reviewsCount": count(*[_type == 'productReviewCollection' && references(^._id)]),
+  "rating": math::avg(*[_type == 'productReviewCollection' && references(^._id)]{rating}.rating),
   gallery[0]{
     ${Img_Query}
   },
+  countInStock,
+  complexity,
   variants[]{
-    _key,
+    "_id": _key,
     name,
     price,
     discount,
+    countInStock,
     gallery[0]{
       ${Img_Query}
     },
   },
+  courses[]->{
+    _id,
+  }
 `;

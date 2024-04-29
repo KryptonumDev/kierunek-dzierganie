@@ -2,18 +2,18 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './ControlPanel.module.scss';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useRouter } from 'next/navigation';
+import { createClient } from '@/utils/supabase-client';
 
 const links = [
   {
     name: 'Moje kursy',
     href: '/moje-konto/kursy',
   },
-  // {
-  //   name: 'Historia zakupów',
-  //   href: '/moje-konto/zakupy',
-  // },
+  {
+    name: 'Historia zakupów',
+    href: '/moje-konto/zakupy',
+  },
   {
     name: 'Pliki do pobrania',
     href: '/moje-konto/pliki-do-pobrania',
@@ -36,7 +36,7 @@ const ControlPanel = () => {
   const router = useRouter();
   const pathname = usePathname();
   const isCurrentPage = (href: string) => pathname.includes(href);
-  const supabase = createClientComponentClient();
+  const supabase = createClient();
 
   const logOut = async () => {
     await supabase.auth.signOut();

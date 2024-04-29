@@ -2,34 +2,54 @@ import { useRef, useState } from 'react';
 import styles from './PickQuantity.module.scss';
 import type { PickQuantityTypes } from './PickQuantity.types';
 
-const PickQuantity = ({ defaultValue, ...props }: PickQuantityTypes) => {
+const PickQuantity = ({ defaultValue, change, ...props }: PickQuantityTypes) => {
   const [quantity, setQuantity] = useState(defaultValue || 1);
   const input = useRef<HTMLInputElement>(null);
 
   const handleIncrease = () => {
-    setQuantity((prevQuantity) => prevQuantity + 1);
+    setQuantity((prevQuantity) => {
+      const newQuantity = prevQuantity + 1;
+
+      if (newQuantity > props.max) return props.max as number;
+
+      change(newQuantity);
+      return newQuantity;
+    });
   };
 
   const handleDecrease = () => {
     if (quantity > 1) {
-      setQuantity((prevQuantity) => prevQuantity - 1);
+      change(quantity);
+      setQuantity((prevQuantity) => {
+        const newQuantity = prevQuantity - 1;
+
+        change(newQuantity);
+        return newQuantity;
+      });
     }
   };
 
   return (
     <div className={styles['PickQuantity']}>
       <p>Ilość</p>
-      <button onClick={handleDecrease}>
+      <button
+        disabled={quantity <= 1}
+        onClick={handleDecrease}
+      >
         <ReduceIcon />
       </button>
       <input
+        disabled={true}
         ref={input}
         type='number'
         onWheel={(e) => e.currentTarget.blur()}
         value={quantity}
         {...props}
       />
-      <button onClick={handleIncrease}>
+      <button
+        disabled={quantity >= props.max}
+        onClick={handleIncrease}
+      >
         <IncreaseIcon />
       </button>
     </div>
