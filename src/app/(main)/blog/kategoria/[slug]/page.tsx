@@ -41,7 +41,7 @@ export default async function CategoryBlogPage({ params: { slug } }: { params: {
           highlightedPost: blog_HighlightedPost,
           slug,
           blogPosts: filteredBlogPosts,
-          pathPrefix: `/blog/kategoria/${slug}`,
+          pathPrefix: `/blog/kategoria/${slug}/strona`,
           addPagePrefix: false,
         }}
       />

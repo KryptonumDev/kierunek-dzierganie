@@ -207,6 +207,7 @@ const query = async (courseSlug: string, lessonSlug: string) => {
         name,
         type,
         "slug": slug.current,
+        generateCertificate,
         chapters {
           "_id": _key,
           chapterImage {

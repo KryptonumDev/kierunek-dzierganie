@@ -6,10 +6,11 @@ import styles from './ProgramChapterCard.module.scss';
 import type { Props } from './ProgramChapterCard.types';
 import PercentChart from '../PercentChart';
 import { formatTime } from '@/utils/format-time';
+import Link from 'next/link';
 
 const circleTypes = {
   '1': {
-    title: 'Tu jesteśmy!',
+    title: 'Gotowe do zaczęcia!',
     background: 'var(--primary-400, #E5D8D4)',
     mobile: false,
   },
@@ -71,16 +72,22 @@ const ProgramChapterCard = ({
 
   return (
     <div className={`${styles['programChapterCard']} ${timeLeft ? styles['blocked'] : ''}`}>
+      <Link
+        tabIndex={-1}
+        href={`/moje-konto/kursy/${courseSlug}/${firstUnendedLesson.slug}`}
+      />
       <div
         style={{ backgroundColor: circleTypes[circleType].background }}
         className={`${styles['circle']} ${circleTypes[circleType].mobile ? styles['mobile'] : ''}`}
       >
         {circleTypes[circleType].title} {circleType === '4' && formatTime(timeLeft)}
       </div>
-      <Img
-        data={image}
-        sizes='380px'
-      />
+      <div className={styles['image-wrap']}>
+        <Img
+          data={image}
+          sizes='380px'
+        />
+      </div>
       <div className={styles['content']}>
         <div>
           <p>

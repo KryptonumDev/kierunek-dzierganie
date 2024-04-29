@@ -28,6 +28,16 @@
       align-items: center;
       gap: 4px;
       grid-column: 1/-1;
+
+      svg {
+        transition: transform 0.3s var(--easing);
+      }
+
+      &:hover {
+        svg {
+          transform: translateX(-4px);
+        }
+      }
     }
 
     display: grid;

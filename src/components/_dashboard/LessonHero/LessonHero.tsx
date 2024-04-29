@@ -3,7 +3,6 @@ import { useMemo, useState } from 'react';
 import styles from './LessonHero.module.scss';
 import type { Props } from './LessonHero.types';
 import Link from 'next/link';
-import Button from '@/components/ui/Button';
 import { updateElement } from '@/utils/update-progress';
 import Vimeo from '@u-wave/react-vimeo';
 import PercentChart from '@/components/ui/PercentChart';
@@ -72,7 +71,7 @@ const LessonHero = ({
             if (completedLessons === course.chapters.find((el) => el._id === chapterId)!.lessons.length)
               completedChapters++;
           }
-          if (completedChapters === course.chapters.length) {
+          if (completedChapters === course.chapters.length && course.generateCertificate) {
             router.push(`/moje-konto/kursy/${course.slug}/certyfikat`);
           }
         }
@@ -114,11 +113,15 @@ const LessonHero = ({
     setAutoplay(isAutoplay);
   };
 
+  const files = useMemo(() => {
+    return leftHanded ? lesson.files_alter : lesson.files;
+  }, [leftHanded, lesson.files, lesson.files_alter]);
+
   return (
     <section className={styles['LessonHero']}>
       <div className={styles['grid']}>
         <Link
-          className={`${styles.returnLink} link`}
+          className={`${styles.returnLink}`}
           href={'/moje-konto/kursy'}
         >
           <ChevronRight />
@@ -132,6 +135,7 @@ const LessonHero = ({
                 loop={false}
                 onEnd={() => updateProgress('auto', true)}
                 className={styles['vimeo']}
+                autoplay={autoplay}
               />
             ) : (
               <Vimeo
@@ -139,6 +143,7 @@ const LessonHero = ({
                 loop={false}
                 onEnd={() => updateProgress('auto', true)}
                 className={styles['vimeo']}
+                autoplay={autoplay}
               />
             )}
           </div>
@@ -149,53 +154,66 @@ const LessonHero = ({
                   <div />
                 ) : (
                   <Link
-                    className={`${styles['prev']} link`}
+                    className={`${styles['prev']}`}
                     href={`/moje-konto/kursy/${course.slug}/${
                       course.chapters[currentChapterIndex - 1]!.lessons[
                         course.chapters[currentChapterIndex - 1]!.lessons.length - 1
                       ]!.slug
                     }`}
                   >
+                    <ChevronRight />
                     Poprzedni moduł
                   </Link>
                 )}
               </>
             ) : (
               <Link
-                className={`${styles['prev']} link`}
+                className={`${styles['prev']}`}
                 href={`/moje-konto/kursy/${course.slug}/${currentChapter.lessons[currentLessonIndex - 1]!.slug}`}
               >
+                <ChevronRight />
                 Poprzednia lekcja
               </Link>
             )}
-            {isCompleted ? (
-              <Button onClick={() => updateProgress('manual', false)}>Oznacz jako nieukończoną</Button>
-            ) : (
-              <Button onClick={() => updateProgress('manual', true)}>Oznacz jako ukończoną</Button>
-            )}
+            <button
+              data-checked={isCompleted}
+              className={styles['complete-button']}
+              onClick={() => updateProgress('manual', !isCompleted)}
+            >
+              <span>
+                <Checkmark />
+              </span>
+              {isCompleted ? 'Oznacz jako nieukończoną' : 'Oznacz jako ukończoną'}
+            </button>
             {currentChapter.lessons.length > currentLessonIndex + 1 ? (
               <Link
-                className={`${styles['next']} link`}
+                className={`${styles['next']}`}
                 href={`/moje-konto/kursy/${course.slug}/${currentChapter.lessons[currentLessonIndex + 1]!.slug}`}
               >
                 Następna lekcja
+                <ChevronLeft />
               </Link>
             ) : (
               <>
-                {currentChapterIndex === course.chapters.length - 1 && isCompleted && completePercentage === 100 && (
-                  <Link
-                    className={`${styles['next']} link`}
-                    href={`/moje-konto/kursy/${course.slug}/certyfikat`}
-                  >
-                    Podsumowanie kursu
-                  </Link>
-                )}
+                {currentChapterIndex === course.chapters.length - 1 &&
+                  isCompleted &&
+                  completePercentage === 100 &&
+                  course.generateCertificate && (
+                    <Link
+                      className={`${styles['next']}`}
+                      href={`/moje-konto/kursy/${course.slug}/certyfikat`}
+                    >
+                      Podsumowanie kursu
+                      <ChevronLeft />
+                    </Link>
+                  )}
                 {currentChapterIndex != course.chapters.length - 1 && (
                   <Link
-                    className={`${styles['next']} link`}
+                    className={`${styles['next']}`}
                     href={`/moje-konto/kursy/${course.slug}/${course.chapters[currentChapterIndex + 1]!.lessons[0]!.slug}`}
                   >
                     Następny moduł
+                    <ChevronLeft />
                   </Link>
                 )}
               </>
@@ -236,46 +254,28 @@ const LessonHero = ({
       </div>
       <div className={styles['columns']}>
         <div className={styles['column']}>
-          <Switch inputProps={{ checked: autoplay, onChange: () => setIsAutoplay(!autoplay)}}>Autoodtwarzanie</Switch>
+          <Switch inputProps={{ checked: autoplay, onChange: () => setIsAutoplay(!autoplay) }}>Autoodtwarzanie</Switch>
           <Switch inputProps={{ checked: leftHanded, onChange: () => setIsLeftHanded(!leftHanded) }}>
             Jestem osobą leworęczną
           </Switch>
           <p>Ustawienie to dostosowuje w jaki sposób wyświetlają Ci się kursy i pliki do lekcji</p>
         </div>
         <div className={styles['column']}>
-          {(lesson.files_alter || lesson.files) && <h2>Pliki do pobrania</h2>}
+          {files && <h2>Pliki do pobrania</h2>}
           <ul className={styles['list']}>
-            {leftHanded ? (
-              <>
-                {lesson.files_alter?.map((el) => (
-                  <li key={el.asset._id}>
-                    <a
-                      href={el.asset.url}
-                      className='link'
-                      download
-                      target='_blank'
-                      rel='noreferrer noopener'
-                    >
-                      {parseFileName(el.asset.originalFilename)} <small>({formatBytes(el.asset.size)})</small>
-                    </a>
-                  </li>
-                ))}
-              </>
-            ) : (
-              <>
-                {lesson.files?.map((el) => (
-                  <li key={el.asset._id}>
-                    <a
-                      href={el.asset.url}
-                      className='link'
-                      download
-                    >
-                      {parseFileName(el.asset.originalFilename)} <small>({formatBytes(el.asset.size)})</small>
-                    </a>
-                  </li>
-                ))}
-              </>
-            )}
+            {files?.map((el, i) => (
+              <li key={i}>
+                <a
+                  href={el.asset.url}
+                  className='link'
+                  download
+                  target='_blank'
+                  rel='noreferrer noopener'
+                >
+                  {parseFileName(el.asset.originalFilename)} <small>({formatBytes(el.asset.size)})</small>
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
       </div>
@@ -303,6 +303,24 @@ function ChevronRight() {
   );
 }
 
+function ChevronLeft() {
+  return (
+    <svg
+      xmlns='http://www.w3.org/2000/svg'
+      width='20'
+      height='20'
+      fill='none'
+    >
+      <path
+        stroke='#B4A29C'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        d='M7.187 15.625L12.813 10 7.187 4.375'
+      ></path>
+    </svg>
+  );
+}
+
 function CheckIcon() {
   return (
     <svg
@@ -320,3 +338,20 @@ function CheckIcon() {
     </svg>
   );
 }
+
+const Checkmark = () => (
+  <svg
+    xmlns='http://www.w3.org/2000/svg'
+    width='14'
+    height='12'
+    fill='none'
+    viewBox='0 0 14 12'
+  >
+    <path
+      stroke='#9A827A'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      d='M13.25 1L4.5 11 .75 7.25'
+    ></path>
+  </svg>
+);

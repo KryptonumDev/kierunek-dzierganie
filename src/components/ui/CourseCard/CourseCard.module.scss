@@ -1,4 +1,16 @@
 .CourseCard {
+  position: relative;
+
+  a {
+    z-index: 3;
+  }
+
+  > a {
+    position: absolute;
+    inset: 0;
+    display: block;
+    z-index: 2;
+  }
 
   &:hover img {
     transform: scale(1.05);

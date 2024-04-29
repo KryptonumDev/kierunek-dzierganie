@@ -8,10 +8,11 @@ import Link from 'next/link';
 
 const FeaturedCourseCard = ({ name, slug, image, complexity, progressPercentage, excerpt }: Props) => {
   return (
-    <Link
-      className={`${styles['featuredCourseCard']}`}
-      href={`/moje-konto/kursy/${slug}`}
-    >
+    <div className={`${styles['featuredCourseCard']}`}>
+      <Link
+        href={`/moje-konto/kursy/${slug}`}
+        tabIndex={-1}
+      />
       <div className={styles['image-wrap']}>
         <span
           style={{
@@ -46,7 +47,7 @@ const FeaturedCourseCard = ({ name, slug, image, complexity, progressPercentage,
         </p>
         <Button href={`/moje-konto/kursy/${slug}`}>Oglądaj</Button>
       </div>
-    </Link>
+    </div>
   );
 };
 

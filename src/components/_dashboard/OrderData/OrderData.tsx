@@ -1,4 +1,3 @@
-'use client';
 import Link from 'next/link';
 import styles from './OrderData.module.scss';
 import type { OrderDataTypes } from './OrderData.types';
@@ -13,7 +12,7 @@ const OrderData = ({ order }: OrderDataTypes) => {
   const totalItemsPrice =
     order.products.array?.reduce((acc, item) => acc + (item.discount ?? item.price!) * item.quantity!, 0) ?? 0;
 
-    return (
+  return (
     <section className={styles['OrderData']}>
       <Link
         className='link'

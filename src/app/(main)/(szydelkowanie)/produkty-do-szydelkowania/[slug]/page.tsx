@@ -126,7 +126,7 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
         ${Description_Query}
         parameters[]{
           name,
-          value,
+          value
         },
         variants[]{
           "_id": _key,

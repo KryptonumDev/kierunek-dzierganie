@@ -88,6 +88,7 @@
   .image-wrap {
     position: relative;
     overflow: hidden;
+    margin-bottom: 24px;
 
     .badge {
       font-size: 14px;
@@ -115,7 +116,6 @@
       object-fit: cover;
       aspect-ratio: 380/280;
       border-radius: 4px;
-      margin-bottom: 24px;
       transition: transform 0.3s ease;
     }
   }

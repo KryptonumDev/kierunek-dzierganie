@@ -287,6 +287,7 @@ export type Course = {
   _id: string;
   name: string;
   slug: string;
+  generateCertificate: boolean;
   type: 'course' | 'program';
   chapters: {
     _id: string;

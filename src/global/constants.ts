@@ -130,9 +130,9 @@ export const PRODUCT_CARD_QUERY = `
     countInStock,
     gallery[0]{
       ${Img_Query}
-    },
+    }
   },
   courses[]->{
-    _id,
-  }
+    _id
+  },
 `;
