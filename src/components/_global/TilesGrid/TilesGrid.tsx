@@ -1,9 +1,10 @@
+import Link from 'next/link';
 import Markdown from '@/components/ui/markdown';
-import styles from './TilesGrid.module.scss';
-import type { Props } from './TilesGrid.types';
 import Img from '@/components/ui/image';
 import Button from '@/components/ui/Button';
+import styles from './TilesGrid.module.scss';
 import { Decoration1 } from '@/components/ui/Icons';
+import type { Props } from './TilesGrid.types';
 
 const TilesGrid = ({ heading, paragraph, list }: Props) => {
   return (
@@ -16,10 +17,10 @@ const TilesGrid = ({ heading, paragraph, list }: Props) => {
       <div className={styles.wrapper}>
         {list.map(({ img, cta }, i) => (
           <div className={styles.item} key={i}>
-            <div className={styles.img}>
+            <Link href={cta.href} className={styles.img}>
               <Img data={img} sizes='(max-width: 899px) 50vw, 400px' />
-            </div>
-            <Button data={cta} />
+            </Link>
+            <Button data={cta} className={styles.cta} />
           </div>
         ))}
       </div>
