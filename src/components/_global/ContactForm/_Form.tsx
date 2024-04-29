@@ -1,15 +1,16 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
+import { useForm, type FieldValues } from 'react-hook-form';
 import Input from '@/components/ui/Input';
 import Checkbox from '@/components/ui/Checkbox';
 import Button from '@/components/ui/Button';
 import styles from './ContactForm.module.scss';
-import { useForm, type FieldValues } from 'react-hook-form';
-import type { StatusProps } from './ContactForm.types';
 import { REGEX } from '@/global/constants';
 import State from './_State';
 import Loading from './_Loading';
+import { formatPhoneNumber } from '@/utils/format-phone-number';
+import type { StatusProps } from './ContactForm.types';
 
 const Form = ({ aboveTheFold }: { aboveTheFold: boolean }) => {
   const [status, setStatus] = useState<StatusProps>({ sending: false });
@@ -70,6 +71,7 @@ const Form = ({ aboveTheFold }: { aboveTheFold: boolean }) => {
         placeholder='_ _ _ - _ _ _ - _ _ _'
         register={register('tel', {
           pattern: { value: REGEX.phone, message: 'Niepoprawny numer telefonu' },
+          onChange: (e) => formatPhoneNumber(e),
         })}
         errors={errors}
       />
