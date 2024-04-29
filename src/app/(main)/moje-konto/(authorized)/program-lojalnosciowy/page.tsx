@@ -5,6 +5,7 @@ import AffiliateCode, { AffiliateCode_Query } from '@/components/_dashboard/_Aff
 import TextSection, { TextSection_Query } from '@/components/_dashboard/_AffiliatePage/TextSection';
 import type { AffiliatePage_QueryTypes } from './page.types';
 import { createClient } from '@/utils/supabase-server';
+import { createClient as createAdminClient } from '@/utils/supabase-admin';
 
 const currentPath = '/moje-konto/pomoc';
 
@@ -63,12 +64,13 @@ export default async function AffiliatePage() {
 
 async function query(): Promise<AffiliatePage_QueryTypes> {
   const supabase = createClient();
+  const adminbase = createAdminClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data } = await supabase
+  const { data } = await adminbase
     .from('profiles')
     .select(
       `
@@ -118,6 +120,8 @@ async function query(): Promise<AffiliatePage_QueryTypes> {
     `,
     tags: ['AffiliateDashboard_Page'],
   });
+
+  console.log(data);
 
   return {
     ...res,

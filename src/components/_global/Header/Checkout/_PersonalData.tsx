@@ -8,6 +8,8 @@ import type { InputState, MappingProps } from './Checkout.types';
 import Radio from '@/components/ui/Radio';
 import { useCart } from 'react-use-cart';
 import { toast } from 'react-toastify';
+// @ts-expect-error there is no type for this package
+import { InpostGeowidget } from 'react-inpost-geowidget';
 
 type FormValues = {
   fullName?: string;
@@ -100,6 +102,8 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
     formState: { errors },
   } = useForm<FormValues>({ mode: 'all', defaultValues: generateDefaults(input) });
 
+  const shippingMethod = watch('shippingMethod');
+
   const onSubmit = handleSubmit(async (data) => {
     const newInput = generateNewInput(data, input);
     setInput(newInput as InputState);
@@ -136,6 +140,11 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
     setValue('shippingCountry', watch('country'));
   }, [shippingSameAsBilling, setValue, watch]);
 
+  const onPointCallback = (e) => {
+    debugger
+    console.log(e);
+  };
+
   return (
     <>
       <form
@@ -153,12 +162,18 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
                 label='Kurier InPost <strong>12,50&nbsp;zł</strong>'
                 errors={errors}
               />
-              <Radio
-                register={register('shippingMethod')}
-                value={'Paczkomat InPost'}
-                label='Paczkomat InPost <strong>12,50&nbsp;zł</strong>'
-                errors={errors}
-              />
+              <div className={`${styles['inpost']} ${shippingMethod === 'Paczkomat InPost' ? styles['active'] : ''}`}>
+                <Radio
+                  register={register('shippingMethod')}
+                  value={'Paczkomat InPost'}
+                  label='Paczkomat InPost <strong>12,50&nbsp;zł</strong>'
+                  errors={errors}
+                />
+                <InpostGeowidget
+                  token='eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJzQlpXVzFNZzVlQnpDYU1XU3JvTlBjRWFveFpXcW9Ua2FuZVB3X291LWxvIn0.eyJleHAiOjIwMDUzMDM1MjAsImlhdCI6MTY4OTk0MzUyMCwianRpIjoiN2YyNDIyZWUtOWQzMy00NWYzLWFjMWItN2Y2YTNjMzg1ZjdkIiwiaXNzIjoiaHR0cHM6Ly9sb2dpbi5pbnBvc3QucGwvYXV0aC9yZWFsbXMvZXh0ZXJuYWwiLCJzdWIiOiJmOjEyNDc1MDUxLTFjMDMtNGU1OS1iYTBjLTJiNDU2OTVlZjUzNTo3Tm8ydDZILUxqb3V5RklmdmtVVHVwT1RId3VwMnZPYm5nelkwWnBmdkQwIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoic2hpcHgiLCJzZXNzaW9uX3N0YXRlIjoiYjE1YTRlNDYtOTgxNS00YmY0LWFlZjktM2RjYWJhMzdlYzY1Iiwic2NvcGUiOiJvcGVuaWQgYXBpOmFwaXBvaW50cyIsInNpZCI6ImIxNWE0ZTQ2LTk4MTUtNGJmNC1hZWY5LTNkY2FiYTM3ZWM2NSIsImFsbG93ZWRfcmVmZXJyZXJzIjoiIiwidXVpZCI6ImZlZDg4NTlhLTY5YTUtNDVlZS1hNmNkLTZjNzNiOWE5YzNkMiJ9.oLlzQKMFGL1-TzdmHG_FlT4vrVZU4LDqm3doZV8cWP0I72CL1QMSlNCq6JZTcaPjWGmGhvBeYbWtUT5bsfOd4qRSkbop1_t0Y5B6pCQOyvF4OvsdbH6nOYj9_W5bhP-fshz-AZzyCroJFMST49zElhlwW0jAHS0Qrq4NznotnEc0IgkqknBSUVhCOeijnhPKT_Or6U9LfQgqqXDuv0i-Y1MDiKu5907B0cSbWc9fc7SpwdWcB-yubhnXrVXz-uzC2TtY9Gd57NigdyfGgDt9vvRXh8xzc9yXt14GRIahKRSbFL9jfqESc7zkk21QPt-QcHEcRafQseIOcmg7CAWQJA'
+                  onPoint={onPointCallback}
+                />
+              </div>
             </fieldset>
           </>
         )}

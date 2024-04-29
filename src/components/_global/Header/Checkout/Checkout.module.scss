@@ -45,6 +45,26 @@
   }
 
   .main {
+    .inpost {
+      height: 50px;
+
+      iframe {
+        height: 0;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      &.active {
+        height: 500px;
+
+        iframe {
+          height: 450px;
+          opacity: 1;
+          pointer-events: all;
+        }
+      }
+    }
+
     fieldset {
       border: none;
       padding: 0;
