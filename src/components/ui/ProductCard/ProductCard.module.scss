@@ -2,6 +2,10 @@
   text-align: center;
   position: relative;
 
+  &:hover img {
+    transform: scale(1.05);
+  }
+
   .rating {
     display: flex;
     gap: 4px;
@@ -83,6 +87,7 @@
 
   .image-wrap {
     position: relative;
+    overflow: hidden;
 
     .badge {
       font-size: 14px;
@@ -93,6 +98,7 @@
       padding: 8px 16px 8px 20px;
       border-radius: 0px 0px 4px 0px;
       max-width: 100%;
+      z-index: 2;
 
       span {
         white-space: nowrap;
@@ -110,6 +116,7 @@
       aspect-ratio: 380/280;
       border-radius: 4px;
       margin-bottom: 24px;
+      transition: transform 0.3s ease;
     }
   }
 

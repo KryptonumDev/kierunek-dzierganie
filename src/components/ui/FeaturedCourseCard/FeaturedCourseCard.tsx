@@ -4,10 +4,14 @@ import Img from '../image';
 import Button from '../Button';
 import { courseComplexityEnum } from '@/global/constants';
 import PercentChart from '../PercentChart';
+import Link from 'next/link';
 
 const FeaturedCourseCard = ({ name, slug, image, complexity, progressPercentage, excerpt }: Props) => {
   return (
-    <div className={`${styles['featuredCourseCard']}`}>
+    <Link
+      className={`${styles['featuredCourseCard']}`}
+      href={`/moje-konto/kursy/${slug}`}
+    >
       <div className={styles['image-wrap']}>
         <span
           style={{
@@ -18,10 +22,12 @@ const FeaturedCourseCard = ({ name, slug, image, complexity, progressPercentage,
         >
           <span>{courseComplexityEnum[complexity].name}</span>
         </span>
-        <Img
-          data={image}
-          sizes='380px'
-        />
+        <div className={styles.imageWrapper}>
+          <Img
+            data={image}
+            sizes='380px'
+          />
+        </div>
         <div className={styles['bestseller']}>
           <LastWatched />
           <h3>
@@ -40,7 +46,7 @@ const FeaturedCourseCard = ({ name, slug, image, complexity, progressPercentage,
         </p>
         <Button href={`/moje-konto/kursy/${slug}`}>Oglądaj</Button>
       </div>
-    </div>
+    </Link>
   );
 };
 

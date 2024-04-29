@@ -5,8 +5,13 @@
   gap: 36px;
   justify-content: flex-start;
 
+  a:hover img {
+    transform: scale(1.05);
+  }
+
   .image-wrap {
     position: relative;
+    overflow: hidden;
 
     .badge {
       position: absolute;
@@ -29,6 +34,7 @@
       width: 100%;
       height: auto;
       object-fit: cover;
+      transition: transform 0.3s ease;
     }
   }
 

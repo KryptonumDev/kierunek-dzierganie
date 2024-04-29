@@ -170,14 +170,17 @@ const Search = ({ SearchIcon, CloseIcon }: { SearchIcon: React.ReactNode; CloseI
                   <Courses
                     passedRef={ref}
                     searchResults={searchResults}
+                    setIsSearching={setIsSearching}
                   />
                   <Products
                     passedRef={ref}
                     searchResults={searchResults}
+                    setIsSearching={setIsSearching}
                   />
                   <Articles
                     passedRef={ref}
                     searchResults={searchResults}
+                    setIsSearching={setIsSearching}
                   />
                 </>
               ) : (

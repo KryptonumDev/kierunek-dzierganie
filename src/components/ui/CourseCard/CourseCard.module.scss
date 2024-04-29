@@ -1,4 +1,9 @@
 .CourseCard {
+
+  &:hover img {
+    transform: scale(1.05);
+  }
+
   .image-wrap {
     position: relative;
     margin-bottom: 24px;
@@ -11,6 +16,7 @@
       padding: 8px 16px 8px 20px;
       border-radius: 0px 0px 4px 0px;
       max-width: 100%;
+      z-index: 2;
 
       span {
         white-space: nowrap;
@@ -20,12 +26,17 @@
       }
     }
 
-    img {
-      border-radius: 4px;
-      aspect-ratio: 381/276;
-      width: 100%;
-      height: auto;
-      object-fit: cover;
+    .imageWrapper {
+      overflow: hidden;
+
+      img {
+        border-radius: 4px;
+        aspect-ratio: 381/276;
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+      }
     }
   }
 

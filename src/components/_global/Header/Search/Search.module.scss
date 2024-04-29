@@ -70,10 +70,15 @@
     gap: 8px;
     grid-template-columns: auto 1fr;
     align-items: center;
-    padding: 4px;
+    margin: 4px;
 
     &:hover {
       background-color: var(--primary-200);
+    }
+
+    &:focus-visible {
+      background-color: var(--primary-200);
+      outline-offset: 3px;
     }
 
     span {
