@@ -3,21 +3,28 @@ import sanityFetch from '@/utils/sanity.fetch';
 import Img, { Img_Query } from '@/components/ui/image';
 import Markdown from '@/components/ui/markdown';
 import styles from './BlogSection.module.scss';
-import { type BlogPostsType } from './BlogSection.types';
+import { type HighlightedPostType, type BlogPostsType } from './BlogSection.types';
 import Link from 'next/link';
 import { POSTS_PER_PAGE } from '@/global/constants';
 import ReadingTime from '@/components/ui/ReadingTime';
 
-export default async function BlogPosts({ slug, number }: { slug?: string; number?: number }) {
+export default async function BlogPosts({
+  slug,
+  number,
+  highlightedPost,
+}: {
+  slug?: string;
+  number?: number;
+  highlightedPost?: HighlightedPostType;
+}) {
   if (number == 1) {
     return redirect('/blog');
   }
   let blogPosts: BlogPostsType[] = [];
   const selectedPage = number ? number : 1;
   slug
-    ? (blogPosts = await getCategoryBlogPostData(selectedPage, slug))
-    : (blogPosts = await getBlogPostData(selectedPage));
-
+    ? (blogPosts = await getCategoryBlogPostData(selectedPage, slug, highlightedPost))
+    : (blogPosts = await getBlogPostData(selectedPage, highlightedPost));
   return (
     <div
       className={styles.blogPosts}
@@ -46,8 +53,8 @@ export default async function BlogPosts({ slug, number }: { slug?: string; numbe
   );
 }
 
-async function getBlogPostData(selectedPage?: number) {
-  const data = await sanityFetch<BlogPostsType[]>({
+async function getBlogPostData(selectedPage?: number, highlightedPost?: HighlightedPostType | null) {
+  let data = await sanityFetch<BlogPostsType[]>({
     query: /* groq */ `
       *[_type == "BlogPost_Collection"]
       [$POSTS_PER_PAGE * ($selectedPage-1)
@@ -67,14 +74,28 @@ async function getBlogPostData(selectedPage?: number) {
     params: { selectedPage, POSTS_PER_PAGE },
     tags: ['BlogPost_Collection'],
   });
+
   if (data.length == 0) {
     return notFound();
   }
+
+  if (!highlightedPost) {
+    data.shift();
+  }
+
+  if (highlightedPost) {
+    data = data.filter((item) => item.slug == highlightedPost.slug);
+  }
+
   return data;
 }
 
-async function getCategoryBlogPostData(selectedPage?: number, slug?: string) {
-  const data = await sanityFetch<BlogPostsType[]>({
+async function getCategoryBlogPostData(
+  selectedPage?: number,
+  slug?: string,
+  highlightedPost?: HighlightedPostType | null
+) {
+  let data = await sanityFetch<BlogPostsType[]>({
     query: /* groq */ `
       *[_type == "BlogPost_Collection" && $slug in category[]->slug.current]
       [$POSTS_PER_PAGE * ($selectedPage-1)
@@ -95,8 +116,18 @@ async function getCategoryBlogPostData(selectedPage?: number, slug?: string) {
     params: { slug, selectedPage, POSTS_PER_PAGE },
     tags: ['BlogPost_Collection'],
   });
+
   if (data.length == 0) {
     return notFound();
   }
+
+  if (!highlightedPost) {
+    data.shift();
+  }
+
+  if (highlightedPost) {
+    data = data.filter((item) => item.slug !== highlightedPost.slug);
+  }
+
   return data;
 }

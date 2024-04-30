@@ -15,6 +15,7 @@ const BlogSection = async ({
   number,
   pathPrefix = '/blog',
 }: BlogSectionTypes) => {
+
   return (
     <section className={styles['BlogSection']}>
       <header>
@@ -28,6 +29,7 @@ const BlogSection = async ({
       <BlogPosts
         slug={slug}
         number={number}
+        highlightedPost={highlightedPost}
       />
       <Pagination
         currentPage={number}
