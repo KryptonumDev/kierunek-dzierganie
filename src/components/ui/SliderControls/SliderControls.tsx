@@ -1,70 +1,133 @@
 'use client';
-import styles from './SliderControls.module.scss';
-import type { Props } from './SliderControls.types';
+import { useCallback, useEffect, useState } from 'react';
+import type { EmblaCarouselType } from 'embla-carousel';
 
-const SliderControls = ({ handlePrev, activeIndex, length, slideTo, handleNext }: Props) => {
+const useNavigation = (emblaApi: EmblaCarouselType | undefined) => {
+  const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
+  const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
+
+  const onPrevButtonClick = useCallback(() => {
+    if (!emblaApi) return;
+    emblaApi.scrollPrev();
+  }, [emblaApi]);
+
+  const onNextButtonClick = useCallback(() => {
+    if (!emblaApi) return;
+    emblaApi.scrollNext();
+  }, [emblaApi]);
+
+  const onSelect = useCallback((emblaApi: EmblaCarouselType) => {
+    setPrevBtnDisabled(!emblaApi.canScrollPrev());
+    setNextBtnDisabled(!emblaApi.canScrollNext());
+  }, []);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    onSelect(emblaApi);
+    emblaApi.on('reInit', onSelect);
+    emblaApi.on('select', onSelect);
+  }, [emblaApi, onSelect]);
+
+  return {
+    prevBtnDisabled,
+    nextBtnDisabled,
+    onPrevButtonClick,
+    onNextButtonClick
+  };
+};
+
+const usePagination = (emblaApi: EmblaCarouselType | undefined) => {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
+
+  const onDotButtonClick = useCallback((index: number) => {
+    if (!emblaApi) return;
+    emblaApi.scrollTo(index);
+  }, [emblaApi]);
+
+  const onInit = useCallback((emblaApi: EmblaCarouselType) => {
+    setScrollSnaps(emblaApi.scrollSnapList());
+  }, []);
+
+  const onSelect = useCallback((emblaApi: EmblaCarouselType) => {
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+  }, []);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    onInit(emblaApi);
+    onSelect(emblaApi);
+    emblaApi.on('reInit', onInit);
+    emblaApi.on('reInit', onSelect);
+    emblaApi.on('select', onSelect);
+  }, [emblaApi, onInit, onSelect]);
+
+  return {
+    selectedIndex,
+    scrollSnaps,
+    onDotButtonClick
+  };
+};
+
+export default function SliderControls({ api }: { api: EmblaCarouselType | undefined }) {
+  const { selectedIndex, scrollSnaps, onDotButtonClick } = usePagination(api);
+  const { prevBtnDisabled, nextBtnDisabled, onPrevButtonClick, onNextButtonClick } = useNavigation(api);
+
   return (
-    <div className={styles['SliderControls']}>
+    <div className="embla__controls">
       <button
-        onClick={handlePrev}
-        disabled={activeIndex === 0}
+        className="embla__button embla__button--prev"
+        type="button"
+        onClick={onPrevButtonClick}
+        disabled={prevBtnDisabled}
         aria-label='Przejdź do poprzedniego elementu'
-        className={styles.button}
       >
-        {LeftIcon}
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          width={23}
+          height={9}
+          viewBox='0 0 23 9'
+          fill='none'
+        >
+          <path
+            d='M22.906 4.767H1.094m0 0 3.75-3.75m-3.75 3.75 3.75 3.75'
+            stroke='#53423C'
+            strokeWidth={0.75}
+          />
+        </svg>
       </button>
-      <div>
-        {Array.from({ length }).map((_, i) => (
+      <div className="embla__dots">
+        {scrollSnaps.map((_, index) => (
           <button
-            key={i}
-            aria-label={`Przejdź do ${i + 1} elementu`}
-            className={styles.pagination}
-            data-active={activeIndex === i}
-            onClick={() => slideTo(i)}
+            key={index}
+            type="button"
+            className='embla__dot'
+            onClick={() => onDotButtonClick(index)}
+            aria-current={index === selectedIndex}
           />
         ))}
       </div>
       <button
-        onClick={handleNext}
-        disabled={activeIndex === length - 1}
+        className="embla__button embla__button--next"
+        type="button"
+        onClick={onNextButtonClick}
+        disabled={nextBtnDisabled}
         aria-label='Przejdź do następnego elementu'
-        className={styles.button}
       >
-        {RightIcon}
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          width={23}
+          height={9}
+          viewBox='0 0 23 9'
+          fill='none'
+        >
+          <path
+            d='M.094 4.767h21.812m0 0-3.75-3.75m3.75 3.75-3.75 3.75'
+            stroke='#53423C'
+            strokeWidth={0.75}
+          />
+        </svg>
       </button>
     </div>
   );
-};
-
-export default SliderControls;
-
-const LeftIcon = (
-  <svg
-    xmlns='http://www.w3.org/2000/svg'
-    width='23'
-    height='9'
-    fill='none'
-    viewBox='0 0 23 9'
-  >
-    <path
-      stroke='#53423C'
-      strokeWidth='0.75'
-      d='M22.906 4.858H1.094m0 0l3.75-3.75m-3.75 3.75l3.75 3.75'
-    ></path>
-  </svg>
-);
-const RightIcon = (
-  <svg
-    xmlns='http://www.w3.org/2000/svg'
-    width='23'
-    height='9'
-    fill='none'
-    viewBox='0 0 23 9'
-  >
-    <path
-      stroke='#53423C'
-      strokeWidth='0.75'
-      d='M.094 4.858h21.812m0 0l-3.75-3.75m3.75 3.75l-3.75 3.75'
-    ></path>
-  </svg>
-);
+}
