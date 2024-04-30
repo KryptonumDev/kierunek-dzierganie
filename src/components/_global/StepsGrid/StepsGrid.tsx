@@ -2,6 +2,7 @@ import Markdown from '@/components/ui/markdown';
 import Img from '@/components/ui/image';
 import styles from './StepsGrid.module.scss';
 import type { StepsGridTypes } from './StepsGrid.types';
+import Link from 'next/link';
 
 const StepsGrid = ({ heading, paragraph, list }: StepsGridTypes) => {
   return (
@@ -11,16 +12,23 @@ const StepsGrid = ({ heading, paragraph, list }: StepsGridTypes) => {
         <Markdown className={styles.paragraph}>{paragraph}</Markdown>
       </header>
       <div className={styles.list}>
-        {list.map(({ img, heading, paragraph }, i) => (
+        {list.map(({ img, heading, paragraph, relatedCourse }, i) => (
           <div
             className={styles.item}
             key={i}
           >
-            <div className={styles.img}>
-              <Img
-                data={img}
-                sizes=''
+            {relatedCourse && (
+              <Link
+                href={`${relatedCourse.basis === 'crocheting' ? '/kursy-szydelkowania' : '/kursy-dziergania-na-drutach'}/${relatedCourse.slug}`}
               />
+            )}
+            <div className={styles.img}>
+              <div className={styles['img-wrap']}>
+                <Img
+                  data={img}
+                  sizes=''
+                />
+              </div>
               {i !== list.length - 1 && <ArrowIcon className={styles.ArrowIcon} />}
             </div>
             <h3>{heading}</h3>

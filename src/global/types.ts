@@ -287,6 +287,7 @@ export type Course = {
   _id: string;
   name: string;
   slug: string;
+  generateCertificate: boolean;
   type: 'course' | 'program';
   chapters: {
     _id: string;
@@ -330,12 +331,25 @@ export type Order = {
   payment_method: string;
   products: {
     array: {
+      complexity: Complexity;
+      courses: ProductCard;
+      discount: number;
+      image: ImgType;
+      type: 'product' | 'course' | 'bundle';
+      variantId: string;
       id: string;
       name: string;
       price: number;
       quantity: number;
     }[];
   };
+  shippingMethod: {
+    inpostPointData: InpostPoint | null;
+    name: string;
+    price: number;
+  };
+  virtualMoney?: number | null;
+  discount?: Discount | null;
   billing: Billing;
   shipping: Shipping;
   orders_statuses: {
@@ -389,4 +403,12 @@ export type Discount = {
   id: string;
   type: string;
   affiliatedBy: string | null;
+};
+
+export type InpostPoint = {
+  address: {
+    line1: string;
+    line2: string;
+  };
+  name: string;
 };

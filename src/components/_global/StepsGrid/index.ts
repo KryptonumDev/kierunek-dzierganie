@@ -8,6 +8,10 @@ export const StepsGrid_Query = `
     heading,
     paragraph,
     list[] {
+      relatedCourse -> {
+        "slug": slug.current,
+        basis
+      },
       img {
         ${Img_Query}
       },

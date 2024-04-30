@@ -20,6 +20,10 @@
     overflow-y: auto;
     direction: rtl;
     padding: 10px 10px 10px 24px;
+    font-size: 18px;
+    display: grid;
+    gap: 16px;
+    color: var(--primary-600);
 
     &::-webkit-scrollbar {
       width: 3px;
@@ -45,22 +49,22 @@
         width: 0px;
       }
     }
-  }
-
-  .link {
-    width: fit-content;
-    text-align: start;
-  }
-
-  .unorderedList {
-    font-size: 18px;
-    display: grid;
-    gap: 16px;
 
     .subList {
       font-size: 14px;
       gap: 16px;
       display: grid;
+      color: var(--primary-600);
+    }
+  }
+
+  .link {
+    width: fit-content;
+    text-align: start;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: var(--primary-900);
     }
   }
 

@@ -2,12 +2,16 @@ import Input from '@/components/ui/Input';
 import { useForm } from 'react-hook-form';
 import styles from './Checkout.module.scss';
 import Checkbox from '@/components/ui/Checkbox';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Button from '@/components/ui/Button';
 import type { InputState, MappingProps } from './Checkout.types';
 import Radio from '@/components/ui/Radio';
 import { useCart } from 'react-use-cart';
 import { toast } from 'react-toastify';
+// @ts-expect-error there is no type for this package
+import { InpostGeowidget } from 'react-inpost-geowidget';
+import { formatPrice } from '@/utils/price-formatter';
+import type { InpostPoint } from '@/global/types';
 
 type FormValues = {
   fullName?: string;
@@ -33,11 +37,18 @@ type FormValues = {
   shippingMethod?: string;
 };
 
-const generateNewInput = (data: FormValues, input: InputState) => {
+const generateNewInput = (data: FormValues, input: InputState, selectedMapPoint: InpostPoint | null) => {
   return {
     ...input,
     firmOrder: data.invoiceType === 'Firma',
     billingDifferentThanShipping: !data.shippingSameAsBilling,
+    shippingMethod: {
+      name: data.shippingMethod,
+      price: shippingMethods.find((method) => method.name === data.shippingMethod)?.price || 0,
+      inpostPointData: shippingMethods.find((method) => method.name === data.shippingMethod)?.map
+        ? selectedMapPoint
+        : '',
+    },
     shipping: {
       firstName: data.shippingFullName,
       address1: data.shippingAddress,
@@ -65,7 +76,7 @@ const generateNewInput = (data: FormValues, input: InputState) => {
 
 const generateDefaults = (input: InputState) => {
   return {
-    shippingMethod: 'Kurier InPost',
+    shippingMethod: shippingMethods[0]!.name,
 
     fullName: input.billing.firstName,
     email: input.billing.email,
@@ -90,7 +101,21 @@ const generateDefaults = (input: InputState) => {
   };
 };
 
+const shippingMethods = [
+  {
+    name: 'Kurier InPost',
+    price: 12.5,
+    map: false,
+  },
+  {
+    name: 'Paczkomat InPost',
+    price: 12.5,
+    map: true,
+  },
+];
+
 export default function PersonalData({ goToCart, setInput, input }: MappingProps) {
+  const [selectedMapPoint, setSelectedMapPoint] = useState<InpostPoint | null>(null);
   const { emptyCart } = useCart();
   const {
     register,
@@ -100,8 +125,17 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
     formState: { errors },
   } = useForm<FormValues>({ mode: 'all', defaultValues: generateDefaults(input) });
 
+  const shippingMethod = watch('shippingMethod');
+
+  useEffect(() => {
+    setInput((prev) => ({
+      ...prev,
+      delivery: shippingMethods.find((method) => method.name === shippingMethod)?.price || 0,
+    }));
+  }, [shippingMethod, setInput]);
+
   const onSubmit = handleSubmit(async (data) => {
-    const newInput = generateNewInput(data, input);
+    const newInput = generateNewInput(data, input, selectedMapPoint);
     setInput(newInput as InputState);
     await fetch('/api/payment/create', {
       method: 'POST',
@@ -136,6 +170,10 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
     setValue('shippingCountry', watch('country'));
   }, [shippingSameAsBilling, setValue, watch]);
 
+  const onPointCallback = (e: InpostPoint) => {
+    setSelectedMapPoint(e);
+  };
+
   return (
     <>
       <form
@@ -147,18 +185,54 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
           <>
             <legend>Wybierz sposób dostawy</legend>
             <fieldset>
-              <Radio
-                register={register('shippingMethod')}
-                value={'Kurier InPost'}
-                label='Kurier InPost <strong>12,50&nbsp;zł</strong>'
-                errors={errors}
-              />
-              <Radio
-                register={register('shippingMethod')}
-                value={'Paczkomat InPost'}
-                label='Paczkomat InPost <strong>12,50&nbsp;zł</strong>'
-                errors={errors}
-              />
+              {shippingMethods.map((method) => {
+                if (method.map)
+                  return (
+                    <div
+                      data-active={shippingMethod === method.name}
+                      data-selected={!!selectedMapPoint}
+                      key={method.name}
+                      className={styles['inpost']}
+                    >
+                      <Radio
+                        register={register('shippingMethod')}
+                        value={method.name}
+                        label={`${method.name} <strong>${formatPrice(method.price * 100)}</strong>`}
+                        errors={errors}
+                      />
+                      {selectedMapPoint ? (
+                        <div className={styles['inpost-data']}>
+                          <p>
+                            {selectedMapPoint.address.line1}, {selectedMapPoint.address.line2}
+                          </p>
+                          <p>Paczkomat: {selectedMapPoint.name}</p>
+                          <button
+                            className='link'
+                            type='button'
+                            onClick={() => setSelectedMapPoint(null)}
+                          >
+                            Zmień
+                          </button>
+                        </div>
+                      ) : (
+                        <InpostGeowidget
+                          token='eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJzQlpXVzFNZzVlQnpDYU1XU3JvTlBjRWFveFpXcW9Ua2FuZVB3X291LWxvIn0.eyJleHAiOjIwMDUzMDM1MjAsImlhdCI6MTY4OTk0MzUyMCwianRpIjoiN2YyNDIyZWUtOWQzMy00NWYzLWFjMWItN2Y2YTNjMzg1ZjdkIiwiaXNzIjoiaHR0cHM6Ly9sb2dpbi5pbnBvc3QucGwvYXV0aC9yZWFsbXMvZXh0ZXJuYWwiLCJzdWIiOiJmOjEyNDc1MDUxLTFjMDMtNGU1OS1iYTBjLTJiNDU2OTVlZjUzNTo3Tm8ydDZILUxqb3V5RklmdmtVVHVwT1RId3VwMnZPYm5nelkwWnBmdkQwIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoic2hpcHgiLCJzZXNzaW9uX3N0YXRlIjoiYjE1YTRlNDYtOTgxNS00YmY0LWFlZjktM2RjYWJhMzdlYzY1Iiwic2NvcGUiOiJvcGVuaWQgYXBpOmFwaXBvaW50cyIsInNpZCI6ImIxNWE0ZTQ2LTk4MTUtNGJmNC1hZWY5LTNkY2FiYTM3ZWM2NSIsImFsbG93ZWRfcmVmZXJyZXJzIjoiIiwidXVpZCI6ImZlZDg4NTlhLTY5YTUtNDVlZS1hNmNkLTZjNzNiOWE5YzNkMiJ9.oLlzQKMFGL1-TzdmHG_FlT4vrVZU4LDqm3doZV8cWP0I72CL1QMSlNCq6JZTcaPjWGmGhvBeYbWtUT5bsfOd4qRSkbop1_t0Y5B6pCQOyvF4OvsdbH6nOYj9_W5bhP-fshz-AZzyCroJFMST49zElhlwW0jAHS0Qrq4NznotnEc0IgkqknBSUVhCOeijnhPKT_Or6U9LfQgqqXDuv0i-Y1MDiKu5907B0cSbWc9fc7SpwdWcB-yubhnXrVXz-uzC2TtY9Gd57NigdyfGgDt9vvRXh8xzc9yXt14GRIahKRSbFL9jfqESc7zkk21QPt-QcHEcRafQseIOcmg7CAWQJA'
+                          onPoint={onPointCallback}
+                        />
+                      )}
+                    </div>
+                  );
+
+                return (
+                  <Radio
+                    key={method.name}
+                    register={register('shippingMethod')}
+                    value={method.name}
+                    label={`${method.name} <strong>${formatPrice(method.price * 100)}</strong>`}
+                    errors={errors}
+                  />
+                );
+              })}
             </fieldset>
           </>
         )}

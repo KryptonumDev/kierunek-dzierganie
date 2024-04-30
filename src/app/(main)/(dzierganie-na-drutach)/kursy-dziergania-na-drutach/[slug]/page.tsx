@@ -131,17 +131,7 @@ const query = async (slug: string): Promise<CoursePageQuery> => {
         featuredVideo,
         countInStock,
         gallery[]{
-          asset -> {
-            url,
-            altText,
-            metadata {
-              lqip,
-              dimensions {
-                width,
-                height,
-              }
-            }
-          }
+          ${Img_Query}
         },
         ${Package_Query}
         ${Description_Query}
@@ -149,8 +139,8 @@ const query = async (slug: string): Promise<CoursePageQuery> => {
           chapterName,
           lessons[] -> {
             title,
-            lengthInMinutes,
-          },
+            lengthInMinutes
+          }
         },
         "reviews": *[_type == 'productReviewCollection' && references(^._id)][0...10]{
           rating,

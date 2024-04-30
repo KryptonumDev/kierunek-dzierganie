@@ -139,8 +139,8 @@ const query = async (slug: string): Promise<CoursePageQuery> => {
           chapterName,
           lessons[] -> {
             title,
-            lengthInMinutes,
-          },
+            lengthInMinutes
+          }
         },
         "reviews": *[_type == 'productReviewCollection' && references(^._id)][0...10]{
           rating,
@@ -157,14 +157,14 @@ const query = async (slug: string): Promise<CoursePageQuery> => {
             ${Img_Query}
           },
           description,
-          "countOfCourse": count(*[_type == 'course' && references(^._id)]),
+          "countOfCourse": count(*[_type == 'course' && references(^._id)])
         },
         "relatedBundle": *[_type == 'bundle' && references(^._id)][0]{
           ${PRODUCT_CARD_QUERY}
           courses[]->{
             ${PRODUCT_CARD_QUERY}
           }
-        },
+        }
       },
       "card": *[_type == 'bundle' && basis == 'crocheting' && slug.current == $slug][0] {
         ${PRODUCT_CARD_QUERY}

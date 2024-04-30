@@ -1,11 +1,15 @@
 import EmptyFiles from '@/components/_dashboard/EmptyFiles';
 import FilesHero from '@/components/_dashboard/FilesHero';
 import ListingFiles from '@/components/_dashboard/ListingFiles';
+import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import { Img_Query } from '@/components/ui/image';
-import Seo from '@/global/Seo';
+import { QueryMetadata } from '@/global/Seo/query-metadata';
 import type { CoursesProgress, File, ImgType } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createClient } from '@/utils/supabase-server';
+
+const currentUrl = '/moje-konto/pliki-do-pobrania';
+const page = [{ name: 'Pliki do pobrania', path: currentUrl }];
 
 type QueryProps = {
   data: {
@@ -42,6 +46,10 @@ export default async function Files() {
 
   return (
     <div>
+      <Breadcrumbs
+        visible={false}
+        data={page}
+      />
       <FilesHero
         left_handed={left_handed}
         id={id}
@@ -63,10 +71,7 @@ export default async function Files() {
 }
 
 export async function generateMetadata() {
-  return Seo({
-    title: 'Pliki do pobrania | Kierunek dzierganie',
-    path: '/moje-konto/pliki-do-pobrania',
-  });
+  return await QueryMetadata('Files_Page', currentUrl);
 }
 
 const query = async (): Promise<QueryProps> => {

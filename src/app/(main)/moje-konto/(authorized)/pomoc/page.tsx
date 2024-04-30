@@ -3,14 +3,20 @@ import { QueryMetadata } from '@/global/Seo/query-metadata';
 import HeroSimple, { HeroSimple_Query } from '@/components/_global/HeroSimple';
 import type { SupportPage_QueryTypes } from './page.types';
 import Tabs, { Tabs_Query } from '@/components/_dashboard/Tabs';
+import Breadcrumbs from '@/components/_global/Breadcrumbs';
 
 const currentPath = '/moje-konto/pomoc';
+const page = [{ name: 'Pomoc', path: currentPath }];
 
 export default async function SupportPage() {
   const { HeroSimple: HeroSimpleData, tabs } = await query();
 
   return (
     <div className='main'>
+      <Breadcrumbs
+        visible={false}
+        data={page}
+      />
       <HeroSimple {...HeroSimpleData} />
       <Tabs {...{ tabs }} />
     </div>

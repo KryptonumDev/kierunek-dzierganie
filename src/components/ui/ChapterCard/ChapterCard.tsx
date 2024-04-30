@@ -33,21 +33,23 @@ const ChapterCard = ({ name, image, description, lessons, courseSlug, number, pr
 
   return (
     <div className={styles['chapterCard']}>
+      <Link
+        href={`/moje-konto/kursy/${courseSlug}/${firstUnendedLesson.slug}`}
+        tabIndex={-1}
+      />
       <div>
-        <Link href={`/moje-konto/kursy/${courseSlug}/${firstUnendedLesson.slug}`}>
-          <div className={styles['image-wrap']}>
-            <Img
-              data={image}
-              sizes='380px'
-            />
-            <span className={styles['badge']}>
-              {prettifyDuration(lessons.reduce((acc, lesson) => acc + lesson.lengthInMinutes, 0))}
-            </span>
-          </div>
-          <h2>
-            <span>Moduł {number}:</span> {name}
-          </h2>
-        </Link>
+        <div className={styles['image-wrap']}>
+          <Img
+            data={image}
+            sizes='380px'
+          />
+          <span className={styles['badge']}>
+            {prettifyDuration(lessons.reduce((acc, lesson) => acc + lesson.lengthInMinutes, 0))}
+          </span>
+        </div>
+        <h2>
+          <span>Moduł {number}:</span> {name}
+        </h2>
         <p>{description}</p>
       </div>
       <div className={styles['flex']}>

@@ -1,19 +1,28 @@
 import UserData from '@/components/_dashboard/UserData';
 import type { QueryProps } from '@/components/_dashboard/UserData/UserData.types';
-import Seo from '@/global/Seo';
+import Breadcrumbs from '@/components/_global/Breadcrumbs';
+import { QueryMetadata } from '@/global/Seo/query-metadata';
 import { createClient } from '@/utils/supabase-server';
+
+const currentUrl = '/moje-konto/dane';
+const page = [{ name: 'Moje dane', path: currentUrl }];
 
 const MyDataPage = async () => {
   const data: QueryProps = await query();
 
-  return <UserData data={data} />;
+  return (
+    <>
+      <Breadcrumbs
+        visible={false}
+        data={page}
+      />
+      <UserData data={data} />
+    </>
+  );
 };
 
 export async function generateMetadata() {
-  return Seo({
-    title: 'Moje dane | Kierunek dzierganie',
-    path: '/moje-konto/dane',
-  });
+  return await QueryMetadata('Data_Page', currentUrl);
 }
 
 export default MyDataPage;
@@ -39,5 +48,5 @@ const query = async (): Promise<QueryProps> => {
 
   if (!data) throw new Error('No data found');
 
-  return {...data, email: user!.email!};
+  return { ...data, email: user!.email! };
 };

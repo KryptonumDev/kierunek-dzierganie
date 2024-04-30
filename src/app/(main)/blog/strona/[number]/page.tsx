@@ -5,8 +5,8 @@ import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import CategoriesSection, { CategoriesSection_Query } from '@/components/_global/CategoriesSection';
 import { POSTS_PER_PAGE } from '@/global/constants';
 import type { BlogPageQueryProps, generateStaticParamsBlogPagination } from '@/global/types';
+import { QueryMetadata } from '@/global/Seo/query-metadata';
 
-const page = { name: 'Blog', path: '/blog' };
 
 export default async function BlogPageNumber({ params: { number } }: { params: { number: string } }) {
   const {
@@ -19,9 +19,14 @@ export default async function BlogPageNumber({ params: { number } }: { params: {
     blog_HighlightedPost,
   } = await query();
 
+  const page = [
+    { name: 'Blog', path: '/blog' },
+    { name: `Strona: ${number}`, path: `/blog/strona/${number}` }
+  ];
+
   return (
     <>
-      <Breadcrumbs data={[page]} />
+      <Breadcrumbs data={page} />
       <HeroSimple {...HeroSimpleData} />
       <CategoriesSection data={{ blogPosts, categories_Heading, categories_Paragraph }} />
       <BlogSection
@@ -37,6 +42,10 @@ export default async function BlogPageNumber({ params: { number } }: { params: {
     </>
   );
 }
+
+export const generateMetadata = async ({ params: { number } }: { params: { number: string } }) => {
+  return await QueryMetadata('Blog_Page', `/blog/strona/${number}`);
+};
 
 async function query(): Promise<BlogPageQueryProps> {
   return await sanityFetch<BlogPageQueryProps>({

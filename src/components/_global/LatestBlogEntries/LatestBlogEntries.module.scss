@@ -52,6 +52,7 @@
 
       .imageWrapper {
         position: relative;
+        overflow: hidden;
 
         >img {
           width: 100%;
@@ -59,7 +60,12 @@
           object-fit: cover;
           aspect-ratio: 16/9;
           border-radius: 4px;
+          transition: transform 0.3s;
         }
+      }
+
+      &:hover .imageWrapper>img {
+        transform: scale(1.05);
       }
 
       >div {

@@ -1,17 +1,20 @@
-import { SearchResultType } from '../Header.types';
-import styles from './Search.module.scss';
-import Link from 'next/link';
 import Img from '@/components/ui/image';
-import findSearchedName from './find-searched-name';
-import Placeholder from './Placeholder';
+import Link from 'next/link';
+import { SearchResultType } from '../Header.types';
 import Loader from './Loader';
+import Placeholder from './Placeholder';
+import styles from './Search.module.scss';
+import findSearchedName from './find-searched-name';
+import handleItemClick from './handle-item-click';
 
 export default function Articles({
   searchResults,
   passedRef,
+  setIsSearching,
 }: {
   searchResults: SearchResultType | null;
   passedRef: React.RefObject<HTMLInputElement>;
+  setIsSearching: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   return (
     <div className={styles.blogPosts}>
@@ -26,6 +29,7 @@ export default function Articles({
               className={styles.item}
               key={index}
               href={`/blog/${slug}`}
+              onClick={() => handleItemClick(passedRef, setIsSearching)}
             >
               <Img
                 data={img}

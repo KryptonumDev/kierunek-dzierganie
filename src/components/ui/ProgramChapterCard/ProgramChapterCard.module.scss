@@ -5,6 +5,22 @@
   position: relative;
   padding-left: 238px;
 
+
+  &:hover img {
+    transform: scale(1.05);
+  }
+
+  a{
+    z-index: 3;
+  }
+
+  >a{
+    position: absolute;
+    inset: 0;
+    display: block;
+    z-index: 2;
+  }
+
   &.blocked{
     &::after{
       content: '';
@@ -24,6 +40,20 @@
 
   @media (max-width: 540px) {
     padding-left: 0;
+  }
+
+  .image-wrap{
+    position: relative;
+    overflow: hidden;
+
+    img {
+      max-width: 100%;
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      border-radius: 4px;
+      transition: transform 0.3s ease;
+    }
   }
 
   .circle {

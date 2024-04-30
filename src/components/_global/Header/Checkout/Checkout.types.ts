@@ -1,4 +1,4 @@
-import type { Billing, Complexity, Discount, ImgType, Shipping } from '@/global/types';
+import type { Billing, Complexity, Discount, ImgType, InpostPoint, Shipping } from '@/global/types';
 import type { useCartItems } from '../Header.types';
 import type { Dispatch, SetStateAction } from 'react';
 
@@ -22,6 +22,11 @@ export type InputState = {
   firmOrder: boolean;
   shippingSameAsBilling: boolean;
   shipping: Shipping;
+  shippingMethod?: {
+    inpostPointData: string | InpostPoint | null;
+    name: string;
+    price: number;
+  };
   billing: Billing & {
     email: string;
   };
@@ -36,6 +41,7 @@ export type InputState = {
       complexity: Complexity | null;
     }[];
   };
+  delivery: number;
   virtualMoney?: number | null;
   discount?: Discount | null;
   needDelivery: boolean;

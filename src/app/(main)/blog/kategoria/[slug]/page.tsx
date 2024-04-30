@@ -28,6 +28,7 @@ export default async function CategoryBlogPage({ params: { slug } }: { params: {
     { name: 'Blog', path: '/blog' },
     { name: `Kategoria: ${name}`, path: `/blog/kategoria/${slug}` },
   ];
+
   return (
     <>
       <Breadcrumbs data={page} />
@@ -40,13 +41,17 @@ export default async function CategoryBlogPage({ params: { slug } }: { params: {
           highlightedPost: blog_HighlightedPost,
           slug,
           blogPosts: filteredBlogPosts,
-          pathPrefix: `/blog/kategoria/${slug}`,
+          pathPrefix: `/blog/kategoria/${slug}/strona`,
           addPagePrefix: false,
         }}
       />
     </>
   );
 }
+
+export const generateMetadata = async ({ params: { slug } }: { params: { slug: string } }) => {
+  return await QueryMetadata('BlogCategory_Collection', `/blog/kategoria/${slug}`, slug);
+};
 
 async function getData(slug: string) {
   const data = await sanityFetch<BlogCategoryPageQueryProps>({
@@ -65,10 +70,6 @@ async function getData(slug: string) {
   !data?.HeroSimple && notFound();
   return data;
 }
-
-export const generateMetadata = async ({ params: { slug } }: { params: { slug: string } }) => {
-  return await QueryMetadata('BlogCategory_Collection', `/blog/kategoria/${slug}`, `${slug}`);
-};
 
 export async function generateStaticParams(): Promise<generateStaticParamsProps[]> {
   const data = await sanityFetch<BlogsCategoryStaticParamsType[]>({

@@ -39,7 +39,7 @@ function CourseChapters({ courses_progress, course }: Props) {
       </div>
       <div className={styles['grid']}>
         <Link
-          className={`${styles.returnLink} link`}
+          className={`${styles.returnLink} `}
           href={'/moje-konto/kursy'}
         >
           <ChevronRight />

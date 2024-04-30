@@ -1,8 +1,13 @@
 .ArticleNavigation {
-  display: flex;
+  display: grid;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 24px;
+  grid-template-columns: 1fr 1fr;
+
+  @media(max-width: 599px) {
+    grid-template-columns: 1fr;
+  }
 
   .previous {
     display: grid;
