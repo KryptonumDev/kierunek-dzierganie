@@ -12,8 +12,12 @@
   .grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    margin-top: 36px;
+    gap: clamp(12px, calc(16vw / 7.68), 24px);
+    margin-top: clamp(24px, calc(28vw / 7.68), 36px);
+
+    @media (max-width: 540px) {
+      grid-template-columns: 1fr;
+    }
 
     > div {
       display: flex;
@@ -21,8 +25,18 @@
       max-width: 380px;
       width: 100%;
 
+      @media (max-width: 540px) {
+        display: grid;
+        grid-template-columns: 70px 1fr;
+        gap: 12px;
+      }
+
       &:nth-child(2n) {
         margin-left: auto;
+
+        @media (max-width: 540px) {
+          margin-left: 0;
+        }
       }
 
       &.main {
@@ -36,6 +50,25 @@
         line-height: 150%;
       }
 
+      .flex-text {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+
+        button {
+          color: #5c7360;
+          font-size: 14px;
+          font-style: italic;
+          font-weight: 300;
+          line-height: 130%;
+
+          &::after {
+            bottom: 0;
+            background-color: #5c7360;
+          }
+        }
+      }
+
       .text {
         color: var(--primary-700, #766965);
         font-size: 14px;
@@ -47,6 +80,20 @@
 
   .progress {
     margin-top: 36px;
+    button {
+      display: block;
+      margin: 16px auto 0;
+      color: #882f2f;
+      font-size: 14px;
+      font-style: italic;
+      font-weight: 300;
+      line-height: 130%;
+
+      &::after {
+        bottom: 0;
+        background-color: #882f2f;
+      }
+    }
     p {
       color: var(--primary-800, #53423c);
       font-size: 14px;
@@ -94,6 +141,16 @@
         grid-template-columns: 174px 1fr;
         gap: 16px;
 
+        @media (max-width:380px){          
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .right-column{
+          p{
+            font-size: clamp(16px, calc(18vw/7.68), 18px);
+          }
+        }
+
         .price {
           margin-top: 12px;
           display: flex;
@@ -125,6 +182,14 @@
             left: 0;
             padding: 8px 16px 8px 20px;
             border-radius: 0px 0px 4px 0px;
+            max-width: 100%;
+
+            span {
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              display: block;
+            }
           }
 
           img {
@@ -146,6 +211,10 @@
     width: 100%;
     display: grid;
     gap: 12px;
+
+    @media (max-width: 480px) {
+      max-width: 100%;
+    }
 
     p {
       display: flex;

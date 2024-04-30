@@ -1,3 +1,4 @@
+'use client';
 import Link from 'next/link';
 import styles from './OrderData.module.scss';
 import type { OrderDataTypes } from './OrderData.types';
@@ -11,6 +12,34 @@ const OrderData = ({ order }: OrderDataTypes) => {
   const totalItemsCount = order.products.array?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
   const totalItemsPrice =
     order.products.array?.reduce((acc, item) => acc + (item.discount ?? item.price!) * item.quantity!, 0) ?? 0;
+
+  // const createIntent = async () => {
+  //   await fetch('/api/payment/create', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({
+  //       input: newInput,
+  //       description: 'Example description',
+  //     }),
+  //   })
+  //     .then((res) => res.json())
+  //     .then(({ link }) => {
+  //       if (!link) throw new Error('Błąd podczas tworzenia zamówienia');
+
+  //       emptyCart();
+  //       window.location.href = link;
+  //     })
+  //     .catch((err) => {
+  //       toast('Błąd podczas tworzenia zamówienia');
+  //       console.log(err);
+  //     });
+  // };
+
+  // const removeOrder = async () => {
+  
+  // };
 
   return (
     <section className={styles['OrderData']}>
@@ -30,9 +59,9 @@ const OrderData = ({ order }: OrderDataTypes) => {
         </div>
         <div className={styles['main']}>
           <p className={styles['title']}>Płatność</p>
-          <p>
+          <p className={styles['flex-text']}>
             {formatPrice(order.amount)} <span className={styles['text']}>({order.payment_method})</span>
-            {/* <button className='link'>Opłać</button> */}
+            {order.orders_statuses.status_name === 'AWAITING PAYMENT' && <button className='link'>Opłać</button>}
           </p>
         </div>
         <div>
@@ -94,6 +123,9 @@ const OrderData = ({ order }: OrderDataTypes) => {
           }
           className={styles['line']}
         />
+        {order.orders_statuses.status_name === 'AWAITING PAYMENT' && (
+          <button className='link'>Anuluj zamówienie</button>
+        )}
       </div>
       <div className={styles['products']}>
         <h2>Zamówione produkty</h2>
@@ -112,7 +144,7 @@ const OrderData = ({ order }: OrderDataTypes) => {
                     }}
                     className={styles['badge']}
                   >
-                    {courseComplexityEnum[item.complexity].name}
+                    <span>{courseComplexityEnum[item.complexity].name}</span>
                   </span>
                 )}
                 {item.image && (
@@ -153,7 +185,7 @@ const OrderData = ({ order }: OrderDataTypes) => {
         {order.shippingMethod && (
           <p>
             <span>Dostawa</span>
-            <span>{formatPrice(order.shippingMethod.price * 100)}</span>
+            <span>{formatPrice(order.shippingMethod.price)}</span>
           </p>
         )}
         {order.virtualMoney && order.virtualMoney > 0 && (
@@ -169,7 +201,7 @@ const OrderData = ({ order }: OrderDataTypes) => {
               totalItemsPrice +
                 (order.discount ? calculateDiscountAmount(totalItemsPrice, order.discount) : 0) -
                 (order.virtualMoney ? order.virtualMoney * 100 : 0) +
-                (order.shippingMethod ? order.shippingMethod.price * 100 : 0)
+                (order.shippingMethod ? order.shippingMethod.price : 0)
             )}
           </span>
         </p>
