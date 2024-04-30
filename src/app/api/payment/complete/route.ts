@@ -123,12 +123,15 @@ export async function POST(request: Request) {
         }
 
         // TODO: maybe move this to create step??
+        console.log('product', product);
         if (product.variantId) {
           // decrease quantity of chosen variant of variable product
-          await sanityPatchQuantityInVariant(product.id, product.variantId, product.quantity);
+          const res = await sanityPatchQuantityInVariant(product.id, product.variantId, product.quantity);
+          console.log('change quantity of product variant', res);
         } else if (product.type === 'product') {
           // decrease quantity of each physical product
-          await sanityPatchQuantity(product.id, product.quantity);
+          const res = await sanityPatchQuantity(product.id, product.quantity);
+          console.log('change quantity of product', res);
         }
       }
     );
