@@ -13,12 +13,14 @@
     }
   }
   .slider {
-    @media (max-width: 1279px) {
-      margin-left: calc(var(--pageMargin) * -1);
-      margin-right: calc(var(--pageMargin) * -1);
-      padding: 0 var(--pageMargin);
-    }
     .item {
+      @media (min-width: 700px) {
+        flex: 0 0 50%;
+      }
+      @media (min-width: 1000px) {
+        flex: 0 0 33.3%;
+      }
+      flex: 0 0 100%;
       padding: clamp(8px, calc(16vw / 7.68), 32px);
       img {
         width: auto;

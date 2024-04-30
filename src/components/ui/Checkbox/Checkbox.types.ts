@@ -1,7 +1,7 @@
 import { FieldErrors } from 'react-hook-form';
 
 export type Props = {
-  label: React.ReactNode;
+  label: React.ReactNode | string;
   register: {
     name: string;
   };
