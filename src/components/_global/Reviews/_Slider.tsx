@@ -1,53 +1,36 @@
 'use client';
-import { useRef, useState } from 'react';
-// import Link from 'next/link';
+import useEmblaCarousel from 'embla-carousel-react';
+import '@/global/embla.scss';
 import styles from './Reviews.module.scss';
-import 'swiper/css';
-import { Swiper, SwiperSlide, type SwiperRef } from 'swiper/react';
-import { A11y } from 'swiper/modules';
-import type { SliderProps } from './Reviews.types';
 import SliderControls from '@/components/ui/SliderControls';
 import Card from './_Card';
+import type { SliderProps } from './Reviews.types';
 
 const Slider = ({ list }: SliderProps) => {
-  const listLength = list.length;
-  const ref = useRef<SwiperRef | null>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const handlePrev = () => ref.current?.swiper.slidePrev();
-  const handleNext = () => ref.current?.swiper.slideNext();
-  const slideTo = (index: number) => ref.current?.swiper.slideTo(index);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ align: 'start', skipSnaps: true });
 
   return (
     <>
-      <Swiper
-        ref={ref}
-        className={styles.slider}
-        spaceBetween={32}
-        slidesPerView={1}
-        breakpoints={{
-          0: { slidesPerView: 1 },
-          768: { slidesPerView: 1.3 },
-          1024: { slidesPerView: 2 },
-        }}
-        modules={[A11y]}
-        onSlideChange={(slider: { realIndex: number; isEnd: boolean }) =>
-          setActiveIndex(slider.isEnd ? listLength - 1 : slider.realIndex)
-        }
-      >
-        {list.map(({ rating, name, review, images }, i) => (
-          <SwiperSlide
-            key={i}
-          > 
-            <Card 
-              rating={rating}
-              name={name}
-              review={review}
-              images={images}
-            />
-          </SwiperSlide>
-        ))}
-      </Swiper>
-      <SliderControls {...{ activeIndex, handlePrev, handleNext, slideTo, length: listLength }} />
+      <div className={`embla ${styles.slider}`}>
+        <div className="embla__viewport" ref={emblaRef}>
+          <div className="embla__container">
+            {list.map(({ rating, name, review, images }, i) => (
+              <div
+                key={i}
+                className={`embla__slide ${styles.slide}`}
+              >
+                <Card
+                  rating={rating}
+                  name={name}
+                  review={review}
+                  images={images}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+        <SliderControls api={emblaApi} />
+      </div>
       {/* <p className={styles.login}>
         <Link
           href='/moje-konto/autoryzacja'

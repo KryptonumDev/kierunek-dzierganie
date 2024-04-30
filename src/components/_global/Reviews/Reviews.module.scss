@@ -1,61 +1,70 @@
 .Reviews {
   header {
-    max-width: calc(582rem/16);
+    max-width: calc(582rem / 16);
     text-align: center;
-    margin: 0 auto clamp(28px, calc(40vw/7.68), 48px);
+    margin: 0 auto clamp(28px, calc(40vw / 7.68), 48px);
   }
   min-width: 0;
   .slider {
-    @media (max-width: 1199px){
-      margin: 0 calc(var(--pageMargin) * -1);
-      padding-left: var(--pageMargin);
-      padding-right: var(--pageMargin);
+    > div {
+      padding-top: calc(clamp(34px, calc(40vw / 7.68), 40px) / 2);
     }
-    padding-top: calc(clamp(34px, calc(40vw/7.68), 40px) / 2);
+    .slide {
+      &:not(:last-child) {
+        margin-right: 1rem;
+      }
+      @media (min-width: 768px) {
+        flex: 0 0 calc(80% - 1rem);
+      }
+      @media (min-width: 1024px) {
+        flex: 0 0 calc(50% - 1rem);
+      }
+      flex: 0 0 100%;
+    }
   }
   .login {
     text-align: center;
-    font-size: calc(14rem/16);
-    margin-top: clamp(24px, calc(32vw/7.68), 32px);
+    font-size: calc(14rem / 16);
+    margin-top: clamp(24px, calc(32vw / 7.68), 32px);
   }
 }
 
 .item {
-  padding: clamp(16px, calc(28vw/7.68), 32px) clamp(16px, calc(20vw/7.68), 28px);
+  padding: clamp(16px, calc(28vw / 7.68), 32px) clamp(16px, calc(20vw / 7.68), 28px);
   border-radius: 4px;
   background-color: var(--primary-200);
   position: relative;
   .quote {
     position: absolute;
     right: 32px;
-    @media (max-width: 599px){
+    @media (max-width: 599px) {
       right: 32%;
     }
     top: 0;
     transform: translateY(-50%);
     width: auto;
-    height: clamp(34px, calc(40vw/7.68), 40px);
+    height: clamp(34px, calc(40vw / 7.68), 40px);
   }
   .info {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 24px;
-    margin-bottom: clamp(12px, calc(16vw/7.68), 16px);
+    margin-bottom: clamp(12px, calc(16vw / 7.68), 16px);
     h3 {
       color: var(--primary-700);
       font-family: var(--font-city-streetwear);
-      font-size: clamp(calc(32rem/16), calc(48vw/7.68), calc(48rem/16));
-      line-height: .875;
+      font-size: clamp(calc(32rem / 16), calc(48vw / 7.68), calc(48rem / 16));
+      line-height: 0.875;
     }
     .rating {
       display: flex;
       align-items: center;
       gap: 4px;
-      font-size: calc(14rem/16);
+      font-size: calc(14rem / 16);
       strong {
         background: none;
-        font-size: clamp(calc(26rem/16), calc(32vw/7.68), calc(32rem/16));
+        font-size: clamp(calc(26rem / 16), calc(32vw / 7.68), calc(32rem / 16));
         font-weight: 400;
         font-family: var(--font-city-streetwear);
         line-height: 0;
@@ -65,8 +74,8 @@
   .images {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: clamp(16px, calc(24vw/7.68), 24px);
-    margin-top: clamp(16px, calc(24vw/7.68), 24px);
+    gap: clamp(16px, calc(24vw / 7.68), 24px);
+    margin-top: clamp(16px, calc(24vw / 7.68), 24px);
     img {
       border-radius: 2px;
     }
