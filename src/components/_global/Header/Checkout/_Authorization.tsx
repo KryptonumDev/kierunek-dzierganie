@@ -10,6 +10,7 @@ import PasswordInput from '@/components/ui/PasswordInput';
 import { useState } from 'react';
 import Input from '@/components/ui/Input';
 import { createClient } from '@/utils/supabase-client';
+import Link from 'next/link';
 // import OAuthMethods from "@/components/organisms/oAuth-methods";
 
 type FormValues = {
@@ -195,7 +196,28 @@ export default function Authorization({ setStep, goToCart, setInput }: MappingPr
                 message: 'Zgoda jest wymagana',
               },
             })}
-            label='Akceptuję warunki <a class="link" href="/polityka-prywatnosci">polityki prywatności</a> i <a class="link" href="/regulamin">regulaminu</a>'
+            label={
+              <>
+                Akceptuję warunki{' '}
+                <Link
+                  className='link'
+                  href='/polityka-prywatnosci'
+                  target='_blank'
+                  rel='noopener'
+                >
+                  polityki prywatności
+                </Link>{' '}
+                i 
+                <Link
+                  className='link'
+                  href='/regulamin'
+                  target='_blank'
+                  rel='noopener'
+                >
+                  regulaminu
+                </Link>
+              </>
+            }
             errors={errors}
           />
         )}

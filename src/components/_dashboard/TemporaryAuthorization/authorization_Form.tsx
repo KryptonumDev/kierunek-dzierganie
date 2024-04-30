@@ -9,6 +9,7 @@ import { REGEX } from '@/global/constants';
 import Checkbox from '@/components/ui/Checkbox';
 import { useState } from 'react';
 import { createClient } from '@/utils/supabase-client';
+import Link from 'next/link';
 
 const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
   const supabase = createClient();
@@ -112,7 +113,28 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
               message: 'Zgoda jest wymagana',
             },
           })}
-          label='Akceptuję warunki <a class="link" href="/polityka-prywatnosci">polityki prywatności</a> i <a class="link" href="/regulamin">regulaminu</a>'
+          label={
+            <>
+              Akceptuję warunki{' '}
+              <Link
+                className='link'
+                href='/polityka-prywatnosci'
+                target='_blank'
+                rel='noopener'
+              >
+                polityki prywatności
+              </Link>{' '}
+              i 
+              <Link
+                className='link'
+                href='/regulamin'
+                target='_blank'
+                rel='noopener'
+              >
+                regulaminu
+              </Link>
+            </>
+          }
           errors={errors}
         />
       )}

@@ -72,6 +72,7 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
           logged={!!user}
           alreadyBought={true}
           reviews={reviews}
+          course={false}
         />
       </Informations>
     </>

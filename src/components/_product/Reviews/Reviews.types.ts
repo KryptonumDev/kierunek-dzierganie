@@ -7,4 +7,5 @@ export type ReviewsTypes = {
   }[];
   logged: boolean;
   alreadyBought: boolean;
+  course: boolean;
 };

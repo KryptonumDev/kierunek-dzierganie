@@ -326,7 +326,7 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
         <fieldset>
           <Checkbox
             register={register('shippingSameAsBilling')}
-            label='Adres dostawy taki sam jak adres do faktury'
+            label={<>Adres dostawy taki sam jak adres do faktury</>}
             errors={errors}
           />
           {!shippingSameAsBilling && (

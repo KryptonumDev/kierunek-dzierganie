@@ -131,7 +131,7 @@ const AddReview = ({ open, setOpen, user }: AddReviewTypes) => {
             errors={errors}
           />
           <Checkbox
-            label='Zgadzam się na przetwarzanie moich danych?'
+            label={<>Zgadzam się na przetwarzanie moich danych?</>}
             register={register('privacy', {
               required: {
                 value: true,

@@ -53,12 +53,12 @@ const query = async (searchParams: { [key: string]: string }): Promise<KnittingP
   return await sanityFetch<KnittingProductsPage_QueryTypes>({
     query: /* groq */ `
     {
-      "page": *[_type == "Knitting_Page"][0] {
+      "page": *[_type == "KnittingProducts_Page"][0] {
         ${HeroSimple_Query(true)}
         ${StepsGrid_Query}
         ${LatestBlogEntries_Query(true)}
-        "listing_title" : listing_Heading_Products,
-        "listing_text": listing_Paragraph_Products,
+        "listing_title" : listing_Heading_Courses,
+        "listing_text": listing_Paragraph,
       },
       "products": *[
         _type == 'product'
@@ -91,10 +91,10 @@ const query = async (searchParams: { [key: string]: string }): Promise<KnittingP
       category: searchParams.rodzaj ?? null,
       discount: searchParams.promocja ?? null,
     },
-    tags: ['Knitting_Page'],
+    tags: ['KnittingProducts_Page'],
   });
 };
 
 export async function generateMetadata() {
-  return await QueryMetadata('Knitting_Page', page.path);
+  return await QueryMetadata('KnittingProducts_Page', page.path);
 }

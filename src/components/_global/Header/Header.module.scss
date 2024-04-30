@@ -35,18 +35,23 @@
       display: grid;
       grid-template-columns: auto auto;
       gap: 2px;
-      // &::after {
-      //   content: attr(data-basket-items);
-      //   display: flex;
-      //   align-items: center;
-      //   justify-content: center;
-      //   border-radius: 20px;
-      //   background-color: var(--primary-400);
-      //   padding: 4px;
-      //   min-width: 20px;
-      //   height: 20px;
-      //   font-size: calc(14rem / 16);
-      // }
+
+      .total-items {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px;
+        background-color: var(--primary-400);
+        padding: 4px;
+        min-width: 20px;
+        height: 20px;
+        font-size: calc(14rem / 16);
+        opacity: 0;
+
+        &.active{
+          opacity: 1;
+        }
+      }
     }
   }
 }
@@ -58,17 +63,16 @@
     align-items: center;
     gap: clamp(20px, calc(36vw / 7.68), 36px);
 
-    >li {
-
-      >button,
-      >a {
+    > li {
+      > button,
+      > a {
         display: flex;
         align-items: center;
         gap: 4px;
         cursor: pointer;
       }
 
-      >button {
+      > button {
         width: 100%;
 
         &::after {
@@ -88,7 +92,7 @@
 
       position: relative;
 
-      >ul {
+      > ul {
         .back-btn {
           flex-shrink: 0;
           display: none;
@@ -130,7 +134,7 @@
         flex-direction: column;
         gap: 8px;
 
-        >li {
+        > li {
           width: 100%;
 
           a {
@@ -159,13 +163,13 @@
   &[data-tab='2'] .Nav__item[data-id='2'],
   &[data-tab='3'] .Nav__item[data-id='3'],
   &[data-tab='4'] .Nav__item[data-id='4'] {
-    >button {
+    > button {
       &::after {
         transform: skewX(0) scaleX(1);
       }
     }
 
-    >ul {
+    > ul {
       display: flex;
     }
   }
@@ -197,10 +201,9 @@
       max-width: 360px;
       padding: 16px;
 
-      >li {
-
-        >button,
-        >a {
+      > li {
+        > button,
+        > a {
           height: 48px;
           justify-content: space-between;
 
@@ -213,7 +216,7 @@
           }
         }
 
-        >button {
+        > button {
           &::after {
             display: none;
           }
@@ -221,7 +224,7 @@
 
         position: static;
 
-        >ul {
+        > ul {
           z-index: 2;
 
           .back-btn {
@@ -304,10 +307,9 @@
 }
 
 .Nav[data-opened='true'] {
-  +.Nav__Toggle {
+  + .Nav__Toggle {
     svg {
       path {
-
         &:nth-child(1),
         &:nth-child(2) {
           stroke-dashoffset: -24;
@@ -354,7 +356,7 @@
   background-color: var(--primary-200);
   padding: 8px 0 12px;
 
-  >div {
+  > div {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -363,7 +365,7 @@
   }
 }
 
-.Header>.Search {
+.Header > .Search {
   &[data-visible='false'] {
     transform: translateY(-100%);
     visibility: hidden;
@@ -473,7 +475,7 @@
       padding: 10px 8px 16px;
       border-bottom: 1px solid var(--primary-300);
 
-      >p {
+      > p {
         border-radius: 50%;
         background-color: var(--primary-300);
         width: 24px;
@@ -566,7 +568,7 @@
       height: fit-content;
       gap: 12px;
 
-      >p {
+      > p {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -700,12 +702,12 @@
   }
 
   .highlighted {
-    >h3 {
+    > h3 {
       margin-top: 128px;
       text-align: center;
     }
 
-    >p {
+    > p {
       text-align: center;
       margin-top: 36px;
     }
@@ -723,13 +725,13 @@
   }
 
   .empty {
-    >h2 {
+    > h2 {
       margin-top: clamp(48px, calc(48vw / 7.68), 64px);
       margin-bottom: clamp(16px, calc(16vw / 7.68), 28px);
       text-align: center;
     }
 
-    >p {
+    > p {
       text-align: center;
     }
 
@@ -753,7 +755,7 @@
         transition: transform 0.3s ease;
       }
 
-      >div {
+      > div {
         max-width: 292px;
         width: 100%;
 
@@ -797,7 +799,7 @@
 
     h3 {
       color: var(--primary-800, #53423c);
-      font-size: clamp(16px, calc(16vw/7.68), 18px);
+      font-size: clamp(16px, calc(16vw / 7.68), 18px);
       font-weight: 300;
       line-height: 155%;
       margin-bottom: 12px;

@@ -36,7 +36,7 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
     return arr;
   }, [variants]);
 
-  const [count, setCount] = useState(1);
+  const [count, setCount] = useState(variants ? 1 : physical.countInStock > 0 ? 1 : 0);
   const [chosenVariant, setChosenVariant] = useState(variants ? variants[0] : physical);
   const [chosenAttributes, setChosenAttributes] = useState(() => {
     const obj = {} as SelectedAttributesTypes;

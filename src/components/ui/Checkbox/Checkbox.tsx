@@ -18,7 +18,7 @@ const Checkbox = ({ register, label, errors, ...props }: Props) => {
         <Checkmark />
       </div>
       <p>
-        <span dangerouslySetInnerHTML={{__html: label}}/>
+        {label}
         {errors && <Error error={errors[register.name]?.message?.toString()} />}
       </p>
     </label>
@@ -40,6 +40,6 @@ const Checkmark = () => (
       strokeLinecap='round'
       strokeLinejoin='round'
       d='M13.25 1L4.5 11 .75 7.25'
-    ></path>
+    />
   </svg>
 );

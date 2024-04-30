@@ -169,7 +169,7 @@ export default function Filters({ basis, categories, courses, authors }: Filters
               setBundle(e.currentTarget.checked);
               handleBundleClick(e.target.checked);
             }}
-            label='Pakiet'
+            label={<>Pakiet</>}
             register={{
               name: 'bundle',
             }}
@@ -181,15 +181,14 @@ export default function Filters({ basis, categories, courses, authors }: Filters
             setDiscount(e.currentTarget.checked);
             handleDiscountedClick(e.target.checked);
           }}
-          label='W promocji'
+          label={<>W promocji</>}
           register={{
             name: 'discounted',
           }}
         />
       </div>
       {searchParams.toString() &&
-        (!searchParams.toString().includes('strona') || searchParams.toString().includes('&')) 
-        && (
+        (!searchParams.toString().includes('strona') || searchParams.toString().includes('&')) && (
           <div className={styles['active-filters']}>
             <div>
               <p>Aktywne filtry:</p>

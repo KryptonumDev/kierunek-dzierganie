@@ -55,7 +55,7 @@ const query = async (searchParams: { [key: string]: string }): Promise<KnittingP
   return await sanityFetch<KnittingPage_QueryTypes>({
     query: /* groq */ `
     {
-      "page": *[_type == "Knitting_Page"][0] {
+      "page": *[_type == "KnittingCourses_Page"][0] {
         ${HeroSimple_Query(true)}
         ${StepsGrid_Query}
         ${LatestBlogEntries_Query(true)}
@@ -107,10 +107,10 @@ const query = async (searchParams: { [key: string]: string }): Promise<KnittingP
       bundle: searchParams.pakiet ?? null,
       discount: searchParams.promocja ?? null,
     },
-    tags: ['Knitting_Page'],
+    tags: ['KnittingCourses_Page'],
   });
 };
 
 export async function generateMetadata() {
-  return await QueryMetadata('Knitting_Page', page.path);
+  return await QueryMetadata('KnittingCourses_Page', page.path);
 }

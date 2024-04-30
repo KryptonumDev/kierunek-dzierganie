@@ -72,6 +72,7 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
           logged={!!user}
           alreadyBought={!!courses_progress?.find((course) => course.course_id === product._id)}
           reviews={reviews}
+          course={true}
         />
       </Informations>
       <RelatedProducts

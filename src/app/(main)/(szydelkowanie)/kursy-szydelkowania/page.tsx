@@ -54,7 +54,7 @@ export default CrochetingPage;
 const query = async (searchParams: { [key: string]: string }): Promise<CrochetingPage_QueryTypes> => {
   return await sanityFetch<CrochetingPage_QueryTypes>({
     query: /* groq */ `{
-      "page": *[_type == "Crocheting_Page"][0] {
+      "page": *[_type == "CrochetingCourses_Page"][0] {
         ${HeroSimple_Query(true)}
         ${StepsGrid_Query}
         ${LatestBlogEntries_Query(true)}
@@ -106,10 +106,10 @@ const query = async (searchParams: { [key: string]: string }): Promise<Crochetin
       bundle: searchParams.pakiet ?? null,
       discount: searchParams.promocja ?? null,
     },
-    tags: ['Crocheting_Page'],
+    tags: ['CrochetingCourses_Page'],
   });
 };
 
 export async function generateMetadata() {
-  return await QueryMetadata('Crocheting_Page', page.path);
+  return await QueryMetadata('CrochetingCourses_Page', page.path);
 }
