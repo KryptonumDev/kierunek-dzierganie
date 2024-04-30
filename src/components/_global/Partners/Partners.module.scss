@@ -14,7 +14,10 @@
   }
   .slider {
     .item {
-      @media (min-width: 768px) {
+      @media (min-width: 700px) {
+        flex: 0 0 50%;
+      }
+      @media (min-width: 1000px) {
         flex: 0 0 33.3%;
       }
       flex: 0 0 100%;

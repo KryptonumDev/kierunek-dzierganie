@@ -1,7 +1,7 @@
 'use client';
 import useEmblaCarousel from 'embla-carousel-react';
-import styles from './Partners.module.scss';
 import '@/global/embla.scss';
+import styles from './Partners.module.scss';
 import SliderControls from '@/components/ui/SliderControls';
 import type { SliderProps } from './Partners.types';
 
