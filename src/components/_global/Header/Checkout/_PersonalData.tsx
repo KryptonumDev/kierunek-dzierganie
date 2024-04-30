@@ -104,12 +104,12 @@ const generateDefaults = (input: InputState) => {
 const shippingMethods = [
   {
     name: 'Kurier InPost',
-    price: 12.5,
+    price: 1250,
     map: false,
   },
   {
     name: 'Paczkomat InPost',
-    price: 12.5,
+    price: 1250,
     map: true,
   },
 ];

@@ -274,15 +274,12 @@ export default function Cart({
             </p>
             <div className={styles['grid']}>
               {highlighted_products.map((product, i) => (
-                <div
-                  key={i}
+                <ProductCard
+                  key={product._id + i}
+                  data={product}
+                  inCart={cart?.some((item) => item.id === product._id)}
                   onClick={() => setShowCart()}
-                >
-                  <ProductCard
-                    data={product}
-                    inCart={cart?.some((item) => item.id === product._id)}
-                  />
-                </div>
+                />
               ))}
             </div>
           </div>

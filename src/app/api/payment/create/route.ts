@@ -33,7 +33,7 @@ export async function POST(request: Request) {
         products: input.products,
         billing: input.billing,
         shipping: input.shipping,
-        amount: input.amount,
+        amount: input.totalAmount,
         shipping_method: input.shippingMethod,
         used_discount: input.discount
           ? {

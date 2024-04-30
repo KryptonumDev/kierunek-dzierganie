@@ -6,4 +6,5 @@ export type Props = {
   horizontal?: boolean;
   tabletHorizontal?: boolean;  
   basis?: string;
+  onClick?: () => void;
 };

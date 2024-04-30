@@ -55,7 +55,10 @@ export default async function Courses({ searchParams }: { searchParams: { [key: 
 
   return (
     <div>
-      <Breadcrumbs visible={false} data={page} />
+      <Breadcrumbs
+        visible={false}
+        data={page}
+      />
       {courses.length > 0 || Object.keys(searchParams).length > 0 ? (
         <ListingCourses
           totalCourses={totalCourses}
@@ -178,38 +181,41 @@ const query = async (searchParams: { [key: string]: string }): Promise<QueryProp
   return {
     ...data,
     lastWatchedCourse: res.data!.last_watched_course,
-    courses: data.courses.concat(data.lastWatched).map((course) => {
-      const progress = res.data!.courses_progress.find((el) => el.course_id === course._id)!;
+    courses: data.courses
+      .concat(data.lastWatched)
+      .filter((el) => el)
+      .map((course) => {
+        const progress = res.data!.courses_progress.find((el) => el.course_id === course._id)!;
 
-      if (!progress)
-        return {
-          ...course,
-          progressPercentage: 0,
-        };
+        if (!progress)
+          return {
+            ...course,
+            progressPercentage: 0,
+          };
 
-      let totalLessons = 0;
-      let completedLessons = 0;
+        let totalLessons = 0;
+        let completedLessons = 0;
 
-      for (const sectionId in progress.progress) {
-        const lessons = progress.progress[sectionId];
-        for (const lessonId in lessons) {
-          totalLessons++;
-          if (lessons[lessonId]!.ended) {
-            completedLessons++;
+        for (const sectionId in progress.progress) {
+          const lessons = progress.progress[sectionId];
+          for (const lessonId in lessons) {
+            totalLessons++;
+            if (lessons[lessonId]!.ended) {
+              completedLessons++;
+            }
           }
         }
-      }
 
-      // if 0 lessons, return to avoid division by 0
-      if (totalLessons === 0)
-        return {
-          ...course,
-          progressPercentage: 0,
-        };
+        // if 0 lessons, return to avoid division by 0
+        if (totalLessons === 0)
+          return {
+            ...course,
+            progressPercentage: 0,
+          };
 
-      const completionPercentage = (completedLessons / totalLessons) * 100;
+        const completionPercentage = (completedLessons / totalLessons) * 100;
 
-      return { ...course, progressPercentage: completionPercentage };
-    }),
+        return { ...course, progressPercentage: completionPercentage };
+      }),
   };
 };
