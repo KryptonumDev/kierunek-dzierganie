@@ -115,7 +115,7 @@ const Content = ({
               <Link href='/kontakt'>Kontakt</Link>
             </li>
             <li>
-              <Link href='/moje-konto/kursy'>Mój profil</Link>
+              <Link href='/moje-konto/kursy'>Profil</Link>
             </li>
             <li>
               <button
@@ -123,7 +123,7 @@ const Content = ({
                   setShowCart(true);
                 }}
                 className={styles.basket}
-                // data-basket-items='2'
+              // data-basket-items='2'
               >
                 Koszyk
               </button>

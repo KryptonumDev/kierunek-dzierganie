@@ -18,7 +18,7 @@ const Checkbox = ({ register, label, errors, ...props }: Props) => {
         <Checkmark />
       </div>
       <p>
-        {label}
+        <span dangerouslySetInnerHTML={{__html: label}}/>
         {errors && <Error error={errors[register.name]?.message?.toString()} />}
       </p>
     </label>

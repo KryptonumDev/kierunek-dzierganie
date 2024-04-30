@@ -1,10 +1,14 @@
 import EmptyCourses from '@/components/_dashboard/EmptyCourses';
 import ListingCourses from '@/components/_dashboard/ListingCourses';
+import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import { Img_Query } from '@/components/ui/image';
-import Seo from '@/global/Seo';
+import { QueryMetadata } from '@/global/Seo/query-metadata';
 import type { Complexity, ImgType } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createClient } from '@/utils/supabase-server';
+
+const currentUrl = '/moje-konto/kursy';
+const page = [{ name: 'Moje kursy', path: currentUrl }];
 
 type QueryProps = {
   lastWatchedCourse: string;
@@ -51,6 +55,7 @@ export default async function Courses({ searchParams }: { searchParams: { [key: 
 
   return (
     <div>
+      <Breadcrumbs visible={false} data={page} />
       {courses.length > 0 || Object.keys(searchParams).length > 0 ? (
         <ListingCourses
           totalCourses={totalCourses}
@@ -70,10 +75,7 @@ export default async function Courses({ searchParams }: { searchParams: { [key: 
 }
 
 export async function generateMetadata() {
-  return Seo({
-    title: 'Moje kursy | Kierunek dzierganie',
-    path: '/moje-konto/kursy',
-  });
+  return await QueryMetadata('Courses_Page', currentUrl);
 }
 
 const query = async (searchParams: { [key: string]: string }): Promise<QueryProps> => {

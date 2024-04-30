@@ -63,5 +63,5 @@ export const Img_Query = `
         height,
       },
     },
-  },
+  }
 `;

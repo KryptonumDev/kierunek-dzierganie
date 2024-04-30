@@ -4,7 +4,8 @@ import PortableContent, { PortableContent_Query } from '@/components/_blogPost/P
 import { ShareArticle_Query } from '@/components/_blogPost/ShareArticle';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import { Img_Query } from '@/components/ui/image';
-import { type BlogPostQueryProps } from '@/global/types';
+import { QueryMetadata } from '@/global/Seo/query-metadata';
+import { generateStaticParamsProps, type BlogPostQueryProps } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 
 export default async function BlogPostPage({ params: { slug } }: { params: { slug: string } }) {
@@ -12,7 +13,7 @@ export default async function BlogPostPage({ params: { slug } }: { params: { slu
 
   const page = [
     { name: 'Blog', path: '/blog' },
-    { name: `${hero.heading}`, path: `/blog/${slug}` },
+    { name: hero.heading, path: `/blog/${slug}` },
   ];
 
   return (
@@ -34,6 +35,10 @@ export default async function BlogPostPage({ params: { slug } }: { params: { slu
     </>
   );
 }
+
+export const generateMetadata = async ({ params: { slug } }: { params: { slug: string } }) => {
+  return await QueryMetadata('BlogPost_Collection', `/blog/${slug}`, slug);
+};
 
 async function getData(slug: string) {
   const data = await sanityFetch<BlogPostQueryProps>({
@@ -64,4 +69,17 @@ async function getData(slug: string) {
     tags: ['BlogPost_Collection'],
   });
   return data;
+}
+
+export async function generateStaticParams(): Promise<generateStaticParamsProps[]> {
+  const data = await sanityFetch<{ slug: string }[]>({
+    query: /* groq */ `
+      *[_type=="BlogPost_Collection"] {
+          "slug": slug.current,
+      }
+    `,
+  });
+  return data.map(({ slug }) => ({
+    slug,
+  }));
 }

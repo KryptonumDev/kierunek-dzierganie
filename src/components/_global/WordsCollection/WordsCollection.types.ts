@@ -9,11 +9,7 @@ export type Props = {
 };
 
 export type ListProps = {
-  list: {
-    text: string;
-    marginLeft: string;
-    y: number;
-  }[];
+  list: Props['list'];
 };
 export type ListItemProps = {
   marginLeft: string;

@@ -32,6 +32,7 @@ export default async function CategoryPaginationBlogPage({
   const page = [
     { name: 'Blog', path: '/blog' },
     { name: `Kategoria: ${name}`, path: `/blog/kategoria/${slug}` },
+    { name: `Strona: ${number}`, path: `/blog/kategoria/${slug}/strona/${number}` },
   ];
   return (
     <>
@@ -53,6 +54,10 @@ export default async function CategoryPaginationBlogPage({
   );
 }
 
+export const generateMetadata = async ({ params: { slug, number } }: { params: { slug: string; number: string } }) => {
+  return await QueryMetadata('BlogCategory_Collection', `/blog/kategoria/${slug}/strona/${number}`, slug);
+};
+
 async function getData(slug: string) {
   const data = await sanityFetch<BlogCategoryPageQueryProps>({
     query: /* groq */ `
@@ -70,10 +75,6 @@ async function getData(slug: string) {
   !data?.HeroSimple && notFound();
   return data;
 }
-
-export const generateMetadata = async ({ params: { slug, number } }: { params: { slug: string; number: string } }) => {
-  return await QueryMetadata('BlogCategory_Collection', `/blog/kategoria/${slug}/${number}`, slug);
-};
 
 export async function generateStaticParams(): Promise<generateBlogCategoryPageStaticParamsProps[]> {
   const data = await sanityFetch<BlogsCategoryStaticParamsType[]>({

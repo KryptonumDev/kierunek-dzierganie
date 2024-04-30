@@ -27,7 +27,7 @@ export default function Courses({
             <Link
               className={styles.item}
               key={index}
-              href={`${basis === 'crocheting' ? '/kursy-dziergania-na-drutach' : '/kursy-szydelkowania'}/${slug}`}
+              href={`${basis === 'crocheting' ? '/kursy-szydelkowania' : '/kursy-dziergania-na-drutach'}/${slug}`}
               onClick={() => handleItemClick(passedRef, setIsSearching)}
             >
               <Img

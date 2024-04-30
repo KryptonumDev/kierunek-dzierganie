@@ -112,7 +112,7 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
               message: 'Zgoda jest wymagana',
             },
           })}
-          label='Akceptuję warunki polityki prywatności i regulaminu'
+          label='Akceptuję warunki <a class="link" href="/polityka-prywatnosci">polityki prywatności</a> i <a class="link" href="/regulamin">regulaminu</a>'
           errors={errors}
         />
       )}

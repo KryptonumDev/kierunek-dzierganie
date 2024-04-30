@@ -45,6 +45,36 @@
   }
 
   .main {
+    .inpost {
+      height: 50px;
+
+      iframe {
+        display: none !important;
+      }
+
+      .inpost-data{
+        display: none;
+      }
+
+      &[data-active='true'] {
+        height: 500px;
+
+        iframe {
+          height: 450px !important;
+          display: block !important;
+        }
+      }
+
+      &[data-selected='true'] {
+        height: auto;
+
+        .inpost-data{
+          display: block;
+          margin-top: 12px;
+        }
+      }
+    }
+
     fieldset {
       border: none;
       padding: 0;

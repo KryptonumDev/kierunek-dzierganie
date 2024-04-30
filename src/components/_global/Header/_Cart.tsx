@@ -147,7 +147,6 @@ export default function Cart({
                               {CrossIcon}
                             </button>
                           </div>
-                          {/* TODO: Add logic for Apply Button */}
                           <button
                             type='button'
                             onClick={verifyCoupon}

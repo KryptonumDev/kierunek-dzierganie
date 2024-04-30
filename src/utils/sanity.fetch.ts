@@ -47,7 +47,6 @@ export default async function sanityFetch<QueryResponse>({
                 cache: 'no-cache',
               }
             : {
-                cache: 'force-cache',
                 next: {
                   tags,
                   // 1 month time revalidation

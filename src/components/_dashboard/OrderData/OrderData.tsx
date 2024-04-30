@@ -5,8 +5,13 @@ import { formatDateToPolishLocale } from '@/utils/formatDateToPolishLocale';
 import { formatPrice } from '@/utils/price-formatter';
 import { courseComplexityEnum, statusesSwitch } from '@/global/constants';
 import Img from '@/components/ui/image';
+import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 
-const OrderData = ({ order, products }: OrderDataTypes) => {
+const OrderData = ({ order }: OrderDataTypes) => {
+  const totalItemsCount = order.products.array?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
+  const totalItemsPrice =
+    order.products.array?.reduce((acc, item) => acc + (item.discount ?? item.price!) * item.quantity!, 0) ?? 0;
+
   return (
     <section className={styles['OrderData']}>
       <Link
@@ -40,6 +45,19 @@ const OrderData = ({ order, products }: OrderDataTypes) => {
             {order.shipping.city}, {order.shipping.postcode}
             <br />
             {order.shipping.phone}
+            {order.shippingMethod && (
+              <>
+                <br />
+                <br />
+                <strong>Metoda dostawy:</strong> {order.shippingMethod.name}
+                {order.shippingMethod.inpostPointData && (
+                  <>
+                    <br />
+                    <strong>Paczkomat:</strong> {order.shippingMethod.inpostPointData.name}
+                  </>
+                )}
+              </>
+            )}
           </p>
         </div>
         <div>
@@ -77,48 +95,84 @@ const OrderData = ({ order, products }: OrderDataTypes) => {
           className={styles['line']}
         />
       </div>
-      <h2>Zamówione produkty</h2>
       <div className={styles['products']}>
-        {products.map((item, i) => (
-          <div
-            className={styles['product']}
-            key={item._id + i}
-          >
-            <div className={styles['image-wrap']}>
-              {item.complexity && (
-                <span
-                  style={{
-                    color: courseComplexityEnum[item.complexity].color,
-                    backgroundColor: courseComplexityEnum[item.complexity].background,
-                  }}
-                  className={styles['badge']}
-                >
-                  {courseComplexityEnum[item.complexity].name}
-                </span>
-              )}
-              {item.gallery && (
-                <Img
-                  data={item.gallery}
-                  sizes='175px'
-                />
-              )}
-            </div>
-            <div className={styles['right-column']}>
-              <p>{item.name}</p>
-              <div>
-                {/* TODO: add attributes */}
-                <div></div>
+        <h2>Zamówione produkty</h2>
+        <div className={styles['products-grid']}>
+          {order.products.array.map((item, i) => (
+            <div
+              className={styles['product']}
+              key={item.id + i}
+            >
+              <div className={styles['image-wrap']}>
+                {item.complexity && (
+                  <span
+                    style={{
+                      color: courseComplexityEnum[item.complexity].color,
+                      backgroundColor: courseComplexityEnum[item.complexity].background,
+                    }}
+                    className={styles['badge']}
+                  >
+                    {courseComplexityEnum[item.complexity].name}
+                  </span>
+                )}
+                {item.image && (
+                  <Img
+                    data={item.image}
+                    sizes='175px'
+                  />
+                )}
               </div>
-              <div className={styles['price']}>
-                <span
-                  className={item.discount ? styles['discount'] : ''}
-                  dangerouslySetInnerHTML={{ __html: formatPrice(item.price!) }}
-                />
-                {item.discount ? <span dangerouslySetInnerHTML={{ __html: formatPrice(item.discount) }} /> : null}
+              <div className={styles['right-column']}>
+                <p>{item.name}</p>
+                <div>{item.type === 'product' && <p>Ilość: {item.quantity}</p>}</div>
+                <div className={styles['price']}>
+                  <span
+                    className={item.discount ? styles['discount'] : ''}
+                    dangerouslySetInnerHTML={{ __html: formatPrice(item.price!) }}
+                  />
+                  {item.discount ? <span dangerouslySetInnerHTML={{ __html: formatPrice(item.discount) }} /> : null}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+      </div>
+      <div className={styles['summary']}>
+        <p>
+          <span>
+            {totalItemsCount} {totalItemsCount === 1 ? 'produkt' : totalItemsCount < 5 ? 'produkty' : 'produktów'}
+          </span>
+          <span>{formatPrice(totalItemsPrice)}</span>
+        </p>
+        {order.discount && (
+          <p>
+            <span>Kupon: {order.discount.code}</span>
+            <span>{formatPrice(calculateDiscountAmount(totalItemsPrice, order.discount))}</span>
+          </p>
+        )}
+        {order.shippingMethod && (
+          <p>
+            <span>Dostawa</span>
+            <span>{formatPrice(order.shippingMethod.price * 100)}</span>
+          </p>
+        )}
+        {order.virtualMoney && order.virtualMoney > 0 && (
+          <p>
+            <span>Wykorzystane WZ</span>
+            <span>-{formatPrice(order.virtualMoney * 100)}</span>
+          </p>
+        )}
+        <p>
+          <span>Razem</span>
+          <span>
+            {formatPrice(
+              totalItemsPrice +
+                (order.discount ? calculateDiscountAmount(totalItemsPrice, order.discount) : 0) -
+                (order.virtualMoney ? order.virtualMoney * 100 : 0) +
+                (order.shippingMethod ? order.shippingMethod.price * 100 : 0)
+            )}
+          </span>
+        </p>
       </div>
     </section>
   );

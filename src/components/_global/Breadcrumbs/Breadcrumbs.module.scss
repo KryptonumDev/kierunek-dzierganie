@@ -5,10 +5,7 @@
   overflow: hidden;
   padding: 6px;
   margin: -6px;
-  margin-bottom: clamp(16px, calc(28vw / 7.68), 28px);
-  + * {
-    margin-top: calc(var(--space-gap) * -1) !important;
-  }
+  margin-bottom: clamp(16px, calc(28vw / 7.68), 28px) !important;
   > *:not(:last-child) {
     flex-shrink: 0;
   }
