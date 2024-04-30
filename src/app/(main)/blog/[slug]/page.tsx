@@ -2,6 +2,7 @@ import Components, { Components_Query } from '@/components/Components';
 import Hero, { Hero_Query } from '@/components/_blogPost/Hero';
 import PortableContent, { PortableContent_Query } from '@/components/_blogPost/PortableContent/PortableContent';
 import { ShareArticle_Query } from '@/components/_blogPost/ShareArticle';
+import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import { Img_Query } from '@/components/ui/image';
 import { type BlogPostQueryProps } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
@@ -9,8 +10,14 @@ import sanityFetch from '@/utils/sanity.fetch';
 export default async function BlogPostPage({ params: { slug } }: { params: { slug: string } }) {
   const { hero, author, date, content, previousBlog, nextBlog, links, portableText } = await getData(slug);
 
+  const page = [
+    { name: 'Blog', path: '/blog' },
+    { name: `${hero.heading}`, path: `/blog/${slug}` },
+  ];
+
   return (
     <>
+      <Breadcrumbs data={page} />
       <Hero
         {...hero}
         author={author}
