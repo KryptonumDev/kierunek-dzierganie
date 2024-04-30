@@ -1,25 +1,11 @@
 'use server';
 import { NextResponse } from 'next/server';
 import { P24 } from '@ingameltd/node-przelewy24';
-import { createClient as createSupabaseClient } from '@/utils/supabase-admin';
-import { createClient } from 'next-sanity';
-
-const projectId = process.env.SANITY_PROJECT_ID;
-const token = process.env.SANITY_API_TOKEN;
-const dataset = 'production';
-const apiVersion = '2024-04-22';
-
-const client = createClient({
-  projectId,
-  dataset,
-  apiVersion,
-  useCdn: false,
-  perspective: 'published',
-  token,
-});
+import { createClient } from '@/utils/supabase-admin';
+import { sanityPatchQuantity, sanityPatchQuantityInVariant } from '@/utils/sanity.fetch';
 
 export async function POST(request: Request) {
-  const supabase = createSupabaseClient();
+  const supabase = createClient();
   try {
     const { sessionId, amount, currency, orderId } = await request.json();
 
@@ -135,18 +121,16 @@ export async function POST(request: Request) {
           }));
           await supabase.from('courses_progress').insert(newCourses);
         }
+
         // TODO: maybe move this to create step??
         console.log('product', product);
         if (product.variantId) {
           // decrease quantity of chosen variant of variable product
-          const res = await client
-            .patch(product.id)
-            .dec({ [`variants[_key == "${product.variantId}"].countInStock`]: product.quantity })
-            .commit();
+          const res = await sanityPatchQuantityInVariant(product.id, product.variantId, product.quantity);
           console.log('change quantity of product variant', res);
         } else if (product.type === 'product') {
           // decrease quantity of each physical product
-          const res = await client.patch(product.id).dec({ countInStock: product.quantity }).commit();
+          const res = await sanityPatchQuantity(product.id, product.quantity);
           console.log('change quantity of product', res);
         }
       }

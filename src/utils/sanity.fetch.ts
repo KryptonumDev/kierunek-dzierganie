@@ -56,3 +56,14 @@ export default async function sanityFetch<QueryResponse>({
         }),
   });
 }
+
+export async function sanityPatchQuantityInVariant(id: string, key: string, quantity: number) {
+  return await client
+    .patch(id)
+    .dec({ [`variants[_key == "${key}"].countInStock`]: quantity })
+    .commit();
+}
+
+export async function sanityPatchQuantity(id: string, quantity: number) {
+  return await client.patch(id).dec({ countInStock: quantity }).commit();
+}
