@@ -284,6 +284,8 @@ export type CoursesProgress = {
 };
 
 export type Course = {
+  materials_link?: ProductCard;
+  printed_manual?: ProductCard;
   _id: string;
   name: string;
   slug: string;

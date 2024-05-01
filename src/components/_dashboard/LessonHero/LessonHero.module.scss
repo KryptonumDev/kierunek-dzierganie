@@ -98,9 +98,11 @@
     gap: 8px;
     margin-bottom: 10px;
 
+    flex-wrap: wrap;
+
     h1 {
       color: var(--primary-800, #53423c);
-      font-size: 28px;
+      font-size: 24px;
       font-weight: 300;
       line-height: 150%;
     }
@@ -224,6 +226,7 @@
 
     &::after {
       content: '';
+      pointer-events: none;
       position: absolute;
       bottom: 0;
       left: 0;

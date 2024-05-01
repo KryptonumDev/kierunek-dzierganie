@@ -1,8 +1,11 @@
 import LessonDescription from '@/components/_dashboard/LessonDescription';
 import LessonHero from '@/components/_dashboard/LessonHero';
 import LessonNotes from '@/components/_dashboard/LessonNotes';
+import PrintedManual from '@/components/_dashboard/PrintedManual';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
+import RelatedMaterials from '@/components/_global/RelatedMaterials';
 import Seo from '@/global/Seo';
+import { PRODUCT_CARD_QUERY } from '@/global/constants';
 import type { Chapter, Course, CoursesProgress, File, ImgType } from '@/global/types';
 import { checkCourseProgress } from '@/utils/check-course-progress';
 import sanityFetch from '@/utils/sanity.fetch';
@@ -46,7 +49,10 @@ export default async function Course({
 }: {
   params: { courseSlug: string; lessonSlug: string };
 }) {
-  const { course, lesson, courses_progress, left_handed, id, auto_play }: QueryProps = await query(courseSlug, lessonSlug);
+  const { course, lesson, courses_progress, left_handed, id, auto_play }: QueryProps = await query(
+    courseSlug,
+    lessonSlug
+  );
 
   const currentChapterInfo = (() => {
     let currentChapter = course.chapters[0]!;
@@ -86,6 +92,7 @@ export default async function Course({
           { name: lesson.title, path: `/moje-konto/kursy/${course.slug}/${lesson.slug}` },
         ]}
       />
+      {course.materials_link && <RelatedMaterials data={course.materials_link} />}
       <LessonHero
         id={id}
         left_handed={left_handed}
@@ -103,6 +110,8 @@ export default async function Course({
         currentLessonIndex={currentChapterInfo.currentLessonIndex}
       />
       <LessonDescription lesson={lesson} />
+      {course.printed_manual && <PrintedManual data={course.printed_manual} />}
+      {/* comments */}
     </>
   );
 }
@@ -200,45 +209,27 @@ const query = async (courseSlug: string, lessonSlug: string) => {
             }
           }
         }
-      }
+      },
     },
     "course": *[_type == "course" && slug.current == $courseSlug][0]{
-        _id,
-        name,
-        type,
-        "slug": slug.current,
-        generateCertificate,
-        chapters {
-          "_id": _key,
-          chapterImage {
-            asset -> {
-              url,
-              altText,
-              metadata {
-                lqip,
-                dimensions {
-                  width,
-                  height,
-                }
-              }
-            }
-          }, 
-          chapterDescription,
-          chapterName,
-          lessons[]->{
-            _id,
-            title,
-            name,
-            video,
-            lengthInMinutes,
-            "slug": slug.current
-          }
-        }[],
-        image {
+      materials_link->{
+        ${PRODUCT_CARD_QUERY}
+      },
+      printed_manual->{
+        ${PRODUCT_CARD_QUERY}
+      },
+      _id,
+      name,
+      type,
+      "slug": slug.current,
+      generateCertificate,
+      chapters {
+        "_id": _key,
+        chapterImage {
           asset -> {
-          url,
-          altText,
-          metadata {
+            url,
+            altText,
+            metadata {
               lqip,
               dimensions {
                 width,
@@ -246,8 +237,32 @@ const query = async (courseSlug: string, lessonSlug: string) => {
               }
             }
           }
-        },
-      }
+        }, 
+        chapterDescription,
+        chapterName,
+        lessons[]->{
+          _id,
+          title,
+          name,
+          video,
+          lengthInMinutes,
+          "slug": slug.current
+        }
+      }[],
+      image {
+        asset -> {
+        url,
+        altText,
+        metadata {
+            lqip,
+            dimensions {
+              width,
+              height,
+            }
+          }
+        }
+      },
+    }
     }`,
     params: {
       lessonSlug: lessonSlug,
