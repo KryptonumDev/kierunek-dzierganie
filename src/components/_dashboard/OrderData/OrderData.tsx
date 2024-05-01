@@ -8,8 +8,11 @@ import { courseComplexityEnum, statusesSwitch } from '@/global/constants';
 import Img from '@/components/ui/image';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 const OrderData = ({ order }: OrderDataTypes) => {
+  const router = useRouter();
+
   const totalItemsCount = order.products.array?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
   const totalItemsPrice =
     order.products.array?.reduce((acc, item) => acc + (item.discount ?? item.price!) * item.quantity!, 0) ?? 0;
@@ -42,9 +45,26 @@ const OrderData = ({ order }: OrderDataTypes) => {
       });
   };
 
-  // const removeOrder = async () => {
-
-  // };
+  const removeOrder = async () => {
+    await fetch('/api/payment/delete', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: order.id,
+      }),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.error) throw new Error('Błąd podczas zmiany statusu zamówienia');
+        router.refresh();
+      })
+      .catch((err) => {
+        toast('Błąd podczas zmiany statusu zamówienia');
+        console.log(err);
+      });
+  };
 
   return (
     <section className={styles['OrderData']}>
@@ -136,7 +156,12 @@ const OrderData = ({ order }: OrderDataTypes) => {
           className={styles['line']}
         />
         {order.orders_statuses.status_name === 'AWAITING PAYMENT' && (
-          <button className='link'>Anuluj zamówienie</button>
+          <button
+            onClick={removeOrder}
+            className='link'
+          >
+            Anuluj zamówienie
+          </button>
         )}
       </div>
       <div className={styles['products']}>
