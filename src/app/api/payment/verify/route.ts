@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const session = searchParams.get('session');
+  const id = searchParams.get('id');
 
   try {
     const transactionHeaders = new Headers();
@@ -20,18 +21,17 @@ export async function GET(request: Request) {
     });
 
     const responseData = await response.json();
-    console.log(responseData);
     // Cannot read properties of undefined (reading 'status')
     if (responseData.data.status == 1 || responseData.data.status == 2) {
       // TODO: payment success status
-      return NextResponse.redirect(`https://kierunekdzierganie.pl/moje-konto/zakupy/${session}`);
+      return NextResponse.redirect(`https://kierunek-dzierganie-git-dev-kryptonum.vercel.app/moje-konto/zakupy/${id}`);
     }
-
+    
     // TODO: payment await status
-    return NextResponse.redirect(`https://kierunekdzierganie.pl/moje-konto/zakupy/${session}`);
+    return NextResponse.redirect(`https://kierunek-dzierganie-git-dev-kryptonum.vercel.app/moje-konto/zakupy/${id}`);
   } catch (error) {
     console.log(error);
     // TODO: payment error status
-    return NextResponse.redirect(`https://kierunekdzierganie.pl/moje-konto/zakupy/${session}`);
+    return NextResponse.redirect(`https://kierunek-dzierganie-git-dev-kryptonum.vercel.app/moje-konto/zakupy/${id}`);
   }
 }
