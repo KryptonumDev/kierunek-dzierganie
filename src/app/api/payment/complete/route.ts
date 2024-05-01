@@ -4,6 +4,11 @@ import { P24 } from '@ingameltd/node-przelewy24';
 import { createClient } from '@/utils/supabase-admin';
 import { sanityPatchQuantity, sanityPatchQuantityInVariant } from '@/utils/sanity.fetch';
 
+// import { EmailTemplate } from 'src/emails/order-create';
+// import { Resend } from 'resend';
+
+// const resend = new Resend(process.env.RESEND_API_TOKEN);
+
 export async function POST(request: Request) {
   const supabase = createClient();
   try {
@@ -139,6 +144,14 @@ export async function POST(request: Request) {
     );
 
     if (error) throw new Error(error.message);
+
+    // const { data, error } = await resend.emails.send({
+    //   from: 'Acme <onboarding@resend.dev>',
+    //   to: ['delivered@resend.dev'],
+    //   subject: 'Nowe zamówienie!',
+    //   text: '',
+    //   react: EmailTemplate({ firstName: 'John' }),
+    // });
 
     return NextResponse.json({}, { status: 200 });
   } catch (error) {
