@@ -7,38 +7,43 @@ import { formatPrice } from '@/utils/price-formatter';
 import { courseComplexityEnum, statusesSwitch } from '@/global/constants';
 import Img from '@/components/ui/image';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
+import { toast } from 'react-toastify';
 
 const OrderData = ({ order }: OrderDataTypes) => {
   const totalItemsCount = order.products.array?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
   const totalItemsPrice =
     order.products.array?.reduce((acc, item) => acc + (item.discount ?? item.price!) * item.quantity!, 0) ?? 0;
 
-  // const createIntent = async () => {
-  //   await fetch('/api/payment/create', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify({
-  //       input: newInput,
-  //       description: 'Example description',
-  //     }),
-  //   })
-  //     .then((res) => res.json())
-  //     .then(({ link }) => {
-  //       if (!link) throw new Error('Błąd podczas tworzenia zamówienia');
-
-  //       emptyCart();
-  //       window.location.href = link;
-  //     })
-  //     .catch((err) => {
-  //       toast('Błąd podczas tworzenia zamówienia');
-  //       console.log(err);
-  //     });
-  // };
+  const createIntent = async () => {
+    await fetch('/api/payment/recreate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: order.id,
+        email: order.billing.email,
+        city: order.billing.city,
+        address1: order.billing.address1,
+        postcode: order.billing.postcode,
+        firstName: order.billing.firstName,
+        totalAmount: order.amount,
+        description: 'Zamówienie w sklepie Kierunek Dzierganie',
+      }),
+    })
+      .then((res) => res.json())
+      .then(({ link }) => {
+        if (!link) throw new Error('Błąd podczas tworzenia bramki płatności');
+        window.location.href = link;
+      })
+      .catch((err) => {
+        toast('Błąd podczas tworzenia bramki płatności');
+        console.log(err);
+      });
+  };
 
   // const removeOrder = async () => {
-  
+
   // };
 
   return (
@@ -61,7 +66,14 @@ const OrderData = ({ order }: OrderDataTypes) => {
           <p className={styles['title']}>Płatność</p>
           <p className={styles['flex-text']}>
             {formatPrice(order.amount)} <span className={styles['text']}>({order.payment_method})</span>
-            {order.orders_statuses.status_name === 'AWAITING PAYMENT' && <button className='link'>Opłać</button>}
+            {order.orders_statuses.status_name === 'AWAITING PAYMENT' && (
+              <button
+                onClick={createIntent}
+                className='link'
+              >
+                Opłać
+              </button>
+            )}
           </p>
         </div>
         <div>

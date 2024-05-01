@@ -385,6 +385,7 @@ export type Billing = {
   postcode: string;
   phone: string;
   company: string;
+  email?: string;
   invoiceType: 'Osoba prywatna' | 'Firma';
 };
 

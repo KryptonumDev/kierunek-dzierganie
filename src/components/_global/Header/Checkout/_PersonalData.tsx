@@ -144,7 +144,7 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
       },
       body: JSON.stringify({
         input: newInput,
-        description: 'Example description',
+        description: 'Zamówienie w sklepie internetowym Kierunek Dzierganie',
       }),
     })
       .then((res) => res.json())

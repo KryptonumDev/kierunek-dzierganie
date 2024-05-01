@@ -8,6 +8,8 @@ export async function POST(request: Request) {
   const supabase = createClient();
   try {
     const { sessionId, amount, currency, orderId } = await request.json();
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
 
     const p24 = new P24(
       Number(process.env.P24_MERCHANT_ID!),
@@ -31,10 +33,10 @@ export async function POST(request: Request) {
       .from('orders')
       .update({
         paid_at: new Date(),
-        payment_id: sessionId,
+        payment_id: id,
         status: 2,
       })
-      .eq('id', sessionId)
+      .eq('id', id)
       .select(
         `
         created_at,

@@ -3,10 +3,10 @@ import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const session = searchParams.get('id');
+  const { searchParams } = new URL(request.url);
+  const session = searchParams.get('session');
 
+  try {
     const transactionHeaders = new Headers();
     transactionHeaders.append('Content-Type', 'application/json');
     transactionHeaders.append(
@@ -24,14 +24,14 @@ export async function GET(request: Request) {
     // Cannot read properties of undefined (reading 'status')
     if (responseData.data.status == 1 || responseData.data.status == 2) {
       // TODO: payment success status
-      return NextResponse.redirect('https://kierunekdzierganie.pl/');
+      return NextResponse.redirect(`https://kierunekdzierganie.pl/moje-konto/zakupy/${session}`);
     }
 
     // TODO: payment await status
-    return NextResponse.redirect('https://kierunekdzierganie.pl/');
+    return NextResponse.redirect(`https://kierunekdzierganie.pl/moje-konto/zakupy/${session}`);
   } catch (error) {
     console.log(error);
     // TODO: payment error status
-    return NextResponse.redirect('https://kierunekdzierganie.pl/');
+    return NextResponse.redirect(`https://kierunekdzierganie.pl/moje-konto/zakupy/${session}`);
   }
 }
