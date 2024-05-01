@@ -33,7 +33,7 @@ export async function POST(request: Request) {
       .from('orders')
       .update({
         paid_at: new Date(),
-        payment_id: id,
+        payment_id: sessionId,
         status: 2,
       })
       .eq('id', id)
