@@ -141,9 +141,6 @@ export async function POST(request: Request) {
 
     if (error) throw new Error(error.message);
 
-    const res = await sanityPatchQuantity('063a247a-6330-49f0-802e-460308b5d214', 1);
-    console.log('test change quantity of product', res);
-
     const { data: messageData, error: messageError } = await resend.emails.send({
       from: 'Acme <onboarding@resend.dev>',
       to: ['kierunek.dzierganie@gmail.com'],
