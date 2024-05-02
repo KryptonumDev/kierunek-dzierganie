@@ -13,11 +13,12 @@ import HeroVirtual from '@/components/_product/HeroVirtual';
 import { Img_Query } from '@/components/ui/image';
 import RelatedProducts from '@/components/_product/RelatedProducts';
 import { createClient } from '@/utils/supabase-server';
+import PrintedManual from '@/components/_dashboard/PrintedManual';
 
 const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
   const {
     data: {
-      product: { relatedBundle, name, description, chapters, reviews, courses },
+      product: { printed_manual, relatedBundle, name, description, chapters, reviews, courses },
       product,
       card,
       relatedCourses,
@@ -75,6 +76,7 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
           course={true}
         />
       </Informations>
+      {printed_manual && <PrintedManual data={printed_manual} />}
       <RelatedProducts
         relatedCourses={relatedCourses}
         title={'Pozwól sobie na <strong>chwilę relaksu!</strong>'}
@@ -142,6 +144,9 @@ const query = async (slug: string): Promise<CoursePageQuery> => {
             title,
             lengthInMinutes
           }
+        },
+        printed_manual->{
+          ${PRODUCT_CARD_QUERY}
         },
         "reviews": *[_type == 'productReviewCollection' && references(^._id)][0...10]{
           rating,

@@ -225,6 +225,7 @@ export type CoursePageQueryProps = {
     rating: number;
     reviewsCount: number;
     description: DescriptionTypes[];
+    printed_manual: ProductCard;
     author: {
       name: string;
       slug: string;
