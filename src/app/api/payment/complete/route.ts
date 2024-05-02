@@ -4,10 +4,10 @@ import { P24 } from '@ingameltd/node-przelewy24';
 import { createClient } from '@/utils/supabase-admin';
 import { sanityPatchQuantity, sanityPatchQuantityInVariant } from '@/utils/sanity.fetch';
 
-// import { EmailTemplate } from 'src/emails/order-create';
-// import { Resend } from 'resend';
+import CreateOrder from 'src/emails/CreateOrder';
 
-// const resend = new Resend(process.env.RESEND_API_TOKEN);
+import { Resend } from 'resend';
+const resend = new Resend(process.env.RESEND_API_TOKEN);
 
 export async function POST(request: Request) {
   const supabase = createClient();
@@ -44,12 +44,8 @@ export async function POST(request: Request) {
       .eq('id', id)
       .select(
         `
-        created_at,
-        user_id,
-        used_discount,
-        used_virtual_money,
-        products
-      `
+          *
+        `
       )
       .single();
 
@@ -145,13 +141,14 @@ export async function POST(request: Request) {
 
     if (error) throw new Error(error.message);
 
-    // const { data, error } = await resend.emails.send({
-    //   from: 'Acme <onboarding@resend.dev>',
-    //   to: ['delivered@resend.dev'],
-    //   subject: 'Nowe zamówienie!',
-    //   text: '',
-    //   react: EmailTemplate({ firstName: 'John' }),
-    // });
+    const { data: messageData, error: messageError } = await resend.emails.send({
+      from: 'Acme <onboarding@resend.dev>',
+      to: ['kierunek.dzierganie@gmail.com'],
+      subject: 'Nowe zamówienie!',
+      text: '',
+      react: CreateOrder({ data: data }),
+    });
+    console.log(messageData, messageError);
 
     return NextResponse.json({}, { status: 200 });
   } catch (error) {
