@@ -1,9 +1,13 @@
-import OrderData from '@/components/_dashboard/OrderData';
+// import OrderData from '@/components/_dashboard/OrderData';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import Seo from '@/global/Seo';
 import type { Order } from '@/global/types';
 import { createClient } from '@/utils/supabase-server';
 import { notFound } from 'next/navigation';
+import CreateOrder from 'src/emails/CreateOrder';
+
+// import { Resend } from 'resend';
+// const resend = new Resend(process.env.RESEND_API_TOKEN);
 
 export default async function Order({ params: { id } }: { params: { id: string } }) {
   const order: Order = await query(id);
@@ -14,13 +18,22 @@ export default async function Order({ params: { id } }: { params: { id: string }
     { name: 'Zamówienie', path: currentUrl },
   ];
 
+  // const { data, error } = await resend.emails.send({
+  //   from: 'Acme <onboarding@resend.dev>',
+  //   to: ['kierunek.dzierganie@gmail.com'],
+  //   subject: 'Nowe zamówienie!',
+  //   text: '',
+  //   react: CreateOrder({ data: order }),
+  // });
+  // console.log(data, error);
   return (
     <>
       <Breadcrumbs
         visible={false}
         data={page}
       />
-      <OrderData order={order} />
+      {/* <OrderData order={order} /> */}
+      <CreateOrder data={order} />
     </>
   );
 }
