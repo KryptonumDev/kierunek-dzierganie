@@ -184,6 +184,7 @@ export type Node = {
 
 export type ProductPageQueryProps = {
   product: {
+    visible: boolean;
     name: string;
     slug: string;
     _id: string;
@@ -198,6 +199,7 @@ export type ProductPageQueryProps = {
       name: string;
       value: string;
     }>;
+    relatedCourses?: { _id: string }[];
     rating: number;
     reviewsCount: number;
     description: DescriptionTypes[];

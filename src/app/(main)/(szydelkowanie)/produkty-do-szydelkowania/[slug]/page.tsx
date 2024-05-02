@@ -91,21 +91,18 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // const res = await supabase
-  //   .from('profiles')
-  //   .select(
-  //     `
-  //       id,
-  //       courses_progress (
-  //         id,
-  //         course_id,
-  //         owner_id,
-  //         progress
-  //       )
-  //     `
-  //   )
-  //   .eq('id', user?.id)
-  //   .single();
+  const res = await supabase
+    .from('profiles')
+    .select(
+      `
+        id,
+        courses_progress (
+          course_id
+        )
+      `
+    )
+    .eq('id', user?.id)
+    .single();
 
   const data = await sanityFetch<ProductPageQueryProps>({
     query: /* groq */ `
@@ -145,6 +142,9 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
             value
           }
         },
+        "relatedCourses": *[_type == 'course' && references(^._id)][]{
+          _id
+        },
         "reviews": *[_type == 'productReviewCollection' && references(^._id)][0...10]{
           rating,
           review,
@@ -159,6 +159,22 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
     tags: ['product'],
   });
   !data && notFound();
+
+  if (!data.product.visible) {
+    // for hidden products check is user already bought related course
+    let owned = false;
+
+    res.data?.courses_progress.forEach((course: { course_id: string }) => {
+      if (
+        data!.product!.relatedCourses?.some((relatedCourse: { _id: string }) => relatedCourse._id === course.course_id)
+      ) {
+        owned = true;
+      }
+    });
+
+    if (!owned) return notFound();
+  }
+
   return { data: data, user: user };
 };
 
