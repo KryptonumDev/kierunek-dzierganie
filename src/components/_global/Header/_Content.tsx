@@ -28,6 +28,7 @@ const Content = ({
   billing,
   virtualWallet,
   userId,
+  ownedCourses,
 }: QueryProps) => {
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
@@ -82,6 +83,7 @@ const Content = ({
         usedDiscount={usedDiscount}
         setUsedDiscount={setUsedDiscount}
         userId={userId}
+        ownedCourses={ownedCourses}
       />
       <a
         href='#main'
@@ -120,7 +122,7 @@ const Content = ({
               <Link href='/kontakt'>Kontakt</Link>
             </li>
             <li>
-              <Link href='/moje-konto/kursy'>Profil</Link>
+              <Link href='/moje-konto/kursy'>{userId ? 'Profil' : 'Logowanie'}</Link>
             </li>
             <li>
               <button

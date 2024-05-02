@@ -17,6 +17,7 @@ export type ProductsListingTypes = {
     slug: string;
     _id: string;
   }[];
+  ownedCourses?: string[];
 };
 
 export type FiltersTypes = {
@@ -41,6 +42,7 @@ export type PaginationTypes = {
 };
 
 export type ListingProps = {
+  ownedCourses?: string[];
   featuredProductExcerpt?: JSX.Element;
   products: ProductCard[];
   basis: string;

@@ -25,6 +25,9 @@ const Header = async () => {
       shipping_data,
       virtual_wallet (
         amount
+      ),
+      courses_progress (
+        course_id
       )
     `
     )
@@ -48,6 +51,7 @@ const Header = async () => {
       userId={user?.id}
       // @ts-expect-error - virtual_wallet is not array, bug in supabase
       virtualWallet={data?.virtual_wallet?.amount}
+      ownedCourses={data?.courses_progress?.map((course) => course.course_id as string)}
     />
   );
 };

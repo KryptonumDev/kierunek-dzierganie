@@ -8,6 +8,7 @@ import type { CrochetingPage_QueryTypes } from '../page.types';
 import ProductsListing from '@/components/_global/ProductsListing';
 import Markdown from '@/components/ui/markdown';
 import { PRODUCT_CARD_QUERY } from '@/global/constants';
+import { createClient } from '@/utils/supabase-server';
 
 const page = { name: 'Szydełkowanie', path: '/kursy-szydelkowania' };
 
@@ -26,6 +27,23 @@ const CrochetingPage = async ({ searchParams }: { searchParams: { [key: string]:
     authors,
   } = await query(searchParams);
 
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const res = await supabase
+    .from('profiles')
+    .select(
+      `
+        id,
+        courses_progress (
+          course_id
+        )
+      `
+    )
+    .eq('id', user?.id)
+    .single();
+
   const title = <Markdown.h2>{listing_title}</Markdown.h2>;
   const text = <Markdown>{listing_text}</Markdown>;
 
@@ -43,6 +61,7 @@ const CrochetingPage = async ({ searchParams }: { searchParams: { [key: string]:
         courses={true}
         productsTotalCount={productsTotalCount}
         authors={authors}
+        ownedCourses={res.data?.courses_progress?.map((course) => course.course_id as string)}
       />
       <LatestBlogEntries {...LatestBlogEntriesData} />
     </>
@@ -52,6 +71,7 @@ const CrochetingPage = async ({ searchParams }: { searchParams: { [key: string]:
 export default CrochetingPage;
 
 const query = async (searchParams: { [key: string]: string }): Promise<CrochetingPage_QueryTypes> => {
+
   return await sanityFetch<CrochetingPage_QueryTypes>({
     query: /* groq */ `{
       "page": *[_type == "CrochetingCourses_Page"][0] {

@@ -8,4 +8,5 @@ export type Props = {
   desktopHorizontal?: boolean;
   basis?: string;
   onClick?: () => void;
+  owned?: boolean;
 };

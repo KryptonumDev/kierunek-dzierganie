@@ -19,6 +19,7 @@ const ProductCard = ({
   desktopHorizontal,
   basis,
   onClick,
+  owned,
 }: Props) => {
   const { addItem } = useCart();
   const [buttonText, setButtonText] = useState(inCart ? 'Już w koszyku' : 'Dodaj do koszyka');
@@ -121,20 +122,26 @@ const ProductCard = ({
             {mainVariant.discount ? <span dangerouslySetInnerHTML={{ __html: mainVariant.discount }} /> : null}
           </p>
         </div>
-        {mainVariant.type === 'variable' ? (
-          <Button href={`${basis ? basis : pageUrls[data.basis]}/${data.slug}`}>Wybierz wariant</Button>
-        ) : mainVariant.countInStock! > 0 ? (
-          <Button
-            disabled={buttonText !== 'Dodaj do koszyka'}
-            onClick={() => {
-              addItem({ quantity: 1, id: data._id, product: data._id, price: 0 }, 1);
-              setButtonText('Dodano do koszyka');
-            }}
-          >
-            {buttonText}
-          </Button>
+        {owned ? (
+          <Button href={`/moje-konto/kursy/${data.slug}`}>Przejdź do kursu</Button>
         ) : (
-          <Button disabled={true}>Brak na stanie</Button>
+          <>
+            {mainVariant.type === 'variable' ? (
+              <Button href={`${basis ? basis : pageUrls[data.basis]}/${data.slug}`}>Wybierz wariant</Button>
+            ) : mainVariant.countInStock! > 0 ? (
+              <Button
+                disabled={buttonText !== 'Dodaj do koszyka'}
+                onClick={() => {
+                  addItem({ quantity: 1, id: data._id, product: data._id, price: 0 }, 1);
+                  setButtonText('Dodano do koszyka');
+                }}
+              >
+                {buttonText}
+              </Button>
+            ) : (
+              <Button disabled={true}>Brak na stanie</Button>
+            )}
+          </>
         )}
       </div>
     </div>

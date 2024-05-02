@@ -8,6 +8,7 @@ import type { KnittingPage_QueryTypes } from '../page.types';
 import ProductsListing from '@/components/_global/ProductsListing';
 import Markdown from '@/components/ui/markdown';
 import { PRODUCT_CARD_QUERY } from '@/global/constants';
+import { createClient } from '@/utils/supabase-server';
 
 const page = { name: 'Dzierganie na drutach', path: '/kursy-dziergania-na-drutach' };
 
@@ -26,6 +27,23 @@ const KnittingPage = async ({ searchParams }: { searchParams: { [key: string]: s
     authors,
   } = await query(searchParams);
 
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const res = await supabase
+    .from('profiles')
+    .select(
+      `
+        id,
+        courses_progress (
+          course_id
+        )
+      `
+    )
+    .eq('id', user?.id)
+    .single();
+
   const title = <Markdown.h2>{listing_title}</Markdown.h2>;
   const text = <Markdown>{listing_text}</Markdown>;
 
@@ -43,6 +61,7 @@ const KnittingPage = async ({ searchParams }: { searchParams: { [key: string]: s
         courses={true}
         productsTotalCount={productsTotalCount}
         authors={authors}
+        ownedCourses={res.data?.courses_progress?.map((course) => course.course_id as string)}
       />
       <LatestBlogEntries {...LatestBlogEntriesData} />
     </>

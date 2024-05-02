@@ -33,6 +33,7 @@ export default function Cart({
   usedDiscount,
   setUsedDiscount,
   userId,
+  ownedCourses
 }: Cart) {
   const {
     register,
@@ -279,6 +280,7 @@ export default function Cart({
                   data={product}
                   inCart={cart?.some((item) => item.id === product._id)}
                   onClick={() => setShowCart()}
+                  owned={ownedCourses?.includes(product._id)}
                 />
               ))}
             </div>
