@@ -11,7 +11,16 @@ import { courseComplexityEnum, pageUrls } from '@/global/constants';
 import Link from 'next/link';
 import { Hearth } from '../Icons';
 
-const ProductCard = ({ data, inCart = false, horizontal, tabletHorizontal, basis }: Props) => {
+const ProductCard = ({
+  data,
+  inCart = false,
+  horizontal,
+  tabletHorizontal,
+  desktopHorizontal,
+  basis,
+  onClick,
+  owned,
+}: Props) => {
   const { addItem } = useCart();
   const [buttonText, setButtonText] = useState(inCart ? 'Już w koszyku' : 'Dodaj do koszyka');
   const mainVariant = useMemo(() => {
@@ -64,11 +73,12 @@ const ProductCard = ({ data, inCart = false, horizontal, tabletHorizontal, basis
 
   return (
     <div
-      className={`${styles['productCard']} ${horizontal ? styles['horizontal'] : ''} ${tabletHorizontal ? styles['tablet-horizontal'] : ''}`}
+      className={`${styles['productCard']} ${horizontal ? styles['horizontal'] : ''} ${tabletHorizontal ? styles['tablet-horizontal'] : ''} ${desktopHorizontal ? styles['desktop-horizontal'] : ''}`}
     >
       <Link
         href={`${basis ? basis : pageUrls[data.basis]}/${data.slug}`}
         className={styles['link']}
+        onClick={onClick}
       />
       {mainVariant.image && (
         <div className={styles['image-wrap']}>
@@ -112,20 +122,26 @@ const ProductCard = ({ data, inCart = false, horizontal, tabletHorizontal, basis
             {mainVariant.discount ? <span dangerouslySetInnerHTML={{ __html: mainVariant.discount }} /> : null}
           </p>
         </div>
-        {mainVariant.type === 'variable' ? (
-          <Button href={`${basis ? basis : pageUrls[data.basis]}/${data.slug}`}>Wybierz wariant</Button>
-        ) : mainVariant.countInStock! > 0 ? (
-          <Button
-            disabled={buttonText !== 'Dodaj do koszyka'}
-            onClick={() => {
-              addItem({ quantity: 1, id: data._id, product: data._id, price: 0 }, 1);
-              setButtonText('Dodano do koszyka');
-            }}
-          >
-            {buttonText}
-          </Button>
+        {owned ? (
+          <Button href={`/moje-konto/kursy/${data.slug}`}>Przejdź do kursu</Button>
         ) : (
-          <Button disabled={true}>Brak na stanie</Button>
+          <>
+            {mainVariant.type === 'variable' ? (
+              <Button href={`${basis ? basis : pageUrls[data.basis]}/${data.slug}`}>Wybierz wariant</Button>
+            ) : mainVariant.countInStock! > 0 ? (
+              <Button
+                disabled={buttonText !== 'Dodaj do koszyka'}
+                onClick={() => {
+                  addItem({ quantity: 1, id: data._id, product: data._id, price: 0 }, 1);
+                  setButtonText('Dodano do koszyka');
+                }}
+              >
+                {buttonText}
+              </Button>
+            ) : (
+              <Button disabled={true}>Brak na stanie</Button>
+            )}
+          </>
         )}
       </div>
     </div>

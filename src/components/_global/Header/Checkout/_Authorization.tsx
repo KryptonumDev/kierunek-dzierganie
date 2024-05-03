@@ -10,6 +10,8 @@ import PasswordInput from '@/components/ui/PasswordInput';
 import { useState } from 'react';
 import Input from '@/components/ui/Input';
 import { createClient } from '@/utils/supabase-client';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 // import OAuthMethods from "@/components/organisms/oAuth-methods";
 
 type FormValues = {
@@ -21,6 +23,7 @@ type FormValues = {
 export default function Authorization({ setStep, goToCart, setInput }: MappingProps) {
   const [isRegister, setRegister] = useState(true);
   const supabase = createClient();
+  const router = useRouter();
 
   const {
     register,
@@ -59,6 +62,7 @@ export default function Authorization({ setStep, goToCart, setInput }: MappingPr
             setInput((prev: InputState) => {
               return {
                 ...prev,
+                user_id: res.data.user!.id,
                 shipping: {
                   firstName: data!.shipping_data?.firstName ?? '',
                   address1: data!.shipping_data?.address1 ?? '',
@@ -119,6 +123,7 @@ export default function Authorization({ setStep, goToCart, setInput }: MappingPr
           setInput((prev: InputState) => {
             return {
               ...prev,
+              user_id: res.data.user!.id,
               shipping: {
                 firstName: data!.shipping_data?.firstName ?? '',
                 address1: data!.shipping_data?.address1 ?? '',
@@ -142,6 +147,7 @@ export default function Authorization({ setStep, goToCart, setInput }: MappingPr
             };
           });
           setStep(2);
+          router.refresh();
         })
         .catch((error) => {
           toast(error.message);
@@ -195,7 +201,28 @@ export default function Authorization({ setStep, goToCart, setInput }: MappingPr
                 message: 'Zgoda jest wymagana',
               },
             })}
-            label='Akceptuję warunki <a class="link" href="/polityka-prywatnosci">polityki prywatności</a> i <a class="link" href="/regulamin">regulaminu</a>'
+            label={
+              <>
+                Akceptuję warunki{' '}
+                <Link
+                  className='link'
+                  href='/polityka-prywatnosci'
+                  target='_blank'
+                  rel='noopener'
+                >
+                  polityki prywatności
+                </Link>{' '}
+                i 
+                <Link
+                  className='link'
+                  href='/regulamin'
+                  target='_blank'
+                  rel='noopener'
+                >
+                  regulaminu
+                </Link>
+              </>
+            }
             errors={errors}
           />
         )}

@@ -5,6 +5,7 @@ export type ListingFilesTypes = {
     _id: string;
     name: string;
     slug: string;
+    generateCertificate: boolean;
     chapters: {
       _id: string;
       lessons: {

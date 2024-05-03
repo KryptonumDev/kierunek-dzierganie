@@ -5,7 +5,7 @@ import type { ProductCard } from '@/global/types';
 import { PRODUCT_CARD_QUERY } from 'src/global/constants';
 
 export const useCartItems = () => {
-  const { items: rawCart, updateItemQuantity, updateItem, removeItem } = useCart();
+  const { items: rawCart, updateItemQuantity, updateItem, removeItem, totalItems } = useCart();
   const [fetchedItems, setFetchedItems] = useState<ProductCard[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -109,5 +109,5 @@ export const useCartItems = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rawCart]);
 
-  return { cart: rawCart, fetchedItems, updateItemQuantity, updateItem, removeItem, loading };
+  return { cart: rawCart, fetchedItems, updateItemQuantity, updateItem, removeItem, loading, totalItems };
 };

@@ -3,7 +3,7 @@ import FeaturedProductCard from '@/components/ui/FeaturedProductCard';
 import styles from './ProductsListing.module.scss';
 import { ListingProps } from './ProductsListing.types';
 
-export default function Listing({ featuredProductExcerpt, products, basis }: ListingProps) {
+export default function Listing({ featuredProductExcerpt, products, basis, ownedCourses }: ListingProps) {
   return (
     <div className={styles['products']}>
       {products.length > 0 && (
@@ -19,6 +19,7 @@ export default function Listing({ featuredProductExcerpt, products, basis }: Lis
             key={product._id}
             data={product}
             basis={basis}
+            owned={ownedCourses?.includes(product._id)}
           />
         ))}
       </div>

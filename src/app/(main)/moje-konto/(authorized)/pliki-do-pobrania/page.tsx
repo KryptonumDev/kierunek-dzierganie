@@ -21,6 +21,7 @@ type QueryProps = {
       _id: string;
       name: string;
       slug: string;
+      generateCertificate: boolean;
       chapters: {
         _id: string;
         lessons: {
@@ -121,6 +122,7 @@ const query = async (): Promise<QueryProps> => {
         _id,
         name,
         "slug": slug.current,
+        generateCertificate,
         chapters {
           "_id": _key,
           lessons[]->{

@@ -17,6 +17,7 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
       product: {
         name,
         _id,
+        _type,
         type,
         variants,
         price,
@@ -69,9 +70,14 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
         {description?.length > 0 && <Description data={description} />}
         {parameters?.length > 0 && <Parameters parameters={parameters} />}
         <Reviews
-          logged={!!user}
+          user={user}
           alreadyBought={true}
           reviews={reviews}
+          course={false}
+          product={{
+            id: _id,
+            type: _type
+          }}
         />
       </Informations>
     </>
@@ -90,21 +96,19 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // const res = await supabase
-  //   .from('profiles')
-  //   .select(
-  //     `
-  //       id,
-  //       courses_progress (
-  //         id,
-  //         course_id,
-  //         owner_id,
-  //         progress
-  //       )
-  //     `
-  //   )
-  //   .eq('id', user?.id)
-  //   .single();
+  const res = await supabase
+    .from('profiles')
+    .select(
+      `
+        id,
+        billing_data->firstName,
+        courses_progress (
+          course_id
+        )
+      `
+    )
+    .eq('id', user?.id)
+    .single();
 
   const data = await sanityFetch<ProductPageQueryProps>({
     query: /* groq */ `
@@ -113,6 +117,7 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
       "product": *[_type == "product" && slug.current == $slug && basis == 'crocheting'][0] {
         name,
         'slug': slug.current,
+        visible,
         _id,
         basis,
         type,
@@ -144,7 +149,10 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
             value
           }
         },
-        "reviews": *[_type == 'productReviewCollection' && references(^._id)][0...10]{
+        "relatedCourses": *[_type == 'course' && references(^._id)][]{
+          _id
+        },
+        "reviews": *[_type == 'productReviewCollection' && visible == true && references(^._id)][0...10]{
           rating,
           review,
           nameOfReviewer,
@@ -158,7 +166,23 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
     tags: ['product'],
   });
   !data && notFound();
-  return { data: data, user: user };
+
+  if (!data.product.visible) {
+    // for hidden products check is user already bought related course
+    let owned = false;
+
+    res.data?.courses_progress.forEach((course: { course_id: string }) => {
+      if (
+        data!.product!.relatedCourses?.some((relatedCourse: { _id: string }) => relatedCourse._id === course.course_id)
+      ) {
+        owned = true;
+      }
+    });
+
+    if (!owned) return notFound();
+  }
+
+  return { data: data, user: res.data?.firstName as string };
 };
 
 export async function generateStaticParams(): Promise<generateStaticParamsProps[]> {

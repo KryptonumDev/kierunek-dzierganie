@@ -41,7 +41,7 @@ const ListingFiles = ({ courses, left_handed, progress }: ListingFilesTypes) => 
         if (completedLessons === course.chapters.find((el) => el._id === chapterId)!.lessons.length)
           completedChapters++;
       }
-      if (completedChapters === course.chapters.length) {
+      if (completedChapters === course.chapters.length && course.generateCertificate) {
         obj.showCert = true;
       }
 

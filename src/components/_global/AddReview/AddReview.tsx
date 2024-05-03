@@ -7,8 +7,9 @@ import { useForm, type SubmitHandler } from 'react-hook-form';
 import Checkbox from '@/components/ui/Checkbox';
 import Button from '@/components/ui/Button';
 import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 
-const AddReview = ({ open, setOpen, user }: AddReviewTypes) => {
+const AddReview = ({ open, setOpen, user, product }: AddReviewTypes) => {
   const {
     register,
     handleSubmit,
@@ -28,17 +29,29 @@ const AddReview = ({ open, setOpen, user }: AddReviewTypes) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        ...data,
-        user,
+        rating: data.mark,
+        review: data.notes,
+        nameOfReviewer: user,
+        course: product.id,
       }),
-    });
+    })
+      .then((res) => {
+        if (res.ok) {
+          setOpen(null);
+          toast('Otrzymaliśmy Twoją opinię. Dziękujemy!');
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        toast('Błąd podczas wysyłania opinii');
+      });
   };
 
   const mark = watch('mark');
 
   const handleEscapeKey = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
-      setOpen(false);
+      setOpen(null);
     }
   };
 
@@ -52,7 +65,7 @@ const AddReview = ({ open, setOpen, user }: AddReviewTypes) => {
   return (
     <>
       <div
-        onClick={() => setOpen(false)}
+        onClick={() => setOpen(null)}
         data-active={open}
         className={styles['overlay']}
       ></div>
@@ -64,7 +77,7 @@ const AddReview = ({ open, setOpen, user }: AddReviewTypes) => {
           Dodaj <strong>opinię</strong>
         </h2>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <p>Oceń kurs</p>
+          <p>Oceń {product.type === 'product' ? 'produkt' : product.type === 'course' ? 'kurs' : 'pakiet'}</p>
           <div className={styles['group']}>
             <label
               data-active={mark > 0}
@@ -131,7 +144,7 @@ const AddReview = ({ open, setOpen, user }: AddReviewTypes) => {
             errors={errors}
           />
           <Checkbox
-            label='Zgadzam się na przetwarzanie moich danych?'
+            label={<>Zgadzam się na przetwarzanie moich danych?</>}
             register={register('privacy', {
               required: {
                 value: true,

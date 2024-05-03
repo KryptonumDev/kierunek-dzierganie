@@ -52,12 +52,12 @@ export default CrochetingPage;
 const query = async (searchParams: { [key: string]: string }): Promise<CrochetingProductsPage_QueryTypes> => {
   return await sanityFetch<CrochetingProductsPage_QueryTypes>({
     query: /* groq */ `{
-      "page": *[_type == "Crocheting_Page"][0] {
+      "page": *[_type == "CrochetingProducts_Page"][0] {
         ${HeroSimple_Query(true)}
         ${StepsGrid_Query}
         ${LatestBlogEntries_Query(true)}
-        "listing_title" : listing_Heading_Products,
-        "listing_text": listing_Paragraph_Products,
+        "listing_title" : listing_Heading_Courses,
+        "listing_text": listing_Paragraph,
       },
       "products": *[
         _type == 'product'
@@ -90,10 +90,10 @@ const query = async (searchParams: { [key: string]: string }): Promise<Crochetin
       category: searchParams.rodzaj ?? null,
       discount: searchParams.promocja ?? null,
     },
-    tags: ['Crocheting_Page'],
+    tags: ['CrochetingProducts_Page'],
   });
 };
 
 export async function generateMetadata() {
-  return await QueryMetadata('Crocheting_Page', page.path);
+  return await QueryMetadata('CrochetingProducts_Page', page.path);
 }

@@ -10,6 +10,7 @@ export type useCartItems = {
 
 export type QueryProps = {
   markdownNavAnnotation: JSX.Element;
+  ownedCourses?: string[];
   global: {
     image_knitting: ImgType;
     image_crochet: ImgType;
@@ -48,6 +49,7 @@ export type EmptyCart = {
 };
 
 export type Cart = {
+  ownedCourses?: string[];
   goToCheckout: () => void;
   setShowCart: () => void;
   showCart?: boolean;

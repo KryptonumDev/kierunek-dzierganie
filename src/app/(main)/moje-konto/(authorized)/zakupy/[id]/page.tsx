@@ -1,19 +1,12 @@
 import OrderData from '@/components/_dashboard/OrderData';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import Seo from '@/global/Seo';
-import type { Order, ProductCard } from '@/global/types';
-import sanityFetch from '@/utils/sanity.fetch';
+import type { Order } from '@/global/types';
 import { createClient } from '@/utils/supabase-server';
 import { notFound } from 'next/navigation';
-import { PRODUCT_CARD_QUERY } from 'src/global/constants';
-
-type QueryProps = {
-  products: ProductCard[];
-  order: Order;
-};
 
 export default async function Order({ params: { id } }: { params: { id: string } }) {
-  const { order, products }: QueryProps = await query(id);
+  const data: Order = await query(id);
 
   const currentUrl = `/moje-konto/zakupy/${id}`;
   const page = [
@@ -22,16 +15,12 @@ export default async function Order({ params: { id } }: { params: { id: string }
   ];
 
   return (
-    // TODO: remove products prop?
     <>
       <Breadcrumbs
         visible={false}
         data={page}
       />
-      <OrderData
-        order={order}
-        products={products}
-      />
+      <OrderData order={data} />
     </>
   );
 }
@@ -43,7 +32,7 @@ export async function generateMetadata({ params: { id } }: { params: { id: strin
   });
 }
 
-const query = async (id: string): Promise<QueryProps> => {
+const query = async (id: string): Promise<Order> => {
   const supabase = createClient();
 
   const res = await supabase
@@ -60,7 +49,8 @@ const query = async (id: string): Promise<QueryProps> => {
         discount:used_discount, 
         shippingMethod:shipping_method, 
         virtualMoney:used_virtual_money, 
-        orders_statuses( * )
+        orders_statuses( * ),
+        profiles( billing_data->firstName )
       `
     )
     .eq('id', id)
@@ -69,18 +59,5 @@ const query = async (id: string): Promise<QueryProps> => {
 
   if (!res.data) notFound();
 
-  const productIds = res.data!.products.array.map((product) => product.id);
-
-  const data = await sanityFetch<QueryProps>({
-    query: /* groq */ ` {
-      "products": *[_type == 'product' && _id in $products] {
-        ${PRODUCT_CARD_QUERY}
-      },
-    }`,
-    params: {
-      products: productIds,
-    },
-  });
-
-  return { ...data, order: res.data };
+  return res.data;
 };

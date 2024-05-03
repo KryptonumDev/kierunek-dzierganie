@@ -40,6 +40,6 @@ const Checkmark = () => (
       strokeLinecap='round'
       strokeLinejoin='round'
       d='M13.25 1L4.5 11 .75 7.25'
-    ></path>
+    />
   </svg>
 );

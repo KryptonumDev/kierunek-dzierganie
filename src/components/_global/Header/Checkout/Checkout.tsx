@@ -85,7 +85,6 @@ export default function Checkout({
     //TODO: revalidate coupon after login,
     // can be problem with per_user_limit if coupon code entered before loginx
 
-
     //TODO: change delivery price calculation, currently it's hardcoded to 12.50zl
     setInput((prev) => ({
       ...prev,
@@ -94,9 +93,9 @@ export default function Checkout({
         fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0) +
         (usedDiscount ? calculateDiscountAmount(input.amount, usedDiscount) : 0) -
         (usedVirtualMoney ? usedVirtualMoney * 100 : 0) +
-        (fetchedItems.some((item) => item._type === 'product') ? 12500 : 0),
+        (fetchedItems.some((item) => item._type === 'product') ? 1250 : 0),
       needDelivery: fetchedItems.some((item) => item._type === 'product'),
-      delivery: 12.5,
+      delivery: (fetchedItems.some((item) => item._type === 'product') ? 1250 : 0),
       discount: usedDiscount?.affiliatedBy === userId ? null : usedDiscount,
       virtualMoney: usedVirtualMoney,
       user_id: userId,

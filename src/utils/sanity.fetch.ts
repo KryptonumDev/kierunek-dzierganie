@@ -67,3 +67,22 @@ export async function sanityPatchQuantityInVariant(id: string, key: string, quan
 export async function sanityPatchQuantity(id: string, quantity: number) {
   return await client.patch(id).dec({ countInStock: quantity }).commit();
 }
+
+export async function sanityCreateReview(data: {
+  rating: number;
+  review: string;
+  nameOfReviewer: string;
+  course: string;
+}) {
+  return await client.create({
+    _type: 'productReviewCollection',
+    rating: Number(data.rating),
+    review: data.review,
+    nameOfReviewer: data.nameOfReviewer,
+    visible: false,
+    course: {
+      _type: 'reference',
+      _ref: data.course,
+    },
+  });
+}

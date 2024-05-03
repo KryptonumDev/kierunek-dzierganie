@@ -1,0 +1,14 @@
+.RelatedMaterials {
+  margin-bottom: clamp(24px, calc(36vw/7.68), 48px) !important;
+  display: grid;
+  grid-template-columns: 488fr 690fr;
+  gap: clamp(24px, calc(28vw/7.68), 32px);
+
+  h2{
+    margin-bottom: clamp(12px, calc(20vw/7.68), 36px);
+  }
+
+  @media (max-width: 976px) {
+    grid-template-columns: 1fr;
+  }
+}

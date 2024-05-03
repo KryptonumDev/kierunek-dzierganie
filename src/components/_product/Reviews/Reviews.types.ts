@@ -5,6 +5,11 @@ export type ReviewsTypes = {
     nameOfReviewer: string;
     _id: string;
   }[];
-  logged: boolean;
+  user?: string;
   alreadyBought: boolean;
+  course: boolean;
+  product: {
+    id: string;
+    type: 'product' | 'course' | 'bundle';
+  };
 };

@@ -104,12 +104,12 @@ const generateDefaults = (input: InputState) => {
 const shippingMethods = [
   {
     name: 'Kurier InPost',
-    price: 12.5,
+    price: 1250,
     map: false,
   },
   {
     name: 'Paczkomat InPost',
-    price: 12.5,
+    price: 1250,
     map: true,
   },
 ];
@@ -144,7 +144,7 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
       },
       body: JSON.stringify({
         input: newInput,
-        description: 'Example description',
+        description: 'Zamówienie w sklepie internetowym Kierunek Dzierganie',
       }),
     })
       .then((res) => res.json())
@@ -326,7 +326,7 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
         <fieldset>
           <Checkbox
             register={register('shippingSameAsBilling')}
-            label='Adres dostawy taki sam jak adres do faktury'
+            label={<>Adres dostawy taki sam jak adres do faktury</>}
             errors={errors}
           />
           {!shippingSameAsBilling && (

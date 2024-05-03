@@ -6,20 +6,20 @@ import Button from '@/components/ui/Button';
 import { useState } from 'react';
 import AddReview from '@/components/_global/AddReview';
 
-const Reviews = ({ logged, alreadyBought, reviews }: ReviewsTypes) => {
-  const [addReview, setAddReview] = useState(false);
+const Reviews = ({ user, alreadyBought, reviews, course, product }: ReviewsTypes) => {
+  const [addReview, setAddReview] = useState<null | boolean>(null);
 
   if (reviews.length === 0) {
     return (
       <section className={styles['Reviews-empty']}>
         <h2>
-          Ten kurs jeszcze <strong>nie ma</strong> opinii
+          Ten {course ? 'kurs' : 'produkt'} jeszcze <strong>nie ma</strong> opinii
         </h2>
         <p>Twoja może być tą pierwszą! Dodaj opinię, aby pomóc innym zdecydować, czy to coś dla nich</p>
         {/* TODO: add check is already added comment */}
-        {logged ? (
+        {user ? (
           <>
-            {alreadyBought ? (
+            {!course || alreadyBought ? (
               <Button onClick={() => setAddReview(true)}>Dodaj opinię</Button>
             ) : (
               <p>Kup ten produkt żeby zostawić opinię</p>
@@ -28,17 +28,22 @@ const Reviews = ({ logged, alreadyBought, reviews }: ReviewsTypes) => {
         ) : (
           <Button href='/moje-konto/autoryzacja'>Zaloguj się, aby dodać opinię</Button>
         )}
-        <AddReview
-          open={addReview}
-          setOpen={setAddReview}
-        />
+        {user && (
+          <AddReview
+            open={!!addReview}
+            setOpen={setAddReview}
+            user={user}
+            product={product}
+          />
+        )}
       </section>
     );
   }
+
   return (
     <section className={styles['Reviews']}>
       <h2>
-        Co mówią o naszym kursie <strong>szydełkowania</strong>
+        Co mówią o naszym <strong>{course ? 'kursie' : 'produkcie'}</strong>
       </h2>
       <div className={styles['grid']}>
         {reviews.map((review) => (
@@ -51,7 +56,19 @@ const Reviews = ({ logged, alreadyBought, reviews }: ReviewsTypes) => {
           />
         ))}
       </div>
-      {/* TODO: add pagination */}
+      {user ? (
+        <>{!course || alreadyBought ? <Button onClick={() => setAddReview(true)}>Dodaj opinię</Button> : null}</>
+      ) : (
+        <Button href='/moje-konto/autoryzacja'>Zaloguj się, aby dodać opinię</Button>
+      )}
+      {user && (
+        <AddReview
+          open={!!addReview}
+          setOpen={setAddReview}
+          user={user}
+          product={product}
+        />
+      )}
     </section>
   );
 };

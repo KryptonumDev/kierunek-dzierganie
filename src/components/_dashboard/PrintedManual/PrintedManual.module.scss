@@ -1,0 +1,16 @@
+.PrintedManual {
+  background: var(--primary-200, #faf4f0);
+  padding: clamp(16px, calc(24vw / 7.68), 36px);
+  align-items: center;
+  display: grid;
+  grid-template-columns: 400fr 690fr;
+  gap: clamp(24px, calc(28vw / 7.68), 32px);
+
+  h2 {
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 976px) {
+    grid-template-columns: 1fr;
+  }
+}

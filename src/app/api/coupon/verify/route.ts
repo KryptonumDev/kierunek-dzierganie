@@ -51,7 +51,7 @@ export async function POST(request: Request) {
         .eq('used_coupon', data.id)
         .eq('used_by', userId);
 
-      if (data.per_user_limit >= count!) {
+      if (count && data.per_user_limit >= count!) {
         return NextResponse.json({ error: 'Osiągnięto limit użyć kodu rabatowego' }, { status: 500 });
       }
     }
@@ -62,7 +62,7 @@ export async function POST(request: Request) {
         .select('*', { count: 'exact', head: true })
         .eq('used_coupon', data.id);
 
-      if (data?.use_limit >= count!) {
+      if (count && data?.use_limit >= count!) {
         return NextResponse.json({ error: 'Osiągnięto limit użyć kodu rabatowego' }, { status: 500 });
       }
     }

@@ -4,10 +4,17 @@ import { P24 } from '@ingameltd/node-przelewy24';
 import { createClient } from '@/utils/supabase-admin';
 import { sanityPatchQuantity, sanityPatchQuantityInVariant } from '@/utils/sanity.fetch';
 
+import CreateOrder from 'src/emails/CreateOrder';
+
+import { Resend } from 'resend';
+const resend = new Resend(process.env.RESEND_API_TOKEN);
+
 export async function POST(request: Request) {
   const supabase = createClient();
   try {
     const { sessionId, amount, currency, orderId } = await request.json();
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
 
     const p24 = new P24(
       Number(process.env.P24_MERCHANT_ID!),
@@ -34,15 +41,11 @@ export async function POST(request: Request) {
         payment_id: sessionId,
         status: 2,
       })
-      .eq('id', sessionId)
+      .eq('id', id)
       .select(
         `
-        created_at,
-        user_id,
-        used_discount,
-        used_virtual_money,
-        products
-      `
+          *
+        `
       )
       .single();
 
@@ -123,17 +126,29 @@ export async function POST(request: Request) {
         }
 
         // TODO: maybe move this to create step??
+        console.log('product', product);
         if (product.variantId) {
           // decrease quantity of chosen variant of variable product
-          await sanityPatchQuantityInVariant(product.id, product.variantId, product.quantity);
+          const res = await sanityPatchQuantityInVariant(product.id, product.variantId, product.quantity);
+          console.log('change quantity of product variant', res);
         } else if (product.type === 'product') {
           // decrease quantity of each physical product
-          await sanityPatchQuantity(product.id, product.quantity);
+          const res = await sanityPatchQuantity(product.id, product.quantity);
+          console.log('change quantity of product', res);
         }
       }
     );
 
     if (error) throw new Error(error.message);
+
+    const { data: messageData, error: messageError } = await resend.emails.send({
+      from: 'Acme <onboarding@resend.dev>',
+      to: ['kierunek.dzierganie@gmail.com'],
+      subject: 'Nowe zamówienie!',
+      text: '',
+      react: CreateOrder({ data: data }),
+    });
+    console.log(messageData, messageError);
 
     return NextResponse.json({}, { status: 200 });
   } catch (error) {

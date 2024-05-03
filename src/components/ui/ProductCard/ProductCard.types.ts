@@ -5,5 +5,8 @@ export type Props = {
   inCart?: boolean;
   horizontal?: boolean;
   tabletHorizontal?: boolean;  
+  desktopHorizontal?: boolean;
   basis?: string;
+  onClick?: () => void;
+  owned?: boolean;
 };

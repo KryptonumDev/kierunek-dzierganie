@@ -33,6 +33,7 @@ export default function Cart({
   usedDiscount,
   setUsedDiscount,
   userId,
+  ownedCourses
 }: Cart) {
   const {
     register,
@@ -158,7 +159,7 @@ export default function Cart({
                       ) : (
                         <Checkbox
                           register={register('isDiscount')}
-                          label='Posiadam kod rabatowy'
+                          label={<>Posiadam kod rabatowy</>}
                           errors={errors}
                           onChange={() => setIsPromoCode((prev) => !prev)}
                         />
@@ -202,7 +203,7 @@ export default function Cart({
                           ) : (
                             <Checkbox
                               register={register('isVirtual')}
-                              label='Chcę wykorzystać wirtualne złotówki'
+                              label={<>Chcę wykorzystać wirtualne złotówki</>}
                               errors={errors}
                               onChange={() => setIsVirtualCoins((prev) => !prev)}
                             />
@@ -275,9 +276,11 @@ export default function Cart({
             <div className={styles['grid']}>
               {highlighted_products.map((product, i) => (
                 <ProductCard
+                  key={product._id + i}
                   data={product}
-                  key={i}
                   inCart={cart?.some((item) => item.id === product._id)}
+                  onClick={() => setShowCart()}
+                  owned={ownedCourses?.includes(product._id)}
                 />
               ))}
             </div>

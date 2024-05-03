@@ -10,7 +10,9 @@ const Seo = async ({ title, description, path, img, ...props }: SeoTypes): Promi
 
   const seo = {
     title: title || DEFAULT_TITLE,
-    description: description || '',
+    description:
+      description ||
+      'Odkryj miłość do rękodzieła z Kierunkiem Dzierganie. Oferujemy kursy z dziergania i szydełkowania dla początkujących i zaawansowanych!',
     url,
     ogImage: img || og_Img || '',
   };

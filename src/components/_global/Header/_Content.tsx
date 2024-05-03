@@ -3,7 +3,7 @@ import type { Discount } from '@/global/types';
 import { useCartItems } from '@/utils/useCartItems';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './Header.module.scss';
 import type { QueryProps } from './Header.types';
 import Search from './Search/Search';
@@ -28,13 +28,19 @@ const Content = ({
   billing,
   virtualWallet,
   userId,
+  ownedCourses,
 }: QueryProps) => {
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [usedDiscount, setUsedDiscount] = useState<Discount | null>(null);
   const [usedVirtualMoney, setUsedVirtualMoney] = useState<number | null>(null);
-  const { cart, fetchedItems, updateItemQuantity, removeItem } = useCartItems();
+  const [totalItemsCount, setTotalItemsCount] = useState<number>(0);
+  const { cart, fetchedItems, updateItemQuantity, removeItem, totalItems } = useCartItems();
+
+  useEffect(() => {
+    setTotalItemsCount(totalItems);
+  }, [totalItems]);
 
   return (
     <>
@@ -77,6 +83,7 @@ const Content = ({
         usedDiscount={usedDiscount}
         setUsedDiscount={setUsedDiscount}
         userId={userId}
+        ownedCourses={ownedCourses}
       />
       <a
         href='#main'
@@ -115,7 +122,7 @@ const Content = ({
               <Link href='/kontakt'>Kontakt</Link>
             </li>
             <li>
-              <Link href='/moje-konto/kursy'>Profil</Link>
+              <Link href='/moje-konto/kursy'>{userId ? 'Profil' : 'Logowanie'}</Link>
             </li>
             <li>
               <button
@@ -123,9 +130,11 @@ const Content = ({
                   setShowCart(true);
                 }}
                 className={styles.basket}
-              // data-basket-items='2'
               >
                 Koszyk
+                <span className={`${styles['total-items']} ${totalItemsCount > 0 ? styles['active'] : ''}`}>
+                  {totalItemsCount}
+                </span>
               </button>
             </li>
           </ul>

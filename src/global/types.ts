@@ -3,7 +3,6 @@ import type { HeroSimpleTypes } from '@/components/_global/HeroSimple';
 import type { DescriptionTypes } from '@/components/_product/Description/Description';
 import type { ReviewsTypes } from '@/components/_product/Reviews';
 import type { TableOfContentTypes } from '@/components/_product/TableOfContent/TableOfContent.types';
-import type { User } from '@supabase/supabase-js';
 
 export type Complexity = 'dla-poczatkujacych' | 'dla-srednio-zaawansowanych' | 'dla-zaawansowanych';
 
@@ -184,8 +183,10 @@ export type Node = {
 
 export type ProductPageQueryProps = {
   product: {
+    visible: boolean;
     name: string;
     slug: string;
+    _type: 'product' | 'course' | 'bundle';
     _id: string;
     type: string;
     variants: Array<ProductVariant>;
@@ -198,6 +199,7 @@ export type ProductPageQueryProps = {
       name: string;
       value: string;
     }>;
+    relatedCourses?: { _id: string }[];
     rating: number;
     reviewsCount: number;
     description: DescriptionTypes[];
@@ -206,7 +208,7 @@ export type ProductPageQueryProps = {
 
 export type ProductPageQuery = {
   data: ProductPageQueryProps;
-  user: User | null;
+  user: string | undefined;
 };
 
 export type CoursePageQueryProps = {
@@ -215,6 +217,7 @@ export type CoursePageQueryProps = {
     name: string;
     slug: string;
     _id: string;
+    _type: 'product' | 'course' | 'bundle';
     type: string;
     gallery?: Array<ImgType>;
     featuredVideo?: string;
@@ -225,6 +228,7 @@ export type CoursePageQueryProps = {
     rating: number;
     reviewsCount: number;
     description: DescriptionTypes[];
+    printed_manual: ProductCard;
     author: {
       name: string;
       slug: string;
@@ -245,7 +249,7 @@ export type CoursePageQueryProps = {
 
 export type CoursePageQuery = {
   data: CoursePageQueryProps;
-  user: User | null;
+  user: string | undefined;
   courses_progress?: CoursesProgress[];
 };
 
@@ -284,6 +288,8 @@ export type CoursesProgress = {
 };
 
 export type Course = {
+  materials_link?: ProductCard;
+  printed_manual?: ProductCard;
   _id: string;
   name: string;
   slug: string;
@@ -329,6 +335,9 @@ export type Order = {
   amount: number;
   created_at: string;
   payment_method: string;
+  profiles: {
+    firstName: string;
+  };
   products: {
     array: {
       complexity: Complexity;
@@ -385,6 +394,7 @@ export type Billing = {
   postcode: string;
   phone: string;
   company: string;
+  email?: string;
   invoiceType: 'Osoba prywatna' | 'Firma';
 };
 
