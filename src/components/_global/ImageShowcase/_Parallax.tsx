@@ -16,8 +16,8 @@ const ParallaxImageShowcase = ({
     target: wrapper,
     offset: ['start end', 'end start']
   });
-  const progress = useTransform(scrollYProgress, [0, 1], [50, -150]);
-  const progressReversed = useTransform(scrollYProgress, [0, 1], [-50, 100]);
+  const progress1 = useTransform(scrollYProgress, [0, 1], [50, -100]);
+  const progress2 = useTransform(scrollYProgress, [0, 1], [100, -200]);
 
   return (
     <section className={`${styles.ParallaxImageShowcase}`} ref={wrapper}>
@@ -29,7 +29,7 @@ const ParallaxImageShowcase = ({
         <div className={styles.images}>
           {images.map((img, i) => (
             <div key={i} className={styles.img}>
-              <motion.div style={{ y: i % 2 ? progressReversed : progress }}>
+              <motion.div style={{ y: i % 2 ? progress2 : progress1 }}>
                 {img}
               </motion.div>
             </div>
