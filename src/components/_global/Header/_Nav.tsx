@@ -86,21 +86,11 @@ const Nav = ({ links, ChevronDownIcon, ChevronBackIcon, showMenu, setShowMenu }:
       <button
         className={styles['Nav__Toggle']}
         onClick={() => navToggle()}
+        aria-label={showMenu ? 'Zamknij menu' : 'Otwórz menu'}
       >
-        <svg
-          width='26'
-          height='26'
-          viewBox='0 0 26 26'
-          fill='none'
-          xmlns='http://www.w3.org/2000/svg'
-          stroke='currentColor'
-          strokeLinecap='round'
-          strokeLinejoin='round'
-        >
-          <path d='M1 1H25L1 25' />
-          <path d='M1 25H25L1 1' />
-          <path d='M1 13H25' />
-        </svg>
+        <span></span>
+        <span></span>
+        <span></span>
       </button>
     </>
   );
