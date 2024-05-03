@@ -17,6 +17,7 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
       product: {
         name,
         _id,
+        _type,
         type,
         variants,
         price,
@@ -69,10 +70,14 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
         {description?.length > 0 && <Description data={description} />}
         {parameters?.length > 0 && <Parameters parameters={parameters} />}
         <Reviews
-          logged={!!user}
+          user={user}
           alreadyBought={true}
           reviews={reviews}
           course={false}
+          product={{
+            id: _id,
+            type: _type
+          }}
         />
       </Informations>
     </>
@@ -96,6 +101,7 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
     .select(
       `
         id,
+        billing_data->firstName,
         courses_progress (
           id,
           course_id,
@@ -113,8 +119,10 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
       
       "product": *[_type == "product" && slug.current == $slug && basis == 'knitting'][0] {
         name,
+        visible,
         'slug': slug.current,
         _id,
+        _type,
         basis,
         type,
         price,
@@ -148,7 +156,7 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
         "relatedCourses": *[_type == 'course' && references(^._id)][]{
           _id
         },
-        "reviews": *[_type == 'productReviewCollection' && references(^._id)][0...10]{
+        "reviews": *[_type == 'productReviewCollection' && visible == true && references(^._id)][0...10]{
           rating,
           review,
           nameOfReviewer,
@@ -178,7 +186,7 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
     if (!owned) return notFound();
   }
 
-  return { data: data, user: user };
+  return { data: data, user: res.data?.firstName as string };
 };
 
 export async function generateStaticParams(): Promise<generateStaticParamsProps[]> {

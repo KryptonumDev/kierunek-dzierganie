@@ -18,7 +18,7 @@ import PrintedManual from '@/components/_dashboard/PrintedManual';
 const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
   const {
     data: {
-      product: { printed_manual, relatedBundle, name, description, chapters, reviews, courses },
+      product: { _id, _type, printed_manual, relatedBundle, name, description, chapters, reviews, courses },
       product,
       card,
       relatedCourses,
@@ -70,10 +70,14 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
         {chapters && <TableOfContent chapters={chapters} />}
         {description?.length > 0 && <Description data={description} />}
         <Reviews
-          logged={!!user}
+          user={user}
           alreadyBought={!!courses_progress?.find((course) => course.course_id === product._id)}
           reviews={reviews}
           course={true}
+          product={{
+            id: _id,
+            type: _type,
+          }}
         />
       </Informations>
       {printed_manual && <PrintedManual data={printed_manual} />}
@@ -105,6 +109,7 @@ const query = async (slug: string): Promise<CoursePageQuery> => {
     .select(
       `
         id,
+        billing_data->firstName,
         courses_progress (
           id,
           course_id,
@@ -148,7 +153,7 @@ const query = async (slug: string): Promise<CoursePageQuery> => {
         printed_manual->{
           ${PRODUCT_CARD_QUERY}
         },
-        "reviews": *[_type == 'productReviewCollection' && references(^._id)][0...10]{
+        "reviews": *[_type == 'productReviewCollection' && visible == true && references(^._id)][0...10]{
           rating,
           review,
           nameOfReviewer,
@@ -187,7 +192,7 @@ const query = async (slug: string): Promise<CoursePageQuery> => {
     tags: ['course', 'bundle'],
   });
   !data && notFound();
-  return { data: data, user: user, courses_progress: res.data?.courses_progress };
+  return { data: data, user: res.data?.firstName as string, courses_progress: res.data?.courses_progress };
 };
 
 export async function generateStaticParams(): Promise<generateStaticParamsProps[]> {

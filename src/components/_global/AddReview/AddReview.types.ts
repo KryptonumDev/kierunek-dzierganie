@@ -1,15 +1,15 @@
 export type AddReviewTypes = {
   open: boolean;
-  setOpen: (open: boolean) => void;
-  user?: {
+  setOpen: (open: null) => void;
+  user: string;
+  product: {
     id: string;
-    name: string;
-    email: string;
+    type: 'product' | 'course' | 'bundle';
   };
-}
+};
 
 export type FormTypes = {
   notes: string;
   privacy: boolean;
   mark: number;
-}
+};

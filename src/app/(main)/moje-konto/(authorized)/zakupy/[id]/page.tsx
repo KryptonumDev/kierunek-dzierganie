@@ -6,7 +6,7 @@ import { createClient } from '@/utils/supabase-server';
 import { notFound } from 'next/navigation';
 
 export default async function Order({ params: { id } }: { params: { id: string } }) {
-  const order: Order = await query(id);
+  const data: Order = await query(id);
 
   const currentUrl = `/moje-konto/zakupy/${id}`;
   const page = [
@@ -20,7 +20,7 @@ export default async function Order({ params: { id } }: { params: { id: string }
         visible={false}
         data={page}
       />
-      <OrderData order={order} />
+      <OrderData order={data} />
     </>
   );
 }
@@ -49,7 +49,8 @@ const query = async (id: string): Promise<Order> => {
         discount:used_discount, 
         shippingMethod:shipping_method, 
         virtualMoney:used_virtual_money, 
-        orders_statuses( * )
+        orders_statuses( * ),
+        profiles( billing_data->firstName )
       `
     )
     .eq('id', id)

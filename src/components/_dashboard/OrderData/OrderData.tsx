@@ -9,13 +9,21 @@ import Img from '@/components/ui/image';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
+import AddReview from '@/components/_global/AddReview';
+import { useMemo, useState } from 'react';
 
 const OrderData = ({ order }: OrderDataTypes) => {
   const router = useRouter();
+  const [addReview, setAddReview] = useState<string | null>(null);
 
-  const totalItemsCount = order.products.array?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
-  const totalItemsPrice =
-    order.products.array?.reduce((acc, item) => acc + (item.discount ?? item.price!) * item.quantity!, 0) ?? 0;
+  const totalItemsCount = useMemo(
+    () => order.products.array?.reduce((acc, item) => acc + item.quantity!, 0) ?? 0,
+    [order.products.array]
+  );
+  const totalItemsPrice = useMemo(
+    () => order.products.array?.reduce((acc, item) => acc + item.price! * item.quantity!, 0) ?? 0,
+    [order.products.array]
+  );
 
   const createIntent = async () => {
     await fetch('/api/payment/recreate', {
@@ -172,36 +180,54 @@ const OrderData = ({ order }: OrderDataTypes) => {
               className={styles['product']}
               key={item.id + i}
             >
-              <div className={styles['image-wrap']}>
-                {item.complexity && (
-                  <span
-                    style={{
-                      color: courseComplexityEnum[item.complexity].color,
-                      backgroundColor: courseComplexityEnum[item.complexity].background,
-                    }}
-                    className={styles['badge']}
-                  >
-                    <span>{courseComplexityEnum[item.complexity].name}</span>
-                  </span>
-                )}
-                {item.image && (
-                  <Img
-                    data={item.image}
-                    sizes='175px'
-                  />
-                )}
-              </div>
-              <div className={styles['right-column']}>
-                <p>{item.name}</p>
-                <div>{item.type === 'product' && <p>Ilość: {item.quantity}</p>}</div>
-                <div className={styles['price']}>
-                  <span
-                    className={item.discount ? styles['discount'] : ''}
-                    dangerouslySetInnerHTML={{ __html: formatPrice(item.price!) }}
-                  />
-                  {item.discount ? <span dangerouslySetInnerHTML={{ __html: formatPrice(item.discount) }} /> : null}
+              {order.orders_statuses.status_name === 'COMPLETED' && (
+                <AddReview
+                  open={addReview === item.id}
+                  setOpen={setAddReview}
+                  user={order.profiles.firstName}
+                  product={item}
+                />
+              )}
+              <div className={styles['content']}>
+                <div className={styles['image-wrap']}>
+                  {item.complexity && (
+                    <span
+                      style={{
+                        color: courseComplexityEnum[item.complexity].color,
+                        backgroundColor: courseComplexityEnum[item.complexity].background,
+                      }}
+                      className={styles['badge']}
+                    >
+                      <span>{courseComplexityEnum[item.complexity].name}</span>
+                    </span>
+                  )}
+                  {item.image && (
+                    <Img
+                      data={item.image}
+                      sizes='175px'
+                    />
+                  )}
+                </div>
+                <div className={styles['right-column']}>
+                  <p>{item.name}</p>
+                  <div>{item.type === 'product' && <p>Ilość: {item.quantity}</p>}</div>
+                  <div className={styles['price']}>
+                    <span
+                      className={item.discount ? styles['discount'] : ''}
+                      dangerouslySetInnerHTML={{ __html: formatPrice(item.price!) }}
+                    />
+                    {item.discount ? <span dangerouslySetInnerHTML={{ __html: formatPrice(item.discount) }} /> : null}
+                  </div>
                 </div>
               </div>
+              {order.orders_statuses.status_name === 'COMPLETED' && (
+                <button
+                  onClick={() => setAddReview(item.id)}
+                  className='link'
+                >
+                  Dodaj opinię
+                </button>
+              )}
             </div>
           ))}
         </div>
