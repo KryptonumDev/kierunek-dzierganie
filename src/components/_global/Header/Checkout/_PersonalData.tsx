@@ -12,6 +12,8 @@ import { toast } from 'react-toastify';
 import { InpostGeowidget } from 'react-inpost-geowidget';
 import { formatPrice } from '@/utils/price-formatter';
 import type { InpostPoint } from '@/global/types';
+import Select from '@/components/ui/Select';
+import countryList from 'react-select-country-list';
 
 type FormValues = {
   fullName?: string;
@@ -122,6 +124,7 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
     handleSubmit,
     watch,
     setValue,
+    control,
     formState: { errors },
   } = useForm<FormValues>({ mode: 'all', defaultValues: generateDefaults(input) });
 
@@ -173,6 +176,8 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
   const onPointCallback = (e: InpostPoint) => {
     setSelectedMapPoint(e);
   };
+
+  const invoiceType = watch('invoiceType');
 
   return (
     <>
@@ -254,16 +259,41 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
         {/*  */}
         <legend>Dane do faktury</legend>
         <fieldset>
-          <Input
-            register={register('fullName', {
-              required: {
-                value: true,
-                message: 'Pole wymagane',
-              },
-            })}
-            label='Imię i nazwisko'
-            errors={errors}
-          />
+          {invoiceType === 'Firma' ? (
+            <>
+              <Input
+                register={register('companyName', {
+                  required: {
+                    value: true,
+                    message: 'Pole wymagane',
+                  },
+                })}
+                label='Firma'
+                errors={errors}
+              />
+              <Input
+                register={register('nip', {
+                  required: {
+                    value: true,
+                    message: 'Pole wymagane',
+                  },
+                })}
+                label='NIP'
+                errors={errors}
+              />
+            </>
+          ) : (
+            <Input
+              register={register('fullName', {
+                required: {
+                  value: true,
+                  message: 'Pole wymagane',
+                },
+              })}
+              label='Imię i nazwisko'
+              errors={errors}
+            />
+          )}
           <Input
             register={register('email', {
               required: {
@@ -306,15 +336,13 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
               errors={errors}
             />
           </div>
-          <Input
-            register={register('country', {
-              required: {
-                value: true,
-                message: 'Pole wymagane',
-              },
-            })}
+          <Select<FormValues>
+            control={control}
+            name={'country'}
+            rules={{ required: 'Pole wymagane' }}
             label='Kraj'
             errors={errors}
+            options={countryList().native().nativeData}
           />
           <Input
             register={register('phoneNumber')}

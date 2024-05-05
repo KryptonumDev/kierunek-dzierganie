@@ -29,6 +29,11 @@ export const useCartItems = () => {
           .filter((el) => {
             const item = res.find((item) => item._id === el.product)!;
 
+            if (!item) {
+              removeItem(el.id);
+              return false;
+            }
+
             if (item._type === 'course' || item._type === 'bundle') return true;
 
             const variant = item.variants?.find((v) => v._id === el.variant) || null;

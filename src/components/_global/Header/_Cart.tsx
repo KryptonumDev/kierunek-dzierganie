@@ -33,7 +33,7 @@ export default function Cart({
   usedDiscount,
   setUsedDiscount,
   userId,
-  ownedCourses
+  ownedCourses,
 }: Cart) {
   const {
     register,
@@ -90,6 +90,7 @@ export default function Cart({
         toast(error.message);
       });
   };
+
   return (
     <>
       <div
@@ -121,7 +122,7 @@ export default function Cart({
           )}
           {cart?.length != 0 && (
             <>
-              {fetchedItems && totalItemsPrice ? (
+              {fetchedItems && typeof totalItemsPrice === 'number' ? (
                 <form
                   onSubmit={handleSubmit(onSubmit)}
                   className={cart?.length ? '' : styles['empty']}
@@ -187,7 +188,7 @@ export default function Cart({
                                 />
                                 <div className={styles.mask}>
                                   <span className={styles.hide}>{usedVirtualMoney}</span>
-                                  <span>&nbsp;/{virtualWallet}</span>
+                                  <span>&nbsp;/&nbsp;{virtualWallet}</span>
                                 </div>
                                 <button
                                   onClick={() => {
@@ -299,24 +300,32 @@ const EmptyLayout = ({ image_crochet, image_knitting, setShowCart }: EmptyCart) 
       </h2>
       <p>Zapraszamy do zakupów 😉</p>
       <div className={styles['grid']}>
-        <Link
-          href='/kursy-dziergania-na-drutach'
-          onClick={() => setShowCart(false)}
-        >
-          <Img
-            data={image_knitting}
-            sizes='(max-width: 640px) 150px, 300px'
-          />
-        </Link>
-        <Link
-          href='/kursy-szydelkowania'
-          onClick={() => setShowCart(false)}
-        >
-          <Img
-            data={image_crochet}
-            sizes='(max-width: 640px) 150px, 300px'
-          />
-        </Link>
+        <div>
+          <Link
+            href='/kursy-dziergania-na-drutach'
+            onClick={() => setShowCart(false)}
+            tabIndex={-1}
+          >
+            <Img
+              data={image_knitting}
+              sizes='(max-width: 640px) 150px, 300px'
+            />
+          </Link>
+          <Button href='/kursy-dziergania-na-drutach'>Dzierganie</Button>
+        </div>
+        <div>
+          <Link
+            href='/kursy-szydelkowania'
+            onClick={() => setShowCart(false)}
+            tabIndex={-1}
+          >
+            <Img
+              data={image_crochet}
+              sizes='(max-width: 640px) 150px, 300px'
+            />
+          </Link>
+          <Button href='/kursy-szydelkowania'>Szydełkowanie</Button>
+        </div>
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ import { useCart } from 'react-use-cart';
 import { courseComplexityEnum, pageUrls } from '@/global/constants';
 import Link from 'next/link';
 import { Hearth } from '../Icons';
+import { toast } from 'react-toastify';
 
 const ProductCard = ({
   data,
@@ -134,6 +135,7 @@ const ProductCard = ({
                 onClick={() => {
                   addItem({ quantity: 1, id: data._id, product: data._id, price: 0 }, 1);
                   setButtonText('Dodano do koszyka');
+                  toast('Produkt dodany do koszyka');
                 }}
               >
                 {buttonText}
