@@ -12,10 +12,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    > * {
+      flex-shrink: 0;
+    }
   }
 
   .logo {
-    height: clamp(36px, calc(68vw / 7.68), 68px);
+    height: clamp(42px, calc(68vw / 7.68), 68px);
     display: inline-block;
 
     svg {
@@ -27,15 +30,19 @@
   .quickLinks {
     list-style-type: none;
     display: flex;
-    gap: clamp(20px, calc(36vw / 7.68), 36px);
+    gap: clamp(12px, calc(24vw / 7.68), 36px);
     align-items: center;
     font-size: clamp(calc(14rem / 16), calc(18vw / 7.68), calc(18rem / 16));
-
+    a {
+      transition: color 0.5s;
+      &:hover {
+        color: var(--primary-600, #9a827a);
+      }
+    }
     .basket {
       display: grid;
       grid-template-columns: auto auto;
       gap: 2px;
-
       .total-items {
         display: flex;
         align-items: center;
@@ -70,6 +77,10 @@
         align-items: center;
         gap: 4px;
         cursor: pointer;
+        transition: color 0.5s;
+        &:hover {
+          color: var(--primary-600, #9a827a);
+        }
       }
 
       > button {
@@ -258,33 +269,20 @@
 .Nav__Toggle {
   order: 1;
   display: grid;
-
   @media (min-width: 1190px) {
     display: none;
   }
-
-  gap: 6px;
-  padding: 11px;
-  border-radius: 50%;
-
-  svg {
-    path {
-      transition: stroke-dashoffset 0.5s 0s var(--easing);
-
-      &:nth-child(1),
-      &:nth-child(2) {
-        stroke-dasharray: 58;
-        stroke-dashoffset: 34;
-      }
-
-      &:nth-child(3) {
-        stroke-dasharray: 24;
-        transition-delay: 0.3s;
-      }
-    }
+  gap: 5px;
+  span {
+    display: block;
+    width: 20px;
+    height: 1.5px;
+    background-color: var(--primary-700, #766965);
+    border-radius: 3px;
+    transition: transform 0.3s var(--easing);
   }
-
-  color: var(--primary-700);
+  padding: 16.75px 14px;
+  border-radius: 50%;
 }
 
 .Overlay {
@@ -308,45 +306,17 @@
 
 .Nav[data-opened='true'] {
   + .Nav__Toggle {
-    svg {
-      path {
-        &:nth-child(1),
-        &:nth-child(2) {
-          stroke-dashoffset: -24;
-          transition-delay: 0.3s;
-        }
-
-        &:nth-child(3) {
-          stroke-dashoffset: 24;
-          transition-delay: 0s;
-        }
+    span {
+      &:nth-child(1) {
+        transform: translateY(6.5px) rotate(135deg);
+      }
+      &:nth-child(2) {
+        transform: scale(0);
+      }
+      &:nth-child(3) {
+        transform: translateY(-6.5px) rotate(-135deg);
       }
     }
-  }
-}
-
-@media (max-width: 499px) {
-  .Nav {
-    ul {
-      z-index: 3;
-      position: fixed;
-      right: var(--pageMargin);
-      top: unset;
-      bottom: 25%;
-      border-radius: 4px;
-      border: 1px solid var(--primary-300);
-      background-color: var(--primary-100);
-      max-width: calc(100% - var(--pageMargin) * 2);
-    }
-  }
-
-  .Nav__Toggle {
-    z-index: 3;
-    position: fixed;
-    bottom: calc(25% - 24px);
-    right: calc(var(--pageMargin) / 2);
-    background-color: var(--primary-600);
-    color: var(--primary-100);
   }
 }
 
