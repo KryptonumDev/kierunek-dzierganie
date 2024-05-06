@@ -16,8 +16,8 @@ const ParallaxImageShowcase = ({
     target: wrapper,
     offset: ['start end', 'end start']
   });
-  const progress1 = useTransform(scrollYProgress, [0, 1], [50, -100]);
-  const progress2 = useTransform(scrollYProgress, [0, 1], [100, -200]);
+  const progress1 = useTransform(scrollYProgress, [0, 1], [40, -80]);
+  const progress2 = useTransform(scrollYProgress, [0, 1], [80, -160]);
 
   return (
     <section className={`${styles.ParallaxImageShowcase}`} ref={wrapper}>
@@ -26,16 +26,16 @@ const ParallaxImageShowcase = ({
         {paragraph}
         {cta}
         {cta_Annotation && cta_Annotation}
-        <div className={styles.images}>
-          {images.map((img, i) => (
-            <div key={i} className={styles.img}>
-              <motion.div style={{ y: i % 2 ? progress2 : progress1 }}>
-                {img}
-              </motion.div>
-            </div>
-          ))}
-        </div>
       </header>
+      <div className={styles.images}>
+        {images.map((img, i) => (
+          <div key={i} className={styles.img}>
+            <motion.div style={{ y: i % 2 ? progress2 : progress1 }}>
+              {img}
+            </motion.div>
+          </div>
+        ))}
+      </div>
     </section>
   );
 };
