@@ -1,8 +1,8 @@
 import Markdown from '@/components/ui/markdown';
 import Img from '@/components/ui/image';
 import styles from './Newsletter.module.scss';
-import type { Props } from './Newsletter.types';
 import Form from './_Form';
+import type { Props } from './Newsletter.types';
 
 const Newsletter = ({ heading, img, index }: Props) => {
   const HeadingComponenet = index === 0 ? Markdown.h1 : Markdown.h2;
