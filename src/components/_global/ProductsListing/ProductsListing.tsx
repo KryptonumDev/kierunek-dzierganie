@@ -15,6 +15,7 @@ const ProductsListing = ({
   productsTotalCount,
   authors,
   ownedCourses,
+  bestSeller
 }: ProductsListingTypes) => {
   const featuredProductExcerpt = products?.[0]?.excerpt ? <Markdown>{products[0]!.excerpt}</Markdown> : undefined;
 
@@ -36,6 +37,7 @@ const ProductsListing = ({
         featuredProductExcerpt={featuredProductExcerpt}
         products={products}
         ownedCourses={ownedCourses}
+        bestSeller={bestSeller}
       />
       {/* TODO: Change no items text */}
       {products.length === 0 && <h2>Niestety teraz w tym rozdziale nic nie ma :( </h2>}
