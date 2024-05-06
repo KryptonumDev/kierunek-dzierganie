@@ -169,14 +169,14 @@ export const Components_Query = /* groq */ `
     ${CtaSection_Query}
     ${SimpleCtaSection_Query}
     ${CourseModules_Query}
-    ${ImageShowcase_Query}
+    ${ImageShowcase_Query(false)}
     ${Bonuses_Query}
     ${TilesGrid_Query}
     ${TilesSticky_Query}
     ${TilesFeatures_Query}
     ${Community_Query}
     ${Reviews_Query}
-    ${Introduction_Query}
+    ${Introduction_Query(false)}
     ${ContactForm_Query}
     ${TabSection_Query}
     ${TilesIndicated_Query}
