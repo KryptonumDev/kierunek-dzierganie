@@ -4,7 +4,7 @@
     text-align: center;
   }
 
-  input{
+  input {
     line-height: 130%;
   }
 
@@ -23,7 +23,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: clamp(36px, calc(48vw / 7.68), 80px);
-    margin-top: clamp(18px, calc(28vw/7.68), 36px);
+    margin-top: clamp(18px, calc(28vw / 7.68), 36px);
 
     @media (max-width: 768px) {
       grid-template-columns: 1fr;
@@ -35,6 +35,7 @@
       font-size: 14px;
       font-weight: 300;
       line-height: 150%;
+      margin-bottom: clamp(24px, calc(36vw / 7.68), 48px);
     }
 
     .authorization-data {
@@ -54,7 +55,7 @@
         margin-top: 0;
       }
 
-      .zip{
+      .zip {
         display: grid;
         grid-template-columns: 1fr 2fr;
         gap: 16px;

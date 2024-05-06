@@ -33,7 +33,7 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
           email: data.email,
           password: data.password,
           options: {
-            emailRedirectTo: `${location.origin}/api/auth/callback`,
+            emailRedirectTo: `${location.origin}/api/auth/confirm`,
           },
         })
         .then((res) => {
@@ -55,6 +55,7 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
         })
         .then((res) => {
           if (res.error) throw res.error;
+          
           router.push('/moje-konto/kursy');
         })
         .catch((error) => {

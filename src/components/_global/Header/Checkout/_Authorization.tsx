@@ -40,7 +40,7 @@ export default function Authorization({ setStep, goToCart, setInput }: MappingPr
           email: data.email,
           password: data.password,
           options: {
-            emailRedirectTo: `${location.origin}/api/auth/callback`,
+            emailRedirectTo: `${location.origin}/api/auth/confirm`,
           },
         })
         .then(async (res) => {
