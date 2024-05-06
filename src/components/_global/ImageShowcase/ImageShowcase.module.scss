@@ -41,7 +41,7 @@
 }
 
 .ParallaxImageShowcase {
-  min-height: clamp(580px, calc(768vw / 7.68), 768px);
+  padding: clamp(182px, calc(208vw / 7.68), 208px) 0px;
   display: flex;
   align-items: center;
   header {
