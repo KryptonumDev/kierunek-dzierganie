@@ -99,6 +99,8 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
             <p key={el.name}>
               <span>Wybierz {el.name}</span>
               <Select
+                className='select'
+                classNamePrefix='select'
                 defaultValue={{ value: chosenAttributes[el.name], label: chosenAttributes[el.name] }}
                 onChange={(e) => selectVariant(e, el.name)}
                 options={(() => [...el.value.map((v) => ({ value: v, label: v }))])()}
@@ -186,7 +188,6 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
         <div className={styles['divider']} />
         <div className={styles['annotations']}>
           {/* TODO: Rework to fetch from sanity */}
-          <p>Darmowa dostawa od 199&nbsp;zł</p>
           <p>Dostawa w&nbsp;ciągu 3&nbsp;dni</p>
           <p>Darmowy zwrot do 14&nbsp;dni</p>
         </div>

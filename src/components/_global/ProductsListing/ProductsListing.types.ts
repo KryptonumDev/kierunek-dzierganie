@@ -18,6 +18,7 @@ export type ProductsListingTypes = {
     _id: string;
   }[];
   ownedCourses?: string[];
+  bestSeller: ProductCard;
 };
 
 export type FiltersTypes = {
@@ -46,4 +47,5 @@ export type ListingProps = {
   featuredProductExcerpt?: JSX.Element;
   products: ProductCard[];
   basis: string;
+  bestSeller: ProductCard;
 };

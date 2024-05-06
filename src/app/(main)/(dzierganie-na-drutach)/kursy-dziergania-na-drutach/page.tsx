@@ -20,6 +20,7 @@ const KnittingPage = async ({ searchParams }: { searchParams: { [key: string]: s
       LatestBlogEntries: LatestBlogEntriesData,
       listing_title,
       listing_text,
+      listing_BestSeller,
     },
     products,
     categories,
@@ -62,6 +63,7 @@ const KnittingPage = async ({ searchParams }: { searchParams: { [key: string]: s
         productsTotalCount={productsTotalCount}
         authors={authors}
         ownedCourses={res.data?.courses_progress?.map((course) => course.course_id as string)}
+        bestSeller={listing_BestSeller}
       />
       <LatestBlogEntries {...LatestBlogEntriesData} />
     </>
@@ -80,6 +82,9 @@ const query = async (searchParams: { [key: string]: string }): Promise<KnittingP
         ${LatestBlogEntries_Query(true)}
         "listing_title" : listing_Heading_Courses,
         "listing_text": listing_Paragraph,
+        listing_BestSeller -> {
+          ${PRODUCT_CARD_QUERY}
+        }
       },
       "products": *[
         (_type == 'course' || _type == 'bundle' )
@@ -118,8 +123,8 @@ const query = async (searchParams: { [key: string]: string }): Promise<KnittingP
     }
     `,
     params: {
-      before: (Number(searchParams.strona ?? 1) - 1) * 10,
-      after: Number(searchParams.strona ?? 1) * 10,
+      before: (Number(searchParams.strona ?? 1) - 1) * 9,
+      after: Number(searchParams.strona ?? 1) * 9,
       category: searchParams.rodzaj ?? null,
       complexity: searchParams['poziom-trudnosci'] ?? null,
       author: searchParams.autor ?? null,

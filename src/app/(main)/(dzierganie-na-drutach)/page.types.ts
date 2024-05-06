@@ -10,6 +10,7 @@ export type KnittingPage_QueryTypes = {
     LatestBlogEntries: LatestBlogEntriesTypes;
     listing_title: string;
     listing_text: string;
+    listing_BestSeller: ProductCard;
   };
   products: ProductCard[];
   productsTotalCount: number;
@@ -25,7 +26,6 @@ export type KnittingPage_QueryTypes = {
   }[];
 };
 
-
 export type KnittingProductsPage_QueryTypes = {
   page: {
     HeroSimple: HeroSimpleTypes;
@@ -33,6 +33,7 @@ export type KnittingProductsPage_QueryTypes = {
     LatestBlogEntries: LatestBlogEntriesTypes;
     listing_title: string;
     listing_text: string;
+    listing_BestSeller: ProductCard;
   };
   productsTotalCount: number;
   products: ProductCard[];
