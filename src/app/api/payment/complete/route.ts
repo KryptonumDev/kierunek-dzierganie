@@ -4,7 +4,7 @@ import { P24 } from '@ingameltd/node-przelewy24';
 import { createClient } from '@/utils/supabase-admin';
 import { sanityPatchQuantity, sanityPatchQuantityInVariant } from '@/utils/sanity.fetch';
 
-import CreateOrder from 'src/emails/CreateOrder';
+import Order from 'src/emails/Order';
 
 import { Resend } from 'resend';
 const resend = new Resend(process.env.RESEND_API_TOKEN);
@@ -141,14 +141,24 @@ export async function POST(request: Request) {
 
     if (error) throw new Error(error.message);
 
+    // TODO: sent to client
     const { data: messageData, error: messageError } = await resend.emails.send({
       from: 'Acme <onboarding@resend.dev>',
       to: ['kierunek.dzierganie@gmail.com'],
       subject: 'Nowe zamówienie!',
       text: '',
-      react: CreateOrder({ data: data }),
+      react: Order({ data: data, type: 'CREATE_ORDER' }),
     });
     console.log(messageData, messageError);
+
+    // const { data: messageData, error: messageError } = await resend.emails.send({
+    //   from: 'Acme <onboarding@resend.dev>',
+    //   to: ['kierunek.dzierganie@gmail.com'],
+    //   subject: 'Nowe zamówienie!',
+    //   text: '',
+    //   react: Order({ data: data, type: 'NEW_ORDER' }),
+    // });
+    // console.log(messageData, messageError);
 
     return NextResponse.json({}, { status: 200 });
   } catch (error) {

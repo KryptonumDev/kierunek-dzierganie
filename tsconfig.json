@@ -35,7 +35,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/app/(landing)/landing/[slug]/page.tsx",
-    "src/app/api/auth/*/route.ts"
   ],
   "exclude": ["node_modules"]
 }
