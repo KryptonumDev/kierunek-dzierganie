@@ -18,7 +18,7 @@ async function getSearchResults(search: string | undefined) {
   return await sanityFetch<SearchResultType>({
     query: /* groq */ `
     {
-    "courses": *[_type=='product' && type=='digital' && name match ["*"+$slug+"*"]][]{
+    "courses": *[_type=='product' && type=='digital' && name match ["*"+$slug+"*"] && visible==true][]{
       course -> {
         image {
           ${Img_Query}
@@ -28,7 +28,7 @@ async function getSearchResults(search: string | undefined) {
       basis,
       "slug": slug.current,
     },
-      "physicalProducts": *[_type=='product' && type=='physical' && name match ["*"+$slug+"*"]][] {
+      "physicalProducts": *[_type=='product' && type=='physical' && name match ["*"+$slug+"*"] && visible==true][] {
         gallery[0] {
           ${Img_Query}
         },
@@ -36,7 +36,7 @@ async function getSearchResults(search: string | undefined) {
         basis,
         "slug": slug.current,
       },
-      "variableProducts": *[_type=='product' && type=='variable' && name match["*"+$slug+"*"]][] {
+      "variableProducts": *[_type=='product' && type=='variable' && name match["*"+$slug+"*"] && visible==true][] {
           variants[0] {
             gallery[0] {
               ${Img_Query}
