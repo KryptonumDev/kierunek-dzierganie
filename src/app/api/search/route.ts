@@ -18,12 +18,10 @@ async function getSearchResults(search: string | undefined) {
   return await sanityFetch<SearchResultType>({
     query: /* groq */ `
     {
-    "courses": *[_type=='product' && type=='digital' && name match ["*"+$slug+"*"] && visible==true][]{
-      course -> {
-        image {
+    "courses": *[_type=='course' && name match ["*"+$slug+"*"] && visible==true][]{
+      gallery[0] {
           ${Img_Query}
-        }
-      },
+        },
       name,
       basis,
       "slug": slug.current,

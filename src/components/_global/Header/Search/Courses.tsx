@@ -23,7 +23,7 @@ export default function Courses({
       </header>
       <div className={styles.list}>
         {searchResults ? (
-          searchResults.courses?.map(({ name, basis, slug, course: { image } }, index) => (
+          searchResults.courses?.map(({ name, basis, slug, gallery }, index) => (
             <Link
               className={styles.item}
               key={index}
@@ -31,7 +31,7 @@ export default function Courses({
               onClick={() => handleItemClick(passedRef, setIsSearching)}
             >
               <Img
-                data={image}
+                data={gallery}
                 sizes='48px'
               />
               {findSearchedName(name, passedRef.current?.value || '')}
