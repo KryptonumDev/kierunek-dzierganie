@@ -1,10 +1,29 @@
 import { formatDateToPolishLocale } from '@/utils/formatDateToPolishLocale';
-import type { CreateOrderTypes } from './CreateOrder.types';
+import type { CreateOrderTypes } from './Order.types';
 import { formatPrice } from '@/utils/price-formatter';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 import countryList from 'react-select-country-list';
 
-const CreateOrder = ({ data }: CreateOrderTypes) => {
+const TextsIterator = {
+  CREATE_ORDER: {
+    title: 'Dziękujemy za zakupy u nas',
+    text: '',
+  },
+  NEW_ORDER: {
+    title: 'Nowe zamówienie ma kierunekdziergania.pl',
+    text: '',
+  },
+  ORDER_CANCELLED: {
+    title: 'Twoje zamówienie zostało anulowane',
+    text: '',
+  },
+  ORDER_COMPLETED: {
+    title: 'Twoje zamówienie zostało zrealizowane',
+    text: '',
+  },
+};
+
+const CreateOrder = ({ data, type }: CreateOrderTypes) => {
   const totalItemsCount = data.products.array?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
   const totalItemsPrice =
     data.products.array?.reduce((acc, item) => acc + (item.discount ?? item.price!) * item.quantity!, 0) ?? 0;
@@ -38,7 +57,7 @@ const CreateOrder = ({ data }: CreateOrderTypes) => {
             textAlign: 'center',
           }}
         >
-          <strong>Dziękujemy</strong> za zakupy u nas
+          {TextsIterator[type].title}
         </h1>
         <div style={{ marginBottom: '80px' }}>
           <p style={{ color: '#332621' }}>Hej,</p>

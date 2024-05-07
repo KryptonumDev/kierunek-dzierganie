@@ -7,6 +7,7 @@ import PersonalData from './_PersonalData';
 import DeletePopup from './_DeletePopup';
 import { useState } from 'react';
 import { createClient } from '@/utils/supabase-client';
+import Button from '@/components/ui/Button';
 
 const UserData = ({ data }: UserDataTypes) => {
   const [openDeletePopup, setOpenDeletePopup] = useState(false);
@@ -38,6 +39,7 @@ const UserData = ({ data }: UserDataTypes) => {
             Jestem osobą leworęczną
           </Switch>
           <p className={styles['switch-annotation']}>Zmienia sposób, w jaki wyświetlają się kursy i pliki do lekcji</p>
+          <Button href='/moje-konto/ustaw-haslo'>Chcę zmienić hasło</Button>
         </div>
         <div className={styles['right-column']}>
           {/* <AuthorizationData

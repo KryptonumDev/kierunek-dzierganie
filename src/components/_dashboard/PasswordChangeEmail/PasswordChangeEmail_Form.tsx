@@ -1,5 +1,4 @@
 'use client';
-
 import styles from './PasswordChangeEmail.module.scss';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { FormTypes } from './PasswordChangeEmail.types';
@@ -28,7 +27,7 @@ const PasswordChangeEmailForm = () => {
     setFetching(true);
     try {
       const res = await supabase.auth.resetPasswordForEmail(data.email, {
-        redirectTo: `${location.origin}/api/auth/callback?backUrl=/moje-konto/ustaw-haslo`,
+        redirectTo: `${location.origin}/api/auth/confirm`,
       });
       if (res.error) throw new Error(res.error.message);
 
