@@ -12,18 +12,16 @@ const TableOfContent = ({ content }: { content: Node[] }) => {
   const contentRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
+    const ref = contentRef.current;
     const handleScroll = () => {
-      if (contentRef.current) {
+      if (ref) {
         const element = contentRef.current;
         setScrollPercentage((element.scrollTop / (element.scrollHeight - element.offsetHeight)) * 100);
       }
     };
 
-    contentRef.current?.addEventListener('scroll', handleScroll);
-
-    return () => {
-      contentRef.current?.removeEventListener('scroll', handleScroll);
-    };
+    ref?.addEventListener('scroll', handleScroll);
+    return () => ref?.removeEventListener('scroll', handleScroll);
   }, [contentRef]);
 
   return (

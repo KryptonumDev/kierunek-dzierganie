@@ -63,7 +63,7 @@ export default function Checkout({
 
   useEffect(() => {
     if (userEmail) setStep(2);
-  }, []);
+  }, [userEmail]);
 
   useEffect(() => {
     if (!fetchedItems?.length) {
