@@ -3,10 +3,11 @@ import { NextResponse } from 'next/server';
 import { P24 } from '@ingameltd/node-przelewy24';
 import { createClient } from '@/utils/supabase-admin';
 import { sanityPatchQuantity, sanityPatchQuantityInVariant } from '@/utils/sanity.fetch';
-
+// import Hex from 'crypto-js/enc-hex';
+// import CryptoJS from 'crypto-js';
 import Order from 'src/emails/Order';
-
 import { Resend } from 'resend';
+
 const resend = new Resend(process.env.RESEND_API_TOKEN);
 
 export async function POST(request: Request) {
@@ -159,6 +160,71 @@ export async function POST(request: Request) {
     //   react: Order({ data: data, type: 'NEW_ORDER' }),
     // });
     // console.log(messageData, messageError);
+
+    // Generate faktur
+    // const requestContent = JSON.stringify({
+    //   Zaplacono: 78,
+    //   LiczOd: 'BRT',
+    //   NumerKontaBankowego: null,
+    //   DataWystawienia: '2024-05-07',
+    //   MiejsceWystawienia: 'Miasto',
+    //   DataSprzedazy: '2024-05-07',
+    //   FormatDatySprzedazy: 'DZN',
+    //   TerminPlatnosci: null,
+    //   SposobZaplaty: 'PRZ',
+    //   NazwaSeriiNumeracji: 'default',
+    //   NazwaSzablonu: 'logo',
+    //   RodzajPodpisuOdbiorcy: 'OUP',
+    //   PodpisOdbiorcy: 'Odbiorca',
+    //   PodpisWystawcy: 'Wystawca',
+    //   Uwagi: 'uwagi',
+    //   WidocznyNumerGios: true,
+    //   Numer: null,
+    //   Pozycje: [
+    //     {
+    //       StawkaVat: 0.23,
+    //       Ilosc: 1,
+    //       CenaJednostkowa: 78.0,
+    //       NazwaPelna: 'cos',
+    //       Jednostka: 'sztuk',
+    //       PKWiU: '',
+    //       TypStawkiVat: 'PRC',
+    //     },
+    //   ],
+    //   Kontrahent: {
+    //     Nazwa: 'Imie Nazwisko',
+    //     Identyfikator: null,
+    //     PrefiksUE: null,
+    //     NIP: null,
+    //     Ulica: 'Ulica',
+    //     KodPocztowy: '11-111',
+    //     Kraj: 'Polska',
+    //     Miejscowosc: 'Miejscowość',
+    //     Email: 'em@il.pl',
+    //     Telefon: '111111111',
+    //     OsobaFizyczna: true,
+    //   },
+    // });
+    // const url = 'https://www.ifirma.pl/iapi/fakturakraj.json';
+    // const user = 'martyna_prochowska@o2.pl';
+    // const keyType = 'faktura';
+
+    // const key = CryptoJS.enc.Hex.parse(process.env.IFIRMA_API_KEY!);
+    // const hmac = CryptoJS.HmacSHA1(url + user + keyType + requestContent, key);
+    // const hash = Hex.stringify(hmac);
+
+    // await fetch(url, {
+    //   method: 'POST',
+    //   headers: {
+    //     Accept: 'application/json',
+    //     'Content-type': 'application/json; charset=UTF-8',
+    //     Authentication: `IAPIS user=${user}, hmac-sha1=${hash}`,
+    //   },
+    //   body: requestContent,
+    // })
+    //   .then((response) => response.json())
+    //   .then((data) => console.log(data.response.Identyfikator))
+    //   .catch((error) => console.log('Error:', error));
 
     return NextResponse.json({}, { status: 200 });
   } catch (error) {
