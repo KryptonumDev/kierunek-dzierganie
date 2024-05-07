@@ -23,7 +23,7 @@ export async function POST(request: Request) {
       process.env.P24_REST_API_KEY!,
       process.env.P24_CRC!,
       {
-        sandbox: !!process.env.SANDBOX,
+        sandbox: process.env.SANDBOX === 'true',
       }
     );
 
