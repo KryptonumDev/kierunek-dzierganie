@@ -32,5 +32,5 @@ const query = async (): Promise<PageQueryProps> => {
     `,
     tags: ['homepage'],
   });
-  return data;
+  return data; 
 };
