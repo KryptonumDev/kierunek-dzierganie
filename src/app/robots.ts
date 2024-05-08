@@ -6,7 +6,9 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/moje-konto/wylogowano'],
+      disallow: [
+        '/moje-konto/'
+      ],
     },
     sitemap: `${DOMAIN}/sitemap.xml`,
   };

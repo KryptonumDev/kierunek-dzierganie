@@ -1,8 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
 import { formatDateToPolishLocale } from '@/utils/formatDateToPolishLocale';
-import type { CreateOrderTypes } from './Order.types';
 import { formatPrice } from '@/utils/price-formatter';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 import countryList from 'react-select-country-list';
+import type { CreateOrderTypes } from './Order.types';
 
 const TextsIterator = {
   CREATE_ORDER: {
@@ -370,9 +371,9 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
               >
                 {formatPrice(
                   totalItemsPrice +
-                    (data.discount ? calculateDiscountAmount(totalItemsPrice, data.discount) : 0) -
-                    (data.virtualMoney ? data.virtualMoney * 100 : 0) +
-                    (data.shippingMethod ? data.shippingMethod.price : 0)
+                  (data.discount ? calculateDiscountAmount(totalItemsPrice, data.discount) : 0) -
+                  (data.virtualMoney ? data.virtualMoney * 100 : 0) +
+                  (data.shippingMethod ? data.shippingMethod.price : 0)
                 )}
               </span>
             </p>
@@ -576,7 +577,7 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
           <a
             href='https://www.facebook.com/kierunekdzierganie'
             target='_blank'
-            rel='noopener noreferrer '
+            rel='noopener noreferrer'
             style={{
               display: 'block',
               padding: '12px',
@@ -584,21 +585,21 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
             }}
           >
             <img
-              alt='facebook logo'
+              alt='Facebook'
               src='https://kierunek-dzierganie-git-dev-kryptonum.vercel.app/facebook.png'
             />
           </a>
           <a
             href='https://www.instagram.com/kierunekdzierganie/'
             target='_blank'
-            rel='noopener noreferrer '
+            rel='noopener noreferrer'
             style={{
               display: 'block',
               padding: '12px',
             }}
           >
             <img
-              alt='instagram logo'
+              alt='Instagram'
               src='https://kierunek-dzierganie-git-dev-kryptonum.vercel.app/instagram.png'
             />
           </a>

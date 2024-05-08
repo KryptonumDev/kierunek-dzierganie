@@ -29,6 +29,8 @@
         img {
           width: clamp(62px, calc(96vw / 7.68), 96px);
           height: clamp(62px, calc(96vw / 7.68), 96px);
+          object-fit: cover;
+          object-position: top;
         }
         p {
           font-size: clamp(calc(32rem / 16), calc(48vw / 7.68), calc(48rem / 16));
