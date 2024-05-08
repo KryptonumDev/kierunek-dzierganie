@@ -37,7 +37,7 @@
   --error-800: #882f2f;
   --error-900: #5a2f2f;
 
-  --space-gap: clamp(96px, calc(148vw / 7.68), 200px);
+  --space-gap: clamp(96px, calc(148vw / 7.68), 176px);
 
   --pageMargin: clamp(16px, calc(40vw / 7.68), 40px);
 
@@ -207,29 +207,24 @@ h4,
     left: 0;
     bottom: -3px;
   }
-
   @keyframes link {
     0%,
     100% {
       transform: scaleX(1);
     }
-
     50% {
       transform: scaleX(0);
       transform-origin: right;
     }
-
     0%,
     50% {
       transform-origin: right;
     }
-
     51%,
     100% {
       transform-origin: left;
     }
   }
-
   &:hover,
   &:focus-visible {
     &::after {
