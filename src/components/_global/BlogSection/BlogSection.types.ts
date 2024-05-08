@@ -17,6 +17,7 @@ export type BlogSectionTypes = {
 
 export type HighlightedPostType = {
   portableText: [];
+  slug?: string;
   hero: {
     img: ImgType;
     heading: string;
