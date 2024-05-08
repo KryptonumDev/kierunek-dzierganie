@@ -59,7 +59,7 @@ body {
   -webkit-tap-highlight-color: transparent;
   font-family: 'Erode', serif;
   background-color: var(--primary-100);
-  color: var(--primary-900);
+  color: var(--primary-800, #53423c);
   line-height: 150%;
   font-size: clamp(1rem, calc(18vw / 7.68), calc(18rem / 16));
 }
