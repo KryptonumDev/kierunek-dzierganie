@@ -38,7 +38,7 @@ export default async function ArticleSchema({
           }),
           publisher: {
             '@type': 'Organization',
-            '@id': { DOMAIN },
+            '@id': DOMAIN,
             ...(OrganizationSchema.name && { name: OrganizationSchema.name }),
             ...(OrganizationSchema.description && { description: OrganizationSchema.description }),
             logo: {
