@@ -72,9 +72,11 @@ async function getData(slug: string) {
         "name" : hero.heading
       },
       ${Components_Query}
-      "OgranizationData": *[_type=="global"][0] {
-        name,
-        description
+      "OrganizationData": *[_type=="global"][0] {
+        OrganizationSchema {
+          name,
+          description
+        },
       },
   }`,
     params: { slug },
