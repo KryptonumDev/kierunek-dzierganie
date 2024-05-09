@@ -10,7 +10,8 @@ import { generateStaticParamsProps, type BlogPostQueryProps } from '@/global/typ
 import sanityFetch from '@/utils/sanity.fetch';
 
 export default async function BlogPostPage({ params: { slug } }: { params: { slug: string } }) {
-  const { hero, author, date, content, previousBlog, nextBlog, links, portableText } = await getData(slug);
+  const { hero, author, date, content, previousBlog, nextBlog, links, portableText, OrganizationData } =
+    await getData(slug);
 
   const page = [
     { name: 'Blog', path: '/blog' },
@@ -19,7 +20,12 @@ export default async function BlogPostPage({ params: { slug } }: { params: { slu
 
   return (
     <>
-      <ArticleSchema {...hero} />
+      <ArticleSchema
+        hero={hero}
+        OrganizationData={OrganizationData}
+        date={date}
+        author={author}
+      />
       <Breadcrumbs data={page} />
       <Hero
         {...hero}
@@ -66,6 +72,10 @@ async function getData(slug: string) {
         "name" : hero.heading
       },
       ${Components_Query}
+      "OgranizationData": *[_type=="global"][0] {
+        name,
+        description
+      },
   }`,
     params: { slug },
     tags: ['BlogPost_Collection'],
