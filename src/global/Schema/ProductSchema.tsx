@@ -37,7 +37,10 @@ export default async function ProductSchema({
             review: [
               reviews.map(({ rating, review, nameOfReviewer }) => ({
                 '@type': 'Review',
-                author: nameOfReviewer,
+                author: {
+                  '@type': 'Person',
+                  name: nameOfReviewer,
+                },
                 reviewBody: review,
                 name: nameOfReviewer,
                 reviewRating: {
