@@ -20,10 +20,32 @@
   .logo {
     height: clamp(42px, calc(68vw / 7.68), 68px);
     display: inline-block;
-
+    position: relative;
+    &[data-reversed='true'] {
+      svg {
+        &:first-child {
+          transform: rotateY(-90deg);
+          transition-delay: 0s;
+        }
+        &:last-child {
+          transform: rotateY(0deg);
+          transition-delay: 0.3s;
+        }
+      }
+    }
     svg {
+      transition: transform 0.3s var(--easing);
       width: auto;
       height: 100%;
+      &:first-child {
+        transition-delay: 0.3s;
+      }
+      &:last-child {
+        position: absolute;
+        left: 0;
+        top: 0;
+        transform: rotateY(-90deg);
+      }
     }
   }
 
@@ -735,7 +757,7 @@
         a {
           margin: 20px auto 0;
 
-          &:first-child{
+          &:first-child {
             margin: 0;
             border-radius: 6px;
             overflow: hidden;
