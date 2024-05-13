@@ -4,6 +4,12 @@
   padding: 20px clamp(24px, calc(36vw/7.68), 28px) 28px clamp(24px, calc(36vw/7.68), 28px);
   background: var(--primary-200);
 
+  @media(max-width: 999px) {
+    padding: 20px 24px 28px 24px;
+    height: 400px;
+    gap: 15px;
+  }
+
   header {
     align-self: center;
     justify-self: center;
@@ -15,46 +21,58 @@
     gap: 16px;
   }
 
-  .unorderedList {
-    max-height: 200px;
-    overflow-y: auto;
-    direction: rtl;
-    padding: 10px 10px 10px 24px;
-    font-size: 18px;
+  >div {
     display: grid;
-    gap: 16px;
-    color: var(--primary-600);
-
-    &::-webkit-scrollbar {
-      width: 3px;
-      height: 16px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background-color: var(--primary-300);
-      border-radius: 2px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: var(--primary-600);
-      border-radius: 2px;
-    }
-
-    &>* {
-      direction: ltr;
-    }
+    gap: 24px;
+    grid-template-columns: auto 1fr;
 
     @media (max-width: 999px) {
-      &::-webkit-scrollbar {
-        width: 0px;
+      grid-template-columns: 1fr;
+    }
+
+    .progressBar {
+      width: 4px;
+      background-color: var(--primary-300);
+      border-radius: 1px;
+      position: relative;
+      margin: 10px 0px;
+
+      @media (max-width: 999px) {
+        display: none;
+      }
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: var(--progressPercentage);
+        background: var(--primary-600);
+        border-radius: 1px;
+        z-index: 1;
       }
     }
 
-    .subList {
-      font-size: 14px;
-      gap: 16px;
+    .unorderedList {
+      overflow-y: auto;
+      max-height: calc(100vh - 300px);
+      padding: 10px 10px 10px 0px;
+      font-size: 18px;
       display: grid;
+      gap: 16px;
       color: var(--primary-600);
+
+      @media (max-width: 999px) {
+        max-height: 300px;
+        justify-items: flex-start;
+      }
+
+      .subList {
+        font-size: 14px;
+        gap: 16px;
+        display: grid;
+        color: var(--primary-600);
+      }
     }
   }
 
@@ -86,7 +104,7 @@
       position: absolute;
       left: 0;
       bottom: 0;
-      width: var(--scrollPercentage);
+      width: var(--progressPercentage);
       height: 5px;
       background: var(--primary-500);
       border-radius: 0px 0px 4px 4px;
