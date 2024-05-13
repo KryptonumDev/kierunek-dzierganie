@@ -15,12 +15,32 @@ const TilesGrid = ({ heading, paragraph, list }: Props) => {
         <Markdown>{paragraph}</Markdown>
       </header>
       <div className={styles.wrapper}>
-        {list.map(({ img, cta }, i) => (
-          <div className={styles.item} key={i}>
-            <Link href={cta.href} className={styles.img}>
-              <Img data={img} sizes='(max-width: 899px) 50vw, 400px' />
+        {list.map(({ img, cta, badge }, i) => (
+          <div
+            className={styles.item}
+            key={i}
+          >
+            <Link
+              href={cta.href}
+              className={styles.img}
+            >
+              <div className={styles.badgeWrapper}>
+                <Img
+                  data={badge}
+                  className={styles.badge}
+                  sizes='(max-width: 499px) 80px, 125px'
+                />
+              </div>
+              <Img
+                data={img}
+                className={styles.image}
+                sizes='(max-width: 899px) 50vw, 400px'
+              />
             </Link>
-            <Button data={cta} className={styles.cta} />
+            <Button
+              data={cta}
+              className={styles.cta}
+            />
           </div>
         ))}
       </div>
