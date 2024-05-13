@@ -12,7 +12,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    > * {
+
+    >* {
       flex-shrink: 0;
     }
   }
@@ -21,25 +22,30 @@
     height: clamp(42px, calc(68vw / 7.68), 68px);
     display: inline-block;
     position: relative;
+
     &[data-reversed='true'] {
       svg {
         &:first-child {
           transform: rotateY(-90deg);
           transition-delay: 0s;
         }
+
         &:last-child {
           transform: rotateY(0deg);
           transition-delay: 0.3s;
         }
       }
     }
+
     svg {
       transition: transform 0.3s var(--easing);
       width: auto;
       height: 100%;
+
       &:first-child {
         transition-delay: 0.3s;
       }
+
       &:last-child {
         position: absolute;
         left: 0;
@@ -55,16 +61,20 @@
     gap: clamp(12px, calc(24vw / 7.68), 36px);
     align-items: center;
     font-size: clamp(calc(14rem / 16), calc(18vw / 7.68), calc(18rem / 16));
+
     a {
       transition: color 0.5s;
+
       &:hover {
         color: var(--primary-600, #9a827a);
       }
     }
+
     .basket {
       display: grid;
       grid-template-columns: auto auto;
       gap: 2px;
+
       .total-items {
         display: flex;
         align-items: center;
@@ -92,20 +102,22 @@
     align-items: center;
     gap: clamp(20px, calc(36vw / 7.68), 36px);
 
-    > li {
-      > button,
-      > a {
+    >li {
+
+      >button,
+      >a {
         display: flex;
         align-items: center;
         gap: 4px;
         cursor: pointer;
         transition: color 0.5s;
+
         &:hover {
           color: var(--primary-600, #9a827a);
         }
       }
 
-      > button {
+      >button {
         width: 100%;
 
         &::after {
@@ -125,7 +137,7 @@
 
       position: relative;
 
-      > ul {
+      >ul {
         .back-btn {
           flex-shrink: 0;
           display: none;
@@ -167,7 +179,7 @@
         flex-direction: column;
         gap: 8px;
 
-        > li {
+        >li {
           width: 100%;
 
           a {
@@ -196,13 +208,13 @@
   &[data-tab='2'] .Nav__item[data-id='2'],
   &[data-tab='3'] .Nav__item[data-id='3'],
   &[data-tab='4'] .Nav__item[data-id='4'] {
-    > button {
+    >button {
       &::after {
         transform: skewX(0) scaleX(1);
       }
     }
 
-    > ul {
+    >ul {
       display: flex;
     }
   }
@@ -234,9 +246,10 @@
       max-width: 360px;
       padding: 16px;
 
-      > li {
-        > button,
-        > a {
+      >li {
+
+        >button,
+        >a {
           height: 48px;
           justify-content: space-between;
 
@@ -249,7 +262,7 @@
           }
         }
 
-        > button {
+        >button {
           &::after {
             display: none;
           }
@@ -257,7 +270,7 @@
 
         position: static;
 
-        > ul {
+        >ul {
           z-index: 2;
 
           .back-btn {
@@ -291,10 +304,13 @@
 .Nav__Toggle {
   order: 1;
   display: grid;
+
   @media (min-width: 1190px) {
     display: none;
   }
+
   gap: 5px;
+
   span {
     display: block;
     width: 20px;
@@ -303,6 +319,7 @@
     border-radius: 3px;
     transition: transform 0.3s var(--easing);
   }
+
   padding: 16.75px 14px;
   border-radius: 50%;
 }
@@ -327,14 +344,16 @@
 }
 
 .Nav[data-opened='true'] {
-  + .Nav__Toggle {
+  +.Nav__Toggle {
     span {
       &:nth-child(1) {
         transform: translateY(6.5px) rotate(135deg);
       }
+
       &:nth-child(2) {
         transform: scale(0);
       }
+
       &:nth-child(3) {
         transform: translateY(-6.5px) rotate(-135deg);
       }
@@ -348,7 +367,7 @@
   background-color: var(--primary-200);
   padding: 8px 0 12px;
 
-  > div {
+  >div {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -357,7 +376,7 @@
   }
 }
 
-.Header > .Search {
+.Header>.Search {
   &[data-visible='false'] {
     transform: translateY(-100%);
     visibility: hidden;
@@ -467,7 +486,7 @@
       padding: 10px 8px 16px;
       border-bottom: 1px solid var(--primary-300);
 
-      > p {
+      >p {
         border-radius: 50%;
         background-color: var(--primary-300);
         width: 24px;
@@ -560,7 +579,7 @@
       height: fit-content;
       gap: 12px;
 
-      > p {
+      >p {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -694,12 +713,12 @@
   }
 
   .highlighted {
-    > h3 {
+    >h3 {
       margin-top: 128px;
       text-align: center;
     }
 
-    > p {
+    >p {
       text-align: center;
       margin-top: 36px;
     }
@@ -717,13 +736,13 @@
   }
 
   .empty {
-    > h2 {
+    >h2 {
       margin-top: clamp(48px, calc(48vw / 7.68), 64px);
       margin-bottom: clamp(16px, calc(16vw / 7.68), 28px);
       text-align: center;
     }
 
-    > p {
+    >p {
       text-align: center;
     }
 
@@ -735,9 +754,47 @@
       width: fit-content;
       margin-top: clamp(20px, calc(48vw / 7.68), 48px);
 
-      a {
-        &:hover img {
-          transform: scale(1.05);
+      >div {
+
+        .img {
+          border-radius: 6px;
+          overflow: hidden;
+          position: relative;
+          display: block;
+          margin-bottom: 20px;
+
+          .image {
+            border-radius: inherit;
+            transition: transform 0.4s var(--easing);
+          }
+        }
+
+        .badgeWrapper {
+          position: absolute;
+          height: clamp(51px, calc(80vw/7.68), 80px);
+          width: clamp(80px, calc(125vw/7.68), 125px);
+          z-index: 1;
+          background: var(--primary-200);
+          display: grid;
+          justify-content: center;
+          overflow: hidden;
+          border-bottom-right-radius: 6px;
+          border-top-left-radius: 6px;
+
+          >svg {
+            align-self: center;
+            object-fit: contain;
+            width: 100%;
+            height: 100%;
+          }
+        }
+
+        .img:hover,
+        &:has(.cta:hover),
+        &:has(.cta:focus-visible) {
+          .image {
+            transform: scale(1.05);
+          }
         }
       }
 
@@ -745,7 +802,7 @@
         transition: transform 0.3s ease;
       }
 
-      > div {
+      >div {
         max-width: 292px;
         width: 100%;
 

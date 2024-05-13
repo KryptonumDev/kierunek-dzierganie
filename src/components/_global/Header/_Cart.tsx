@@ -14,6 +14,7 @@ import PickQuantity from '@/components/ui/PickQuantity';
 import { toast } from 'react-toastify';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 import Link from 'next/link';
+import { FirstBadge, SecondBadge } from '@/components/ui/Icons';
 
 export default function Cart({
   goToCheckout,
@@ -305,26 +306,46 @@ const EmptyLayout = ({ image_crochet, image_knitting, setShowCart }: EmptyCart) 
             href='/kursy-dziergania-na-drutach'
             onClick={() => setShowCart(false)}
             tabIndex={-1}
+            className={styles.img}
           >
+            <div className={styles.badgeWrapper}>
+              <FirstBadge />
+            </div>
             <Img
               data={image_knitting}
               sizes='(max-width: 640px) 150px, 300px'
+              className={styles.image}
             />
           </Link>
-          <Button href='/kursy-dziergania-na-drutach'>Dzierganie</Button>
+          <Button
+            href='/kursy-dziergania-na-drutach'
+            className={styles.cta}
+          >
+            Dzierganie
+          </Button>
         </div>
         <div>
           <Link
             href='/kursy-szydelkowania'
             onClick={() => setShowCart(false)}
             tabIndex={-1}
+            className={styles.img}
           >
+            <div className={styles.badgeWrapper}>
+              <SecondBadge />
+            </div>
             <Img
               data={image_crochet}
               sizes='(max-width: 640px) 150px, 300px'
+              className={styles.image}
             />
           </Link>
-          <Button href='/kursy-szydelkowania'>Szydełkowanie</Button>
+          <Button
+            href='/kursy-szydelkowania'
+            className={styles.cta}
+          >
+            Szydełkowanie
+          </Button>
         </div>
       </div>
     </div>
