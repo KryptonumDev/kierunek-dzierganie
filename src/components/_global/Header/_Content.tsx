@@ -45,7 +45,7 @@ const Content = ({
   const [logoReversed, setLogoReversed] = useState(false);
   useEffect(() => {
     const toggleLogoReversed = () => setLogoReversed(prev => !prev);
-    const intervalId = setInterval(toggleLogoReversed, 8000);
+    const intervalId = setInterval(toggleLogoReversed, 13000);
     return () => clearInterval(intervalId);
   }, []);
 
