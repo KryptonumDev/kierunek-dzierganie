@@ -31,7 +31,7 @@ export default function MascotsRender({ text, image, icon }: MascotsRenderTypes)
         {image.map((item, i) => (
           <Img
             data={item}
-            sizes=''
+            sizes='158px'
             key={i}
             style={{ display: i !== activeImg ? 'none' : undefined }}
           />
