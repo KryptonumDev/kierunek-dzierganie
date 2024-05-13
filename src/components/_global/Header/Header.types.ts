@@ -32,7 +32,7 @@ export type QueryProps = {
   ChevronBackIcon: React.ReactNode;
   SearchIcon: React.ReactNode;
   CloseIcon: React.ReactNode;
-  Logo: React.ReactNode;
+  Logo: React.ReactNode[];
   CrossIcon: React.ReactNode;
 
   userId?: string;

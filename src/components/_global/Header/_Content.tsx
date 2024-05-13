@@ -42,6 +42,13 @@ const Content = ({
     setTotalItemsCount(totalItems);
   }, [totalItems]);
 
+  const [logoReversed, setLogoReversed] = useState(false);
+  useEffect(() => {
+    const toggleLogoReversed = () => setLogoReversed(prev => !prev);
+    const intervalId = setInterval(toggleLogoReversed, 8000);
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <>
       <Checkout
@@ -105,8 +112,10 @@ const Content = ({
             href='/'
             aria-label='Strona główna'
             className={styles.logo}
+            data-reversed={logoReversed}
           >
-            {Logo}
+            {Logo[0]}
+            {Logo[1]}
           </Link>
           <Nav
             links={nav_Links}
