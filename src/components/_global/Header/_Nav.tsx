@@ -51,7 +51,10 @@ const Nav = ({ links, ChevronDownIcon, ChevronBackIcon, showMenu, setShowMenu }:
               key={i}
             >
               {href ? (
-                <Link href={href}>{name}</Link>
+                <Link
+                  href={href}
+                  onClick={() => setShowMenu(false)}
+                >{name}</Link>
               ) : (
                 <button onClick={() => setTab(tab === i ? null : i)}>
                   <span>{name}</span>

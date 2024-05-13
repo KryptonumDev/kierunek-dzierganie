@@ -1,13 +1,13 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import type { Discount } from '@/global/types';
 import { useCartItems } from '@/utils/useCartItems';
 import dynamic from 'next/dynamic';
 import styles from './Header.module.scss';
 import Search from './Search/Search';
 import Annotation from './_Annotation';
 import Nav from './_Nav';
+import type { Discount } from '@/global/types';
 import type { QueryProps } from './Header.types';
 
 const Cart = dynamic(() => import('./_Cart'), { ssr: false });
@@ -113,6 +113,7 @@ const Content = ({
             aria-label='Strona główna'
             className={styles.logo}
             data-reversed={logoReversed}
+            onClick={() => setShowMenu(false)}
           >
             {Logo[0]}
             {Logo[1]}
