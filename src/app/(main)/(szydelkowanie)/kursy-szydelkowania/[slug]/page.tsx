@@ -28,6 +28,8 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
     courses_progress,
   } = await query(slug);
 
+  const alreadyBought = !!courses_progress?.find((course) => course.course_id === product._id);
+
   return (
     <>
       <ProductSchema
@@ -50,7 +52,7 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
         visible={true}
       />
       <HeroVirtual
-        alreadyBought={!!courses_progress?.find((course) => course.course_id === product._id)}
+        alreadyBought={alreadyBought}
         course={product}
       />
       {relatedBundle && (
@@ -87,7 +89,7 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
           }}
         />
       </Informations>
-      {printed_manual && <PrintedManual data={printed_manual} />}
+      {printed_manual && alreadyBought && <PrintedManual data={printed_manual} />}
       <RelatedProducts
         relatedCourses={relatedCourses}
         title={'Pozwól sobie na <strong>chwilę relaksu!</strong>'}
