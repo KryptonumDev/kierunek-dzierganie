@@ -25,7 +25,6 @@ export async function POST(request: Request) {
         sandbox: process.env.SANDBOX === 'true',
       }
     );
-    console.log(p24);
 
     const { data, error } = await supabase
       .from('orders')
@@ -62,8 +61,8 @@ export async function POST(request: Request) {
       email: input.billing.email,
       country: Country.Poland,
       language: Language.PL,
-      urlReturn: `https://kierunek-dzierganie-git-dev-kryptonum.vercel.app/api/payment/verify/?session=${session}&id=${data.id}`,
-      urlStatus: `https://kierunek-dzierganie-git-dev-kryptonum.vercel.app/api/payment/complete/?session=${session}&id=${data.id}`,
+      urlReturn: `https://kierunek-dzierganie-git-beta-kryptonum.vercel.app/api/payment/verify/?session=${session}&id=${data.id}`,
+      urlStatus: `https://kierunek-dzierganie-git-beta-kryptonum.vercel.app/api/payment/complete/?session=${session}&id=${data.id}`,
       timeLimit: 60,
       encoding: Encoding.UTF8,
       city: input.billing.city,

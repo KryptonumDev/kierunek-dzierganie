@@ -24,14 +24,14 @@ export async function GET(request: Request) {
     // Cannot read properties of undefined (reading 'status')
     if (responseData.data.status == 1 || responseData.data.status == 2) {
       // TODO: payment success status
-      return NextResponse.redirect(`https://kierunek-dzierganie-git-dev-kryptonum.vercel.app/moje-konto/zakupy/${id}`);
+      return NextResponse.redirect(`https://kierunek-dzierganie-git-beta-kryptonum.vercel.app/moje-konto/zakupy/${id}`);
     }
     
     // TODO: payment await status
-    return NextResponse.redirect(`https://kierunek-dzierganie-git-dev-kryptonum.vercel.app/moje-konto/zakupy/${id}`);
+    return NextResponse.redirect(`https://kierunek-dzierganie-git-beta-kryptonum.vercel.app/moje-konto/zakupy/${id}`);
   } catch (error) {
     console.log(error);
     // TODO: payment error status
-    return NextResponse.redirect(`https://kierunek-dzierganie-git-dev-kryptonum.vercel.app/moje-konto/zakupy/${id}`);
+    return NextResponse.redirect(`https://kierunek-dzierganie-git-beta-kryptonum.vercel.app/moje-konto/zakupy/${id}`);
   }
 }
