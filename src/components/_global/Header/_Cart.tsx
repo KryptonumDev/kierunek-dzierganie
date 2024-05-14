@@ -115,7 +115,7 @@ export default function Cart({
 
   const filteredFetchItems = filterFetchedItems();
 
-  if (filteredFetchItems?.length === 0) setPopupState(false);
+  if (filteredFetchItems?.length == null) setPopupState(false);
 
   return (
     <>
