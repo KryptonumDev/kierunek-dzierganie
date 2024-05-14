@@ -127,7 +127,6 @@ export async function POST(request: Request) {
         }
 
         // TODO: maybe move this to create step??
-        console.log('product', product);
         if (product.variantId) {
           // decrease quantity of chosen variant of variable product
           const res = await sanityPatchQuantityInVariant(product.id, product.variantId, product.quantity);
@@ -233,8 +232,9 @@ export async function POST(request: Request) {
       },
       body: requestContent,
     });
-
+    console.log(billRes);
     const billId = await billRes.json();
+    console.log(billId);
 
     await supabase
       .from('orders')

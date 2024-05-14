@@ -219,7 +219,7 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
                       <Radio
                         register={register('shippingMethod')}
                         value={method.name}
-                        label={`${method.name} <strong>${formatPrice(method.price * 100)}</strong>`}
+                        label={`${method.name} <strong>${formatPrice(method.price)}</strong>`}
                         errors={errors}
                       />
                       {selectedMapPoint ? (

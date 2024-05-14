@@ -20,6 +20,7 @@ export async function POST(request: Request) {
         `
         id,  
         amount,
+        state,
         expiration_date,
         per_user_limit,
         affiliation_of,
@@ -32,7 +33,7 @@ export async function POST(request: Request) {
       .eq('code', code)
       .single();
 
-    if (error?.code === 'PGRST116') {
+    if (error?.code === 'PGRST116' || data?.state === 1) {
       return NextResponse.json({ error: 'Kod rabatowy nie istnieje' }, { status: 500 });
     }
 
