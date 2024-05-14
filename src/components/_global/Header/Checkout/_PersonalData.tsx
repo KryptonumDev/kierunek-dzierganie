@@ -14,6 +14,7 @@ import { formatPrice } from '@/utils/price-formatter';
 import type { InpostPoint } from '@/global/types';
 import Select from '@/components/ui/Select';
 import countryList from 'react-select-country-list';
+import Script from 'next/script';
 
 type FormValues = {
   fullName?: string;
@@ -179,6 +180,21 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
 
   const invoiceType = watch('invoiceType');
 
+  // const func = () => {
+  //   {
+  //     /* key: 6qxqpdy8b4ygujapfmnh3fxow6ho5njd */
+  //   }
+  //   const apaczkaMap = new window.ApaczkaMap({
+  //     app_id: '1320108_LEgNbCQabNbVO3IG1jU9cYvI',
+  //     onChange: function (record: { foreign_access_point_id: string }) {
+  //       if (record) {
+  //         alert('Wybrano: ' + record.foreign_access_point_id);
+  //       }
+  //     },
+  //   });
+  //   apaczkaMap.show({});
+  // };
+
   return (
     <>
       <form
@@ -186,6 +202,7 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
         className={styles['main']}
         onSubmit={onSubmit}
       >
+        <Script src='https://mapa.apaczka.pl/client/apaczka.map.js' />
         {input.needDelivery && (
           <>
             <legend>Wybierz sposób dostawy</legend>
@@ -220,6 +237,7 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
                           </button>
                         </div>
                       ) : (
+                        // <button type='button' onClick={func}>Wybierz paczkomat</button>
                         <InpostGeowidget
                           token='eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJzQlpXVzFNZzVlQnpDYU1XU3JvTlBjRWFveFpXcW9Ua2FuZVB3X291LWxvIn0.eyJleHAiOjIwMDUzMDM1MjAsImlhdCI6MTY4OTk0MzUyMCwianRpIjoiN2YyNDIyZWUtOWQzMy00NWYzLWFjMWItN2Y2YTNjMzg1ZjdkIiwiaXNzIjoiaHR0cHM6Ly9sb2dpbi5pbnBvc3QucGwvYXV0aC9yZWFsbXMvZXh0ZXJuYWwiLCJzdWIiOiJmOjEyNDc1MDUxLTFjMDMtNGU1OS1iYTBjLTJiNDU2OTVlZjUzNTo3Tm8ydDZILUxqb3V5RklmdmtVVHVwT1RId3VwMnZPYm5nelkwWnBmdkQwIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoic2hpcHgiLCJzZXNzaW9uX3N0YXRlIjoiYjE1YTRlNDYtOTgxNS00YmY0LWFlZjktM2RjYWJhMzdlYzY1Iiwic2NvcGUiOiJvcGVuaWQgYXBpOmFwaXBvaW50cyIsInNpZCI6ImIxNWE0ZTQ2LTk4MTUtNGJmNC1hZWY5LTNkY2FiYTM3ZWM2NSIsImFsbG93ZWRfcmVmZXJyZXJzIjoiIiwidXVpZCI6ImZlZDg4NTlhLTY5YTUtNDVlZS1hNmNkLTZjNzNiOWE5YzNkMiJ9.oLlzQKMFGL1-TzdmHG_FlT4vrVZU4LDqm3doZV8cWP0I72CL1QMSlNCq6JZTcaPjWGmGhvBeYbWtUT5bsfOd4qRSkbop1_t0Y5B6pCQOyvF4OvsdbH6nOYj9_W5bhP-fshz-AZzyCroJFMST49zElhlwW0jAHS0Qrq4NznotnEc0IgkqknBSUVhCOeijnhPKT_Or6U9LfQgqqXDuv0i-Y1MDiKu5907B0cSbWc9fc7SpwdWcB-yubhnXrVXz-uzC2TtY9Gd57NigdyfGgDt9vvRXh8xzc9yXt14GRIahKRSbFL9jfqESc7zkk21QPt-QcHEcRafQseIOcmg7CAWQJA'
                           onPoint={onPointCallback}

@@ -25,6 +25,7 @@ export async function POST(request: Request) {
         sandbox: process.env.SANDBOX === 'true',
       }
     );
+    console.log(p24);
 
     const { data, error } = await supabase
       .from('orders')
@@ -34,7 +35,7 @@ export async function POST(request: Request) {
         billing: input.billing,
         shipping: input.shipping,
         amount: input.totalAmount,
-        shipping_method: input.shippingMethod,
+        shipping_method: input.needDelivery ? input.shippingMethod : null,
         used_discount: input.discount
           ? {
               amount: input.discount.amount,
