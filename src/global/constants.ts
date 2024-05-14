@@ -63,6 +63,11 @@ export const pageUrls: { knitting: string; crocheting: string } = {
   crocheting: '/kursy-szydelkowania',
 };
 
+export const productUrls: { knitting: string; crocheting: string } = {
+  knitting: '/produkty-do-dziergania',
+  crocheting: '/produkty-do-szydelkowania',
+};
+
 /**
  * Declaration of how many posts per page should be visible.
  * @constant
@@ -131,10 +136,13 @@ export const PRODUCT_CARD_QUERY = `
     rating,
     "reviewsCount": count(*[_type == 'productReviewCollection' && references(^._id)]),
     countInStock,
+    basis,
+    "slug": slug.current,
   },
   printed_manual -> {
     _id,
     name,
+    "slug": slug.current,
     gallery[0] {
       ${Img_Query}
     },
@@ -142,6 +150,7 @@ export const PRODUCT_CARD_QUERY = `
     rating,
     "reviewsCount": count(*[_type == 'productReviewCollection' && references(^._id)]),
     countInStock,
+    basis,
   },
   popup,
   complexity,

@@ -5,16 +5,32 @@ import { Hearth } from '@/components/ui/Icons';
 import { formatPrice } from '@/utils/price-formatter';
 import AddToCart from '@/components/ui/AddToCart';
 import Button from '@/components/ui/Button';
+import Link from 'next/link';
+import { productUrls } from '@/global/constants';
 
-export default function Item({ materials_link, printed_manual }: ProductCard) {
+export default function Item({
+  materials_link,
+  printed_manual,
+  setShowCart,
+  setPopupState,
+}: ProductCard & { setShowCart: (variable: boolean) => void; setPopupState: (variable: boolean) => void }) {
   return (
     <>
       {materials_link && (
         <div className={styles.item}>
-          <Img
-            data={materials_link.gallery}
-            sizes='(max-width: 713px) 100vw, 293px'
-          />
+          <Link
+            href={`${productUrls[materials_link.basis]}/${materials_link.slug}`}
+            className={styles['link']}
+            onClick={() => {
+              setPopupState(false);
+              setShowCart(false);
+            }}
+          >
+            <Img
+              data={materials_link.gallery}
+              sizes='(max-width: 713px) 100vw, 293px'
+            />
+          </Link>
           <div className={styles.content}>
             <div className={styles.textContent}>
               {materials_link.rating !== undefined && materials_link.reviewsCount > 0 ? (
@@ -44,10 +60,19 @@ export default function Item({ materials_link, printed_manual }: ProductCard) {
       )}
       {printed_manual && (
         <div className={styles.item}>
-          <Img
-            data={printed_manual.gallery}
-            sizes='(max-width: 713px) 100vw, 293px'
-          />
+          <Link
+            href={`${productUrls[printed_manual.basis]}/${printed_manual.slug}`}
+            className={styles['link']}
+            onClick={() => {
+              setPopupState(false);
+              setShowCart(false);
+            }}
+          >
+            <Img
+              data={printed_manual.gallery}
+              sizes='(max-width: 713px) 100vw, 293px'
+            />
+          </Link>
           <div className={styles.content}>
             <div className={styles.textContent}>
               {printed_manual.rating !== undefined && printed_manual.reviewsCount > 0 ? (

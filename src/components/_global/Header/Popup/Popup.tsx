@@ -8,12 +8,14 @@ export default function Popup({
   setPopupState,
   popupState,
   className,
+  setShowCart,
 }: {
   data: ProductCard[] | undefined;
   closeIcon: React.ReactNode;
   setPopupState: (variable: boolean) => void;
   popupState: boolean;
   className: string | undefined;
+  setShowCart: (variable: boolean) => void;
 }) {
   return (
     <div className={`${styles.Popup} ${className}`}>
@@ -30,6 +32,8 @@ export default function Popup({
       <div className={styles.items}>
         {data?.map((item, i) => (
           <Item
+            setShowCart={setShowCart}
+            setPopupState={setPopupState}
             key={i}
             {...item}
           />
