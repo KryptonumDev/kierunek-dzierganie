@@ -8,19 +8,19 @@ import type { CreateOrderTypes } from './Order.types';
 const TextsIterator = {
   CREATE_ORDER: {
     title: 'Dziękujemy za zakupy u nas',
-    text: '',
+    text: 'Zaczynamy realizację twojego zamówienia, o każdym kolejnym etapie będziemy Cię informować!',
   },
   NEW_ORDER: {
     title: 'Nowe zamówienie ma kierunekdziergania.pl',
-    text: '',
+    text: 'Dostaliśmy nowe zamówienie. Sprawdź szczegóły!',
   },
   ORDER_CANCELLED: {
     title: 'Twoje zamówienie zostało anulowane',
-    text: '',
+    text: 'Z przykrością informujemy, że Twoje zamówienie zostało anulowane. Jeśli masz jakiekolwiek pytania, skontaktuj się z nami!',
   },
   ORDER_COMPLETED: {
     title: 'Twoje zamówienie zostało zrealizowane',
-    text: '',
+    text: 'Zakończyliśmy realizację Twojego zamówienia. Zobacz co dla Ciebie przygotowaliśmy!',
   },
 };
 
@@ -62,9 +62,7 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
         </h1>
         <div style={{ marginBottom: '80px' }}>
           <p style={{ color: '#332621' }}>Hej,</p>
-          <p style={{ color: '#332621', marginTop: '8px' }}>
-            Zakończyliśmy realizację Twojego zamówienia. Zobacz co dla Ciebie przygotowaliśmy!
-          </p>
+          <p style={{ color: '#332621', marginTop: '8px' }}>{TextsIterator[type].text}</p>
         </div>
         <div>
           <div
@@ -221,7 +219,7 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
                 {formatPrice(totalItemsPrice)}
               </span>
             </p>
-            {data.discount && (
+            {data.used_discount && (
               <p
                 style={{
                   display: 'flex',
@@ -236,7 +234,7 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
                     lineHeight: '150%',
                   }}
                 >
-                  Kupon: {data.discount.code}
+                  Kupon: {data.used_discount.code}
                 </span>
                 <span
                   style={{
@@ -248,11 +246,11 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
                     lineHeight: '150%',
                   }}
                 >
-                  {formatPrice(calculateDiscountAmount(totalItemsPrice, data.discount))}
+                  {formatPrice(calculateDiscountAmount(totalItemsPrice, data.used_discount))}
                 </span>
               </p>
             )}
-            {data.shippingMethod && (
+            {data.shipping_method && (
               <p
                 style={{
                   display: 'flex',
@@ -279,7 +277,7 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
                     lineHeight: '150%',
                   }}
                 >
-                  {formatPrice(data.shippingMethod.price)}
+                  {formatPrice(data.shipping_method.price)}
                 </span>
               </p>
             )}
@@ -371,9 +369,9 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
               >
                 {formatPrice(
                   totalItemsPrice +
-                  (data.discount ? calculateDiscountAmount(totalItemsPrice, data.discount) : 0) -
-                  (data.virtualMoney ? data.virtualMoney * 100 : 0) +
-                  (data.shippingMethod ? data.shippingMethod.price : 0)
+                    (data.used_discount ? calculateDiscountAmount(totalItemsPrice, data.used_discount) : 0) -
+                    (data.virtualMoney ? data.virtualMoney * 100 : 0) +
+                    (data.shipping_method ? data.shipping_method.price : 0)
                 )}
               </span>
             </p>
@@ -397,56 +395,23 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
                 display: 'flex',
               }}
             >
-              <div
-                style={{
-                  width: '261px',
-                  marginRight: '16px',
-                }}
-              >
-                <p
+              {data.shipping_method && (
+                <div
                   style={{
-                    color: '#332621',
-                    fontSize: '14px',
-                    fontWeight: '300',
-                    lineHeight: '150%',
+                    width: '261px',
+                    marginRight: '16px',
                   }}
                 >
-                  Dane dostawy:
-                </p>
-                <p
-                  style={{
-                    marginTop: '4px',
-                    color: '#332621',
-                    fontSize: '14px',
-                    fontWeight: '300',
-                    lineHeight: '150%',
-                  }}
-                >
-                  {data.shipping.firstName}
-                </p>
-                <p
-                  style={{
-                    marginTop: '4px',
-                    color: '#332621',
-                    fontSize: '14px',
-                    fontWeight: '300',
-                    lineHeight: '150%',
-                  }}
-                >
-                  {data.shipping.address1}
-                </p>
-                <p
-                  style={{
-                    marginTop: '4px',
-                    color: '#332621',
-                    fontSize: '14px',
-                    fontWeight: '300',
-                    lineHeight: '150%',
-                  }}
-                >
-                  {data.shipping.postcode}, {countryList().getLabel(data.shipping.country)}
-                </p>
-                {data.shipping.phone && (
+                  <p
+                    style={{
+                      color: '#332621',
+                      fontSize: '14px',
+                      fontWeight: '300',
+                      lineHeight: '150%',
+                    }}
+                  >
+                    Dane dostawy:
+                  </p>
                   <p
                     style={{
                       marginTop: '4px',
@@ -456,10 +421,60 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
                       lineHeight: '150%',
                     }}
                   >
-                    {data.shipping.phone}
+                    {data.shipping.firstName}
                   </p>
-                )}
-              </div>
+                  <p
+                    style={{
+                      marginTop: '4px',
+                      color: '#332621',
+                      fontSize: '14px',
+                      fontWeight: '300',
+                      lineHeight: '150%',
+                    }}
+                  >
+                    {data.shipping.address1}
+                  </p>
+                  <p
+                    style={{
+                      marginTop: '4px',
+                      color: '#332621',
+                      fontSize: '14px',
+                      fontWeight: '300',
+                      lineHeight: '150%',
+                    }}
+                  >
+                    {data.shipping.postcode}, {countryList().getLabel(data.shipping.country)}
+                  </p>
+                  {data.shipping.phone && (
+                    <p
+                      style={{
+                        marginTop: '4px',
+                        color: '#332621',
+                        fontSize: '14px',
+                        fontWeight: '300',
+                        lineHeight: '150%',
+                      }}
+                    >
+                      {data.shipping.phone}
+                    </p>
+                  )}
+                  {data.shipping_method.data && (
+                    <p
+                      style={{
+                        marginTop: '4px',
+                        color: '#332621',
+                        fontSize: '14px',
+                        fontWeight: '300',
+                        lineHeight: '150%',
+                      }}
+                    >
+                      Metoda dostawy: {data.shipping_method.name}
+                      <br />
+                      Punkt: {data.shipping_method.data.foreign_access_point_id}
+                    </p>
+                  )}
+                </div>
+              )}
               <div
                 style={{
                   width: '261px',

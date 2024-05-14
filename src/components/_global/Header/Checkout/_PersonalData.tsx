@@ -8,10 +8,8 @@ import type { InputState, MappingProps } from './Checkout.types';
 import Radio from '@/components/ui/Radio';
 import { useCart } from 'react-use-cart';
 import { toast } from 'react-toastify';
-// @ts-expect-error there is no type for this package
-import { InpostGeowidget } from 'react-inpost-geowidget';
 import { formatPrice } from '@/utils/price-formatter';
-import type { InpostPoint } from '@/global/types';
+import type { MapPoint } from '@/global/types';
 import Select from '@/components/ui/Select';
 import countryList from 'react-select-country-list';
 import Script from 'next/script';
@@ -40,7 +38,7 @@ type FormValues = {
   shippingMethod?: string;
 };
 
-const generateNewInput = (data: FormValues, input: InputState, selectedMapPoint: InpostPoint | null) => {
+const generateNewInput = (data: FormValues, input: InputState, selectedMapPoint: MapPoint | null) => {
   return {
     ...input,
     firmOrder: data.invoiceType === 'Firma',
@@ -48,7 +46,7 @@ const generateNewInput = (data: FormValues, input: InputState, selectedMapPoint:
     shippingMethod: {
       name: data.shippingMethod,
       price: shippingMethods.find((method) => method.name === data.shippingMethod)?.price || 0,
-      inpostPointData: shippingMethods.find((method) => method.name === data.shippingMethod)?.map
+      data: shippingMethods.find((method) => method.name === data.shippingMethod)?.map
         ? selectedMapPoint
         : '',
     },
@@ -106,19 +104,15 @@ const generateDefaults = (input: InputState) => {
 
 const shippingMethods = [
   {
-    name: 'Kurier InPost',
-    price: 1250,
-    map: false,
-  },
-  {
-    name: 'Paczkomat InPost',
+    name: 'Apaczka',
     price: 1250,
     map: true,
   },
 ];
 
 export default function PersonalData({ goToCart, setInput, input }: MappingProps) {
-  const [selectedMapPoint, setSelectedMapPoint] = useState<InpostPoint | null>(null);
+  const [selectedMapPoint, setSelectedMapPoint] = useState<MapPoint | null>(null);
+  const [apaczka, setApaczka] = useState(null);
   const { emptyCart } = useCart();
   const {
     register,
@@ -174,26 +168,26 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
     setValue('shippingCountry', watch('country'));
   }, [shippingSameAsBilling, setValue, watch]);
 
-  const onPointCallback = (e: InpostPoint) => {
-    setSelectedMapPoint(e);
-  };
-
   const invoiceType = watch('invoiceType');
 
-  // const func = () => {
-  //   {
-  //     /* key: 6qxqpdy8b4ygujapfmnh3fxow6ho5njd */
-  //   }
-  //   const apaczkaMap = new window.ApaczkaMap({
-  //     app_id: '1320108_LEgNbCQabNbVO3IG1jU9cYvI',
-  //     onChange: function (record: { foreign_access_point_id: string }) {
-  //       if (record) {
-  //         alert('Wybrano: ' + record.foreign_access_point_id);
-  //       }
-  //     },
-  //   });
-  //   apaczkaMap.show({});
-  // };
+  const initApaczka = () => {
+    {
+      /* key: 6qxqpdy8b4ygujapfmnh3fxow6ho5njd */
+    }
+    const apaczkaMap = new window.ApaczkaMap({
+      app_id: '1320108_LEgNbCQabNbVO3IG1jU9cYvI',
+      onChange: function (record: MapPoint) {
+        setSelectedMapPoint(record);
+      },
+    });
+    setApaczka(apaczkaMap);
+    apaczkaMap.show({});
+  };
+
+  const openApaczka = () => {
+    // @ts-expect-error - don't have types for apaczka instance
+    apaczka.show({ point: selectedMapPoint });
+  };
 
   return (
     <>
@@ -207,55 +201,47 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
           <>
             <legend>Wybierz sposób dostawy</legend>
             <fieldset>
-              {shippingMethods.map((method) => {
-                if (method.map)
-                  return (
-                    <div
-                      data-active={shippingMethod === method.name}
-                      data-selected={!!selectedMapPoint}
-                      key={method.name}
-                      className={styles['inpost']}
-                    >
-                      <Radio
-                        register={register('shippingMethod')}
-                        value={method.name}
-                        label={`${method.name} <strong>${formatPrice(method.price)}</strong>`}
-                        errors={errors}
-                      />
-                      {selectedMapPoint ? (
-                        <div className={styles['inpost-data']}>
-                          <p>
-                            {selectedMapPoint.address.line1}, {selectedMapPoint.address.line2}
-                          </p>
-                          <p>Paczkomat: {selectedMapPoint.name}</p>
-                          <button
-                            className='link'
-                            type='button'
-                            onClick={() => setSelectedMapPoint(null)}
-                          >
-                            Zmień
-                          </button>
-                        </div>
-                      ) : (
-                        // <button type='button' onClick={func}>Wybierz paczkomat</button>
-                        <InpostGeowidget
-                          token='eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJzQlpXVzFNZzVlQnpDYU1XU3JvTlBjRWFveFpXcW9Ua2FuZVB3X291LWxvIn0.eyJleHAiOjIwMDUzMDM1MjAsImlhdCI6MTY4OTk0MzUyMCwianRpIjoiN2YyNDIyZWUtOWQzMy00NWYzLWFjMWItN2Y2YTNjMzg1ZjdkIiwiaXNzIjoiaHR0cHM6Ly9sb2dpbi5pbnBvc3QucGwvYXV0aC9yZWFsbXMvZXh0ZXJuYWwiLCJzdWIiOiJmOjEyNDc1MDUxLTFjMDMtNGU1OS1iYTBjLTJiNDU2OTVlZjUzNTo3Tm8ydDZILUxqb3V5RklmdmtVVHVwT1RId3VwMnZPYm5nelkwWnBmdkQwIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoic2hpcHgiLCJzZXNzaW9uX3N0YXRlIjoiYjE1YTRlNDYtOTgxNS00YmY0LWFlZjktM2RjYWJhMzdlYzY1Iiwic2NvcGUiOiJvcGVuaWQgYXBpOmFwaXBvaW50cyIsInNpZCI6ImIxNWE0ZTQ2LTk4MTUtNGJmNC1hZWY5LTNkY2FiYTM3ZWM2NSIsImFsbG93ZWRfcmVmZXJyZXJzIjoiIiwidXVpZCI6ImZlZDg4NTlhLTY5YTUtNDVlZS1hNmNkLTZjNzNiOWE5YzNkMiJ9.oLlzQKMFGL1-TzdmHG_FlT4vrVZU4LDqm3doZV8cWP0I72CL1QMSlNCq6JZTcaPjWGmGhvBeYbWtUT5bsfOd4qRSkbop1_t0Y5B6pCQOyvF4OvsdbH6nOYj9_W5bhP-fshz-AZzyCroJFMST49zElhlwW0jAHS0Qrq4NznotnEc0IgkqknBSUVhCOeijnhPKT_Or6U9LfQgqqXDuv0i-Y1MDiKu5907B0cSbWc9fc7SpwdWcB-yubhnXrVXz-uzC2TtY9Gd57NigdyfGgDt9vvRXh8xzc9yXt14GRIahKRSbFL9jfqESc7zkk21QPt-QcHEcRafQseIOcmg7CAWQJA'
-                          onPoint={onPointCallback}
-                        />
-                      )}
-                    </div>
-                  );
-
-                return (
+              {shippingMethods.map((method) => (
+                <div
+                  data-active={shippingMethod === method.name}
+                  data-selected={!!selectedMapPoint}
+                  key={method.name}
+                  className={styles['map']}
+                >
                   <Radio
-                    key={method.name}
-                    register={register('shippingMethod')}
+                    register={register('shippingMethod', {
+                      validate: () => !!selectedMapPoint || 'Musisz wybrać paczkomat',
+                    })}
                     value={method.name}
-                    label={`${method.name} <strong>${formatPrice(method.price * 100)}</strong>`}
+                    label={`${method.name} <strong>${formatPrice(method.price)}</strong>`}
                     errors={errors}
                   />
-                );
-              })}
+                  {selectedMapPoint ? (
+                    <div className={styles['inpost-data']}>
+                      <p>
+                        {selectedMapPoint.street}, {selectedMapPoint.postal_code} {selectedMapPoint.city}
+                      </p>
+                      <p>Punkt: {selectedMapPoint.foreign_access_point_id}</p>
+                      <p>Dostawca: {selectedMapPoint.supplier}</p>
+                      <button
+                        className='link'
+                        type='button'
+                        onClick={() => openApaczka()}
+                      >
+                        Zmień
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      className='link'
+                      type='button'
+                      onClick={initApaczka}
+                    >
+                      Wybierz paczkomat
+                    </button>
+                  )}
+                </div>
+              ))}
             </fieldset>
           </>
         )}

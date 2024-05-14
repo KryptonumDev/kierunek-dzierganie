@@ -50,6 +50,8 @@ export async function POST(request: Request) {
       )
       .single();
 
+    const orderNeedDelivery = !!data?.shipping_method;
+
     // check if discount was used
     error: if (data && data.used_discount?.id) {
       // create new coupons_uses record
@@ -147,12 +149,12 @@ export async function POST(request: Request) {
       subject: 'Nowe zamówienie!',
       reply_to: 'kontakt@zrobmimamo.pl',
       text: '',
-      react: Order({ data: data, type: 'CREATE_ORDER' }),
+      react: Order({ data: data, type: orderNeedDelivery ? 'CREATE_ORDER' : 'ORDER_COMPLETED' }),
     });
     console.log(clientMessage, clientError);
 
     const { data: messageData, error: messageError } = await resend.emails.send({
-      from: 'runek Dzierganie <kontakt@kierunekdzierganie.pl>',
+      from: 'Kierunek Dzierganie <kontakt@kierunekdzierganie.pl>',
       to: ['kierunek.dzierganie@gmail.com'],
       subject: 'Nowe zamówienie!',
       reply_to: 'kontakt@zrobmimamo.pl',
@@ -240,6 +242,7 @@ export async function POST(request: Request) {
       .from('orders')
       .update({
         bill_id: billId.response.Identyfikator,
+        status: orderNeedDelivery ? 2 : 3,
       })
       .eq('id', id);
 

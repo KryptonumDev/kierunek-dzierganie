@@ -353,7 +353,7 @@ export type Order = {
     }[];
   };
   shippingMethod: {
-    inpostPointData: InpostPoint | null;
+    data: MapPoint | null;
     name: string;
     price: number;
   };
@@ -415,10 +415,42 @@ export type Discount = {
   affiliatedBy: string | null;
 };
 
-export type InpostPoint = {
-  address: {
-    line1: string;
-    line2: string;
-  };
+export type MapPoint = {
+  access_point_id: number;
+  foreign_access_point_id: string;
+  foreign_number: string | null;
+  supplier: string;
+  subtype: string | null;
   name: string;
+  street: string;
+  house_number: string | null;
+  flat_number: string | null;
+  line_1: string;
+  line_2: string | null;
+  postal_code: string;
+  city: string;
+  state_code: string | null;
+  country_code: string;
+  longitude: string;
+  latitude: string;
+  image_url: string | null;
+  open_hours: {
+    sat: string[][];
+    tue: string[][];
+    wed: string[][];
+    thu: string[][];
+    fri: string[][];
+    mon: string[][];
+  };
+  services: string;
+  services_sender: boolean;
+  services_cod: boolean;
+  services_receiver: boolean;
+  additional_info: string;
+  is_active: boolean;
+  date_last_active: {
+    date: string;
+    timezone_type: number;
+    timezone: string;
+  };
 };

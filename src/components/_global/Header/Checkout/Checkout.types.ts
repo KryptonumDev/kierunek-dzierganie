@@ -1,4 +1,4 @@
-import type { Billing, Complexity, Discount, ImgType, InpostPoint, Shipping } from '@/global/types';
+import type { Billing, Complexity, Discount, ImgType, MapPoint, Shipping } from '@/global/types';
 import type { useCartItems } from '../Header.types';
 import type { Dispatch, SetStateAction } from 'react';
 
@@ -23,7 +23,7 @@ export type InputState = {
   shippingSameAsBilling: boolean;
   shipping: Shipping;
   shippingMethod?: {
-    inpostPointData: string | InpostPoint | null;
+    data: string | MapPoint | null;
     name: string;
     price: number;
   };

@@ -119,10 +119,22 @@ const OrderData = ({ order }: OrderDataTypes) => {
                 <br />
                 <br />
                 <strong>Metoda dostawy:</strong> {order.shippingMethod.name}
-                {order.shippingMethod.inpostPointData && (
+                {order.shippingMethod.data && (
                   <>
                     <br />
-                    <strong>Paczkomat:</strong> {order.shippingMethod.inpostPointData.name}
+                    <span>
+                      <strong>Adres:</strong>{' '}
+                      {order.shippingMethod.data.street}, {order.shippingMethod.data.postal_code}{' '}
+                      {order.shippingMethod.data.city}
+                    </span>
+                    <br />
+                    <span>
+                      <strong>Punkt:</strong> {order.shippingMethod.data.foreign_access_point_id}
+                    </span>
+                    <br />
+                    <span>
+                      <strong>Dostawca:</strong> {order.shippingMethod.data.supplier}
+                    </span>
                   </>
                 )}
               </>

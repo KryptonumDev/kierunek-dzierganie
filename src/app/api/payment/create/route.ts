@@ -35,12 +35,7 @@ export async function POST(request: Request) {
         shipping: input.shipping,
         amount: input.totalAmount,
         shipping_method: input.needDelivery ? input.shippingMethod : null,
-        used_discount: input.discount
-          ? {
-              amount: input.discount.amount,
-              id: input.discount.id,
-            }
-          : null,
+        used_discount: input.discount || null,
         used_virtual_money: input.virtualMoney,
         paid_at: null,
         payment_id: null,
