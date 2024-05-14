@@ -1,13 +1,16 @@
 .Popup {
-  position: absolute;
-  top: clamp(165px, calc(212vw/7.68), 221px);
+  position: sticky;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  top: 0;
   z-index: 10;
   padding: 48px clamp(16px, calc(36vw/7.68), 80px) clamp(16px, calc(36vw/7.68), 48px);
   background: var(--primary-100);
   border: 1px solid var(--primary-500);
-  left: clamp(16px, calc(80vw / 7.68), 96px);
-  right: clamp(16px, calc(80vw / 7.68), 96px);
   border-radius: 4px;
+  max-height: 80vh;
+  overflow-y: auto;
 
   .closeButton {
     position: absolute;
@@ -42,12 +45,23 @@
       gap: clamp(20px, calc(24vw/7.68), 24px);
       grid-template-columns: auto 1fr;
 
-      >img {
-        width: 293px;
-        height: auto;
-        aspect-ratio: 1.38/1;
+      .link {
+        overflow: hidden;
         border-radius: 4px;
-        object-fit: cover;
+
+        &:hover {
+          img {
+            transform: scale(1.05);
+          }
+        }
+
+        >img {
+          width: 293px;
+          height: auto;
+          aspect-ratio: 1.38/1;
+          object-fit: cover;
+          transition: transform 0.3s var(--easing);
+        }
       }
 
       .content {
@@ -84,12 +98,14 @@
       @media(max-width: 713px) {
         grid-template-columns: 1fr;
 
-        >img {
-          width: 100%;
-          height: auto;
-          aspect-ratio: 1.38/1;
-          border-radius: 4px;
-          object-fit: cover;
+        .link {
+          >img {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1.38/1;
+            border-radius: 4px;
+            object-fit: cover;
+          }
         }
 
         .content {

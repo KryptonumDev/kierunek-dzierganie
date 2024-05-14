@@ -49,6 +49,8 @@ export type ProductCard = {
     rating: number;
     reviewsCount: number;
     countInStock: number;
+    basis: 'knitting' | 'crocheting';
+    slug: string;
   };
   printed_manual?: {
     _id: string;
@@ -58,6 +60,8 @@ export type ProductCard = {
     rating: number;
     reviewsCount: number;
     countInStock: number;
+    basis: 'knitting' | 'crocheting';
+    slug: string;
   };
   popup?: boolean;
   variant: {
