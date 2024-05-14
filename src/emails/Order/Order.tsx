@@ -47,6 +47,7 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
           style={{
             display: 'block',
             margin: '0 auto',
+            width: 'fit-content',
           }}
         >
           <img

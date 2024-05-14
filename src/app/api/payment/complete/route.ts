@@ -234,14 +234,13 @@ export async function POST(request: Request) {
       },
       body: requestContent,
     });
-    console.log(billRes);
+
     const billId = await billRes.json();
-    console.log(billId);
 
     await supabase
       .from('orders')
       .update({
-        bill_id: billId.response.Identyfikator,
+        bill_id: billId.response,
         status: orderNeedDelivery ? 2 : 3,
       })
       .eq('id', id);
