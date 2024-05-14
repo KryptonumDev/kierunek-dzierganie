@@ -42,14 +42,18 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
           padding: '36px 42px 48px 42px',
         }}
       >
-        <img
+        <a
+          href='https://kierunekdzierganie.pl/'
           style={{
             display: 'block',
             margin: '0 auto',
           }}
-          alt='website logo'
-          src='https://kierunek-dzierganie-git-beta-kryptonum.vercel.app/logo.png'
-        />
+        >
+          <img
+            alt='website logo'
+            src='https://kierunek-dzierganie-git-beta-kryptonum.vercel.app/logo.png'
+          />
+        </a>
         <h1
           style={{
             color: '#332621',
