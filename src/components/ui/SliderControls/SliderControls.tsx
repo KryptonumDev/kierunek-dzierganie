@@ -104,6 +104,7 @@ export default function SliderControls({ api }: { api: EmblaCarouselType | undef
             className='embla__dot'
             onClick={() => onDotButtonClick(index)}
             aria-current={index === selectedIndex}
+            aria-label={`Przejdź do ${index + 1} elementu`}
           />
         ))}
       </div>
