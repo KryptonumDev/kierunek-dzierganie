@@ -115,6 +115,8 @@ export default function Cart({
 
   const filteredFetchItems = filterFetchedItems();
 
+  if (filteredFetchItems?.length === 0) setPopupState(false);
+
   return (
     <>
       <div
@@ -134,14 +136,16 @@ export default function Cart({
               {CrossIcon}
             </button>
           </div>
-          <div className={styles.linkWrapper}>
-            <p
-              className={`link ${styles.link}`}
-              onClick={() => setPopupState(!popupState)}
-            >
-              Pokaż materiały do kursów{' '}
-            </p>
-          </div>
+          {(filteredFetchItems?.length ?? 0) > 0 && (
+            <div className={styles.linkWrapper}>
+              <p
+                className={`link ${styles.link}`}
+                onClick={() => setPopupState(!popupState)}
+              >
+                Pokaż materiały do kursów{' '}
+              </p>
+            </div>
+          )}
           <div>
             {cart?.length ? (
               <CartGrid
