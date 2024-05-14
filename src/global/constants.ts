@@ -121,6 +121,29 @@ export const PRODUCT_CARD_QUERY = `
     ${Img_Query}
   },
   countInStock,
+  materials_link -> {
+    _id,
+    name,
+    gallery[0] {
+      ${Img_Query}
+    },
+    price,
+    rating,
+    "reviewsCount": count(*[_type == 'productReviewCollection' && references(^._id)]),
+    countInStock,
+  },
+  printed_manual -> {
+    _id,
+    name,
+    gallery[0] {
+      ${Img_Query}
+    },
+    price,
+    rating,
+    "reviewsCount": count(*[_type == 'productReviewCollection' && references(^._id)]),
+    countInStock,
+  },
+  popup,
   complexity,
   variants[]{
     "_id": _key,

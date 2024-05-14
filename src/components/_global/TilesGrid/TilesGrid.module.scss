@@ -3,40 +3,68 @@
     max-width: calc(587rem / 16);
     margin: 0 auto clamp(20px, calc(48vw / 7.68), 64px);
     text-align: center;
+
     h2 {
       margin-bottom: clamp(16px, calc(28vw / 7.68), 28px);
     }
   }
+
   .wrapper {
     max-width: calc(834rem / 16);
     margin: 0 auto;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: clamp(24px, calc(32vw / 7.68), 48px) clamp(16px, calc(24vw / 7.68), 32px);
+
     .item {
       .img {
         display: block;
         margin-bottom: 24px;
         border-radius: 6px;
         overflow: hidden;
-        img {
+        position: relative;
+
+        .image {
           border-radius: inherit;
           transition: transform 0.4s var(--easing);
         }
+
+        .badgeWrapper {
+          position: absolute;
+          height: clamp(51px, calc(80vw/7.68), 80px);
+          width: clamp(80px, calc(125vw/7.68), 125px);
+          z-index: 1;
+          background: var(--primary-200);
+          display: grid;
+          justify-content: center;
+          overflow: hidden;
+          border-bottom-right-radius: 6px;
+
+          .badge {
+            align-self: center;
+            object-fit: contain;
+            width: 100%;
+            height: 100%;
+          }
+        }
       }
+
       .cta {
         margin: 0 auto;
       }
+
       .img:hover,
       &:has(.cta:hover),
       &:has(.cta:focus-visible) {
-        img {
+        .image {
           transform: scale(1.05);
         }
       }
     }
   }
+
   position: relative;
+
   .decoration {
     position: absolute;
     left: 0;

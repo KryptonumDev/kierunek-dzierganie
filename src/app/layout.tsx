@@ -5,6 +5,7 @@ import SchemaOrganization from '@/global/Schema/Ogranization';
 import CookieConsent from '@/components/_global/CookieConsent';
 import { GoogleTagManager } from '@next/third-parties/google';
 import type { Viewport } from 'next';
+import Mascots from '@/components/_global/Mascots';
 
 const Lato = localFont({
   src: [
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${Lato.className} ${CityStreetWear.variable}`}>
         {children}
         <CookieConsent />
+        <Mascots />
       </body>
     </html>
   );

@@ -1,13 +1,13 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import type { Discount } from '@/global/types';
 import { useCartItems } from '@/utils/useCartItems';
 import dynamic from 'next/dynamic';
 import styles from './Header.module.scss';
 import Search from './Search/Search';
 import Annotation from './_Annotation';
 import Nav from './_Nav';
+import type { Discount } from '@/global/types';
 import type { QueryProps } from './Header.types';
 
 const Cart = dynamic(() => import('./_Cart'), { ssr: false });
@@ -32,6 +32,7 @@ const Content = ({
 }: QueryProps) => {
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
+  const [popupState, setPopupState] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [usedDiscount, setUsedDiscount] = useState<Discount | null>(null);
   const [usedVirtualMoney, setUsedVirtualMoney] = useState<number | null>(null);
@@ -41,6 +42,13 @@ const Content = ({
   useEffect(() => {
     setTotalItemsCount(totalItems);
   }, [totalItems]);
+
+  const [logoReversed, setLogoReversed] = useState(false);
+  useEffect(() => {
+    const toggleLogoReversed = () => setLogoReversed((prev) => !prev);
+    const intervalId = setInterval(toggleLogoReversed, 13000);
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <>
@@ -52,6 +60,7 @@ const Content = ({
         goToCart={() => {
           setShowCart(true);
           setShowCheckout(false);
+          setPopupState(true);
         }}
         setUsedDiscount={setUsedDiscount}
         usedDiscount={usedDiscount}
@@ -66,8 +75,11 @@ const Content = ({
         goToCheckout={() => {
           setShowCheckout(true);
           setShowCart(false);
+          setPopupState(false);
         }}
         setShowCart={() => setShowCart(false)}
+        setPopupState={setPopupState}
+        popupState={popupState}
         showCart={showCart}
         image_knitting={image_knitting}
         image_crochet={image_crochet}
@@ -105,8 +117,11 @@ const Content = ({
             href='/'
             aria-label='Strona główna'
             className={styles.logo}
+            data-reversed={logoReversed}
+            onClick={() => setShowMenu(false)}
           >
-            {Logo}
+            {Logo[0]}
+            {Logo[1]}
           </Link>
           <Nav
             links={nav_Links}
@@ -125,6 +140,7 @@ const Content = ({
               <button
                 onClick={() => {
                   setShowCart(true);
+                  setPopupState(true);
                 }}
                 className={styles.basket}
               >
@@ -146,6 +162,7 @@ const Content = ({
           setShowCart(false);
           setShowCheckout(false);
           setShowMenu(false);
+          setPopupState(false);
         }}
         className={styles['Overlay']}
         data-visible={!!(showCart || showCheckout || showMenu)}

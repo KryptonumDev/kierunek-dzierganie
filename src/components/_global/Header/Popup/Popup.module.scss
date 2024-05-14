@@ -1,0 +1,110 @@
+.Popup {
+  position: absolute;
+  top: clamp(165px, calc(212vw/7.68), 221px);
+  z-index: 10;
+  padding: 48px clamp(16px, calc(36vw/7.68), 80px) clamp(16px, calc(36vw/7.68), 48px);
+  background: var(--primary-100);
+  border: 1px solid var(--primary-500);
+  left: clamp(16px, calc(80vw / 7.68), 96px);
+  right: clamp(16px, calc(80vw / 7.68), 96px);
+  border-radius: 4px;
+
+  .closeButton {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 16px;
+
+    &:focus-visible {
+      outline-offset: -2px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    left: 16px;
+    right: 16px;
+  }
+
+  >h2 {
+    margin-bottom: clamp(8px, calc(12vw/7.68), 20px);
+  }
+
+  >p {
+    margin-bottom: clamp(20px, calc(28vw/7.68), 28px);
+  }
+
+  .items {
+    display: grid;
+    gap: clamp(12px, calc(24vw/7.68), 24px);
+
+    .item {
+      display: grid;
+      gap: clamp(20px, calc(24vw/7.68), 24px);
+      grid-template-columns: auto 1fr;
+
+      >img {
+        width: 293px;
+        height: auto;
+        aspect-ratio: 1.38/1;
+        border-radius: 4px;
+        object-fit: cover;
+      }
+
+      .content {
+        display: grid;
+
+        .textContent {
+          gap: 8px;
+          display: grid;
+          align-self: flex-start;
+
+          .rating {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 4px;
+
+            span {
+              font-size: 14px;
+              color: var(--primary-800, #53423c);
+
+              b {
+                font-weight: 300;
+                font-size: 32px;
+                font-family: var(--font-city-streetwear);
+              }
+            }
+          }
+        }
+
+        >button {
+          align-self: flex-end;
+        }
+      }
+
+      @media(max-width: 713px) {
+        grid-template-columns: 1fr;
+
+        >img {
+          width: 100%;
+          height: auto;
+          aspect-ratio: 1.38/1;
+          border-radius: 4px;
+          object-fit: cover;
+        }
+
+        .content {
+          justify-items: center;
+          text-align: center;
+
+          .rating {
+            justify-self: center;
+          }
+
+          >button {
+            margin-top: 20px;
+          }
+        }
+      }
+    }
+  }
+}

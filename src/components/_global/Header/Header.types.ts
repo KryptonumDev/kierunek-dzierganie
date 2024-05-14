@@ -32,7 +32,7 @@ export type QueryProps = {
   ChevronBackIcon: React.ReactNode;
   SearchIcon: React.ReactNode;
   CloseIcon: React.ReactNode;
-  Logo: React.ReactNode;
+  Logo: React.ReactNode[];
   CrossIcon: React.ReactNode;
 
   userId?: string;
@@ -45,13 +45,15 @@ export type QueryProps = {
 export type EmptyCart = {
   image_crochet: ImgType;
   image_knitting: ImgType;
-  setShowCart: (variable:boolean) => void;
+  setShowCart: (variable: boolean) => void;
 };
 
 export type Cart = {
   ownedCourses?: string[];
   goToCheckout: () => void;
   setShowCart: () => void;
+  setPopupState: (variable: boolean) => void;
+  popupState: boolean;
   showCart?: boolean;
   image_knitting: ImgType;
   image_crochet: ImgType;

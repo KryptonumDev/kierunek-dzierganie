@@ -16,7 +16,7 @@ const staticRoutes = [
   '/kursy-dziergania-na-drutach',
   '/kursy-szydelkowania',
   '/newsletter',
-  '/o-mnie',
+  '/o-nas',
   '/partnerzy',
   '/polityka-prywatnosci',
   '/regulamin',

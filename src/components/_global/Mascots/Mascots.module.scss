@@ -1,0 +1,45 @@
+.Mascots {
+  position: fixed;
+  right: 0;
+  bottom: 20%;
+  z-index: 9;
+  &:not(:hover) {
+    p {
+      transform: scale(0);
+      transition-delay: 0s;
+    }
+    .images {
+      transition-delay: 0.15s;
+      transform: translateX(55%);
+    }
+  }
+  p {
+    position: absolute;
+    bottom: 100%;
+    right: 35%;
+    width: clamp(156px, calc(206vw / 7.68), 206px);
+    font-size: calc(14rem / 16);
+    padding: clamp(8px, calc(16vw / 7.68), 16px) clamp(12px, calc(16vw / 7.68), 16px);
+    border-radius: 8px;
+    background: var(--primary-300, #efe8e7);
+    transition: transform 0.3s 0.15s var(--easing);
+    transform-origin: calc(100% - 16px) calc(100% + 16px);
+    svg {
+      position: absolute;
+      right: 16px;
+      bottom: -16px;
+      z-index: -1;
+    }
+  }
+  .images {
+    transition: transform 0.3s var(--easing);
+    transform: rotate(15deg);
+    transform-origin: right bottom;
+    img {
+      width: clamp(100px, calc(158vw / 7.68), 158px);
+      height: clamp(100px, calc(158vw / 7.68), 158px);
+      object-fit: contain;
+      transform: rotate(-90deg);
+    }
+  }
+}
