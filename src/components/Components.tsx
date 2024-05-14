@@ -40,6 +40,7 @@ import Faq, { Faq_Query, type FaqTypes } from '@/components/_global/Faq';
 import HeroSimple, { HeroSimple_Query, HeroSimpleTypes } from '@/components/_global/HeroSimple';
 import LatestBlogEntries, { LatestBlogEntries_Query, type LatestBlogEntriesTypes } from './_global/LatestBlogEntries';
 import CompaniesShowcase, { CompaniesShowcase_Query, type CompaniesShowcaseTypes } from './_global/CompaniesShowcase';
+import TeamShowcase, { TeamShowcaseTypes, TeamShowcase_Query } from './_about/TeamShowcase';
 
 type ComponentMap = {
   HeroBackgroundImg: HeroBackgroundImgProps;
@@ -71,6 +72,7 @@ type ComponentMap = {
   Partners: PartnersProps;
   LatestBlogEntries: LatestBlogEntriesTypes;
   CompaniesShowcase: CompaniesShowcaseTypes;
+  TeamShowcase: TeamShowcaseTypes;
 };
 
 export type ComponentProps = ComponentMap[keyof ComponentMap] & { _type: string };
@@ -149,6 +151,7 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
       ),
       LatestBlogEntries: <LatestBlogEntries {...(item as LatestBlogEntriesTypes)} />,
       CompaniesShowcase: <CompaniesShowcase {...(item as CompaniesShowcaseTypes)} />,
+      TeamShowcase: <TeamShowcase {...(item as TeamShowcaseTypes)} />,
     };
     const DynamicComponent = componentMap[componentType];
     if (!DynamicComponent) {
@@ -193,5 +196,6 @@ export const Components_Query = /* groq */ `
     ${Faq_Query}
     ${LatestBlogEntries_Query(false)}
     ${CompaniesShowcase_Query}
+    ${TeamShowcase_Query}
   },
 `;

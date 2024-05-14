@@ -167,21 +167,6 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
   });
   !data && notFound();
 
-  if (!data.product.visible) {
-    // for hidden products check is user already bought related course
-    let owned = false;
-
-    res.data?.courses_progress.forEach((course: { course_id: string }) => {
-      if (
-        data!.product!.relatedCourses?.some((relatedCourse: { _id: string }) => relatedCourse._id === course.course_id)
-      ) {
-        owned = true;
-      }
-    });
-
-    if (!owned) return notFound();
-  }
-
   return { data: data, user: res.data?.firstName as string };
 };
 
