@@ -32,6 +32,7 @@ const Content = ({
 }: QueryProps) => {
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
+  const [popupState, setPopupState] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [usedDiscount, setUsedDiscount] = useState<Discount | null>(null);
   const [usedVirtualMoney, setUsedVirtualMoney] = useState<number | null>(null);
@@ -44,7 +45,7 @@ const Content = ({
 
   const [logoReversed, setLogoReversed] = useState(false);
   useEffect(() => {
-    const toggleLogoReversed = () => setLogoReversed(prev => !prev);
+    const toggleLogoReversed = () => setLogoReversed((prev) => !prev);
     const intervalId = setInterval(toggleLogoReversed, 13000);
     return () => clearInterval(intervalId);
   }, []);
@@ -59,6 +60,7 @@ const Content = ({
         goToCart={() => {
           setShowCart(true);
           setShowCheckout(false);
+          setPopupState(true);
         }}
         setUsedDiscount={setUsedDiscount}
         usedDiscount={usedDiscount}
@@ -73,8 +75,11 @@ const Content = ({
         goToCheckout={() => {
           setShowCheckout(true);
           setShowCart(false);
+          setPopupState(false);
         }}
         setShowCart={() => setShowCart(false)}
+        setPopupState={setPopupState}
+        popupState={popupState}
         showCart={showCart}
         image_knitting={image_knitting}
         image_crochet={image_crochet}
@@ -135,6 +140,7 @@ const Content = ({
               <button
                 onClick={() => {
                   setShowCart(true);
+                  setPopupState(true);
                 }}
                 className={styles.basket}
               >
@@ -156,6 +162,7 @@ const Content = ({
           setShowCart(false);
           setShowCheckout(false);
           setShowMenu(false);
+          setPopupState(false);
         }}
         className={styles['Overlay']}
         data-visible={!!(showCart || showCheckout || showMenu)}

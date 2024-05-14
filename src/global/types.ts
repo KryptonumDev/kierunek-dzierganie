@@ -41,6 +41,25 @@ export type ProductCard = {
   complexity?: Complexity;
   reviewsCount: number;
   rating: number;
+  materials_link?: {
+    _id: string;
+    gallery: ImgType;
+    name: string;
+    price: number;
+    rating: number;
+    reviewsCount: number;
+    countInStock: number;
+  };
+  printed_manual?: {
+    _id: string;
+    gallery: ImgType;
+    name: string;
+    price: number;
+    rating: number;
+    reviewsCount: number;
+    countInStock: number;
+  };
+  popup?: boolean;
   variant: {
     _id: string;
     name: string;

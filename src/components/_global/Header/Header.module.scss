@@ -902,4 +902,10 @@
     display: block;
     margin-left: auto;
   }
+
+  // &[data-blurred='true'] {
+  //   *:not(.popup) {
+  //     filter: blur(2px);
+  //   }
+  // }
 }

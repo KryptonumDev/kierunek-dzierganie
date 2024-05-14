@@ -15,10 +15,13 @@ import { toast } from 'react-toastify';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 import Link from 'next/link';
 import { FirstBadge, SecondBadge } from '@/components/ui/Icons';
+import Popup from './Popup/Popup';
 
 export default function Cart({
   goToCheckout,
   setShowCart,
+  setPopupState,
+  popupState,
   showCart,
   image_crochet,
   image_knitting,
@@ -92,14 +95,47 @@ export default function Cart({
       });
   };
 
+  function filterFetchedItems() {
+    const filteredFetchItems = fetchedItems?.filter((item) => item.popup == true);
+
+    const materials_linkIds = filteredFetchItems?.map((item) => item.materials_link?._id);
+    const printed_manualIds = filteredFetchItems?.map((item) => item.printed_manual?._id);
+
+    fetchedItems?.forEach((product) => {
+      if (materials_linkIds?.includes(product._id)) {
+        product.materials_link = undefined;
+      }
+      if (printed_manualIds?.includes(product._id)) {
+        product.printed_manual = undefined;
+      }
+    });
+
+    return filteredFetchItems;
+  }
+
+  const filteredFetchItems = filterFetchedItems();
+
   return (
     <>
       <div
         className={styles['Cart']}
         data-visible={!!showCart}
+        data-blurred={popupState}
       >
+        {popupState && (filteredFetchItems?.length ?? 0) > 0 && (
+          <Popup
+            data={filteredFetchItems}
+            closeIcon={CrossIcon}
+            setPopupState={setPopupState}
+            popupState={popupState}
+            className={styles.popup}
+          />
+        )}
         <div className={`${styles['flex']} ${styles['CartHeader']}`}>
           <h3>Twoje produkty</h3>
+          {!popupState && (filteredFetchItems?.length ?? 0) > 0 && (
+            <h3 onClick={() => setPopupState(!popupState)}>Pokaż materiały do kursów </h3>
+          )}
           <button
             onClick={setShowCart}
             className={styles.CloseButton}
