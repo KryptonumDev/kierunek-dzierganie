@@ -4,12 +4,14 @@ import PortableContent, { PortableContent_Query } from '@/components/_blogPost/P
 import { ShareArticle_Query } from '@/components/_blogPost/ShareArticle';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import { Img_Query } from '@/components/ui/image';
+import ArticleSchema from '@/global/Schema/ArticleSchema';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
 import { generateStaticParamsProps, type BlogPostQueryProps } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 
 export default async function BlogPostPage({ params: { slug } }: { params: { slug: string } }) {
-  const { hero, author, date, content, previousBlog, nextBlog, links, portableText } = await getData(slug);
+  const { hero, author, date, content, previousBlog, nextBlog, links, portableText, OrganizationData } =
+    await getData(slug);
 
   const page = [
     { name: 'Blog', path: '/blog' },
@@ -18,6 +20,12 @@ export default async function BlogPostPage({ params: { slug } }: { params: { slu
 
   return (
     <>
+      <ArticleSchema
+        hero={hero}
+        OrganizationData={OrganizationData}
+        date={date}
+        author={author}
+      />
       <Breadcrumbs data={page} />
       <Hero
         {...hero}
@@ -64,6 +72,12 @@ async function getData(slug: string) {
         "name" : hero.heading
       },
       ${Components_Query}
+      "OrganizationData": *[_type=="global"][0] {
+        OrganizationSchema {
+          name,
+          description
+        },
+      },
   }`,
     params: { slug },
     tags: ['BlogPost_Collection'],

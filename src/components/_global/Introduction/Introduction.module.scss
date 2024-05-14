@@ -2,7 +2,7 @@
   background-color: var(--primary-200);
   padding-bottom: clamp(32px, calc(48vw / 7.68), 64px);
   display: grid;
-  align-items: center;
+  align-items: flex-start;
   column-gap: clamp(48px, calc(82vw / 7.68), 82px);
   @media (min-width: 1050px) {
     grid-template-columns: 1.75fr 1fr;
@@ -30,6 +30,7 @@
       margin-top: clamp(28px, calc(36vw / 7.68), 36px);
     }
   }
+  margin-top: clamp(32px, calc(60vw / 7.68), 64px);
   img {
     margin-left: auto;
     width: 100%;

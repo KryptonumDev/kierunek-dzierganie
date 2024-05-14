@@ -158,6 +158,12 @@ export type BlogPostQueryProps = {
     facebook: string;
     pinterest: string;
   };
+  OrganizationData: {
+    OrganizationSchema: {
+      name: string;
+      description: string;
+    };
+  };
 };
 
 export type BlogCategoryPageQueryProps = {

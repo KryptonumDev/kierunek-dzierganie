@@ -14,6 +14,7 @@ import { Img_Query } from '@/components/ui/image';
 import RelatedProducts from '@/components/_product/RelatedProducts';
 import { createClient } from '@/utils/supabase-server';
 import PrintedManual from '@/components/_dashboard/PrintedManual';
+import ProductSchema from '@/global/Schema/ProductSchema';
 
 const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
   const {
@@ -29,6 +30,12 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
 
   return (
     <>
+      <ProductSchema
+        image={product.gallery?.[0] ?? undefined}
+        name={product.name}
+        price={product.price}
+        reviews={product.reviews}
+      />
       <Breadcrumbs
         data={[
           {

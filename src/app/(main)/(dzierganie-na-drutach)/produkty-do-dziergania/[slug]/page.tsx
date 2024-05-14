@@ -10,6 +10,7 @@ import Description, { Description_Query } from '@/components/_product/Descriptio
 import { Img_Query } from '@/components/ui/image';
 import Reviews from '@/components/_product/Reviews';
 import { createClient } from '@/utils/supabase-server';
+import ProductSchema from '@/global/Schema/ProductSchema';
 
 const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
   const {
@@ -36,6 +37,12 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
 
   return (
     <>
+      <ProductSchema
+        name={name}
+        image={gallery?.[0] ?? undefined}
+        price={price}
+        reviews={reviews}
+      />
       <Breadcrumbs
         data={[
           {
@@ -76,7 +83,7 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
           course={false}
           product={{
             id: _id,
-            type: _type
+            type: _type,
           }}
         />
       </Informations>

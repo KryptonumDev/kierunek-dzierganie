@@ -28,6 +28,7 @@ const BlogSection = async ({
       <BlogPosts
         slug={slug}
         number={number}
+        highlightedPost={highlightedPost}
       />
       <Pagination
         currentPage={number}

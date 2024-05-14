@@ -8,6 +8,7 @@ import AddToCart from '@/components/ui/AddToCart';
 import { formatPrice } from '@/utils/price-formatter';
 import Gallery from '@/components/ui/Gallery';
 import { Hearth } from '@/components/ui/Icons';
+import ColorPicker from './ColorPicker';
 
 const HeroPhysical = ({ name, id, variants, physical }: Props) => {
   const attributes = useMemo(() => {
@@ -96,16 +97,35 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
         <h1>{name}</h1>
         <div className={styles.attributes}>
           {attributes.map((el) => (
-            <p key={el.name}>
-              <span>Wybierz {el.name}</span>
-              <Select
-                className='select'
-                classNamePrefix='select'
-                defaultValue={{ value: chosenAttributes[el.name], label: chosenAttributes[el.name] }}
-                onChange={(e) => selectVariant(e, el.name)}
-                options={(() => [...el.value.map((v) => ({ value: v, label: v }))])()}
-              />
-            </p>
+            <>
+              {el.type === 'color' ? (
+                <div
+                  key={el.name}
+                  className={styles.colorPicker}
+                >
+                  <span>Wybierz {el.name}</span>
+                  {el.value.map((hex, index) => (
+                    <ColorPicker
+                      key={index}
+                      hex={hex}
+                      onClick={() => selectVariant({ value: hex, label: hex }, el.name)}
+                      data-selected={chosenAttributes[el.name] == hex}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p key={el.name}>
+                  <span>Wybierz {el.name}</span>
+                  <Select
+                    className='select'
+                    classNamePrefix='select'
+                    defaultValue={{ value: chosenAttributes[el.name], label: chosenAttributes[el.name] }}
+                    onChange={(e) => selectVariant(e, el.name)}
+                    options={(() => [...el.value.map((v) => ({ value: v, label: v }))])()}
+                  />
+                </p>
+              )}
+            </>
           ))}
         </div>
         <div className={styles['flex']}>
