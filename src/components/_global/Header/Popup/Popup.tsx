@@ -54,7 +54,7 @@ export default function Popup({
             setShowCart={setShowCart}
             setPopupState={setPopupState}
             key={i}
-            {...item}
+            {...(item as unknown as ProductCard[] | null)}
           />
         ))}
       </div>
