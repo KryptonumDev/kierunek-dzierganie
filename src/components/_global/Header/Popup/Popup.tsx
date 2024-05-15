@@ -12,7 +12,7 @@ export default function Popup({
   className,
   setShowCart,
 }: {
-  data: ProductCard[] | undefined;
+  data: ProductCard[] | null;
   closeIcon: React.ReactNode;
   setPopupState: (variable: boolean) => void;
   popupState: boolean;
