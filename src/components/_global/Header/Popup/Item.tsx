@@ -22,7 +22,6 @@ export default function Item({
   setShowCart,
   setPopupState,
 }: ItemType) {
-
   return (
     <div className={styles.item}>
       {variants != null ? (
@@ -57,7 +56,7 @@ export default function Item({
                       <Hearth /> <span>Brak opinii</span>
                     </p>
                   )}
-                  <p>{variant.name}</p>
+                  <p>{`${name} - ${variant.name}`}</p>
                   <p>
                     <span>{formatPrice(variant.price!)}</span>
                   </p>
