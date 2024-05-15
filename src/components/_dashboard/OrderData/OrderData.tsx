@@ -107,34 +107,37 @@ const OrderData = ({ order }: OrderDataTypes) => {
         <div>
           <p className={styles['title']}>Dane dostawy</p>
           <p className={styles['text']}>
-            {order.shipping.firstName}
-            <br />
-            {order.shipping.address1}
-            <br />
-            {order.shipping.city}, {order.shipping.postcode}
-            <br />
-            {order.shipping.phone}
+            {order.shipping && (
+              <>
+                {order.shipping.firstName}
+                <br />
+                {order.shipping.address1}
+                <br />
+                {order.shipping.city}, {order.shipping.postcode}
+                <br />
+                {order.shipping.phone}
+              </>
+            )}
             {order.shippingMethod && (
               <>
-                <br />
-                <br />
-                <strong>Metoda dostawy:</strong> {order.shippingMethod.name}
+                {order.shipping && (
+                  <>
+                    <br />
+                    <br />
+                  </>
+                )}
+                Metoda dostawy: {order.shippingMethod.name}
                 {order.shippingMethod.data && (
                   <>
                     <br />
                     <span>
-                      <strong>Adres:</strong>{' '}
-                      {order.shippingMethod.data.street}, {order.shippingMethod.data.postal_code}{' '}
+                      Adres: {order.shippingMethod.data.street}, {order.shippingMethod.data.postal_code}{' '}
                       {order.shippingMethod.data.city}
                     </span>
                     <br />
-                    <span>
-                      <strong>Punkt:</strong> {order.shippingMethod.data.foreign_access_point_id}
-                    </span>
+                    <span>Punkt: {order.shippingMethod.data.foreign_access_point_id}</span>
                     <br />
-                    <span>
-                      <strong>Dostawca:</strong> {order.shippingMethod.data.supplier}
-                    </span>
+                    <span>Dostawca: {order.shippingMethod.data.supplier}</span>
                   </>
                 )}
               </>

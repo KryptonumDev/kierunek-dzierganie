@@ -40,6 +40,10 @@ export type QueryProps = {
   shipping?: Shipping;
   billing?: Billing;
   virtualWallet: number;
+  deliverySettings: {
+    deliveryPrice: number;
+    paczkomatPrice: number;
+  } | null;
 };
 
 export type EmptyCart = {

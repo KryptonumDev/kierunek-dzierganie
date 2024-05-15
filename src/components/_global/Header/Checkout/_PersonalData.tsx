@@ -2,9 +2,9 @@ import Input from '@/components/ui/Input';
 import { useForm } from 'react-hook-form';
 import styles from './Checkout.module.scss';
 import Checkbox from '@/components/ui/Checkbox';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Button from '@/components/ui/Button';
-import type { InputState, MappingProps } from './Checkout.types';
+import type { FormValues, InputState, MappingProps } from './Checkout.types';
 import Radio from '@/components/ui/Radio';
 import { useCart } from 'react-use-cart';
 import { toast } from 'react-toastify';
@@ -14,31 +14,13 @@ import Select from '@/components/ui/Select';
 import countryList from 'react-select-country-list';
 import Script from 'next/script';
 
-type FormValues = {
-  fullName?: string;
-  email: string;
-  address: string;
-  city: string;
-  country: string;
-  zipCode: string;
-  phoneNumber?: string;
 
-  shippingFullName?: string;
-  shippingAddress?: string;
-  shippingCity?: string;
-  shippingCountry?: string;
-  shippingZipCode?: string;
-
-  nip?: string;
-  companyName?: string;
-
-  shippingSameAsBilling: boolean;
-
-  invoiceType: 'Osoba prywatna' | 'Firma';
-  shippingMethod?: string;
-};
-
-const generateNewInput = (data: FormValues, input: InputState, selectedMapPoint: MapPoint | null) => {
+const generateNewInput = (
+  data: FormValues,
+  input: InputState,
+  selectedMapPoint: MapPoint | null,
+  shippingMethods: { name: string; map: boolean; price: number }[]
+) => {
   return {
     ...input,
     firmOrder: data.invoiceType === 'Firma',
@@ -46,9 +28,7 @@ const generateNewInput = (data: FormValues, input: InputState, selectedMapPoint:
     shippingMethod: {
       name: data.shippingMethod,
       price: shippingMethods.find((method) => method.name === data.shippingMethod)?.price || 0,
-      data: shippingMethods.find((method) => method.name === data.shippingMethod)?.map
-        ? selectedMapPoint
-        : '',
+      data: shippingMethods.find((method) => method.name === data.shippingMethod)?.map ? selectedMapPoint : '',
     },
     shipping: {
       firstName: data.shippingFullName,
@@ -75,7 +55,7 @@ const generateNewInput = (data: FormValues, input: InputState, selectedMapPoint:
   };
 };
 
-const generateDefaults = (input: InputState) => {
+const generateDefaults = (input: InputState, shippingMethods: { name: string }[]) => {
   return {
     shippingMethod: shippingMethods[0]!.name,
 
@@ -102,15 +82,21 @@ const generateDefaults = (input: InputState) => {
   };
 };
 
-const shippingMethods = [
-  {
-    name: 'Apaczka',
-    price: 1250,
-    map: true,
-  },
-];
-
-export default function PersonalData({ goToCart, setInput, input }: MappingProps) {
+export default function PersonalData({ goToCart, setInput, input, deliverySettings }: MappingProps) {
+  const shippingMethods = useMemo(() => {
+    return [
+      {
+        name: 'Kurier InPost',
+        price: deliverySettings?.deliveryPrice ?? 2000,
+        map: false,
+      },
+      {
+        name: 'Paczkomat Inpost',
+        price: deliverySettings?.paczkomatPrice ?? 2000,
+        map: true,
+      },
+    ];
+  }, [deliverySettings]);
   const [selectedMapPoint, setSelectedMapPoint] = useState<MapPoint | null>(null);
   const [apaczka, setApaczka] = useState(null);
   const { emptyCart } = useCart();
@@ -121,19 +107,48 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
     setValue,
     control,
     formState: { errors },
-  } = useForm<FormValues>({ mode: 'all', defaultValues: generateDefaults(input) });
+  } = useForm<FormValues>({ mode: 'all', defaultValues: generateDefaults(input, shippingMethods) });
 
   const shippingMethod = watch('shippingMethod');
+  const shippingSameAsBilling = watch('shippingSameAsBilling');
 
   useEffect(() => {
     setInput((prev) => ({
       ...prev,
       delivery: shippingMethods.find((method) => method.name === shippingMethod)?.price || 0,
     }));
-  }, [shippingMethod, setInput]);
+  }, [shippingMethod, setInput, shippingMethods]);
+
+
+  useEffect(() => {
+    setValue('shippingFullName', watch('fullName'));
+    setValue('shippingAddress', watch('address'));
+    setValue('shippingCity', watch('city'));
+    setValue('shippingZipCode', watch('zipCode'));
+    setValue('shippingCountry', watch('country'));
+  }, [shippingSameAsBilling, setValue, watch]);
+
+  const invoiceType = watch('invoiceType');
+
+  const initApaczka = () => {
+    /* key:  */
+    const apaczkaMap = new window.ApaczkaMap({
+      app_id: process.env.NEXT_PUBLIC_APACZKA_APP_ID,
+      onChange: function (record: MapPoint) {
+        setSelectedMapPoint(record);
+      },
+    });
+    apaczkaMap.setFilterSupplierAllowed(['INPOST']);
+    setApaczka(apaczkaMap);
+  };
+
+  const openApaczka = () => {
+    // @ts-expect-error - don't have types for apaczka instance
+    apaczka.show({ point: selectedMapPoint });
+  };
 
   const onSubmit = handleSubmit(async (data) => {
-    const newInput = generateNewInput(data, input, selectedMapPoint);
+    const newInput = generateNewInput(data, input, selectedMapPoint, shippingMethods);
     setInput(newInput as InputState);
     await fetch('/api/payment/create', {
       method: 'POST',
@@ -158,37 +173,6 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
       });
   });
 
-  const shippingSameAsBilling = watch('shippingSameAsBilling');
-
-  useEffect(() => {
-    setValue('shippingFullName', watch('fullName'));
-    setValue('shippingAddress', watch('address'));
-    setValue('shippingCity', watch('city'));
-    setValue('shippingZipCode', watch('zipCode'));
-    setValue('shippingCountry', watch('country'));
-  }, [shippingSameAsBilling, setValue, watch]);
-
-  const invoiceType = watch('invoiceType');
-
-  const initApaczka = () => {
-    {
-      /* key: 6qxqpdy8b4ygujapfmnh3fxow6ho5njd */
-    }
-    const apaczkaMap = new window.ApaczkaMap({
-      app_id: '1320108_LEgNbCQabNbVO3IG1jU9cYvI',
-      onChange: function (record: MapPoint) {
-        setSelectedMapPoint(record);
-      },
-    });
-    setApaczka(apaczkaMap);
-    apaczkaMap.show({});
-  };
-
-  const openApaczka = () => {
-    // @ts-expect-error - don't have types for apaczka instance
-    apaczka.show({ point: selectedMapPoint });
-  };
-
   return (
     <>
       <form
@@ -196,52 +180,78 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
         className={styles['main']}
         onSubmit={onSubmit}
       >
-        <Script src='https://mapa.apaczka.pl/client/apaczka.map.js' />
+        <Script
+          onLoad={initApaczka}
+          src='https://mapa.apaczka.pl/client/apaczka.map.js'
+        />
         {input.needDelivery && (
           <>
             <legend>Wybierz sposób dostawy</legend>
             <fieldset>
-              {shippingMethods.map((method) => (
-                <div
-                  data-active={shippingMethod === method.name}
-                  data-selected={!!selectedMapPoint}
-                  key={method.name}
-                  className={styles['map']}
-                >
-                  <Radio
-                    register={register('shippingMethod', {
-                      validate: () => !!selectedMapPoint || 'Musisz wybrać paczkomat',
-                    })}
-                    value={method.name}
-                    label={`${method.name} <strong>${formatPrice(method.price)}</strong>`}
-                    errors={errors}
-                  />
-                  {selectedMapPoint ? (
-                    <div className={styles['inpost-data']}>
-                      <p>
-                        {selectedMapPoint.street}, {selectedMapPoint.postal_code} {selectedMapPoint.city}
-                      </p>
-                      <p>Punkt: {selectedMapPoint.foreign_access_point_id}</p>
-                      <p>Dostawca: {selectedMapPoint.supplier}</p>
-                      <button
-                        className='link'
-                        type='button'
-                        onClick={() => openApaczka()}
-                      >
-                        Zmień
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      className='link'
-                      type='button'
-                      onClick={initApaczka}
+              {shippingMethods.map((method) => {
+                if (method.map)
+                  return (
+                    <div
+                      data-active={shippingMethod === method.name}
+                      data-selected={!!selectedMapPoint}
+                      key={method.name}
+                      className={styles['map']}
                     >
-                      Wybierz paczkomat
-                    </button>
-                  )}
-                </div>
-              ))}
+                      <Radio
+                        register={register('shippingMethod', {
+                          validate: () =>
+                            shippingMethod !== method.name || !!selectedMapPoint || 'Musisz wybrać paczkomat',
+                        })}
+                        value={method.name}
+                        label={`${method.name} <strong>${formatPrice(method.price)}</strong>`}
+                        errors={errors}
+                      />
+                      {shippingMethod === method.name && (
+                        <>
+                          {selectedMapPoint ? (
+                            <div className={styles['inpost-data']}>
+                              <p>
+                                {selectedMapPoint.street}, {selectedMapPoint.postal_code} {selectedMapPoint.city}
+                              </p>
+                              <p>Punkt: {selectedMapPoint.foreign_access_point_id}</p>
+                              <p>Dostawca: {selectedMapPoint.supplier}</p>
+                              <button
+                                className='link'
+                                type='button'
+                                onClick={openApaczka}
+                              >
+                                Zmień
+                              </button>
+                            </div>
+                          ) : (
+                            <button
+                              className='link'
+                              type='button'
+                              onClick={openApaczka}
+                            >
+                              Wybierz paczkomat
+                            </button>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  );
+
+                return (
+                  <div
+                    data-active={shippingMethod === method.name}
+                    key={method.name}
+                    className={styles['map']}
+                  >
+                    <Radio
+                      register={register('shippingMethod')}
+                      value={method.name}
+                      label={`${method.name} <strong>${formatPrice(method.price)}</strong>`}
+                      errors={{}}
+                    />
+                  </div>
+                );
+              })}
             </fieldset>
           </>
         )}
@@ -354,55 +364,59 @@ export default function PersonalData({ goToCart, setInput, input }: MappingProps
             errors={errors}
           />
         </fieldset>
-        <legend>Adres dostawy</legend>
-        <fieldset>
-          <Checkbox
-            register={register('shippingSameAsBilling')}
-            label={<>Adres dostawy taki sam jak adres do faktury</>}
-            errors={errors}
-          />
-          {!shippingSameAsBilling && (
-            <>
-              <Input
-                register={register('shippingFullName')}
-                label='Imię i nazwisko'
+        {input.needDelivery && shippingMethod === 'Kurier InPost' && (
+          <>
+            <legend>Adres dostawy</legend>
+            <fieldset>
+              <Checkbox
+                register={register('shippingSameAsBilling')}
+                label={<>Adres dostawy taki sam jak adres do faktury</>}
                 errors={errors}
-                readOnly={shippingSameAsBilling}
-                tabIndex={shippingSameAsBilling ? -1 : 0}
               />
-              <Input
-                register={register('shippingAddress')}
-                label='Adres'
-                errors={errors}
-                readOnly={shippingSameAsBilling}
-                tabIndex={shippingSameAsBilling ? -1 : 0}
-              />
-              <div className={styles['zip']}>
-                <Input
-                  register={register('shippingZipCode')}
-                  label='Kod pocztowy'
-                  errors={errors}
-                  readOnly={shippingSameAsBilling}
-                  tabIndex={shippingSameAsBilling ? -1 : 0}
-                />
-                <Input
-                  register={register('shippingCity')}
-                  label='Miasto'
-                  errors={errors}
-                  readOnly={shippingSameAsBilling}
-                  tabIndex={shippingSameAsBilling ? -1 : 0}
-                />
-              </div>
-              <Input
-                register={register('shippingCountry')}
-                label='Kraj'
-                errors={errors}
-                readOnly={shippingSameAsBilling}
-                tabIndex={shippingSameAsBilling ? -1 : 0}
-              />
-            </>
-          )}
-        </fieldset>
+              {!shippingSameAsBilling && (
+                <>
+                  <Input
+                    register={register('shippingFullName')}
+                    label='Imię i nazwisko'
+                    errors={errors}
+                    readOnly={shippingSameAsBilling}
+                    tabIndex={shippingSameAsBilling ? -1 : 0}
+                  />
+                  <Input
+                    register={register('shippingAddress')}
+                    label='Adres'
+                    errors={errors}
+                    readOnly={shippingSameAsBilling}
+                    tabIndex={shippingSameAsBilling ? -1 : 0}
+                  />
+                  <div className={styles['zip']}>
+                    <Input
+                      register={register('shippingZipCode')}
+                      label='Kod pocztowy'
+                      errors={errors}
+                      readOnly={shippingSameAsBilling}
+                      tabIndex={shippingSameAsBilling ? -1 : 0}
+                    />
+                    <Input
+                      register={register('shippingCity')}
+                      label='Miasto'
+                      errors={errors}
+                      readOnly={shippingSameAsBilling}
+                      tabIndex={shippingSameAsBilling ? -1 : 0}
+                    />
+                  </div>
+                  <Input
+                    register={register('shippingCountry')}
+                    label='Kraj'
+                    errors={errors}
+                    readOnly={shippingSameAsBilling}
+                    tabIndex={shippingSameAsBilling ? -1 : 0}
+                  />
+                </>
+              )}
+            </fieldset>
+          </>
+        )}
       </form>
       <div className={styles.buttons}>
         <button

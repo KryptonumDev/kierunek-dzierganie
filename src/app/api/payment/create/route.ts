@@ -32,7 +32,7 @@ export async function POST(request: Request) {
         user_id: input.user_id,
         products: input.products,
         billing: input.billing,
-        shipping: input.shipping,
+        shipping: input.needDelivery && !input.shippingMethod?.data ? input.shipping : null,
         amount: input.totalAmount,
         shipping_method: input.needDelivery ? input.shippingMethod : null,
         used_discount: input.discount || null,
@@ -40,6 +40,7 @@ export async function POST(request: Request) {
         paid_at: null,
         payment_id: null,
         payment_method: 'Przelewy24',
+        need_delivery: input.needDelivery,
       })
       .select('id')
       .single();

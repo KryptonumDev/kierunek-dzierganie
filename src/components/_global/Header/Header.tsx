@@ -4,6 +4,7 @@ import Markdown from '@/components/ui/markdown';
 import { Img_Query } from '@/components/ui/image';
 import { PRODUCT_CARD_QUERY } from '@/global/constants';
 import { createClient } from '@/utils/supabase-server';
+import { createClient as createAdminClient } from '@/utils/supabase-admin';
 import type { QueryProps } from './Header.types';
 
 const Header = async () => {
@@ -34,6 +35,15 @@ const Header = async () => {
     .eq('id', user?.id)
     .single();
 
+  const adminClient = createAdminClient();
+
+  const { data: deliverySettings } = await adminClient
+    .from('settings')
+    .select('value->deliveryPrice, value->paczkomatPrice')
+    .eq('name', 'apaczka')
+    .returns<{ deliveryPrice: number; paczkomatPrice: number }[]>()
+    .single();
+
   return (
     <Content
       global={global}
@@ -49,6 +59,7 @@ const Header = async () => {
       shipping={data?.shipping_data}
       billing={data?.billing_data}
       userId={user?.id}
+      deliverySettings={deliverySettings}
       // @ts-expect-error - virtual_wallet is not array, bug in supabase
       virtualWallet={data?.virtual_wallet?.amount}
       ownedCourses={data?.courses_progress?.map((course) => course.course_id as string)}

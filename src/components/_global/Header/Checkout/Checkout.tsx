@@ -55,6 +55,7 @@ export default function Checkout({
   usedVirtualMoney,
   userId,
   setUsedDiscount,
+  deliverySettings,
   // virtualWallet,
 }: Props) {
   const [step, setStep] = useState(1);
@@ -137,7 +138,7 @@ export default function Checkout({
           {CrossIcon}
         </button>
         <div className={styles['content']}>
-          {stepContent({ goToCart, setStep, input, setInput })[step as keyof typeof stepContent]}
+          {stepContent({ goToCart, setStep, input, setInput, deliverySettings })[step as keyof typeof stepContent]}
           <SummaryAside input={input} />
         </div>
       </div>

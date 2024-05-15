@@ -16,6 +16,10 @@ export type Props = {
   usedDiscount: Discount | null;
   usedVirtualMoney: number | null;
   setUsedDiscount: Dispatch<SetStateAction<Discount | null>>;
+  deliverySettings: {
+    deliveryPrice: number;
+    paczkomatPrice: number;
+  } | null;
 };
 
 export type InputState = {
@@ -58,8 +62,36 @@ export type MappingProps = {
   setStep: (step: number) => void;
   input: InputState;
   setInput: Dispatch<SetStateAction<InputState>>;
+  deliverySettings: {
+    deliveryPrice: number;
+    paczkomatPrice: number;
+  } | null;
 };
 
 export type AsideProps = {
   input: InputState;
+};
+
+export type FormValues = {
+  fullName?: string;
+  email: string;
+  address: string;
+  city: string;
+  country: string;
+  zipCode: string;
+  phoneNumber?: string;
+
+  shippingFullName?: string;
+  shippingAddress?: string;
+  shippingCity?: string;
+  shippingCountry?: string;
+  shippingZipCode?: string;
+
+  nip?: string;
+  companyName?: string;
+
+  shippingSameAsBilling: boolean;
+
+  invoiceType: 'Osoba prywatna' | 'Firma';
+  shippingMethod?: string;
 };
