@@ -96,19 +96,29 @@ export default function Cart({
   };
 
   function filterFetchedItems() {
-    const filteredFetchItems = fetchedItems?.filter((item) => item.popup == true);
+    let filteredFetchItems = fetchedItems;
 
     const materials_linkIds = filteredFetchItems?.map((item) => item.materials_link?._id);
     const printed_manualIds = filteredFetchItems?.map((item) => item.printed_manual?._id);
 
-    fetchedItems?.forEach((product) => {
+    filteredFetchItems?.map((product) => {
       if (materials_linkIds?.includes(product._id)) {
-        product.materials_link = undefined;
+        filteredFetchItems?.forEach((item) => {
+          if (item.materials_link?._id === product._id) {
+            item.materials_link = undefined;
+          }
+        });
       }
       if (printed_manualIds?.includes(product._id)) {
-        product.printed_manual = undefined;
+        filteredFetchItems?.forEach((item) => {
+          if (item.printed_manual?._id === product._id) {
+            item.printed_manual = undefined;
+          }
+        });
       }
     });
+
+    filteredFetchItems = filteredFetchItems?.filter((item) => item.popup == true) ?? [];
 
     return filteredFetchItems;
   }

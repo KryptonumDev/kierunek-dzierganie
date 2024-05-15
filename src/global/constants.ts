@@ -138,6 +138,16 @@ export const PRODUCT_CARD_QUERY = `
     countInStock,
     basis,
     "slug": slug.current,
+    variants[] {
+      "_id": _key,
+      name,
+      price,
+      discount,
+      countInStock,
+      gallery[0]{
+        ${Img_Query}
+      },
+    },
   },
   printed_manual -> {
     _id,
@@ -151,6 +161,15 @@ export const PRODUCT_CARD_QUERY = `
     "reviewsCount": count(*[_type == 'productReviewCollection' && references(^._id)]),
     countInStock,
     basis,
+    variants[] {
+      "_id": _key,
+      name,
+      price,
+      countInStock,
+      gallery[0]{
+        ${Img_Query}
+      },
+    },
   },
   popup,
   complexity,
@@ -158,7 +177,6 @@ export const PRODUCT_CARD_QUERY = `
     "_id": _key,
     name,
     price,
-    discount,
     countInStock,
     gallery[0]{
       ${Img_Query}

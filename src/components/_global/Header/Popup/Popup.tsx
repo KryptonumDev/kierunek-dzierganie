@@ -1,6 +1,6 @@
 import { type ProductCard } from '@/global/types';
 import styles from './Popup.module.scss';
-import Item from './Item';
+import Items from './Items';
 import { useEffect } from 'react';
 import { useRef } from 'react';
 
@@ -12,7 +12,7 @@ export default function Popup({
   className,
   setShowCart,
 }: {
-  data: ProductCard[] | undefined;
+  data: ProductCard[] | null;
   closeIcon: React.ReactNode;
   setPopupState: (variable: boolean) => void;
   popupState: boolean;
@@ -50,11 +50,11 @@ export default function Popup({
       </p>
       <div className={styles.items}>
         {data?.map((item, i) => (
-          <Item
+          <Items
             setShowCart={setShowCart}
             setPopupState={setPopupState}
             key={i}
-            {...item}
+            {...(item as unknown as ProductCard[] | null)}
           />
         ))}
       </div>

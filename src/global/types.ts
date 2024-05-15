@@ -43,7 +43,7 @@ export type ProductCard = {
   rating: number;
   materials_link?: {
     _id: string;
-    gallery: ImgType;
+    gallery?: ImgType;
     name: string;
     price: number;
     rating: number;
@@ -51,10 +51,19 @@ export type ProductCard = {
     countInStock: number;
     basis: 'knitting' | 'crocheting';
     slug: string;
+    variants: Array<{
+      _id: string;
+      name: string;
+      price: number;
+      discount: number;
+      countInStock: number;
+      featuredVideo: string;
+      gallery: ImgType;
+    }> | null;
   };
   printed_manual?: {
     _id: string;
-    gallery: ImgType;
+    gallery?: ImgType;
     name: string;
     price: number;
     rating: number;
@@ -62,6 +71,15 @@ export type ProductCard = {
     countInStock: number;
     basis: 'knitting' | 'crocheting';
     slug: string;
+    variants: Array<{
+      _id: string;
+      name: string;
+      price: number;
+      discount: number;
+      countInStock: number;
+      featuredVideo: string;
+      gallery: ImgType;
+    }> | null;
   };
   popup?: boolean;
   variant: {

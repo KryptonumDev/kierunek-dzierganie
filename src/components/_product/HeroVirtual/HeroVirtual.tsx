@@ -65,7 +65,7 @@ const HeroVirtual = ({ alreadyBought, course }: HeroVirtualTypes) => {
           />
           <div>
             <p>
-              Autorka {course.author.countOfCourse} {course.author.countOfCourse === 1 ? 'kursa' : 'kursów'}
+              Autorka {course.author.countOfCourse} {course.author.countOfCourse === 1 ? 'kursu' : 'kursów'}
             </p>
             <p>{course.author.description}</p>
           </div>

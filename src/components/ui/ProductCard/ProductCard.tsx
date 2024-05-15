@@ -128,7 +128,12 @@ const ProductCard = ({
         ) : (
           <>
             {mainVariant.type === 'variable' ? (
-              <Button href={`${basis ? basis : pageUrls[data.basis]}/${data.slug}`}>Wybierz wariant</Button>
+              <Button
+                href={`${basis ? basis : pageUrls[data.basis]}/${data.slug}`}
+                onClick={onClick}
+              >
+                Wybierz wariant
+              </Button>
             ) : mainVariant.countInStock! > 0 ? (
               <Button
                 disabled={buttonText !== 'Dodaj do koszyka'}
