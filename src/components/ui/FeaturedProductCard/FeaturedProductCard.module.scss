@@ -144,6 +144,8 @@
 
     .imageWrapper {
       overflow: hidden;
+      border-radius: 4px;
+      border-bottom-left-radius: 0px;
 
 
       img {

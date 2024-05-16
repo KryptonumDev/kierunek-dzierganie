@@ -94,10 +94,12 @@ const ProductCard = ({
               <span>{courseComplexityEnum[data.complexity].name}</span>
             </span>
           )}
-          <Img
-            data={mainVariant.image}
-            sizes='380px'
-          />
+          <div className={styles.imageWrapper}>
+            <Img
+              data={mainVariant.image}
+              sizes='380px'
+            />
+          </div>
         </div>
       )}
       <div className={styles['data']}>
