@@ -8,6 +8,7 @@ export type Props = {
     img: ImgType;
     name: string;
     description: string;
+    href: string;
   }[];
   index?: number;
 };
@@ -17,5 +18,6 @@ export type SliderProps = {
     img: React.ReactNode;
     name: string;
     description: string;
+    href: string;
   }[];
 };

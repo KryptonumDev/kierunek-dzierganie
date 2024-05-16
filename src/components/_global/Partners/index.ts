@@ -17,6 +17,7 @@ export const Partners_Query = `
       },
       name,
       description,
+      href,
     },
   },
 `;
