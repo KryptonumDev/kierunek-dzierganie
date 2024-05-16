@@ -3,6 +3,7 @@ import type { PageQueryProps } from '@/global/types';
 import Components, { Components_Query } from '@/components/Components';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
+import { notFound } from 'next/navigation';
 
 const page = { name: 'Partnerzy', path: '/partnerzy' };
 
@@ -23,13 +24,19 @@ export async function generateMetadata() {
 }
 
 const query = async (): Promise<PageQueryProps> => {
-  const data = await sanityFetch({
+  const data = await sanityFetch<PageQueryProps & { displayPage: boolean }>({
     query: /* groq */ `
       *[_type == "Partners_Page"][0] {
+        displayPage,
         ${Components_Query}
       }
     `,
     tags: ['Partners_Page'],
   });
+
+  if (!data.displayPage) {
+    notFound();
+  }
+
   return data as PageQueryProps;
 };
