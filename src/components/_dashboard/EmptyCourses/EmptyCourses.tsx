@@ -3,7 +3,7 @@ import styles from './EmptyCourses.module.scss';
 import type { Props } from './EmptyCourses.types';
 import Img from '@/components/ui/image';
 import Link from 'next/link';
-import { FirstBadge, SecondBadge } from '@/components/ui/Icons';
+import { CrochetingLogo, KnittingLogo } from '@/components/ui/Icons';
 
 const EmptyCourses = ({ image_crochet, image_knitting }: Props) => {
   return (
@@ -21,8 +21,8 @@ const EmptyCourses = ({ image_crochet, image_knitting }: Props) => {
             href='/kursy-dziergania-na-drutach'
             className={styles.img}
           >
-            <div className={styles.badgeWrapper}>
-              <FirstBadge />
+            <div className={styles.iconWrapper}>
+              <KnittingLogo />
             </div>
             <Img
               data={image_knitting}
@@ -34,7 +34,7 @@ const EmptyCourses = ({ image_crochet, image_knitting }: Props) => {
             href='/kursy-dziergania-na-drutach'
             className={styles.cta}
           >
-            Dzierganie
+            Kursy dziergania
           </Button>
         </div>
         <div>
@@ -42,8 +42,8 @@ const EmptyCourses = ({ image_crochet, image_knitting }: Props) => {
             href='/kursy-szydelkowania'
             className={styles.img}
           >
-            <div className={styles.badgeWrapper}>
-              <SecondBadge />
+            <div className={styles.iconWrapper} data-crocheting="true">
+              <CrochetingLogo />
             </div>
             <Img
               data={image_crochet}
@@ -55,7 +55,7 @@ const EmptyCourses = ({ image_crochet, image_knitting }: Props) => {
             href='/kursy-szydelkowania'
             className={styles.cta}
           >
-            Szydełkowanie
+            Kursy szydełkowania
           </Button>
         </div>
       </div>

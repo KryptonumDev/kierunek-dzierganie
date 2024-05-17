@@ -2,6 +2,8 @@ import Button from '@/components/ui/Button';
 import styles from './EmptyOrders.module.scss';
 import type { Props } from './EmptyOrders.types';
 import Img from '@/components/ui/image';
+import Link from 'next/link';
+import { CrochetingLogo, KnittingLogo } from '@/components/ui/Icons';
 
 const EmptyOrders = ({ image_crochet, image_knitting }: Props) => {
   return (
@@ -17,18 +19,49 @@ const EmptyOrders = ({ image_crochet, image_knitting }: Props) => {
       </p>
       <div className={styles['grid']}>
         <div>
-          <Img
-            data={image_knitting}
-            sizes='(max-width: 640px) 150px, 300px'
-          />
-          <Button href='/kursy-dziergania-na-drutach'>Dzierganie</Button>
+          <Link
+            href='/kursy-dziergania-na-drutach'
+            className={styles.img}
+          >
+            <div className={styles.iconWrapper}>
+              <KnittingLogo />
+            </div>
+            <Img
+              data={image_knitting}
+              sizes='(max-width: 640px) 150px, 300px'
+              className={styles.image}
+            />
+          </Link>
+          <Button
+            href='/kursy-dziergania-na-drutach'
+            className={styles.cta}
+          >
+            Kursy dziergania
+          </Button>
         </div>
         <div>
-          <Img
-            data={image_crochet}
-            sizes='(max-width: 640px) 150px, 300px'
-          />
-          <Button href='/kursy-szydelkowania'>Szydełkowanie</Button>
+          <Link
+            href='/kursy-szydelkowania'
+            className={styles.img}
+          >
+            <div
+              className={styles.iconWrapper}
+              data-crocheting='true'
+            >
+              <CrochetingLogo />
+            </div>
+            <Img
+              data={image_crochet}
+              sizes='(max-width: 640px) 150px, 300px'
+              className={styles.image}
+            />
+          </Link>
+          <Button
+            href='/kursy-szydelkowania'
+            className={styles.cta}
+          >
+            Kursy szydełkowania
+          </Button>
         </div>
       </div>
     </section>

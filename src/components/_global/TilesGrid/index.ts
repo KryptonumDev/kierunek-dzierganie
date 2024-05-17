@@ -8,9 +8,6 @@ export const TilesGrid_Query = `
     heading,
     paragraph,
     list[]{
-      badge {
-        ${Img_Query}
-      },
       img {
         ${Img_Query}
       },

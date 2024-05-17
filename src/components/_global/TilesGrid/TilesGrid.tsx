@@ -3,7 +3,7 @@ import Markdown from '@/components/ui/markdown';
 import Img from '@/components/ui/image';
 import Button from '@/components/ui/Button';
 import styles from './TilesGrid.module.scss';
-import { Decoration1 } from '@/components/ui/Icons';
+import { CrochetingLogo, Decoration1, KnittingLogo } from '@/components/ui/Icons';
 import type { Props } from './TilesGrid.types';
 
 const TilesGrid = ({ heading, paragraph, list }: Props) => {
@@ -15,7 +15,7 @@ const TilesGrid = ({ heading, paragraph, list }: Props) => {
         <Markdown>{paragraph}</Markdown>
       </header>
       <div className={styles.wrapper}>
-        {list.map(({ img, cta, badge }, i) => (
+        {list.map(({ img, cta }, i) => (
           <div
             className={styles.item}
             key={i}
@@ -24,12 +24,12 @@ const TilesGrid = ({ heading, paragraph, list }: Props) => {
               href={cta.href}
               className={styles.img}
             >
-              <div className={styles.badgeWrapper}>
-                <Img
-                  data={badge}
-                  className={styles.badge}
-                  sizes='(max-width: 499px) 80px, 125px'
-                />
+              <div
+                className={styles.iconWrapper}
+                data-crocheting={i == 1 ? true : false}
+              >
+                {i == 0 && <KnittingLogo />}
+                {i == 1 && <CrochetingLogo />}
               </div>
               <Img
                 data={img}
