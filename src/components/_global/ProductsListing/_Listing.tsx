@@ -3,12 +3,13 @@ import FeaturedProductCard from '@/components/ui/FeaturedProductCard';
 import styles from './ProductsListing.module.scss';
 import { ListingProps } from './ProductsListing.types';
 
-export default function Listing({ featuredProductExcerpt, products, basis, ownedCourses, bestSeller }: ListingProps) {
+export default function Listing({ featuredProductExcerpt, products, basis, ownedCourses, bestSeller, bestSellerBadge }: ListingProps) {
   return (
     <div className={styles['products']}>
       <FeaturedProductCard
         excerpt={featuredProductExcerpt}
         data={bestSeller}
+        badge={bestSellerBadge}
         basis={basis}
       />
       <div className={styles['grid']}>

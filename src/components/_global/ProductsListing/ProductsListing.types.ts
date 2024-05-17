@@ -19,6 +19,7 @@ export type ProductsListingTypes = {
   }[];
   ownedCourses?: string[];
   bestSeller: ProductCard;
+  bestSellerBadge?: string;
 };
 
 export type FiltersTypes = {
@@ -48,4 +49,5 @@ export type ListingProps = {
   products: ProductCard[];
   basis: string;
   bestSeller: ProductCard;
+  bestSellerBadge?: string;
 };

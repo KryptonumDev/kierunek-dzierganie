@@ -20,7 +20,8 @@ const CrochetingPage = async ({ searchParams }: { searchParams: { [key: string]:
       LatestBlogEntries: LatestBlogEntriesData,
       listing_title,
       listing_text,
-      listing_BestSeller
+      listing_HighlightedCourse,
+      listing_HighlightedCourse_Badge,
     },
     products,
     categories,
@@ -63,7 +64,8 @@ const CrochetingPage = async ({ searchParams }: { searchParams: { [key: string]:
         productsTotalCount={productsTotalCount}
         authors={authors}
         ownedCourses={res.data?.courses_progress?.map((course) => course.course_id as string)}
-        bestSeller={listing_BestSeller}
+        bestSeller={listing_HighlightedCourse}
+        bestSellerBadge={listing_HighlightedCourse_Badge}
       />
       <LatestBlogEntries {...LatestBlogEntriesData} />
     </>
@@ -73,7 +75,6 @@ const CrochetingPage = async ({ searchParams }: { searchParams: { [key: string]:
 export default CrochetingPage;
 
 const query = async (searchParams: { [key: string]: string }): Promise<CrochetingPage_QueryTypes> => {
-
   return await sanityFetch<CrochetingPage_QueryTypes>({
     query: /* groq */ `{
       "page": *[_type == "CrochetingCourses_Page"][0] {
@@ -82,9 +83,10 @@ const query = async (searchParams: { [key: string]: string }): Promise<Crochetin
         ${LatestBlogEntries_Query(true)}
         "listing_title" : listing_Heading_Courses,
         "listing_text": listing_Paragraph,
-        listing_BestSeller -> {
+        listing_HighlightedCourse -> {
           ${PRODUCT_CARD_QUERY}
-        }
+        },
+        listing_HighlightedCourse_Badge,
       },
       "products": *[
         (_type == 'course' || _type == 'bundle' )

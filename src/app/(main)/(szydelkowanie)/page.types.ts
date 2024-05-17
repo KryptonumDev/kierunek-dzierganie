@@ -10,7 +10,8 @@ export type CrochetingPage_QueryTypes = {
     LatestBlogEntries: LatestBlogEntriesTypes;
     listing_title: string;
     listing_text: string;
-    listing_BestSeller: ProductCard;
+    listing_HighlightedCourse: ProductCard;
+    listing_HighlightedCourse_Badge: string;
   };
   productsTotalCount: number;
   products: ProductCard[];
@@ -33,7 +34,8 @@ export type CrochetingProductsPage_QueryTypes = {
     LatestBlogEntries: LatestBlogEntriesTypes;
     listing_title: string;
     listing_text: string;
-    listing_BestSeller: ProductCard;
+    listing_HighlightedCourse: ProductCard;
+    listing_HighlightedCourse_Badge: string;
   };
   productsTotalCount: number;
   products: ProductCard[];

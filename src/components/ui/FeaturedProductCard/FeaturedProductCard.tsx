@@ -11,7 +11,7 @@ import { courseComplexityEnum, pageUrls } from '@/global/constants';
 import Link from 'next/link';
 import { Hearth } from '../Icons';
 
-const FeaturedProductCard = ({ excerpt, data, inCart = false, basis }: Props) => {
+const FeaturedProductCard = ({ excerpt, data, inCart = false, basis, badge }: Props) => {
   const { addItem } = useCart();
   const [buttonText, setButtonText] = useState(inCart ? 'Już w koszyku' : 'Dodaj do koszyka');
   const mainVariant = useMemo(() => {
@@ -90,7 +90,7 @@ const FeaturedProductCard = ({ excerpt, data, inCart = false, basis }: Props) =>
       <div className={styles['bestseller']}>
         <BestSeller />
         <h3>
-          <strong>Bestseller</strong>
+          <strong>{badge}</strong>
         </h3>
       </div>
       <div className={styles['data']}>
