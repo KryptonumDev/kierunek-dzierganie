@@ -25,6 +25,13 @@
       width: 100%;
       gap: 16px;
       align-items: flex-start;
+      position: relative;
+
+      a {
+        position: absolute;
+        z-index: 2;
+        inset: 0;
+      }
 
       @media (max-width: 999px) {
         grid-template-columns: 1fr 0.8fr;
@@ -53,13 +60,13 @@
       .imageWrapper {
         position: relative;
         overflow: hidden;
+        border-radius: 4px;
 
         >img {
           width: 100%;
           height: auto;
           object-fit: cover;
           aspect-ratio: 16/9;
-          border-radius: 4px;
           transition: transform 0.3s;
         }
       }

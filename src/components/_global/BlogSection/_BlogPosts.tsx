@@ -32,11 +32,15 @@ export default async function BlogPosts({
       id='wpisy'
     >
       {blogPosts.map(({ hero: { heading, img, paragraph }, portableText, slug }, i) => (
-        <Link
+        <div
           key={i}
           className={styles.item}
-          href={`/blog/${slug}`}
         >
+          <Link
+            key={i}
+            className={styles.item}
+            href={`/blog/${slug}`}
+          />
           <div className={styles.imageWrapper}>
             <Img
               data={img}
@@ -48,7 +52,7 @@ export default async function BlogPosts({
             <Markdown.h3>{heading}</Markdown.h3>
             <Markdown>{paragraph}</Markdown>
           </div>
-        </Link>
+        </div>
       ))}
     </div>
   );

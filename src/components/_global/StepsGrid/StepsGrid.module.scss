@@ -1,54 +1,64 @@
 .StepsGrid {
   padding: clamp(24px, calc(36vw / 7.68), 36px) 0;
   background-color: var(--primary-200);
+
   header {
     max-width: calc(793rem / 16);
     margin: 0 auto clamp(32px, calc(76vw / 7.68), 96px);
     text-align: center;
+
     h2 {
       margin-bottom: clamp(12px, calc(28vw / 7.68), 36px);
     }
+
     .paragraph {
-      & > *:not(:last-child) {
+      &>*:not(:last-child) {
         margin-bottom: 12px;
       }
     }
   }
+
   .list {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: clamp(24px, calc(36vw / 7.68), 48px);
     counter-reset: counter;
+
     .item {
       position: relative;
       text-align: center;
       counter-increment: counter;
-      > a {
+
+      >a {
         position: absolute;
         z-index: 2;
         inset: 0;
         display: block;
       }
 
-      a:hover ~ .img img {
+      a:hover~.img img {
         transform: scale(1.05);
       }
+
       &:nth-child(3n + 1) {
         .img::before {
           background: var(--primary-300);
         }
       }
+
       &:nth-child(3n + 2) {
         .img::before {
           background: var(--primary-400);
         }
       }
+
       &:nth-child(3n + 3) {
         .img::before {
           background: var(--primary-700);
           color: var(--primary-100);
         }
       }
+
       .img {
         position: relative;
 
@@ -66,6 +76,7 @@
           text-align: center;
           z-index: 1;
         }
+
         padding-left: 20px;
         padding-bottom: 16px;
         z-index: 1;
@@ -75,10 +86,10 @@
           position: relative;
           z-index: 0;
           overflow: hidden;
+          border-radius: 4px;
 
           img {
             transition: transform 0.3s var(--easing);
-            border-radius: 4px;
             aspect-ratio: 381/276;
             width: 100%;
             height: auto;
@@ -86,6 +97,7 @@
           }
         }
       }
+
       .ArrowIcon {
         z-index: -1;
         position: absolute;
@@ -93,12 +105,14 @@
         left: 62%;
         transform: rotate(-13deg);
       }
+
       @media (min-width: 950px) {
         &:nth-child(3n) {
           .ArrowIcon {
             display: none;
           }
         }
+
         &:nth-child(3n + 2) {
           .ArrowIcon {
             top: unset;
@@ -107,12 +121,15 @@
           }
         }
       }
+
       h3 {
         margin: clamp(12px, calc(16vw / 7.68), 24px) 0 clamp(8px, calc(12vw / 7.68), 12px);
       }
     }
+
     @media (max-width: 949px) {
       grid-template-columns: 1fr 1fr;
+
       .item {
         &:nth-child(2n) {
           .ArrowIcon {
@@ -121,8 +138,10 @@
         }
       }
     }
+
     @media (max-width: 649px) {
       grid-template-columns: 1fr;
+
       .ArrowIcon {
         display: none;
       }

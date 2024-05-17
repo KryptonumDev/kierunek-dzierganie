@@ -5,4 +5,5 @@ export type Props = {
   inCart?: boolean;
   excerpt?: JSX.Element;
   basis?: string;
+  badge?: string;
 };

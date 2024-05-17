@@ -19,7 +19,8 @@ const KnittingPage = async ({ searchParams }: { searchParams: { [key: string]: s
       LatestBlogEntries: LatestBlogEntriesData,
       listing_title,
       listing_text,
-      listing_BestSeller,
+      listing_HighlightedCourse,
+      listing_HighlightedCourse_Badge,
     },
     products,
     categories,
@@ -42,7 +43,8 @@ const KnittingPage = async ({ searchParams }: { searchParams: { [key: string]: s
         basis='/produkty-do-dziergania/'
         courses={false}
         productsTotalCount={productsTotalCount}
-        bestSeller={listing_BestSeller}
+        bestSeller={listing_HighlightedCourse}
+        bestSellerBadge={listing_HighlightedCourse_Badge}
       />
       <LatestBlogEntries {...LatestBlogEntriesData} />
     </>
@@ -61,9 +63,10 @@ const query = async (searchParams: { [key: string]: string }): Promise<KnittingP
         ${LatestBlogEntries_Query(true)}
         "listing_title" : listing_Heading_Courses,
         "listing_text": listing_Paragraph,
-        listing_BestSeller -> {
+        listing_HighlightedCourse -> {
           ${PRODUCT_CARD_QUERY}
-        }
+        },
+        listing_HighlightedCourse_Badge,
       },
       "products": *[
         _type == 'product'
