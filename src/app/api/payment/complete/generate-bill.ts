@@ -21,7 +21,7 @@ export async function generateBill(data: any, id: string) {
 
       return {
         ...product,
-        rabat: product.price - discount,
+        rabat: discount,
       };
     }
 
