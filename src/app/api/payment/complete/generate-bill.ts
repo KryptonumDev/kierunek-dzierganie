@@ -59,14 +59,14 @@ export async function generateBill(data: any, id: string) {
           Rabat: discount,
         };
       }),
-      ...(data.shipping_method && {
-        StawkaVat: settingsData!.value.vatDelivery / 100,
-        Ilosc: 1,
-        CenaJednostkowa: data.shipping_method.price / 100,
-        NazwaPelna: data.shipping_method.name,
-        Jednostka: 'sztuk',
-        TypStawkiVat: 'PRC',
-      }),
+      // ...(data.shipping_method && {
+      //   StawkaVat: settingsData!.value.vatDelivery / 100,
+      //   Ilosc: 1,
+      //   CenaJednostkowa: data.shipping_method.price / 100,
+      //   NazwaPelna: data.shipping_method.name,
+      //   Jednostka: 'sztuk',
+      //   TypStawkiVat: 'PRC',
+      // }),
     ],
     Kontrahent: {
       Nazwa: 'Martyna Brzozowska',
