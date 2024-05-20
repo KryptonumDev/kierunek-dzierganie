@@ -94,9 +94,9 @@ export default function Checkout({
         fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0) +
         (usedDiscount ? calculateDiscountAmount(input.amount, usedDiscount) : 0) -
         (usedVirtualMoney ? usedVirtualMoney * 100 : 0) +
-        (fetchedItems.some((item) => item._type === 'product') ? 1250 : 0),
+        (fetchedItems.some((item) => item._type === 'product') ? Number(deliverySettings?.deliveryPrice) : 0),
       needDelivery: fetchedItems.some((item) => item._type === 'product'),
-      delivery: (fetchedItems.some((item) => item._type === 'product') ? 1250 : 0),
+      delivery: (fetchedItems.some((item) => item._type === 'product') ? Number(deliverySettings?.deliveryPrice) : 0),
       discount: usedDiscount?.affiliatedBy === userId ? null : usedDiscount,
       virtualMoney: usedVirtualMoney,
       user_id: userId,

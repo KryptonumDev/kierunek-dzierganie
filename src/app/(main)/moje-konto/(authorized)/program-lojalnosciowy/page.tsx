@@ -141,5 +141,5 @@ async function query(): Promise<AffiliatePage_QueryTypes> {
     affiliateCode: data!.coupons?.code,
     // @ts-expect-error - virtual_wallet is not array, bug in supabase
     balance: data!.virtual_wallet?.amount,
-  };
+  }
 }
