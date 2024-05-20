@@ -113,11 +113,11 @@ export async function generateBill(data: any, id: string) {
   });
 
   const billId = await billRes.json();
-
+  console.log(billId.response.Identyfikator);
   await supabase
     .from('orders')
     .update({
-      bill: billId.response.Identyfikator,
+      bill: String(billId.response.Identyfikator),
       status: data.need_delivery ? 2 : 3,
     })
     .eq('id', id);
