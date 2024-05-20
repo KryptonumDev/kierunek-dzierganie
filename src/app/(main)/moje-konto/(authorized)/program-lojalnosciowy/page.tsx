@@ -131,15 +131,17 @@ async function query(): Promise<AffiliatePage_QueryTypes> {
     tags: ['AffiliateDashboard_Page'],
   });
 
+  console.log(data)
+
   return {
     ...res,
     userId: user!.id,
     // @ts-expect-error - coupons is not array, bug in supabase
-    isSubscribed: data!.coupons.code,
+    isSubscribed: data!.coupons?.code,
     name: data!.firstName as string,
     // @ts-expect-error - coupons is not array, bug in supabase
-    affiliateCode: data!.coupons.code,
+    affiliateCode: data!.coupons?.code,
     // @ts-expect-error - virtual_wallet is not array, bug in supabase
-    balance: data!.virtual_wallet.amount,
+    balance: data!.virtual_wallet?.amount,
   };
 }

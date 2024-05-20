@@ -364,7 +364,7 @@ export default function PersonalData({ goToCart, setInput, input, deliverySettin
             errors={errors}
           />
         </fieldset>
-        {input.needDelivery && shippingMethod === 'Kurier InPost' && (
+        {input.needDelivery && (
           <>
             <legend>Adres dostawy</legend>
             <fieldset>
