@@ -53,7 +53,7 @@ export async function generateBill(data: any, id: string) {
             Ilosc: product.quantity,
             CenaJednostkowa: (product.discount ?? product.price) / 100,
             NazwaPelna: product.name,
-            Jednostka: 'sztuk',
+            Jednostka: 'szt',
             TypStawkiVat: 'PRC',
             Rabat: product.rabat,
           };
@@ -65,7 +65,7 @@ export async function generateBill(data: any, id: string) {
           Ilosc: 1,
           CenaJednostkowa: (product.discount ?? product.price) / 100,
           NazwaPelna: product.name,
-          Jednostka: 'sztuk',
+          Jednostka: 'szt',
           TypStawkiVat: 'PRC',
           Rabat: product.rabat,
         };
@@ -87,14 +87,14 @@ export async function generateBill(data: any, id: string) {
   if (data.shipping_method) {
     requestContent.Pozycje.push({
       StawkaVat: settingsData!.value.vatDelivery / 100,
+      StawkaRyczaltu: settingsData!.value.ryczaltPhysical / 100,
       Ilosc: 1,
       CenaJednostkowa: data.shipping_method.price / 100,
       NazwaPelna: data.shipping_method.name,
-      Jednostka: 'sztuk',
+      Jednostka: 'szt',
       TypStawkiVat: 'PRC',
     });
   }
-  console.log(requestContent);
 
   const url = 'https://www.ifirma.pl/iapi/fakturakraj.json';
   const user = 'martyna_prochowska@o2.pl';
@@ -115,7 +115,7 @@ export async function generateBill(data: any, id: string) {
   });
 
   const billId = await billRes.json();
-  console.log(billId);
+
   await supabase
     .from('orders')
     .update({
