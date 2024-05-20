@@ -25,6 +25,16 @@ const nextConfig = {
         destination: '/kursy-dziergania-na-drutach',
         permanent: true,
       },
+      {
+        source: '/dlaczego-kierunek-dzierganie',
+        destination: '/nasze-marki',
+        permanent: true,
+      },
+      {
+        source: '/o-nas',
+        destination: '/zespol',
+        permanent: true,
+      }
     ];
   },
 };
