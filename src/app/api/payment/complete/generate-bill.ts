@@ -93,6 +93,7 @@ export async function generateBill(data: any, id: string) {
       TypStawkiVat: 'PRC',
     });
   }
+  console.log(requestContent);
 
   const url = 'https://www.ifirma.pl/iapi/fakturakraj.json';
   const user = 'martyna_prochowska@o2.pl';
@@ -113,7 +114,7 @@ export async function generateBill(data: any, id: string) {
   });
 
   const billId = await billRes.json();
-  console.log(billId.response.Identyfikator);
+  console.log(billId);
   await supabase
     .from('orders')
     .update({
