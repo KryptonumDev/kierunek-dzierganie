@@ -29,7 +29,7 @@ export async function generateBill(data: any, id: string) {
   });
 
   const requestContent = JSON.stringify({
-    Zaplacono: data.amount,
+    Zaplacono: data.amount / 100,
     LiczOd: 'BRT',
     DataWystawienia: new Date().toISOString().split('T')[0],
     MiejsceWystawienia: 'Miasto',
