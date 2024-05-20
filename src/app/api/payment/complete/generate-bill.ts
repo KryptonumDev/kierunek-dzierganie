@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase-admin';
 import Hex from 'crypto-js/enc-hex';
 import CryptoJS from 'crypto-js';
+import countryList from 'react-select-country-list';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function generateBill(data: any, id: string) {
@@ -71,15 +72,15 @@ export async function generateBill(data: any, id: string) {
       }),
     ],
     Kontrahent: {
-      Nazwa: 'Martyna Brzozowska',
-      Identyfikator: 'Zrób Mi Mamo',
-      NIP: '5222677740',
-      Ulica: 'Moszyn 50',
-      KodPocztowy: '06-100',
-      Kraj: 'Polska',
-      Miejscowosc: 'Pułtusk',
-      Email: 'kontakt@zrobmimamo.pl',
-      OsobaFizyczna: false,
+      Nazwa: data.billing.firstName,
+      Identyfikator: data.billing.invoiceType === 'Firma' ? data.billing.company : '',
+      NIP: data.billing.invoiceType === 'Firma' ? data.billing.nip : '',
+      Ulica: data.billing.address1,
+      KodPocztowy: data.billing.postcode,
+      Kraj: countryList().getLabel(data.billing.country),
+      Miejscowosc: data.billing.city,
+      Email: data.billing.email,
+      OsobaFizyczna: data.billing.invoiceType !== 'Firma',
     },
   };
 
