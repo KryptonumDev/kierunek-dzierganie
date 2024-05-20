@@ -4,9 +4,9 @@ import Components, { Components_Query } from '@/components/Components';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
 
-const page = { name: 'O nas', path: '/o-nas' };
+const page = { name: 'Zespół', path: '/zespol' };
 
-const AboutUsPage = async () => {
+const TeamPage = async () => {
   const { content }: PageQueryProps = await query();
 
   return (
@@ -16,20 +16,20 @@ const AboutUsPage = async () => {
     </>
   );
 };
-export default AboutUsPage;
+export default TeamPage;
 
 export async function generateMetadata() {
-  return await QueryMetadata('AboutUs_Page', `${page.path}`);
+  return await QueryMetadata('Team_Page', `${page.path}`);
 }
 
 const query = async (): Promise<PageQueryProps> => {
   const data = await sanityFetch({
     query: /* groq */ `
-      *[_type == "AboutUs_Page"][0] {
+      *[_type == "Team_Page"][0] {
         ${Components_Query}
       }
     `,
-    tags: ['AboutUs_Page'],
+    tags: ['Team_Page'],
   });
   return data as PageQueryProps;
 };

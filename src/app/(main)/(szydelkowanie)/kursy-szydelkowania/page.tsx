@@ -1,7 +1,7 @@
 import sanityFetch from '@/utils/sanity.fetch';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
-import HeroSimple, { HeroSimple_Query } from '@/components/_global/HeroSimple';
+// import HeroSimple, { HeroSimple_Query } from '@/components/_global/HeroSimple';
 import StepsGrid, { StepsGrid_Query } from '@/components/_global/StepsGrid';
 import LatestBlogEntries, { LatestBlogEntries_Query } from '@/components/_global/LatestBlogEntries';
 import type { CrochetingPage_QueryTypes } from '../page.types';
@@ -9,13 +9,15 @@ import ProductsListing from '@/components/_global/ProductsListing';
 import Markdown from '@/components/ui/markdown';
 import { PRODUCT_CARD_QUERY } from '@/global/constants';
 import { createClient } from '@/utils/supabase-server';
+import LogoSection, { LogoSection_Query } from '@/components/_global/LogoSection';
 
 const page = { name: 'Szydełkowanie', path: '/kursy-szydelkowania' };
 
 const CrochetingPage = async ({ searchParams }: { searchParams: { [key: string]: string } }) => {
   const {
     page: {
-      HeroSimple: HeroSimpleData,
+      LogoSection: LogoSectionData,
+      // HeroSimple: HeroSimpleData,
       StepsGrid: StepsGridData,
       LatestBlogEntries: LatestBlogEntriesData,
       listing_title,
@@ -52,7 +54,11 @@ const CrochetingPage = async ({ searchParams }: { searchParams: { [key: string]:
   return (
     <>
       <Breadcrumbs data={[page]} />
-      <HeroSimple {...HeroSimpleData} />
+      <LogoSection
+        {...LogoSectionData}
+        isHero={true}
+      />
+      {/* <HeroSimple {...HeroSimpleData} /> */}
       <StepsGrid {...StepsGridData} />
       <ProductsListing
         title={title}
@@ -78,7 +84,7 @@ const query = async (searchParams: { [key: string]: string }): Promise<Crochetin
   return await sanityFetch<CrochetingPage_QueryTypes>({
     query: /* groq */ `{
       "page": *[_type == "CrochetingCourses_Page"][0] {
-        ${HeroSimple_Query(true)}
+        ${LogoSection_Query(true)}
         ${StepsGrid_Query}
         ${LatestBlogEntries_Query(true)}
         "listing_title" : listing_Heading_Courses,
