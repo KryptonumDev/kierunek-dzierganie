@@ -8,15 +8,25 @@ export async function generateBill(data: any, id: string) {
 
   const { data: settingsData } = await supabase.from('settings').select('value').eq('name', 'ifirma').single();
 
-  let discount = 0;
+  // @ts-expect-error TODO: implement types
+  const productsWithDiscount = data.products.array.map((product) => {
+    let discount = 0;
 
-  if (data.used_discount) {
-    if (data.used_discount.type === 'PERCENTAGE') {
-      discount = data.amount;
-    } else {
-      discount = data.amount / data.products.array.length;
+    if (data.used_discount) {
+      if (data.used_discount.type === 'PERCENTAGE') {
+        discount = data.used_discount.amount;
+      } else {
+        discount = (data.used_discount.amount / data.products.array.length / (product.discount ?? product.price)) * 100;
+      }
+
+      return {
+        ...product,
+        rabat: product.price - discount,
+      };
     }
-  }
+
+    return product;
+  });
 
   const requestContent = JSON.stringify({
     Zaplacono: data.amount,
@@ -34,7 +44,7 @@ export async function generateBill(data: any, id: string) {
     Numer: null,
     Pozycje: [
       // @ts-expect-error hard to implement types here
-      ...data.products.array.map((product) => {
+      ...productsWithDiscount.map((product) => {
         if (product.type === 'product') {
           return {
             StawkaVat: settingsData!.value.vatPhysical / 100,
@@ -44,7 +54,7 @@ export async function generateBill(data: any, id: string) {
             NazwaPelna: product.name,
             Jednostka: 'sztuk',
             TypStawkiVat: 'PRC',
-            Rabat: discount,
+            Rabat: product.rabat,
           };
         }
 
@@ -56,7 +66,7 @@ export async function generateBill(data: any, id: string) {
           NazwaPelna: product.name,
           Jednostka: 'sztuk',
           TypStawkiVat: 'PRC',
-          Rabat: discount,
+          Rabat: product.rabat,
         };
       }),
       // ...(data.shipping_method && {
