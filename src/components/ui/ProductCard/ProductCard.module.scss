@@ -135,14 +135,18 @@
       }
     }
 
-    img {
-      max-width: 100%;
-      width: 100%;
-      height: auto;
-      object-fit: cover;
-      aspect-ratio: 380/280;
+    .imageWrapper {
       border-radius: 4px;
-      transition: transform 0.3s ease;
+      overflow: hidden;
+
+      img {
+        max-width: 100%;
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        aspect-ratio: 380/280;
+        transition: transform 0.3s ease;
+      }
     }
   }
 

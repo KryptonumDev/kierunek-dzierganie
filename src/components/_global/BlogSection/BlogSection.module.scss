@@ -17,6 +17,18 @@
     gap: clamp(20px, calc(28vw / 7.68), 32px);
     grid-template-columns: 7fr 5fr;
     border-radius: 4px;
+    position: relative;
+
+    &:hover .imageWrapper>img {
+      transform: scale(1.05);
+    }
+
+    .link {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      margin: 0 !important;
+    }
 
     @media (max-width: 999px) {
       grid-template-columns: 1fr;
@@ -29,18 +41,14 @@
       display: flex;
       align-self: center;
       overflow: hidden;
+      border-radius: 4px;
 
       >img {
         aspect-ratio: 1.6/1;
         object-fit: cover;
         width: 100%;
         height: auto;
-        border-radius: 4px;
         transition: transform 0.3s;
-
-        &:hover {
-          transform: scale(1.05);
-        }
       }
     }
 
@@ -95,16 +103,23 @@
       width: 100%;
       gap: 16px;
       align-items: flex-start;
+      position: relative;
+
+      a {
+        position: absolute;
+        z-index: 2;
+        inset: 0;
+      }
 
       .imageWrapper {
         position: relative;
         overflow: hidden;
+        border-radius: 4px;
 
         >img {
           width: 100%;
           object-fit: cover;
           aspect-ratio: 381/239;
-          border-radius: 4px;
           transition: transform 0.3s;
         }
       }

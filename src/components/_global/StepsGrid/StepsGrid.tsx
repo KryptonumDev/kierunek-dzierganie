@@ -26,7 +26,7 @@ const StepsGrid = ({ heading, paragraph, list }: StepsGridTypes) => {
               <div className={styles['img-wrap']}>
                 <Img
                   data={img}
-                  sizes=''
+                  sizes='(max-width:649px) 100vw, (max-width: 949px) 50vw, 33vw'
                 />
               </div>
               {i !== list.length - 1 && <ArrowIcon className={styles.ArrowIcon} />}

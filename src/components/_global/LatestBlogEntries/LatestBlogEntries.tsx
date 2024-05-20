@@ -16,11 +16,11 @@ const LatestBlogEntries = ({ heading, paragraph, entries }: LatestBlogEntriesTyp
       <div className={styles.blogPosts}>
         {entries.map(({ hero: { heading, img, paragraph }, slug, portableText }, index) => {
           return (
-            <Link
+            <div
               key={index}
               className={styles.item}
-              href={`/blog/${slug}`}
             >
+              <Link href={`/blog/${slug}`} />
               <div className={styles.imageWrapper}>
                 <Img
                   data={img}
@@ -32,7 +32,7 @@ const LatestBlogEntries = ({ heading, paragraph, entries }: LatestBlogEntriesTyp
                 <Markdown.h3>{heading}</Markdown.h3>
                 <Markdown>{paragraph}</Markdown>
               </div>
-            </Link>
+            </div>
           );
         })}
       </div>

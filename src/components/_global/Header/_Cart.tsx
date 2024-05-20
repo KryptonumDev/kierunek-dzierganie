@@ -14,7 +14,7 @@ import PickQuantity from '@/components/ui/PickQuantity';
 import { toast } from 'react-toastify';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 import Link from 'next/link';
-import { FirstBadge, SecondBadge } from '@/components/ui/Icons';
+import { CrochetingLogo, KnittingLogo } from '@/components/ui/Icons';
 import Popup from './Popup/Popup';
 
 export default function Cart({
@@ -370,8 +370,8 @@ const EmptyLayout = ({ image_crochet, image_knitting, setShowCart }: EmptyCart) 
             tabIndex={-1}
             className={styles.img}
           >
-            <div className={styles.badgeWrapper}>
-              <FirstBadge />
+            <div className={styles.iconWrapper}>
+              <KnittingLogo />
             </div>
             <Img
               data={image_knitting}
@@ -383,7 +383,7 @@ const EmptyLayout = ({ image_crochet, image_knitting, setShowCart }: EmptyCart) 
             href='/kursy-dziergania-na-drutach'
             className={styles.cta}
           >
-            Dzierganie
+            Kursy dziergania
           </Button>
         </div>
         <div>
@@ -393,8 +393,8 @@ const EmptyLayout = ({ image_crochet, image_knitting, setShowCart }: EmptyCart) 
             tabIndex={-1}
             className={styles.img}
           >
-            <div className={styles.badgeWrapper}>
-              <SecondBadge />
+            <div className={styles.iconWrapper} data-crocheting="true">
+              <CrochetingLogo />
             </div>
             <Img
               data={image_crochet}
@@ -406,7 +406,7 @@ const EmptyLayout = ({ image_crochet, image_knitting, setShowCart }: EmptyCart) 
             href='/kursy-szydelkowania'
             className={styles.cta}
           >
-            Szydełkowanie
+            Kursy szydełkowania
           </Button>
         </div>
       </div>
