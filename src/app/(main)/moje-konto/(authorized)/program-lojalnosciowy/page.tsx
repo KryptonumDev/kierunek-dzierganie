@@ -131,8 +131,6 @@ async function query(): Promise<AffiliatePage_QueryTypes> {
     tags: ['AffiliateDashboard_Page'],
   });
 
-  console.log(data)
-
   return {
     ...res,
     userId: user!.id,
