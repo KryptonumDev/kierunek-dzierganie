@@ -28,7 +28,7 @@ export async function generateBill(data: any, id: string) {
     return product;
   });
 
-  const requestContent = JSON.stringify({
+  const requestContent = {
     Zaplacono: data.amount / 100,
     LiczOd: 'BRT',
     DataWystawienia: new Date().toISOString().split('T')[0],
@@ -69,14 +69,6 @@ export async function generateBill(data: any, id: string) {
           Rabat: product.rabat,
         };
       }),
-      // ...(data.shipping_method && {
-      //   StawkaVat: settingsData!.value.vatDelivery / 100,
-      //   Ilosc: 1,
-      //   CenaJednostkowa: data.shipping_method.price / 100,
-      //   NazwaPelna: data.shipping_method.name,
-      //   Jednostka: 'sztuk',
-      //   TypStawkiVat: 'PRC',
-      // }),
     ],
     Kontrahent: {
       Nazwa: 'Martyna Brzozowska',
@@ -89,16 +81,25 @@ export async function generateBill(data: any, id: string) {
       Email: 'kontakt@zrobmimamo.pl',
       OsobaFizyczna: false,
     },
-  });
+  };
 
-  console.log(requestContent);
+  if (data.shipping_method) {
+    requestContent.Pozycje.push({
+      StawkaVat: settingsData!.value.vatDelivery / 100,
+      Ilosc: 1,
+      CenaJednostkowa: data.shipping_method.price / 100,
+      NazwaPelna: data.shipping_method.name,
+      Jednostka: 'sztuk',
+      TypStawkiVat: 'PRC',
+    });
+  }
 
   const url = 'https://www.ifirma.pl/iapi/fakturakraj.json';
   const user = 'martyna_prochowska@o2.pl';
   const keyType = 'faktura';
 
   const key = CryptoJS.enc.Hex.parse(process.env.IFIRMA_API_KEY!);
-  const hmac = CryptoJS.HmacSHA1(url + user + keyType + requestContent, key);
+  const hmac = CryptoJS.HmacSHA1(url + user + keyType + JSON.stringify(requestContent), key);
   const hash = Hex.stringify(hmac);
 
   const billRes = await fetch(url, {
@@ -108,15 +109,15 @@ export async function generateBill(data: any, id: string) {
       'Content-type': 'application/json; charset=UTF-8',
       Authentication: `IAPIS user=${user}, hmac-sha1=${hash}`,
     },
-    body: requestContent,
+    body: JSON.stringify(requestContent),
   });
 
   const billId = await billRes.json();
-  console.log(billId);
+
   await supabase
     .from('orders')
     .update({
-      bill_id: billId.response,
+      bill: billId.response.Identyfikator,
       status: data.need_delivery ? 2 : 3,
     })
     .eq('id', id);
