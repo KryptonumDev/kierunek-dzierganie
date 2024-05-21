@@ -140,7 +140,7 @@ const Content = ({
               <button
                 onClick={() => {
                   setShowCart(true);
-                  setPopupState(true);
+                  setPopupState(popupState);
                 }}
                 className={styles.basket}
               >
