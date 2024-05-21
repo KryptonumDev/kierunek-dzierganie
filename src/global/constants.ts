@@ -149,6 +149,7 @@ export const PRODUCT_CARD_QUERY = `
       },
     },
   },
+  automatizationId,
   printed_manual -> {
     _id,
     name,

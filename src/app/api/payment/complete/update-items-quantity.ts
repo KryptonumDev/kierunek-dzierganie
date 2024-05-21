@@ -1,5 +1,6 @@
 import { sanityPatchQuantity, sanityPatchQuantityInVariant } from '@/utils/sanity.fetch';
 import { createClient } from '@/utils/supabase-admin';
+// import { addToGroup } from './mailer-lite';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function updateItemsQuantity(data: any) {
@@ -11,16 +12,24 @@ export async function updateItemsQuantity(data: any) {
       type: string;
       variantId: string;
       id: string;
-      courses: null | { _id: string }[];
+      courses: null | { _id: string; automatizationId: string }[];
     }) => {
       // create courses_progress record for each course
       if (product.courses) {
-        const newCourses = product.courses.map((el) => ({
-          owner_id: data.user_id,
-          course_id: el._id,
-          progress: null,
-        }));
+        const newCourses = product.courses.map(async (el) => {
+          // if (el.automatizationId) {
+          //   await addToGroup(data.billing.email, data.billing.firstName, el.automatizationId);
+          // }
+
+          return {
+            owner_id: data.user_id,
+            course_id: el._id,
+            progress: null,
+          };
+        });
         await supabase.from('courses_progress').insert(newCourses);
+
+        // add to mailerlite group for integration
       }
 
       // TODO: maybe move this to create step??

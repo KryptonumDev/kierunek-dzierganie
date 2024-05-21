@@ -41,6 +41,7 @@ export type ProductCard = {
   complexity?: Complexity;
   reviewsCount: number;
   rating: number;
+  automatizationId: string | null;
   materials_link?: {
     _id: string;
     gallery?: ImgType;
@@ -102,6 +103,7 @@ export type ProductCard = {
   }> | null;
   courses: Array<{
     _id: string;
+    automatizationId: string;
   }>;
 };
 

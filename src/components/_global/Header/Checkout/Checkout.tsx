@@ -96,7 +96,7 @@ export default function Checkout({
         (usedVirtualMoney ? usedVirtualMoney * 100 : 0) +
         (fetchedItems.some((item) => item._type === 'product') ? Number(deliverySettings?.deliveryPrice) : 0),
       needDelivery: fetchedItems.some((item) => item._type === 'product'),
-      delivery: (fetchedItems.some((item) => item._type === 'product') ? Number(deliverySettings?.deliveryPrice) : 0),
+      delivery: fetchedItems.some((item) => item._type === 'product') ? Number(deliverySettings?.deliveryPrice) : 0,
       discount: usedDiscount?.affiliatedBy === userId ? null : usedDiscount,
       virtualMoney: usedVirtualMoney,
       user_id: userId,
@@ -109,13 +109,16 @@ export default function Checkout({
           quantity: item.quantity!,
           image: item.variants?.[0]?.gallery ? item.variants[0].gallery : item.gallery!,
           complexity: item.complexity || null,
-          courses: item._type === 'course' ? [{ _id: item._id }] : item.courses ?? null,
+          courses:
+            item._type === 'course'
+              ? [{ _id: item._id, automatizationId: item.automatizationId }]
+              : item.courses ?? null,
           variantId: item.variant?._id ?? null,
           type: item._type,
         })),
       },
     }));
-  }, [fetchedItems, input.amount, setInput, usedDiscount, usedVirtualMoney, userId, setUsedDiscount]);
+  }, [fetchedItems, input.amount, setInput, usedDiscount, usedVirtualMoney, userId, setUsedDiscount, deliverySettings]);
 
   useEffect(() => {
     addEventListener('keydown', (e) => {
