@@ -10,6 +10,7 @@ export async function POST(request: Request) {
   const supabase = createClient();
 
   // update user default data for next orders
+
   await supabase
     .from('profiles')
     .update({ billing_data: input.billing, shipping_data: input.shipping })
@@ -25,12 +26,17 @@ export async function POST(request: Request) {
         sandbox: process.env.SANDBOX === 'true',
       }
     );
+    const { data: settingsData } = await supabase.from('settings').select('value').eq('name', 'ifirma').single();
 
     const { data, error } = await supabase
       .from('orders')
       .insert({
         user_id: input.user_id,
-        products: input.products,
+        products: input.products?.array.map((product) => ({
+          ...product,
+          // @ts-expect-error - product.courses is not defined in types... todo later
+          vat: product.courses ? settingsData?.value.vatCourses : settingsData?.value.vatPhysical,
+        })),
         billing: input.billing,
         shipping: input.needDelivery && !input.shippingMethod?.data ? input.shipping : null,
         amount: input.totalAmount,
