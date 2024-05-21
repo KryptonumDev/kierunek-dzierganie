@@ -18,6 +18,7 @@ const PasswordChangeForm = () => {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<FormTypes>({
     mode: 'all',
@@ -39,6 +40,8 @@ const PasswordChangeForm = () => {
     }
   };
 
+  const inputValue = watch('password');
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -48,6 +51,7 @@ const PasswordChangeForm = () => {
         isRegister={true}
         password={true}
         label='Password'
+        value={inputValue}
         register={register('password', {
           required: {
             value: true,

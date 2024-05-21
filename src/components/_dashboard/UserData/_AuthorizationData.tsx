@@ -13,6 +13,7 @@ export default function AuthorizationData({ email }: AuthorizationDataTypes) {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<AuthorizationDataFormTypes>({
     mode: 'all',
@@ -50,6 +51,8 @@ export default function AuthorizationData({ email }: AuthorizationDataTypes) {
     }
   };
 
+  const inputValue = watch('password');
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -73,6 +76,7 @@ export default function AuthorizationData({ email }: AuthorizationDataTypes) {
         isRegister={true}
         password={true}
         label='Password'
+        value={inputValue}
         register={register('password', {
           required: {
             value: true,
