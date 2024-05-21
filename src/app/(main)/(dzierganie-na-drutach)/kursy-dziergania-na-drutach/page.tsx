@@ -119,7 +119,7 @@ const query = async (searchParams: { [key: string]: string }): Promise<KnittingP
         && (!defined($author) || author->slug.current == $author)
         && (!defined($discount) || defined(discount))
       ]),
-      "categories": *[_type == 'courseCategory'][]{
+      "categories": *[_type == 'courseCategory' && visibleInKnitting == true][]{
         name,
         "slug": slug.current,
         _id

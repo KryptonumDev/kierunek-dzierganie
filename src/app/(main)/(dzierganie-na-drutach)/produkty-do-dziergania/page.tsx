@@ -92,7 +92,7 @@ const query = async (searchParams: { [key: string]: string }): Promise<KnittingP
         && (!defined($discount) || type =='variable' || defined(discount))
         && (!defined($discount) || type =='physical' || defined(math::avg(variants[].discount)) )
       ]),
-      "categories": *[_type == 'productCategory'][]{
+      "categories": *[_type == 'productCategory' && visibleInKnitting == true][]{
         name,
         "slug": slug.current,
         _id

@@ -118,7 +118,7 @@ const query = async (searchParams: { [key: string]: string }): Promise<Crochetin
         && (!defined($author) || author->slug.current == $author)
         && (!defined($discount) || defined(discount))
       ]),
-      "categories": *[_type == 'courseCategory'][]{
+      "categories": *[_type == 'courseCategory' && visibleInCrocheting == true][]{
         name,
         "slug": slug.current,
         _id
