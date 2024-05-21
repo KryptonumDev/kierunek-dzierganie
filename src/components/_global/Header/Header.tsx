@@ -243,6 +243,7 @@ const CrossIcon = (
     viewBox='0 0 24 25'
     fill='none'
     xmlns='http://www.w3.org/2000/svg'
+    aria-label='Wyjdź'
   >
     <path
       d='M17.25 17.5171L6.75 7.01709M17.25 7.01709L6.75 17.5171'
