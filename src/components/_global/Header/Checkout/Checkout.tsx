@@ -102,21 +102,33 @@ export default function Checkout({
       virtualMoney: usedVirtualMoney,
       user_id: userId,
       products: {
-        array: fetchedItems.map((item) => ({
-          id: item._id,
-          name: item.name,
-          price: item.price!,
-          discount: item.discount!,
-          quantity: item.quantity!,
-          image: item.variants?.[0]?.gallery ? item.variants[0].gallery : item.gallery!,
-          complexity: item.complexity || null,
-          courses:
-            item._type === 'course'
-              ? [{ _id: item._id, automatizationId: item.automatizationId }]
-              : item.courses ?? null,
-          variantId: item.variant?._id ?? null,
-          type: item._type,
-        })),
+        array: fetchedItems.map((item) => {
+          let basis = '';
+
+          if (item.basis === 'crocheting') {
+            if (item._type === 'product') basis = '/produkty-do-szydelkowania';
+            else basis = '/kursy-szydelkowania';
+          } else if (item.basis === 'knitting') {
+            if (item._type === 'product') basis = '/produkty-do-dziergania';
+            else basis = '/kursy-dziergania-na-drutach';
+          }
+          return {
+            url: 'https://kierunekdzierganie.pl' + basis + '/' + item.slug,
+            id: item._id,
+            name: item.name,
+            price: item.price!,
+            discount: item.discount!,
+            quantity: item.quantity!,
+            image: item.variants?.[0]?.gallery ? item.variants[0].gallery : item.gallery!,
+            complexity: item.complexity || null,
+            courses:
+              item._type === 'course'
+                ? [{ _id: item._id, automatizationId: item.automatizationId }]
+                : item.courses ?? null,
+            variantId: item.variant?._id ?? null,
+            type: item._type,
+          };
+        }),
       },
     }));
   }, [fetchedItems, input.amount, setInput, usedDiscount, usedVirtualMoney, userId, setUsedDiscount, deliverySettings]);
