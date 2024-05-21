@@ -75,6 +75,7 @@ const ProgramChapterCard = ({
       <Link
         tabIndex={-1}
         href={`/moje-konto/kursy/${courseSlug}/${firstUnendedLesson.slug}`}
+        aria-label={`Przejdź do lekcji ${name}`}
       />
       <div
         style={{ backgroundColor: circleTypes[circleType].background }}

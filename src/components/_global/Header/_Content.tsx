@@ -21,7 +21,10 @@ const Content = ({
   ChevronBackIcon,
   SearchIcon,
   CloseIcon,
-  CrossIcon,
+  NavigationCrossIcon,
+  PopupCrossIcon,
+  VirtualCoinsCrossIcon,
+  PromoCodeCrossIcon,
   cart: { highlighted },
   userEmail,
   shipping,
@@ -54,7 +57,7 @@ const Content = ({
   return (
     <>
       <Checkout
-        CrossIcon={CrossIcon}
+        NavigationCrossIcon={NavigationCrossIcon}
         setShowCheckout={() => setShowCheckout(false)}
         showCheckout={showCheckout}
         fetchedItems={fetchedItems}
@@ -85,7 +88,10 @@ const Content = ({
         showCart={showCart}
         image_knitting={image_knitting}
         image_crochet={image_crochet}
-        CrossIcon={CrossIcon}
+        NavigationCrossIcon={NavigationCrossIcon}
+        PopupCrossIcon={PopupCrossIcon}
+        VirtualCoinsCrossIcon={VirtualCoinsCrossIcon}
+        PromoCodeCrossIcon={PromoCodeCrossIcon}
         cart={cart}
         fetchedItems={fetchedItems}
         updateItemQuantity={updateItemQuantity}

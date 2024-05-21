@@ -33,8 +33,10 @@ export type QueryProps = {
   SearchIcon: React.ReactNode;
   CloseIcon: React.ReactNode;
   Logo: React.ReactNode[];
-  CrossIcon: React.ReactNode;
-
+  VirtualCoinsCrossIcon: React.ReactNode;
+  NavigationCrossIcon: React.ReactNode;
+  PopupCrossIcon: React.ReactNode;
+  PromoCodeCrossIcon: React.ReactNode;
   userId?: string;
   userEmail?: string;
   shipping?: Shipping;
@@ -62,7 +64,10 @@ export type Cart = {
   image_knitting: ImgType;
   image_crochet: ImgType;
   highlighted_products?: Array<ProductCard>;
-  CrossIcon: React.ReactNode;
+  NavigationCrossIcon: React.ReactNode;
+  PopupCrossIcon: React.ReactNode;
+  VirtualCoinsCrossIcon: React.ReactNode;
+  PromoCodeCrossIcon: React.ReactNode;
   virtualWallet: number;
   setUsedVirtualMoney: React.Dispatch<React.SetStateAction<number | null>>;
   setUsedDiscount: React.Dispatch<React.SetStateAction<Discount | null>>;

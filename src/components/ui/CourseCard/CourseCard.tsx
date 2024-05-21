@@ -12,6 +12,7 @@ const CourseCard = ({ name, slug, image, complexity, progressPercentage }: Props
       <Link
         tabIndex={-1}
         href={`/moje-konto/kursy/${slug}`}
+        aria-label={name}
       />
       <div className={styles['image-wrap']}>
         <span

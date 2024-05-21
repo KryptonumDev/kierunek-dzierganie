@@ -65,6 +65,7 @@ const FeaturedProductCard = ({ excerpt, data, inCart = false, basis, badge }: Pr
       <Link
         href={`${basis ? basis : pageUrls[data.basis]}/${data.slug}`}
         className={styles['link']}
+        aria-label={`${mainVariant.name}`}
       />
       {mainVariant.image && (
         <div className={styles['image-wrap']}>

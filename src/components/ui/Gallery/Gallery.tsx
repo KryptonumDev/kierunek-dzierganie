@@ -32,12 +32,14 @@ const Gallery = ({ images }: GalleryTypes) => {
             <button
               onClick={() => setSelectedImage(index)}
               key={index}
+              aria-label={`Zdjęcie numer ${index}`}
             >
               {gallerySwitch(el.data, 'small')[el.type as 'image' | 'video']}
             </button>
           );
         })}
       </div>
+      {/* TODO: change aria-label of buttons */}
       {/* TODO: add complexity page */}
       {/* TODO: add course in bundle badge */}
       {/* TODO: add arrows */}

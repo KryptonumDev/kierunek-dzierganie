@@ -48,7 +48,7 @@ export default function Checkout({
   fetchedItems,
   showCheckout,
   setShowCheckout,
-  CrossIcon,
+  NavigationCrossIcon,
   userEmail,
   billing,
   shipping,
@@ -151,7 +151,7 @@ export default function Checkout({
           className={styles['CloseButton']}
           onClick={setShowCheckout}
         >
-          {CrossIcon}
+          {NavigationCrossIcon}
         </button>
         <div className={styles['content']}>
           {stepContent({ goToCart, setStep, input, setInput, deliverySettings })[step as keyof typeof stepContent]}

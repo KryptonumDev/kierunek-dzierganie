@@ -36,6 +36,7 @@ const ChapterCard = ({ name, image, description, lessons, courseSlug, number, pr
       <Link
         href={`/moje-konto/kursy/${courseSlug}/${firstUnendedLesson.slug}`}
         tabIndex={-1}
+        aria-label={`lekcja: Moduł ${number}: ${name}`}
       />
       <div>
         <div className={styles['image-wrap']}>

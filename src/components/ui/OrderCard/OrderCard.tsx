@@ -46,7 +46,7 @@ const OrderCard = ({ order, product }: OrderCardTypes) => {
           />
         </div>
         <div className={styles['main-data']}>
-          <h3>Numer zamówienia: {order.id}</h3>
+          <h2>Numer zamówienia: {order.id}</h2>
           <p>{formatDateToPolishLocale(order.created_at)}</p>
         </div>
         <div className={styles['payment']}>

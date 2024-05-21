@@ -20,6 +20,7 @@ const StepsGrid = ({ heading, paragraph, list }: StepsGridTypes) => {
             {relatedCourse && (
               <Link
                 href={`${relatedCourse.basis === 'crocheting' ? '/kursy-szydelkowania' : '/kursy-dziergania-na-drutach'}/${relatedCourse.slug}`}
+                aria-label={`${heading}`}
               />
             )}
             <div className={styles.img}>
