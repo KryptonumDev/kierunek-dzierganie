@@ -18,7 +18,7 @@ const ProductsListing = ({
   bestSeller,
   bestSellerBadge,
 }: ProductsListingTypes) => {
-  const featuredProductExcerpt = bestSeller.excerpt ? <Markdown>{bestSeller.excerpt}</Markdown> : undefined;
+  const featuredProductExcerpt = bestSeller?.excerpt ? <Markdown>{bestSeller.excerpt}</Markdown> : undefined;
 
   return (
     <section
