@@ -32,11 +32,13 @@ export async function POST(request: Request) {
       .from('orders')
       .insert({
         user_id: input.user_id,
-        products: input.products?.array.map((product) => ({
-          ...product,
-          // @ts-expect-error - product.courses is not defined in types... todo later
-          vat: product.courses ? settingsData?.value.vatCourses : settingsData?.value.vatPhysical,
-        })),
+        products: {
+          array: input.products?.array.map((product) => ({
+            ...product,
+            // @ts-expect-error - product.courses is not defined in types... todo later
+            vat: product.courses ? settingsData?.value.vatCourses : settingsData?.value.vatPhysical,
+          })),
+        },
         billing: input.billing,
         shipping: input.needDelivery && !input.shippingMethod?.data ? input.shipping : null,
         amount: input.totalAmount,
