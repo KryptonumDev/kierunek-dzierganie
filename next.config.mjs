@@ -12,6 +12,15 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: 'https://www.zrobmimamo.pl',
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
