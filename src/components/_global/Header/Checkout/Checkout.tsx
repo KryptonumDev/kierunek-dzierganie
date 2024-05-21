@@ -15,6 +15,7 @@ const createInputState = (billing?: Billing, shipping?: Shipping, userEmail?: st
   amount: 0,
   totalAmount: 0,
   needDelivery: false,
+  client_notes: '',
   shipping: {
     firstName: shipping?.firstName ?? '',
     address1: shipping?.address1 ?? '',

@@ -14,7 +14,6 @@ import Select from '@/components/ui/Select';
 import countryList from 'react-select-country-list';
 import Script from 'next/script';
 
-
 const generateNewInput = (
   data: FormValues,
   input: InputState,
@@ -30,6 +29,7 @@ const generateNewInput = (
       price: shippingMethods.find((method) => method.name === data.shippingMethod)?.price || 0,
       data: shippingMethods.find((method) => method.name === data.shippingMethod)?.map ? selectedMapPoint : '',
     },
+    client_notes: data.client_notes,
     shipping: {
       firstName: data.shippingFullName,
       address1: data.shippingAddress,
@@ -72,6 +72,7 @@ const generateDefaults = (input: InputState, shippingMethods: { name: string }[]
     shippingCity: input.shipping.city,
     shippingCountry: input.shipping.country,
     shippingZipCode: input.shipping.postcode,
+    client_notes: input.client_notes,
 
     nip: input.billing.nip,
     companyName: input.billing.company,
@@ -118,7 +119,6 @@ export default function PersonalData({ goToCart, setInput, input, deliverySettin
       delivery: shippingMethods.find((method) => method.name === shippingMethod)?.price || 0,
     }));
   }, [shippingMethod, setInput, shippingMethods]);
-
 
   useEffect(() => {
     setValue('shippingFullName', watch('fullName'));
@@ -417,6 +417,16 @@ export default function PersonalData({ goToCart, setInput, input, deliverySettin
             </fieldset>
           </>
         )}
+        <legend></legend>
+        <fieldset>
+          <Input
+            register={register('client_notes')}
+            label='Uwagi do zamówienia (opcjonalnie)'
+            errors={errors}
+            rows={3}
+            textarea={true}
+          />
+        </fieldset>
       </form>
       <div className={styles.buttons}>
         <button

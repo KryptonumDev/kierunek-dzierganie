@@ -45,6 +45,7 @@ export type InputState = {
       complexity: Complexity | null;
     }[];
   };
+  client_notes: string;
   delivery: number;
   virtualMoney?: number | null;
   discount?: Discount | null;
@@ -86,6 +87,7 @@ export type FormValues = {
   shippingCity?: string;
   shippingCountry?: string;
   shippingZipCode?: string;
+  client_notes: string;
 
   nip?: string;
   companyName?: string;
