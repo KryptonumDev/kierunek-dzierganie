@@ -80,6 +80,7 @@ const ProductCard = ({
         href={`${basis ? basis : pageUrls[data.basis]}/${data.slug}`}
         className={styles['link']}
         onClick={onClick}
+        aria-label={mainVariant.image?.asset.altText}
       />
       {mainVariant.image && (
         <div className={styles['image-wrap']}>
