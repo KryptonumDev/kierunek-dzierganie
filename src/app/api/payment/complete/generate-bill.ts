@@ -48,8 +48,8 @@ export async function generateBill(data: any, id: string) {
       ...productsWithDiscount.map((product) => {
         if (product.type === 'product') {
           return {
-            StawkaVat: settingsData!.value.vatPhysical / 100,
-            StawkaRyczaltu: settingsData!.value.ryczaltPhysical / 100,
+            StawkaVat: product.vat / 100,
+            StawkaRyczaltu: product.ryczalt / 100,
             Ilosc: product.quantity,
             CenaJednostkowa: (product.discount ?? product.price) / 100,
             NazwaPelna: product.name,
@@ -60,8 +60,8 @@ export async function generateBill(data: any, id: string) {
         }
 
         return {
-          StawkaVat: settingsData!.value.vatCourses / 100,
-          StawkaRyczaltu: settingsData!.value.ryczaltCourses / 100,
+          StawkaVat: product.vat / 100,
+          StawkaRyczaltu: product.ryczalt / 100,
           Ilosc: 1,
           CenaJednostkowa: (product.discount ?? product.price) / 100,
           NazwaPelna: product.name,

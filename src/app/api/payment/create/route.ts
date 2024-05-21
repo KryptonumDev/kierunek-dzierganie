@@ -37,6 +37,8 @@ export async function POST(request: Request) {
             ...product,
             // @ts-expect-error - product.courses is not defined in types... todo later
             vat: product.courses ? settingsData?.value.vatCourses : settingsData?.value.vatPhysical,
+            // @ts-expect-error - product.courses is not defined in types... todo later
+            ryczalt: product.courses ? settingsData?.value.ryczaltCourses : settingsData?.value.ryczaltPhysical,
           })),
         },
         billing: input.billing,
