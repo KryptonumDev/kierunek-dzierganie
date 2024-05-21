@@ -26,7 +26,10 @@ export default function Cart({
   image_crochet,
   image_knitting,
   highlighted_products,
-  CrossIcon,
+  NavigationCrossIcon,
+  PopupCrossIcon,
+  VirtualCoinsCrossIcon,
+  PromoCodeCrossIcon,
   cart,
   fetchedItems,
   updateItemQuantity,
@@ -125,9 +128,9 @@ export default function Cart({
 
   const filteredFetchItems = filterFetchedItems();
 
-  if (filteredFetchItems?.length == 0) setPopupState(false);
+  if (fetchedItems && filteredFetchItems?.length == 0) setPopupState(false);
 
-  if (filteredFetchItems?.length == undefined) setPopupState(false);
+  if (fetchedItems && filteredFetchItems?.length == undefined) setPopupState(false);
 
   return (
     <>
@@ -145,7 +148,7 @@ export default function Cart({
               onClick={setShowCart}
               className={styles.CloseButton}
             >
-              {CrossIcon}
+              {NavigationCrossIcon}
             </button>
           </div>
           {(filteredFetchItems?.length ?? 0) > 0 && (
@@ -198,7 +201,7 @@ export default function Cart({
                                   setValue('discount', '');
                                 }}
                               >
-                                {CrossIcon}
+                                {PromoCodeCrossIcon}
                               </button>
                             </div>
                             <button
@@ -249,7 +252,7 @@ export default function Cart({
                                       setValue('virtual', '');
                                     }}
                                   >
-                                    {CrossIcon}
+                                    {VirtualCoinsCrossIcon}
                                   </button>
                                 </div>
                               </div>
@@ -343,7 +346,7 @@ export default function Cart({
         {popupState && (filteredFetchItems?.length ?? 0) > 0 && (
           <Popup
             data={filteredFetchItems}
-            closeIcon={CrossIcon}
+            closeIcon={PopupCrossIcon}
             setPopupState={setPopupState}
             popupState={popupState}
             className={styles.popup}
@@ -369,6 +372,7 @@ const EmptyLayout = ({ image_crochet, image_knitting, setShowCart }: EmptyCart) 
             onClick={() => setShowCart(false)}
             tabIndex={-1}
             className={styles.img}
+            aria-label='Kursy dziergania na drutach'
           >
             <div className={styles.iconWrapper}>
               <KnittingLogo />
@@ -392,8 +396,12 @@ const EmptyLayout = ({ image_crochet, image_knitting, setShowCart }: EmptyCart) 
             onClick={() => setShowCart(false)}
             tabIndex={-1}
             className={styles.img}
+            aria-label='Kursy szydełkowania'
           >
-            <div className={styles.iconWrapper} data-crocheting="true">
+            <div
+              className={styles.iconWrapper}
+              data-crocheting='true'
+            >
               <CrochetingLogo />
             </div>
             <Img

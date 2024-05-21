@@ -43,7 +43,10 @@ const Header = async () => {
       CloseIcon={CloseIcon}
       ChevronDownIcon={ChevronDownIcon}
       ChevronBackIcon={ChevronBackIcon}
-      CrossIcon={CrossIcon}
+      VirtualCoinsCrossIcon={VirtualCoinsCrossIcon}
+      NavigationCrossIcon={NavigationCrossIcon}
+      PopupCrossIcon={PopupCrossIcon}
+      PromoCodeCrossIcon={PromoCodeCrossIcon}
       cart={cart}
       userEmail={user?.email}
       shipping={data?.shipping_data}
@@ -236,14 +239,67 @@ const ChevronBackIcon = (
     ></path>
   </svg>
 );
-const CrossIcon = (
+const NavigationCrossIcon = (
   <svg
     width='24'
     height='25'
     viewBox='0 0 24 25'
     fill='none'
     xmlns='http://www.w3.org/2000/svg'
-    aria-label='Wyjdź'
+    aria-label='Zamknij koszyk'
+  >
+    <path
+      d='M17.25 17.5171L6.75 7.01709M17.25 7.01709L6.75 17.5171'
+      stroke='#9A827A'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    />
+  </svg>
+);
+
+const VirtualCoinsCrossIcon = (
+  <svg
+    width='24'
+    height='25'
+    viewBox='0 0 24 25'
+    fill='none'
+    xmlns='http://www.w3.org/2000/svg'
+    aria-label='Zamknij okno z wirtualnymi monetami'
+  >
+    <path
+      d='M17.25 17.5171L6.75 7.01709M17.25 7.01709L6.75 17.5171'
+      stroke='#9A827A'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    />
+  </svg>
+);
+
+const PopupCrossIcon = (
+  <svg
+    width='24'
+    height='25'
+    viewBox='0 0 24 25'
+    fill='none'
+    xmlns='http://www.w3.org/2000/svg'
+    aria-label='Zamknij okno'
+  >
+    <path
+      d='M17.25 17.5171L6.75 7.01709M17.25 7.01709L6.75 17.5171'
+      stroke='#9A827A'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    />
+  </svg>
+);
+const PromoCodeCrossIcon = (
+  <svg
+    width='24'
+    height='25'
+    viewBox='0 0 24 25'
+    fill='none'
+    xmlns='http://www.w3.org/2000/svg'
+    aria-label='Zamknij okno z kodem promocyjnym'
   >
     <path
       d='M17.25 17.5171L6.75 7.01709M17.25 7.01709L6.75 17.5171'

@@ -25,7 +25,11 @@ export default async function HighlightedPost({
 
   return (
     <div className={styles.highlightedPost}>
-      <Link href={`/blog/${href}`} className={styles.link}/>
+      <Link
+        href={`/blog/${href}`}
+        className={styles.link}
+        aria-label={`blog ${hero.heading}`}
+      />
       <div className={styles.imageWrapper}>
         <Img
           data={hero.img}

@@ -284,11 +284,11 @@
         font-weight: 300;
       }
 
-      &[aria-checked='true'] {
+      &[data-checked='true'] {
         background: #d0dad2;
       }
 
-      &[aria-current='true'] {
+      &[data-current='true'] {
         background: var(--primary-200, #faf4f0);
         color: var(--primary-800, #53423c);
         font-size: 18px;

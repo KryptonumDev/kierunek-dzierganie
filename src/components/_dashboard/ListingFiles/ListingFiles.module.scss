@@ -3,7 +3,11 @@
   display: grid;
   gap: clamp(48px, calc(80vw/7.68), 80px);
 
-  > div {
+  h2 {
+    font-size: clamp(calc(18rem / 16), calc(28vw / 7.68), calc(28rem / 16));
+  }
+
+  >div {
     display: grid;
     grid-template-columns: 277fr 587fr;
     gap: clamp(16px, calc(32vw / 7.68), 32px);

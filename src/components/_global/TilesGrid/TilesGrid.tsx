@@ -23,6 +23,7 @@ const TilesGrid = ({ heading, paragraph, list }: Props) => {
             <Link
               href={cta.href}
               className={styles.img}
+              aria-label={cta.text as string}
             >
               <div
                 className={styles.iconWrapper}

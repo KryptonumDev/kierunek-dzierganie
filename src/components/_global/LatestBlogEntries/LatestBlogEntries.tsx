@@ -20,7 +20,10 @@ const LatestBlogEntries = ({ heading, paragraph, entries }: LatestBlogEntriesTyp
               key={index}
               className={styles.item}
             >
-              <Link href={`/blog/${slug}`} />
+              <Link
+                href={`/blog/${slug}`}
+                aria-label={`blog ${heading}`}
+              />
               <div className={styles.imageWrapper}>
                 <Img
                   data={img}

@@ -47,7 +47,7 @@ export default function Checkout({
   fetchedItems,
   showCheckout,
   setShowCheckout,
-  CrossIcon,
+  NavigationCrossIcon,
   userEmail,
   billing,
   shipping,
@@ -95,7 +95,7 @@ export default function Checkout({
         (usedVirtualMoney ? usedVirtualMoney * 100 : 0) +
         (fetchedItems.some((item) => item._type === 'product') ? 1250 : 0),
       needDelivery: fetchedItems.some((item) => item._type === 'product'),
-      delivery: (fetchedItems.some((item) => item._type === 'product') ? 1250 : 0),
+      delivery: fetchedItems.some((item) => item._type === 'product') ? 1250 : 0,
       discount: usedDiscount?.affiliatedBy === userId ? null : usedDiscount,
       virtualMoney: usedVirtualMoney,
       user_id: userId,
@@ -134,7 +134,7 @@ export default function Checkout({
           className={styles['CloseButton']}
           onClick={setShowCheckout}
         >
-          {CrossIcon}
+          {NavigationCrossIcon}
         </button>
         <div className={styles['content']}>
           {stepContent({ goToCart, setStep, input, setInput })[step as keyof typeof stepContent]}

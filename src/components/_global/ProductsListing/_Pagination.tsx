@@ -206,6 +206,7 @@ function ArrowLeftIcon() {
       width='23'
       height='9'
       fill='none'
+      aria-label='poprzednia strona'
     >
       <path
         stroke='#53423C'
@@ -223,6 +224,7 @@ function ArrowRightIcon() {
       width='23'
       height='9'
       fill='none'
+      aria-label='następna strona'
     >
       <path
         stroke='#53423C'

@@ -59,7 +59,7 @@ const ListingFiles = ({ courses, left_handed, progress }: ListingFilesTypes) => 
 
         return (
           <div key={el.name + i}>
-            <h3>{el.name}</h3>
+            <h2>{el.name}</h2>
             {left_handed ? (
               <ul>
                 {el.filesAlt.map((file) => (

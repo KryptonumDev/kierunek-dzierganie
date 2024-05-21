@@ -20,6 +20,7 @@ const EmptyCourses = ({ image_crochet, image_knitting }: Props) => {
           <Link
             href='/kursy-dziergania-na-drutach'
             className={styles.img}
+            aria-label='Kursy dziergania na drutach'
           >
             <div className={styles.iconWrapper}>
               <KnittingLogo />
@@ -41,8 +42,12 @@ const EmptyCourses = ({ image_crochet, image_knitting }: Props) => {
           <Link
             href='/kursy-szydelkowania'
             className={styles.img}
+            aria-label='Kursy szydełkowania'
           >
-            <div className={styles.iconWrapper} data-crocheting="true">
+            <div
+              className={styles.iconWrapper}
+              data-crocheting='true'
+            >
               <CrochetingLogo />
             </div>
             <Img
