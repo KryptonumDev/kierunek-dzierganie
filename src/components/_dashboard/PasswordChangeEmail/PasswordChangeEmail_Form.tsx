@@ -27,7 +27,7 @@ const PasswordChangeEmailForm = () => {
     setFetching(true);
     try {
       const res = await supabase.auth.resetPasswordForEmail(data.email, {
-        redirectTo: 'https://kierunek-dzierganie-git-beta-kryptonum.vercel.app/api/auth/confirm',
+        redirectTo: 'https://kierunek-dzierganie-git-beta-kryptonum.vercel.app/api/auth/confirm?backRoute=/moje-konto/ustaw-haslo',
       });
       if (res.error) throw new Error(res.error.message);
 
