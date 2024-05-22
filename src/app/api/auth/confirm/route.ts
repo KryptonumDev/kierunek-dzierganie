@@ -12,9 +12,9 @@ export async function GET(request: NextRequest) {
   }
 
   if(backRoute){
-    return NextResponse.redirect(`https://kierunek-dzierganie-git-beta-kryptonum.vercel.app${backRoute}`);
+    return NextResponse.redirect(`https://kierunekdzierganie.pl${backRoute}`);
   }
 
   // URL to redirect to after sign in process completes
-  return NextResponse.redirect('https://kierunek-dzierganie-git-beta-kryptonum.vercel.app/moje-konto/kursy');
+  return NextResponse.redirect('https://kierunekdzierganie.pl/moje-konto/kursy');
 }

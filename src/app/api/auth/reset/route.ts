@@ -11,5 +11,5 @@ export async function GET(request: NextRequest) {
   }
 
   // URL to redirect to after sign in process completes
-  return NextResponse.redirect('https://kierunek-dzierganie-git-beta-kryptonum.vercel.app/moje-konto/ustaw-haslo');
+  return NextResponse.redirect('https://kierunekdzierganie.pl/moje-konto/ustaw-haslo');
 }

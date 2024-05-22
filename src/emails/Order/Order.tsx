@@ -52,7 +52,7 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
         >
           <img
             alt='website logo'
-            src='https://kierunek-dzierganie-git-beta-kryptonum.vercel.app/logo.png'
+            src='https://kierunekdzierganie.pl/logo.png'
           />
         </a>
         <h1
@@ -606,7 +606,7 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
           >
             <img
               alt='Facebook'
-              src='https://kierunek-dzierganie-git-beta-kryptonum.vercel.app/facebook.png'
+              src='https://kierunekdzierganie.pl/facebook.png'
             />
           </a>
           <a
@@ -620,7 +620,7 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
           >
             <img
               alt='Instagram'
-              src='https://kierunek-dzierganie-git-beta-kryptonum.vercel.app/instagram.png'
+              src='https://kierunekdzierganie.pl/instagram.png'
             />
           </a>
         </div>
