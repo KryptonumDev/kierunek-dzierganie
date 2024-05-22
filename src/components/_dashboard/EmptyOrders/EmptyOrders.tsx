@@ -22,6 +22,7 @@ const EmptyOrders = ({ image_crochet, image_knitting }: Props) => {
           <Link
             href='/kursy-dziergania-na-drutach'
             className={styles.img}
+            aria-label='Kursy dziergania na drutach'
           >
             <div className={styles.iconWrapper}>
               <KnittingLogo />
@@ -43,6 +44,7 @@ const EmptyOrders = ({ image_crochet, image_knitting }: Props) => {
           <Link
             href='/kursy-szydelkowania'
             className={styles.img}
+            aria-label='Kursy szydełkowania'
           >
             <div
               className={styles.iconWrapper}

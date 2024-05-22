@@ -40,6 +40,7 @@ export default async function BlogPosts({
             key={i}
             className={styles.item}
             href={`/blog/${slug}`}
+            aria-label={`blog ${heading}`}
           />
           <div className={styles.imageWrapper}>
             <Img

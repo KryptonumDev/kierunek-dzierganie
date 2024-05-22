@@ -12,6 +12,7 @@ const FeaturedCourseCard = ({ name, slug, image, complexity, progressPercentage,
       <Link
         href={`/moje-konto/kursy/${slug}`}
         tabIndex={-1}
+        aria-label={name}
       />
       <div className={styles['image-wrap']}>
         <span
@@ -31,9 +32,9 @@ const FeaturedCourseCard = ({ name, slug, image, complexity, progressPercentage,
         </div>
         <div className={styles['bestseller']}>
           <LastWatched />
-          <h3>
+          <h2>
             <strong>Ostatnio przerabiany</strong>
-          </h3>
+          </h2>
         </div>
       </div>
       <div className={styles['data']}>

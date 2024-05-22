@@ -46,6 +46,7 @@
         line-height: 150%;
         margin-bottom: 8px;
       }
+
       .line {
         display: block;
         width: 100%;
@@ -73,6 +74,10 @@
       justify-content: space-between;
       align-items: center;
       gap: 16px;
+
+      h2 {
+        font-size: clamp(calc(18rem / 16), calc(28vw / 7.68), calc(28rem / 16));
+      }
     }
 
     .payment {

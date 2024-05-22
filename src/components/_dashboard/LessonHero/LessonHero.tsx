@@ -237,8 +237,8 @@ const LessonHero = ({
                   <Link
                     href={`/moje-konto/kursy/${course.slug}/${el.slug}`}
                     key={i}
-                    aria-current={el.slug === lesson.slug}
-                    aria-checked={progress.progress[currentChapter._id]![el._id]?.ended}
+                    data-current={el.slug === lesson.slug}
+                    data-checked={progress.progress[currentChapter._id]![el._id]?.ended}
                   >
                     <p>
                       {progress.progress[currentChapter._id]![el._id]?.ended && <CheckIcon />}

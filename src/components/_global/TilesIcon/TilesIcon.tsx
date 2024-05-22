@@ -5,6 +5,7 @@ import type { Props } from './TilesIcon.types';
 
 const TilesIcon = ({ heading, paragraph, list, index }: Props) => {
   const HeadingComponent = index === 0 ? Markdown.h1 : Markdown.h2;
+  const TitleComponent = index === 0 ? Markdown.h2 : Markdown.h3;
 
   return (
     <section className={styles['TilesIcon']}>
@@ -26,7 +27,7 @@ const TilesIcon = ({ heading, paragraph, list, index }: Props) => {
                 height={32}
               />
             </div>
-            <Markdown.h3>{title}</Markdown.h3>
+            <TitleComponent>{title}</TitleComponent>
             <Markdown>{description}</Markdown>
           </div>
         ))}

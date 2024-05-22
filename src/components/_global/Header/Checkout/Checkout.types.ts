@@ -5,7 +5,7 @@ import type { Dispatch, SetStateAction } from 'react';
 export type Props = {
   setShowCheckout: () => void;
   showCheckout: boolean;
-  CrossIcon: React.ReactNode;
+  NavigationCrossIcon: React.ReactNode;
   fetchedItems: useCartItems['fetchedItems'];
   goToCart: () => void;
   userEmail?: string;
