@@ -36,7 +36,7 @@
   }
 
   .indicator {
-    font-size: 14px;
+    font-size: calc(14rem / 16);
     color: var(--primary-700);
     font-weight: 300;
     align-self: center;

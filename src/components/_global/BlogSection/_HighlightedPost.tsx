@@ -35,8 +35,8 @@ export default async function HighlightedPost({
           data={hero.img}
           sizes='(max-width: 999px) 100vw, 50vw'
         />
+        <ReadingTime portableText={portableText} />
       </div>
-      <ReadingTime portableText={portableText} />
       <div className={styles.highlightedPostContent}>
         <div>
           <Markdown.h3>{hero.heading}</Markdown.h3>

@@ -39,7 +39,7 @@
           }
           &:last-child {
             font-family: var(--font-city-streetwear);
-            font-size: clamp(32px, calc(40vw / 7.68), 40px);
+            font-size: clamp(calc(32rem/16), calc(40vw/7.68), calc(40rem/16));
             line-height: 0;
           }
         }

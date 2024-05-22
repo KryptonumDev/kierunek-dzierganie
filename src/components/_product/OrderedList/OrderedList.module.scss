@@ -36,7 +36,7 @@
         content: counter(counter);
         width: clamp(48px, calc(48vw / 7.68), 60px);
         height: clamp(48px, calc(48vw / 7.68), 60px);
-        font-size: clamp(40px, calc(40vw / 7.68), 48px);
+        font-size: clamp(calc(40rem/16), calc(40vw/7.68), calc(48rem/16));
         font-family: var(--font-city-streetwear);
         border-radius: 50%;
         line-height: 1.6;

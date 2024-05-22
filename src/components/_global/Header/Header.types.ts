@@ -122,7 +122,7 @@ export type SearchResultType = {
   }[];
   variableProducts: {
     variants: {
-      gallery: ImgType;
+      gallery?: ImgType;
     };
     name: string;
     slug: string;

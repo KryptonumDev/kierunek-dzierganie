@@ -5,6 +5,7 @@ import type { MetadataRoute } from 'next';
 type FetchTypes = {
   [key: string]: {
     slug: string;
+    displayPage?: boolean;
   }[];
 };
 
@@ -17,7 +18,6 @@ const staticRoutes = [
   '/kursy-szydelkowania',
   '/newsletter',
   '/zespol',
-  '/partnerzy',
   '/polityka-prywatnosci',
   '/regulamin',
   '/produkty-do-dziergania',
@@ -26,13 +26,17 @@ const staticRoutes = [
   '/wspolpraca',
 ];
 
-
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const {
     landings = [],
     BlogPost_Collection = [],
     BlogCategory_Collection = [],
     CustomerCaseStudy_Collection = [],
+    CrochetingCourses_Collection = [],
+    KnittingCourses_Collection = [],
+    CrochetingProducts_Collection = [],
+    KnittingProducts_Collection = [],
+    PartnersPage = [],
   } = await query();
 
   return [
@@ -56,6 +60,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${DOMAIN}/historia-kursantek/${slug}`,
       lastModified: new Date(),
     })),
+    ...CrochetingCourses_Collection.map(({ slug }) => ({
+      url: `${DOMAIN}/kursy-szydelkowania/${slug}`,
+      lastModified: new Date(),
+    })),
+    ...KnittingCourses_Collection.map(({ slug }) => ({
+      url: `${DOMAIN}/kursy-dziergania-na-drutach/${slug}`,
+      lastModified: new Date(),
+    })),
+    ...CrochetingProducts_Collection.map(({ slug }) => ({
+      url: `${DOMAIN}/produkty-do-szydelkowania/${slug}`,
+      lastModified: new Date(),
+    })),
+    ...KnittingProducts_Collection.map(({ slug }) => ({
+      url: `${DOMAIN}/produkty-do-dziergania/${slug}`,
+      lastModified: new Date(),
+    })),
+    ...PartnersPage.filter(({ displayPage }) => displayPage).map(() => ({
+      url: `${DOMAIN}/partnerzy`,
+      lastModified: new Date(),
+    })),
   ];
 }
 
@@ -75,10 +99,21 @@ const query = async (): Promise<FetchTypes> => {
         'CustomerCaseStudy_Collection': *[_type == 'CustomerCaseStudy_Collection'] {
           'slug': slug.current
         },
-        // /kursy-dziergania-na-drutach/[slug] query
-        // /kursy-szydelkowania/[slug] query
-        // /produkty-do-dziergania/[slug] query
-        // /produkty-do-szydelkowania/[slug] query
+        'CrochetingCourses_Collection': *[(_type == 'course' || _type == 'bundle') && basis =='crocheting'][] {
+          'slug': slug.current
+        },
+        'KnittingCourses_Collection': *[(_type == 'course' || _type == 'bundle') && basis =='knitting'][] {
+          'slug': slug.current
+        },
+        'CrochetingProducts_Collection': *[_type=='product' && basis =='crocheting'][] {
+          'slug': slug.current
+        },
+        'KnittingProducts_Collection': *[_type=='product' && basis =='knitting'][] {
+          'slug': slug.current
+        },
+        'PartnersPage': *[_id=="Partners_Page"][] {
+          displayPage,
+        }
       }
     `,
   });

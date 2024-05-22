@@ -11,7 +11,7 @@
 
     p {
       color: var(--primary-800, #53423C);
-      font-size: 18px;
+      font-size: calc(18rem / 16);
       font-weight: 300;
       line-height: 150%;
       display: flex;

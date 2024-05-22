@@ -16,7 +16,7 @@
 
     > p {
       color: var(--primary-800, #53423c);
-      font-size: 14px;
+      font-size: calc(14rem / 16);
       font-weight: 300;
       line-height: 150%;
     }

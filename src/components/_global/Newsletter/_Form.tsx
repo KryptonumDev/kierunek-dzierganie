@@ -1,15 +1,14 @@
 'use client';
 import { useState } from 'react';
-import Input from '@/components/ui/Input';
 import { type FieldValues, useForm } from 'react-hook-form';
-import styles from './Newsletter.module.scss';
+import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import Checkbox from '@/components/ui/Checkbox';
-import { StatusProps } from './Newsletter.types';
+import styles from './Newsletter.module.scss';
 import { mailerLiteGroup, REGEX } from '@/global/constants';
-import Link from 'next/link';
 import State from './_State';
 import Loading from './_Loading';
+import type { StatusProps } from './Newsletter.types';
 
 const Form = ({ Heading }: { Heading: React.ReactNode }) => {
   const [status, setStatus] = useState<StatusProps>({ sending: false });
@@ -70,24 +69,17 @@ const Form = ({ Heading }: { Heading: React.ReactNode }) => {
       <Checkbox
         label={
           <>
-            Akceptuję warunki{' '}
-            <Link
+            Wyrażam zgodę na przetwarzanie moich danych osobowych zgodnie z
+            {' '}
+            <a
               className='link'
               href='/polityka-prywatnosci'
               target='_blank'
               rel='noopener'
             >
-              polityki prywatności
-            </Link>{' '}
-            i&nbsp;
-            <Link
-              className='link'
-              href='/regulamin'
-              target='_blank'
-              rel='noopener'
-            >
-              regulaminu
-            </Link>
+              polityką prywatności
+            </a>
+            .{' '} Wiem, że w każdej chwili mogę wypisać się z newslettera i cofnąć tę zgodę.
           </>
         }
         register={register('legal', {

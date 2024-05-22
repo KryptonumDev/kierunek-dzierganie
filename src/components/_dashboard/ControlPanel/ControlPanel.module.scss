@@ -56,7 +56,7 @@
         }
         &[aria-current='true'] {
           color: var(--primary-800, #53423c);
-          font-size: 18px;
+          font-size: calc(18rem / 16);
           svg {
             width: 21px;
           }

@@ -6,7 +6,7 @@ import CategoriesSection, { CategoriesSection_Query } from '@/components/_global
 import { POSTS_PER_PAGE } from '@/global/constants';
 import type { BlogPageQueryProps, generateStaticParamsBlogPagination } from '@/global/types';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
-
+import Components, { Components_Query } from '@/components/Components';
 
 export default async function BlogPageNumber({ params: { number } }: { params: { number: string } }) {
   const {
@@ -17,11 +17,12 @@ export default async function BlogPageNumber({ params: { number } }: { params: {
     blog_Heading,
     blog_Paragraph,
     blog_HighlightedPost,
+    content,
   } = await query();
 
   const page = [
     { name: 'Blog', path: '/blog' },
-    { name: `Strona: ${number}`, path: `/blog/strona/${number}` }
+    { name: `Strona: ${number}`, path: `/blog/strona/${number}` },
   ];
 
   return (
@@ -39,6 +40,7 @@ export default async function BlogPageNumber({ params: { number } }: { params: {
           pathPrefix: '/blog/strona',
         }}
       />
+      <Components data={content} />
     </>
   );
 }
@@ -54,6 +56,7 @@ async function query(): Promise<BlogPageQueryProps> {
         ${HeroSimple_Query(true)}
         ${CategoriesSection_Query}
         ${BlogSection_Query}
+        ${Components_Query}
       }
     `,
     tags: ['Blog_Page'],

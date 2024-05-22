@@ -13,12 +13,12 @@
     margin-bottom: 4px;
 
     span {
-      font-size: 14px;
+      font-size: calc(14rem/16);
       color: var(--primary-800, #53423c);
 
       b {
         font-weight: 300;
-        font-size: 32px;
+        font-size: calc(32rem/16);
         font-family: var(--font-city-streetwear);
       }
     }
@@ -105,13 +105,13 @@
     }
 
     .discount {
-      font-size: 14px;
+      font-size: calc(14rem/16);
       text-decoration: line-through;
       color: var(--primary-600);
     }
 
     small {
-      font-size: 14px;
+      font-size: calc(14rem/16);
       line-height: 21px;
       font-weight: 300;
       color: var(--primary-700);
@@ -132,7 +132,7 @@
 
     .calculator>p {
       color: var(--primary-600);
-      font-size: 14px;
+      font-size: calc(14rem/16);
       line-height: 21px;
       font-weight: 300;
     }

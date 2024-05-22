@@ -78,12 +78,12 @@
             margin-bottom: 4px;
 
             span {
-              font-size: 14px;
+              font-size: calc(14rem/16);
               color: var(--primary-800, #53423c);
 
               b {
                 font-weight: 300;
-                font-size: 32px;
+                font-size: calc(32rem/16);
                 font-family: var(--font-city-streetwear);
               }
             }

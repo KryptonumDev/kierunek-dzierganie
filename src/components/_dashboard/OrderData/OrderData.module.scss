@@ -45,7 +45,7 @@
 
       .title {
         color: var(--primary-700, #766965);
-        font-size: 14px;
+        font-size: calc(14rem/16);
         font-weight: 300;
         line-height: 150%;
       }
@@ -57,7 +57,7 @@
 
         button {
           color: #5c7360;
-          font-size: 14px;
+          font-size: calc(14rem/16);
           font-style: italic;
           font-weight: 300;
           line-height: 130%;
@@ -71,7 +71,7 @@
 
       .text {
         color: var(--primary-700, #766965);
-        font-size: 14px;
+        font-size: calc(14rem/16);
         font-weight: 300;
         line-height: 150%;
       }
@@ -84,7 +84,7 @@
       display: block;
       margin: 16px auto 0;
       color: #882f2f;
-      font-size: 14px;
+      font-size: calc(14rem/16);
       font-style: italic;
       font-weight: 300;
       line-height: 130%;
@@ -96,7 +96,7 @@
     }
     p {
       color: var(--primary-800, #53423c);
-      font-size: 14px;
+      font-size: calc(14rem/16);
       font-weight: 300;
       line-height: 150%;
       margin-bottom: 8px;
@@ -127,7 +127,7 @@
       margin-top: 80px;
       margin-bottom: 48px;
       color: var(--primary-800, #53423c);
-      font-size: 24px;
+      font-size: calc(24rem/16);
       font-weight: 300;
       line-height: 130%;
     }
@@ -152,7 +152,7 @@
 
           .right-column {
             p {
-              font-size: clamp(16px, calc(18vw / 7.68), 18px);
+              font-size: clamp(calc(16rem/16), calc(18vw/7.68), calc(18rem/16));
             }
           }
 
@@ -164,13 +164,13 @@
 
             span {
               color: var(--primary-800, #53423c);
-              font-size: 18px;
+              font-size: calc(18rem/16);
               font-weight: 300;
               line-height: 150%;
 
               &.discount {
                 color: var(--primary-600, #9a827a);
-                font-size: 14px;
+                font-size: calc(14rem/16);
                 line-height: 150%;
                 text-decoration: line-through;
               }
@@ -228,12 +228,12 @@
       justify-content: space-between;
       gap: 12px;
       color: var(--primary-700, #766965);
-      font-size: 14px;
+      font-size: calc(14rem/16);
       font-weight: 300;
       line-height: 150%;
 
       span:last-child {
-        font-size: 18px;
+        font-size: calc(18rem/16);
       }
     }
   }

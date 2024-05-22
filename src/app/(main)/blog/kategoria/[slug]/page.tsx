@@ -10,6 +10,7 @@ import type {
   BlogCategoryPageQueryProps,
 } from '@/global/types';
 import HeroSimple, { HeroSimple_Query } from '@/components/_global/HeroSimple';
+import Components, { Components_Query } from '@/components/Components';
 
 export default async function CategoryBlogPage({ params: { slug } }: { params: { slug: string } }) {
   const {
@@ -22,6 +23,7 @@ export default async function CategoryBlogPage({ params: { slug } }: { params: {
     blog_HighlightedPost,
     name,
     filteredBlogPosts,
+    content,
   } = await getData(slug);
 
   const page = [
@@ -45,6 +47,7 @@ export default async function CategoryBlogPage({ params: { slug } }: { params: {
           addPagePrefix: false,
         }}
       />
+      <Components data={content} />
     </>
   );
 }
@@ -62,6 +65,7 @@ async function getData(slug: string) {
         ${HeroSimple_Query(true)}
         ${CategoriesSection_Query}
         ${BlogSection_Query}
+        ${Components_Query}
       }
     `,
     params: { slug },

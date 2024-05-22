@@ -43,7 +43,7 @@
         width: clamp(48px, calc(60vw / 7.68), 60px);
         height: clamp(48px, calc(60vw / 7.68), 60px);
         border-radius: 50%;
-        font-size: clamp(32px, calc(48vw / 7.68), 48px);
+        font-size: clamp(calc(32rem/16), calc(48vw/7.68), calc(48rem/16));
         font-family: var(--font-city-streetwear);
         line-height: calc(clamp(48px, calc(60vw / 7.68), 60px) * 1.3);
       }

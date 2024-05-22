@@ -35,7 +35,7 @@
       @media (max-width: 820px) {
         flex-direction: column-reverse !important;
 
-        img{
+        img {
           max-width: 485px;
         }
       }
@@ -43,7 +43,7 @@
       h3 {
         margin-bottom: clamp(12px, calc(28vw/7.68), 36px);
         color: var(--primary-800, #53423c);
-        font-size: clamp(18px, calc(36vw/7.68), 36px);
+        font-size: clamp(calc(18rem/16), calc(36vw/7.68), calc(36rem/16));
         font-weight: 300;
         line-height: 120%;
       }

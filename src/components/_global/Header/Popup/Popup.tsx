@@ -1,8 +1,6 @@
 import { type ProductCard } from '@/global/types';
 import styles from './Popup.module.scss';
 import Items from './Items';
-import { useEffect } from 'react';
-import { useRef } from 'react';
 
 export default function Popup({
   data,
@@ -19,25 +17,8 @@ export default function Popup({
   className: string | undefined;
   setShowCart: (variable: boolean) => void;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (ref.current && !ref.current.contains(event.target as Node)) {
-        setPopupState(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [setPopupState]);
   return (
-    <div
-      className={`${styles.Popup} ${className}`}
-      ref={ref}
-    >
+    <div className={`${styles.Popup} ${className}`}>
       <button
         className={styles.closeButton}
         onClick={() => setPopupState(!popupState)}
