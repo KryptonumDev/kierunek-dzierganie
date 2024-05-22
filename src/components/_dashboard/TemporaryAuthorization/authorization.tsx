@@ -11,7 +11,17 @@ const Authorization = () => {
 
   useEffect(() => {
     if (params.get('error_description')) {
-      toast.error(params.get('error_description'));
+      let message = params.get('error_description');
+
+      if (message === 'Email link is invalid or has expired') {
+        message = 'Link aktywacyjny jest nieprawidłowy lub wygasł! Proszę spróbować ponownie.';
+      }
+
+      if(message === 'Invalid login credentials') {
+        message = 'Nieprawidłowe dane logowania! Proszę spróbować ponownie.';
+      }
+
+      toast.error(message);
     }
   }, [params]);
 
