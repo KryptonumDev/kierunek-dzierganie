@@ -17,7 +17,6 @@ export async function updateItemsQuantity(data: any) {
       // create courses_progress record for each course
       if (product.courses) {
         const newCourses = product.courses.map(async (el) => {
-          console.log('el', el);
           if (el.automatizationId) {
             await addToGroup(data.billing.email, data.billing.firstName, el.automatizationId);
           }
@@ -28,8 +27,9 @@ export async function updateItemsQuantity(data: any) {
             progress: null,
           };
         });
-        await supabase.from('courses_progress').insert(newCourses);
 
+        const res = await supabase.from('courses_progress').insert(newCourses);
+        console.log(res);
         // add to mailerlite group for integration
       }
 
