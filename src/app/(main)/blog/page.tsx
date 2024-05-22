@@ -5,6 +5,7 @@ import HeroSimple, { HeroSimple_Query } from '@/components/_global/HeroSimple';
 import BlogSection, { BlogSection_Query } from '@/components/_global/BlogSection';
 import CategoriesSection, { CategoriesSection_Query } from '@/components/_global/CategoriesSection';
 import type { BlogPageQueryProps } from '@/global/types';
+import Components, { Components_Query } from '@/components/Components';
 
 const page = { name: 'Blog', path: '/blog' };
 
@@ -17,6 +18,7 @@ export default async function BlogPage() {
     blog_Heading,
     blog_Paragraph,
     blog_HighlightedPost,
+    content,
   } = await query();
 
   return (
@@ -33,6 +35,7 @@ export default async function BlogPage() {
           pathPrefix: '/blog/strona',
         }}
       />
+      <Components data={content} />
     </>
   );
 }
@@ -48,6 +51,7 @@ const query = async (): Promise<BlogPageQueryProps> => {
         ${HeroSimple_Query(true)}
         ${CategoriesSection_Query}
         ${BlogSection_Query}
+        ${Components_Query}
       }
     `,
     tags: ['Blog_Page'],

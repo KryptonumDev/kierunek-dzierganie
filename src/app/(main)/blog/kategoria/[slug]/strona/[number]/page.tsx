@@ -11,6 +11,7 @@ import type {
   BlogCategoryPageQueryProps,
   generateBlogCategoryPageStaticParamsProps,
 } from '@/global/types';
+import Components, { Components_Query } from '@/components/Components';
 
 export default async function CategoryPaginationBlogPage({
   params: { slug, number },
@@ -27,6 +28,7 @@ export default async function CategoryPaginationBlogPage({
     blog_HighlightedPost,
     name,
     filteredBlogPosts,
+    content,
   } = await getData(slug);
 
   const page = [
@@ -50,6 +52,7 @@ export default async function CategoryPaginationBlogPage({
           addPagePrefix: false,
         }}
       />
+      <Components data={content} />
     </>
   );
 }
@@ -67,6 +70,7 @@ async function getData(slug: string) {
         ${HeroSimple_Query(true)}
         ${CategoriesSection_Query}
         ${BlogSection_Query}
+        ${Components_Query}
       }
     `,
     params: { slug },
