@@ -139,7 +139,7 @@ const query = async (searchParams: { [key: string]: string }): Promise<Crochetin
       bundle: searchParams.pakiet ?? null,
       discount: searchParams.promocja ?? null,
     },
-    tags: ['CrochetingCourses_Page'],
+    tags: ['CrochetingCourses_Page', 'course', 'bundle', 'courseCategory', 'CourseAuthor_Collection'],
   });
 };
 

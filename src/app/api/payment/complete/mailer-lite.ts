@@ -2,7 +2,7 @@
 export async function addToGroup(email: string, name: string, groupID: string) {
   const time = new Date().toISOString();
 
-  const res = await fetch(`https://api.mailerlite.com/api/v2/groups/${groupID}/subscribers`, {
+  await fetch(`https://api.mailerlite.com/api/v2/groups/${groupID}/subscribers`, {
     method: 'POST',
     headers: {
       'X-MailerLite-ApiKey': process.env.MAILERLITE_API_KEY!,
@@ -10,5 +10,4 @@ export async function addToGroup(email: string, name: string, groupID: string) {
     },
     body: JSON.stringify({ email, name, signup_time: time }),
   });
-  console.log('res', res);
 }
