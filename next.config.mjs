@@ -34,7 +34,12 @@ const nextConfig = {
         source: '/o-nas',
         destination: '/zespol',
         permanent: true,
-      }
+      },
+      {
+        source: '/landing/program-rozwojowy-dziergania-na-drutach',
+        destination: '/',
+        permanent: false,
+      },
     ];
   },
 };
