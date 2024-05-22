@@ -50,17 +50,21 @@ export default function Products({
           </>
         )}
         {searchResults ? (
-          searchResults.variableProducts?.map(({ name, slug, variants: { gallery }, basis }, index) => (
+          searchResults.variableProducts?.map(({ name, slug, variants, basis }, index) => (
             <Link
               className={styles.item}
               key={index}
               href={`${basis === 'crocheting' ? '/produkty-do-szydelkowania' : '/produkty-do-dziergania'}/${slug}`}
               onClick={() => handleItemClick(passedRef, setIsSearching)}
             >
-              <Img
-                data={gallery}
-                sizes='48px'
-              />
+              {variants?.gallery ? (
+                <Img
+                  data={variants.gallery}
+                  sizes='48px'
+                />
+              ) : (
+                <Placeholder />
+              )}
               {findSearchedName(name, passedRef.current?.value || '')}
             </Link>
           ))

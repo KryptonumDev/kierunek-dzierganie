@@ -105,9 +105,7 @@ export type _NavProps = {
 
 export type SearchResultType = {
   courses: {
-    course: {
-      image: ImgType;
-    };
+    gallery: ImgType;
     name: string;
     basis: 'crocheting' | 'knitting';
     slug: string;
@@ -120,7 +118,7 @@ export type SearchResultType = {
   }[];
   variableProducts: {
     variants: {
-      gallery: ImgType;
+      gallery?: ImgType;
     };
     name: string;
     slug: string;
