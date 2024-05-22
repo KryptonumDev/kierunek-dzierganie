@@ -18,6 +18,7 @@
     grid-template-columns: 7fr 5fr;
     border-radius: 4px;
     position: relative;
+    background: var(--primary-200);
 
     &:hover .imageWrapper>img {
       transform: scale(1.05);
@@ -32,7 +33,6 @@
 
     @media (max-width: 999px) {
       grid-template-columns: 1fr;
-      background: var(--primary-200);
       width: 100%;
     }
 
@@ -76,7 +76,6 @@
         column-gap: 16px;
         align-items: center;
         padding: 20px 20px 22px 20px;
-        background: var(--primary-200);
         align-items: flex-start;
 
         >img {
