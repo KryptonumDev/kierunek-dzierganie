@@ -29,7 +29,6 @@ const query = async (): Promise<PageQueryProps> => {
         ${Components_Query}
       }
     `,
-    tags: ['Team_Page'],
   });
   return data as PageQueryProps;
 };
