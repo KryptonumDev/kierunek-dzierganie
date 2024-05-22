@@ -33,12 +33,18 @@ export async function GET(request: NextRequest) {
           ? 'Proszę aktywować link w tej samej przeglądarce z której wysłałeś zapytanie!'
           : typedError.code === 'flow_state_not_found'
             ? 'Czas na aktywację linku wygasł! Proszę spróbować ponownie.'
-            : typedError.message;
+            : typedError.code === 'validation_failed'
+              ? 'Brak informacji w ciasteczkach, proszę skontaktować się z administracją.'
+              : typedError.message ?? 'Błąd podczas autoryzacji! Proszę spróbować ponownie.';
 
-      return NextResponse.redirect(`https://kierunekdzierganie.pl/moje-konto/kursy?error_description=${message}`);
+      return NextResponse.redirect(
+        `https://kierunekdzierganie.pl/moje-konto/autoryzacja?error_description=${message.replace(/ /g, '+')}`
+      );
     }
   } else {
     console.log('No code provided! ', request);
-    return NextResponse.redirect('https://kierunekdzierganie.pl/moje-konto/autoryzacja?error_decr=Błąd+podczas+autoryzacji!+Proszę+spróbować+ponownie.');
+    return NextResponse.redirect(
+      'https://kierunekdzierganie.pl/moje-konto/autoryzacja?error_decr=Błąd+podczas+autoryzacji!+Proszę+spróbować+ponownie.'
+    );
   }
 }
