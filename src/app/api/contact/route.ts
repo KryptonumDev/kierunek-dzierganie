@@ -14,8 +14,8 @@ type RequestProps = {
 const resend = new Resend(process.env.RESEND_API_TOKEN);
 
 const emailData = {
-  from: 'Martyna z Kierunek Dzierganie <kontakt@kierunekdzierganie.pl>',
-  to: 'bogumil@kryptonum.eu', // TODO: change emailData.to
+  from: 'Martyna z Kierunek Dzierganie <formularz@kierunekdzierganie.pl>',
+  to: 'kontakt@kierunekdzierganie.pl',
 };
 
 const headers = {
