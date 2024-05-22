@@ -131,6 +131,7 @@ const LessonHero = ({
           <div className={styles.video}>
             {leftHanded ? (
               <Vimeo
+                speed={true}
                 video={lesson.video_alter}
                 loop={false}
                 onEnd={() => updateProgress('auto', true)}
@@ -139,6 +140,7 @@ const LessonHero = ({
               />
             ) : (
               <Vimeo
+                speed={true}
                 video={lesson.video}
                 loop={false}
                 onEnd={() => updateProgress('auto', true)}
