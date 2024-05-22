@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase-server';
+import { type AuthError } from '@supabase/supabase-js';
 import { type NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -24,9 +25,19 @@ export async function GET(request: NextRequest) {
       // URL to redirect to after sign in process completes
       return NextResponse.redirect('https://kierunekdzierganie.pl/moje-konto/kursy');
     } catch (error) {
-      console.log('finally ', error);
+      const typedError = error as AuthError;
+      console.log('finally ', typedError.message);
 
-      return NextResponse.redirect('https://kierunekdzierganie.pl/moje-konto/kursy');
+      const message =
+        typedError.code === 'bad_code_verifier'
+          ? 'Proszę aktywować link w tej samej przeglądarce z której wysłałeś zapytanie!'
+          : typedError.code === 'flow_state_not_found'
+            ? 'Czas na aktywację linku wygasł! Proszę spróbować ponownie.'
+            : 'Wystąpił błąd podczas autoryzacji! Proszę spróbować ponownie.';
+
+      return NextResponse.redirect(
+        `https://kierunekdzierganie.pl/moje-konto/kursy?error_description=${message}&error_code=${typedError.code}&error_detail=${typedError.status}`
+      );
     }
   } else {
     console.log('No code provided! ', request);
