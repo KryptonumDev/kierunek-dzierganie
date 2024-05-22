@@ -6,10 +6,15 @@ export async function GET(request: NextRequest) {
   const code = requestUrl.searchParams.get('code');
   const backRoute = requestUrl.searchParams.get('backRoute');
 
+  console.log(request);
+  
   if (code) {
     const supabase = createClient();
-    await supabase.auth.exchangeCodeForSession(code);
-  }
+    const res = await supabase.auth.exchangeCodeForSession(code);
+
+    console.log('res', res);
+  } 
+
 
   if(backRoute){
     return NextResponse.redirect(`https://kierunekdzierganie.pl${backRoute}`);
