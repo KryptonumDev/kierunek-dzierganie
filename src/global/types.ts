@@ -171,6 +171,7 @@ export type BlogPageQueryProps = {
       img: ImgType;
     };
   };
+  content: ComponentProps[];
 };
 
 export type BlogPostQueryProps = {
