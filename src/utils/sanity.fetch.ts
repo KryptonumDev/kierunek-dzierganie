@@ -39,21 +39,19 @@ export default async function sanityFetch<QueryResponse>({
   return await client.fetch<QueryResponse>(query, params, {
     ...(!isProductionDeployment
       ? {
-          cache: 'reload',
-        }
+        cache: 'reload',
+      }
       : {
-          ...(isPreviewDeployment || !tags
-            ? {
-                cache: 'no-cache',
-              }
-            : {
-                next: {
-                  tags,
-                  // 1 month time revalidation
-                  revalidate: 2592000,
-                },
-              }),
-        }),
+        ...(isPreviewDeployment || !tags
+          ? {
+            cache: 'no-cache',
+          }
+          : {
+            next: {
+              tags,
+            },
+          }),
+      }),
   });
 }
 
