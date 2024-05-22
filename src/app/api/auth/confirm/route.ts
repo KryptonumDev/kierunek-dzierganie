@@ -7,21 +7,27 @@ export async function GET(request: NextRequest) {
   const backRoute = requestUrl.searchParams.get('backRoute');
 
   if (code) {
-    const supabase = createClient();
-    const response = await supabase.auth.exchangeCodeForSession(code);
+    try {
+      const supabase = createClient();
+      const response = await supabase.auth.exchangeCodeForSession(code);
 
-    if (response.error) {
-      return NextResponse.redirect(
-        `https://kierunekdzierganie.pl/moje-konto/kursy?error_code=${response.error.code}&error_description=${response.error.message}&error_detail=${response.error.status}`
-      );
+      if (response.error) {
+        return NextResponse.redirect(
+          `https://kierunekdzierganie.pl/moje-konto/kursy?error_code=${response.error.code}&error_description=${response.error.message}&error_detail=${response.error.status}`
+        );
+      }
+
+      if (backRoute) {
+        return NextResponse.redirect(`https://kierunekdzierganie.pl${backRoute}`);
+      }
+
+      // URL to redirect to after sign in process completes
+      return NextResponse.redirect('https://kierunekdzierganie.pl/moje-konto/kursy');
+    } catch (error) {
+      console.log('finally ', error);
+
+      return NextResponse.redirect('https://kierunekdzierganie.pl/moje-konto/kursy');
     }
-
-    if (backRoute) {
-      return NextResponse.redirect(`https://kierunekdzierganie.pl${backRoute}`);
-    }
-
-    // URL to redirect to after sign in process completes
-    return NextResponse.redirect('https://kierunekdzierganie.pl/moje-konto/kursy');
   } else {
     console.log('No code provided! ', request);
     return NextResponse.redirect(
