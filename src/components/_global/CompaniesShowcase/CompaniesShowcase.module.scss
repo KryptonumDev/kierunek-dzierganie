@@ -21,8 +21,8 @@
 
     .item {
       display: grid;
-      gap: clamp(12px, calc(24vw/7.68), 36px);
-      padding: clamp(12px, calc(26vw/7.68), 32px) clamp(12px, calc(30vw/7.68), 36px) clamp(12px, calc(30vw/7.68), 36px);
+      gap: clamp(20px, calc(24vw/7.68), 36px);
+      padding: clamp(16px, calc(28vw/7.68), 32px) clamp(16px, calc(32vw/7.68), 36px) clamp(16px, calc(38vw/7.68), 36px);
       background: var(--primary-200);
       align-items: flex-start;
 
@@ -30,7 +30,7 @@
         overflow: hidden;
 
         >img {
-          height: 164px;
+          height: clamp(64px, calc(112vw/7.68), 112px);
           width: auto;
           transition: transform 0.4s var(--easing);
         }
@@ -38,7 +38,7 @@
 
       .text {
         display: grid;
-        gap: clamp(16px, calc(20vw/7.68), 20px);
+        gap: clamp(12px, calc(16vw/7.68), 20px);
       }
 
       &.link:hover {
