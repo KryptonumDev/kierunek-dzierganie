@@ -72,11 +72,13 @@ const ProgramChapterCard = ({
 
   return (
     <div className={`${styles['programChapterCard']} ${timeLeft ? styles['blocked'] : ''}`}>
-      <Link
-        tabIndex={-1}
-        href={`/moje-konto/kursy/${courseSlug}/${firstUnendedLesson.slug}`}
-        aria-label={`Przejdź do lekcji ${name}`}
-      />
+      {!timeLeft && (
+        <Link
+          tabIndex={-1}
+          href={`/moje-konto/kursy/${courseSlug}/${firstUnendedLesson.slug}`}
+          aria-label={`Przejdź do lekcji ${name}`}
+        />
+      )}
       <div
         style={{ backgroundColor: circleTypes[circleType].background }}
         className={`${styles['circle']} ${circleTypes[circleType].mobile ? styles['mobile'] : ''}`}
@@ -104,11 +106,7 @@ const ProgramChapterCard = ({
           <span>
             Ukończono <PercentChart p={completionPercentage} />
           </span>
-          {timeLeft ? (
-            <Button disabled>Oglądaj</Button>
-          ) : (
-            <Button href={`/moje-konto/kursy/${courseSlug}/${firstUnendedLesson.slug}`}>Oglądaj</Button>
-          )}
+          {!timeLeft && <Button href={`/moje-konto/kursy/${courseSlug}/${firstUnendedLesson.slug}`}>Oglądaj</Button>}
         </div>
       </div>
     </div>
