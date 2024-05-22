@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect('https://kierunekdzierganie.pl/moje-konto/kursy');
     } catch (error) {
       const typedError = error as AuthError;
-      console.log('finally ', typedError.message);
+      console.error(typedError);
 
       const message =
         typedError.code === 'bad_code_verifier'
@@ -35,14 +35,10 @@ export async function GET(request: NextRequest) {
             ? 'Czas na aktywację linku wygasł! Proszę spróbować ponownie.'
             : 'Wystąpił błąd podczas autoryzacji! Proszę spróbować ponownie.';
 
-      return NextResponse.redirect(
-        `https://kierunekdzierganie.pl/moje-konto/kursy?error_description=${message}&error_code=${typedError.code}&error_detail=${typedError.status}`
-      );
+      return NextResponse.redirect(`https://kierunekdzierganie.pl/moje-konto/kursy?error_description=${message}`);
     }
   } else {
     console.log('No code provided! ', request);
-    return NextResponse.redirect(
-      'https://kierunekdzierganie.pl/moje-konto/autoryzacja?error_description=Brak+ważnego+kodu+autoryzacji!'
-    );
+    return NextResponse.redirect('https://kierunekdzierganie.pl/moje-konto/autoryzacja');
   }
 }
