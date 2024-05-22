@@ -128,7 +128,9 @@ export default function Cart({
 
   const filteredFetchItems = filterFetchedItems();
 
-  if (fetchedItems && filteredFetchItems?.length == 0) setPopupState(false);
+  if (filteredFetchItems?.length == 0) {
+    setPopupState(false);
+  }
 
   if (fetchedItems && filteredFetchItems?.length == undefined) setPopupState(false);
 
