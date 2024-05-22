@@ -1,0 +1,83 @@
+.CourseCard {
+  position: relative;
+
+  a {
+    z-index: 3;
+  }
+
+  >a {
+    position: absolute;
+    inset: 0;
+    display: block;
+    z-index: 2;
+  }
+
+  &:hover img {
+    transform: scale(1.05);
+  }
+
+  .image-wrap {
+    position: relative;
+    margin-bottom: 24px;
+
+    .badge {
+      position: absolute;
+      display: block;
+      top: 0;
+      left: 0;
+      padding: 8px 16px 8px 20px;
+      border-radius: 0px 0px 4px 0px;
+      max-width: 100%;
+      z-index: 2;
+
+      span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+      }
+    }
+
+    .imageWrapper {
+      overflow: hidden;
+      border-radius: 4px;
+
+      img {
+        aspect-ratio: 381/276;
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+      }
+    }
+  }
+
+  .flex {
+    margin-top: 28px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    p {
+      color: var(--primary-800, #53423c);
+      font-size: calc(18rem/16);
+      font-weight: 300;
+      line-height: 150%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+  }
+
+  small {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--primary-800, #53423c);
+    font-size: calc(14rem/16);
+    font-weight: 300;
+    line-height: 150%;
+  }
+}

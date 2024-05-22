@@ -1,0 +1,48 @@
+.Breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: clamp(4px, calc(8vw / 7.68), 8px);
+  overflow: hidden;
+  padding: 6px;
+  margin: -6px;
+  margin-bottom: clamp(16px, calc(28vw / 7.68), 28px) !important;
+  > *:not(:last-child) {
+    flex-shrink: 0;
+  }
+  a {
+    color: var(--primary-600);
+    font-size: calc(14rem / 16);
+    transition: color 0.5s;
+    &:hover {
+      color: var(--primary-800);
+    }
+    &:last-of-type {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      svg {
+        display: none;
+        transform: rotate(180deg);
+      }
+    }
+  }
+  > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  @media (max-width: 599px) {
+    > *:not(a:last-of-type) {
+      display: none;
+    }
+    a:last-of-type {
+      color: var(--primary-800);
+      &:hover {
+        color: var(--primary-600);
+      }
+      svg {
+        display: block;
+      }
+    }
+  }
+}

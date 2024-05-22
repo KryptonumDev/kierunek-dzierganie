@@ -1,8 +1,11 @@
 import '@/global/global.scss';
 import localFont from 'next/font/local';
-import Analitics from '@/global/Analitics';
-import { locale, themeColor } from '@/global/constants';
+import { LOCALE, THEME_COLOR } from '@/global/constants';
+import SchemaOrganization from '@/global/Schema/Ogranization';
+import CookieConsent from '@/components/_global/CookieConsent';
+import { GoogleTagManager } from '@next/third-parties/google';
 import type { Viewport } from 'next';
+import Mascots from '@/components/_global/Mascots';
 
 const Lato = localFont({
   src: [
@@ -35,15 +38,20 @@ const CityStreetWear = localFont({
 });
 
 export const viewport: Viewport = {
-  themeColor: themeColor,
+  themeColor: THEME_COLOR,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang={locale}>
+    <html lang={LOCALE}>
+      <head>
+        <SchemaOrganization />
+      </head>
+      {process.env.NODE_ENV === 'production' && <GoogleTagManager gtmId='GTM-PSPN2NCN' />}
       <body className={`${Lato.className} ${CityStreetWear.variable}`}>
         {children}
-        <Analitics />
+        <CookieConsent />
+        <Mascots />
       </body>
     </html>
   );

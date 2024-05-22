@@ -30,6 +30,9 @@
     .paragraph {
       margin-bottom: clamp(28px, calc(36vw/7.68), 36px);
     }
+    .cta {
+      margin: 0 auto;
+    }
     .ctaAnnotation {
       margin-top: 8px;
       font-size: calc(14rem/16);

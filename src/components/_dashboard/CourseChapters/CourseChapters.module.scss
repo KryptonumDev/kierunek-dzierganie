@@ -1,0 +1,61 @@
+.CourseChapters {
+  .title {
+    margin-bottom: clamp(28px, calc(36vw/7.68), 48px);
+    display: flex;
+    align-items: center;
+    gap: 36px;
+
+    @media (max-width: 480px) {
+      justify-content: space-between;
+    }
+
+    p {
+      color: var(--primary-800, #53423C);
+      font-size: calc(18rem / 16);
+      font-weight: 300;
+      line-height: 150%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+  }
+
+  .grid {
+    .returnLink {
+      width: fit-content;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: 4px;
+      grid-column: 1/-1;
+
+      svg {
+        transition: transform 0.3s var(--easing);
+      }
+
+      &:hover {
+        svg {
+          transform: translateX(-4px);
+        }
+      }
+    }
+
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 48px 32px;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr 1fr;
+      gap: 36px 24px;
+    }
+
+    @media (max-width: 640px) {
+      gap: 24px;
+    }
+
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+  }
+}

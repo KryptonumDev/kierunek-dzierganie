@@ -1,32 +1,37 @@
 const generator = function (plop) {
   plop.setGenerator('component', {
-    description: 'Component generator for Next.js',
+    description: 'Component generator Next.js',
     prompts: [
       {
         type: 'input',
         name: 'name',
         message: 'Component name:',
       },
+      {
+        type: 'input',
+        name: 'parent',
+        message: 'Parent component (optional):',
+      },
     ],
     actions: [
       {
         type: 'add',
-        path: 'src/components/{{name}}/{{name}}.tsx',
+        path: 'src/components/{{parent}}/{{name}}/{{name}}.tsx',
         templateFile: 'templates/component.hbs',
       },
       {
         type: 'add',
-        path: 'src/components/{{name}}/{{name}}.module.scss',
+        path: 'src/components/{{parent}}/{{name}}/{{name}}.module.scss',
         templateFile: 'templates/styles.hbs',
       },
       {
         type: 'add',
-        path: 'src/components/{{name}}/index.ts',
+        path: 'src/components/{{parent}}/{{name}}/index.ts',
         templateFile: 'templates/index.hbs',
       },
       {
         type: 'add',
-        path: 'src/components/{{name}}/{{name}}.types.ts',
+        path: 'src/components/{{parent}}/{{name}}/{{name}}.types.ts',
         templateFile: 'templates/types.hbs',
       },
     ],

@@ -1,0 +1,21 @@
+.ImagesGrid {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  gap: clamp(16px, calc(24vw/7.68), 32px);
+  justify-content: space-around;
+
+  .item {
+    display: grid;
+    gap: clamp(8px, calc(12vw/7.68), 16px);
+  }
+
+  img {
+    aspect-ratio: 1/1;
+    width: 100%;
+    max-height: 200px;
+    height: auto;
+    border-radius: 4px;
+    object-fit: cover;
+  }
+}

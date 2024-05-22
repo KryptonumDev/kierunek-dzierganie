@@ -1,0 +1,24 @@
+.TableSection {
+  display: grid;
+  row-gap: clamp(4px, calc(12vw/7.68), 12px);
+  margin-bottom: 12px;
+
+  .item {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+
+    p {
+      padding: clamp(6px, calc(10vw/7.68), 10px) clamp(8px, calc(20vw/7.68), 20px) clamp(8px, calc(12vw/7.68), 12px) clamp(8px, calc(20vw/7.68), 20px);
+    }
+
+    .title {
+      display: grid;
+      background: var(--primary-200);
+      align-content: center;
+    }
+
+    .description {
+      border-bottom: 1px solid var(--primary-300);
+    }
+  }
+}

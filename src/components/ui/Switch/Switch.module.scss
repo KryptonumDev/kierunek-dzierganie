@@ -1,0 +1,61 @@
+.Switch {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  align-items: center;
+  cursor: pointer;
+  &:has(input[disabled]) {
+    cursor: not-allowed;
+  }
+  .switcher {
+    width: 62px;
+    height: 32px;
+    border-radius: 50px;
+    background-color: var(--primary-400);
+    padding: 2px;
+    input {
+      position: absolute;
+      opacity: 0;
+    }
+    transition: background-color 0.5s var(--easing);
+    .dot {
+      width: 28px;
+      height: 28px;
+      background: var(--primary-100);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      transition:
+        transform 0.5s var(--easing),
+        background-color 0.5s var(--easing);
+      .tick {
+        stroke-dasharray: 18;
+        stroke-dashoffset: 18;
+        transition: stroke-dashoffset 0.5s var(--easing);
+      }
+    }
+    &:has(input:checked) {
+      background-color: var(--primary-500);
+      .dot {
+        transform: translateX(30px);
+        background-color: var(--primary-200);
+        .tick {
+          stroke-dashoffset: 0;
+        }
+      }
+    }
+  }
+  &:active {
+    .switcher {
+      .dot {
+        transform: scale(0.9);
+      }
+    }
+  }
+  &:hover,
+  &:has(input:focus-visible) {
+    .switcher {
+      background-color: var(--primary-500);
+    }
+  }
+}

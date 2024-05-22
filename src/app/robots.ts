@@ -1,4 +1,4 @@
-import { domain } from '@/global/constants';
+import { DOMAIN } from '@/global/constants';
 import type { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
@@ -6,7 +6,10 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
+      disallow: [
+        '/moje-konto/'
+      ],
     },
-    sitemap: `${domain}/sitemap.xml`,
+    sitemap: `${DOMAIN}/sitemap.xml`,
   };
 }

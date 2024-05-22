@@ -1,0 +1,48 @@
+.ArticleNavigation {
+  display: grid;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+  grid-template-columns: 1fr 1fr;
+
+  @media(max-width: 599px) {
+    grid-template-columns: 1fr;
+  }
+
+  .previous {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px;
+
+    .name {
+      grid-column: 2/3;
+    }
+  }
+
+  .next {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+  }
+
+  .arrow {
+    display: flex;
+    align-items: center;
+    width: 48px;
+    height: 48px;
+    background: var(--primary-200);
+    border-radius: 50%;
+    justify-content: center;
+  }
+
+  .indicator {
+    font-size: calc(14rem / 16);
+    color: var(--primary-700);
+    font-weight: 300;
+    align-self: center;
+
+    &.right {
+      text-align: right;
+    }
+  }
+}

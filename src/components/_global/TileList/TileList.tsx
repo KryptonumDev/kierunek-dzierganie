@@ -17,7 +17,7 @@ const TileList = ({ heading, list, paragraph, cta, cta_Annotation }: Props) => {
       </ul>
       <div className={styles.copy}>
         <Markdown className={styles.paragraph}>{paragraph}</Markdown>
-        {cta.href && (
+        {cta && (
           <>
             <Button
               data={cta}

@@ -1,0 +1,18 @@
+.FilesComponent {
+  max-width: calc(896rem / 16);
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  gap: 16px;
+  .linkWrapper {
+    font-size: clamp(calc(14rem / 16), calc(18vw / 7.68), calc(18rem / 16));
+    width: fit-content;
+    display: flex;
+    gap: 4px;
+    .fileSize {
+      font-weight: 300;
+      font-style: italic;
+      color: var(--primary-600);
+    }
+  }
+}

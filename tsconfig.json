@@ -17,8 +17,8 @@
     "noUncheckedIndexedAccess": true,
     "plugins": [
       {
-        "name": "next",
-      },
+        "name": "next"
+      }
     ],
     "baseUrl": ".",
     "paths": {
@@ -26,15 +26,15 @@
       "@/components/*": ["src/components/*"],
       "@/utils/*": ["src/utils/*"],
       "@/assets/*": ["src/assets/*"],
-      "@/public/*": ["public/*"],
-    },
+      "@/public/*": ["public/*"]
+    }
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/app/(landing)/landing/[slug]/page.js",
+    "src/app/(landing)/landing/[slug]/page.tsx",
   ],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules"]
 }

@@ -1,15 +1,11 @@
-import sanityFetch from '@/utils/sanityFetch';
+import sanityFetch from '@/utils/sanity.fetch';
 import styles from './Header.module.scss';
 import { Facebook, Instagram, Youtube } from '@/components/ui/Icons';
 import Link from 'next/link';
 import type { QueryProps } from './Header.types';
 
 const Nav = async () => {
-  const {
-    facebook,
-    instagram,
-    youtube,
-  }: QueryProps = await query();
+  const { facebook, instagram, youtube }: QueryProps = await query();
 
   const socials = [
     {
@@ -58,13 +54,16 @@ const Nav = async () => {
 };
 
 const query = async (): Promise<QueryProps> => {
-  const data = await sanityFetch(/* groq */ `
-    *[_id == 'global'][0] {
-      facebook,
-      instagram,
-      youtube,
-    }
-  `);
+  const data = await sanityFetch({
+    query: /* groq */ `
+      *[_id == 'global'][0] {
+        facebook,
+        instagram,
+        youtube,
+      }
+    `,
+    tags: ['global'],
+  });
   return data as QueryProps;
 };
 

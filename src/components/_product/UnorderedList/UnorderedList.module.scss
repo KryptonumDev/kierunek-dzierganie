@@ -1,0 +1,18 @@
+.UnorderedList {
+  header {
+    max-width: calc(793rem / 16);
+    margin: 0 auto;
+    text-align: center;
+    margin-bottom: clamp(16px, calc(28vw / 7.68), 28px);
+  }
+  .paragraph {
+    text-align: center;
+    max-width: calc(585rem / 16);
+    margin: 0 auto clamp(16px, calc(28vw / 7.68), 28px);
+  }
+
+  .list {
+    max-width: calc(585rem / 16);
+    margin: 0 auto;
+  }
+}

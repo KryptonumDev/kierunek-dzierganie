@@ -1,0 +1,36 @@
+.Tabs {
+  h2,
+  h3 {
+    margin-bottom: clamp(16px, calc(28vw / 7.68), 36px);
+  }
+  h4 {
+    margin-bottom: clamp(16px, calc(20vw / 7.68), 20px);
+  }
+  p + p {
+    margin-top: clamp(12px, calc(20vw / 7.68), 20px);
+  }
+  * + h2,
+  * + h3 {
+    margin-top: clamp(48px, calc(80vw / 7.68), 144px);
+  }
+  * + h4 {
+    margin-top: clamp(28px, calc(48vw / 7.68), 48px);
+  }
+}
+
+.Switcher {
+  .buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    margin-bottom: clamp(28px, calc(48vw / 7.68), 64px);
+    button {
+      text-align: center;
+      padding: 8px 8px 12px;
+      border-bottom: 1px solid var(--primary-400);
+      transition: border-color 0.5s var(--easing);
+      &[aria-current='true'] {
+        border-color: var(--primary-600);
+      }
+    }
+  }
+}

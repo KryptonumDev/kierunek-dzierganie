@@ -1,0 +1,38 @@
+.Package {
+  padding: clamp(32px, calc(48vw / 7.68), 48px) 0;
+  background: var(--primary-200);
+  header {
+    max-width: calc(793rem / 16);
+    margin: 0 auto clamp(28px, calc(64vw / 7.68), 96px);
+    text-align: center;
+    h2 {
+      margin-bottom: clamp(16px, calc(24vw / 7.68), 24px);
+    }
+  }
+
+  .list {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 136px;
+    position: relative;
+
+    >svg{
+      position: absolute;
+      top: -86px;
+      left: 286px;
+    }
+
+    > div {
+      height: fit-content;
+    }
+
+    .cards{
+      display: grid;
+      gap: 24px;
+
+      >p{
+        margin-bottom: 8px;
+      }
+    }
+  }
+}

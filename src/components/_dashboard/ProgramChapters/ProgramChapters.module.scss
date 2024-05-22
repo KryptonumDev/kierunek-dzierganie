@@ -1,0 +1,48 @@
+.ProgramChapters {
+  h1 {
+    margin-bottom: clamp(28px, calc(36vw / 7.68), 48px);
+    text-align: center;
+  }
+
+  .grid {
+    &::after {
+      content: '';
+      position: absolute;
+      top: 140px;
+      left: 140px;
+      bottom: 140px;
+      width: 1px;
+      background-color: var(--primary-400, #e5d8d4);
+      z-index: 1;
+
+      @media (max-width: 1024px) {
+        left: 112px;
+      }
+
+      @media (max-width: 899px) {
+        bottom: 6%;
+      }
+
+      @media (max-width: 600px) {
+        display: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      width: calc(100% + var(--pageMargin) + var(--pageMargin));
+      margin-left: calc(var(--pageMargin) * -1);
+      margin-right: calc(var(--pageMargin) * -1);
+    }
+
+    position: relative;
+    display: grid;
+    padding: 36px;
+    gap: 80px;
+    border-radius: 8px;
+    background: var(--primary-200, #faf4f0);
+    > div {
+      position: relative;
+      z-index: 2;
+    }
+  }
+}

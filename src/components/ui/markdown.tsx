@@ -1,6 +1,6 @@
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import Link from 'next/link';
-import isExternalLink from '../../utils/is-external-link';
+import isExternalLink from '@/utils/is-external-link';
 
 const LinkRenderer = ({
   href,
@@ -43,15 +43,24 @@ type MarkdownProps = {
   components?: Record<string, React.ReactNode>;
   children: string;
   className?: string;
+  id?: string;
 };
 
-const Markdown = ({ Tag, components, children, className, ...props }: MarkdownProps) => {
+const Markdown = ({ Tag, components, children, className, id, ...props }: MarkdownProps) => {
   const markdown = (
     <MDXRemote
       source={children}
       components={{
         ...(Tag && {
-          p: ({ children }) => <Tag {...props}>{children}</Tag>,
+          p: ({ children }) => (
+            <Tag
+              {...(className && { className: className })}
+              {...(id && { id })}
+              {...props}
+            >
+              {children}
+            </Tag>
+          ),
         }),
         a: LinkRenderer,
         li: ListRenderer,
@@ -63,7 +72,18 @@ const Markdown = ({ Tag, components, children, className, ...props }: MarkdownPr
     />
   );
 
-  return className ? <div className={className}>{markdown}</div> : markdown;
+  return Tag ? (
+    markdown
+  ) : (
+    <div
+      {...(className && { className: className })}
+      {...(Object.keys(props).length > 0 && {
+        ...props,
+      })}
+    >
+      {markdown}
+    </div>
+  );
 };
 
 Markdown.h1 = (props: JSX.IntrinsicAttributes & MarkdownProps) => (
@@ -99,6 +119,12 @@ Markdown.h5 = (props: JSX.IntrinsicAttributes & MarkdownProps) => (
 Markdown.span = (props: JSX.IntrinsicAttributes & MarkdownProps) => (
   <Markdown
     Tag='span'
+    {...props}
+  />
+);
+Markdown.li = (props: JSX.IntrinsicAttributes & MarkdownProps) => (
+  <Markdown
+    Tag='li'
     {...props}
   />
 );

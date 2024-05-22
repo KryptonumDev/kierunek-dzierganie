@@ -1,0 +1,4 @@
+.Description {
+  display: grid;
+  gap: clamp(64px, calc(80vw / 7.68), 80px);
+}

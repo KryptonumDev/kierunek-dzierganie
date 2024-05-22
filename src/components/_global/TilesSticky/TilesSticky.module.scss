@@ -1,0 +1,37 @@
+.TilesSticky {
+  display: grid;
+  align-items: flex-start;
+  gap: clamp(42px, calc(56vw / 7.68), 56px) 32px;
+  @media (min-width: 950px) {
+    grid-template-columns: 1fr 1fr;
+    header {
+      height: 100%;
+      max-height: 100vh;
+      max-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: sticky;
+      top: 0;
+    }
+  }
+  header {
+    h2 {
+      margin-bottom: clamp(16px, calc(28vw / 7.68), 28px);
+    }
+    a {
+      margin-top: clamp(24px, calc(36vw / 7.68), 36px);
+    }
+  }
+  .wrapper {
+    display: grid;
+    gap: clamp(16px, calc(32vw / 7.68), 32px);
+    .item {
+      padding: clamp(16px, calc(36vw / 7.68), 36px);
+      background-color: var(--primary-200);
+      h3 {
+        margin-bottom: clamp(16px, calc(20vw / 7.68), 20px);
+      }
+    }
+  }
+}

@@ -1,0 +1,67 @@
+.ControlPanel {
+  @media (min-width: 1000px) {
+    position: sticky;
+    top: 140px;
+  }
+  border-radius: 6px;
+  background: var(--primary-200);
+  padding: clamp(16px, calc(24vw / 7.68), 36px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: fit-content;
+  ul {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 28px;
+    @media (min-width: 1000px) {
+      .logout {
+        margin-top: 160px;
+        width: fit-content;
+        text-align: left;
+      }
+    }
+    @media (max-width: 999px) {
+      flex-direction: row;
+      gap: 34px 48px;
+      .logout {
+        margin-left: auto;
+      }
+      li {
+        flex-grow: 1;
+        text-align: center;
+      }
+    }
+    li {
+      list-style-type: none;
+      a {
+        display: grid;
+        gap: 4px;
+        grid-template-columns: auto 1fr;
+        color: var(--primary-700);
+        font-size: calc(14rem / 16);
+        &:hover {
+          color: var(--primary-900);
+        }
+        font-weight: 300;
+        line-height: 150%;
+        transition:
+          color 0.5s var(--easing),
+          font-size 0.5s var(--easing);
+        svg {
+          margin-top: 0.35em;
+          width: 0px;
+          transition: width 0.5s var(--easing);
+        }
+        &[aria-current='true'] {
+          color: var(--primary-800, #53423c);
+          font-size: calc(18rem / 16);
+          svg {
+            width: 21px;
+          }
+        }
+      }
+    }
+  }
+}

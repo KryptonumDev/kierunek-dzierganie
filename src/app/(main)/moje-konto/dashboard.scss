@@ -1,0 +1,12 @@
+.dashboard-wrapper {
+  display: grid;
+  gap: 32px;
+  @media (min-width: 1000px) {
+    grid-template-columns: 0.375fr 1fr;
+  }
+
+  .main {
+    display: grid;
+    gap: clamp(48px, calc(96vw / 7.68), 144px);
+  }
+}

@@ -1,0 +1,25 @@
+.CertificateSection {
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(12px, calc(16vw/7.68), 24px);
+  padding-top: 82px;
+
+  .icon {
+    display: grid;
+    padding: clamp(58px, calc(60vw/7.68), 92px) clamp(78px, calc(78vw/7.68), 122px) clamp(51px, calc(51vw/7.68), 76px) clamp(78px, calc(78vw/7.68), 122px);
+    background: #FFF;
+    width: fit-content;
+    border-radius: 4px;
+    justify-self: center;
+  }
+
+  .link {
+    width: fit-content;
+    .fileSize {
+      font-weight: 300;
+      font-style: italic;
+      color: var(--primary-600);
+    }
+  }
+}

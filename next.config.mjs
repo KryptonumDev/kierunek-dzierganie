@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
+  reactStrictMode: false,
   productionBrowserSourceMaps: true,
   images: {
     dangerouslyAllowSVG: true,
@@ -15,10 +16,25 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/',
-        destination: 'https://www.zrobmimamo.pl',
-        permanent: false,
+        source: '/szydelkowanie',
+        destination: '/kursy-szydelkowania',
+        permanent: true,
       },
+      {
+        source: '/dzierganie-na-drutach',
+        destination: '/kursy-dziergania-na-drutach',
+        permanent: true,
+      },
+      {
+        source: '/dlaczego-kierunek-dzierganie',
+        destination: '/nasze-marki',
+        permanent: true,
+      },
+      {
+        source: '/o-nas',
+        destination: '/zespol',
+        permanent: true,
+      }
     ];
   },
 };

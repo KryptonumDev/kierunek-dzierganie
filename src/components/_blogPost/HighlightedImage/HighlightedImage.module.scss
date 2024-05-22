@@ -1,0 +1,27 @@
+.HighlightedImage {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: auto auto;
+  align-items: center;
+  padding-right: 32px;
+  padding-top: clamp(4px, calc(12vw/7.68), 12px);
+
+  &[data-background="true"] {
+    background: var(--primary-200);
+    border-radius: 4px;
+  }
+
+  @media(max-width: 499px) {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+
+  >img {
+    border-radius: 4px;
+    height: auto;
+    width: 100%;
+    object-fit: cover;
+    max-width: 250px;
+    display: block;
+  }
+}

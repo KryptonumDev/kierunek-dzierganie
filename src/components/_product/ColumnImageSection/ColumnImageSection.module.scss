@@ -1,0 +1,30 @@
+$tabletBrakpoint: 900px;
+
+.ColumnImageSection {
+  header {
+    max-width: calc(584rem / 16);
+    margin: 0 auto clamp(16px, calc(28vw / 7.68), 36px);
+    text-align: center;
+  }
+  .column {
+    display: grid;
+    align-items: center;
+    gap: clamp(16px, calc(32vw / 7.68), 32px);
+    @media (min-width: $tabletBrakpoint) {
+      grid-template-columns: 1fr 1.4fr;
+    }
+    .subheading {
+      margin-bottom: clamp(12px, calc(20vw / 7.68), 36px);
+    }
+  }
+  &[data-reversed='true'] {
+    .column {
+      @media (min-width: $tabletBrakpoint) {
+        grid-template-columns: 1.4fr 1fr;
+      }
+      img {
+        order: 1;
+      }
+    }
+  }
+}

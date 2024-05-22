@@ -1,0 +1,81 @@
+.embla {
+  margin: auto;
+}
+.embla__viewport {
+  overflow: hidden;
+  @media (max-width: 1279px) {
+    margin-left: calc(var(--pageMargin) * -1);
+    margin-right: calc(var(--pageMargin) * -1);
+    padding: 0 var(--pageMargin);
+  }
+}
+.embla__container {
+  backface-visibility: hidden;
+  display: flex;
+  touch-action: pan-y;
+}
+.embla__slide {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+.embla__controls {
+  margin-top: clamp(16px, calc(24vw / 7.68), 32px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(24px, calc(36vw / 7.68), 36px);
+}
+.embla__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--primary-200);
+  transition:
+    opacity 0.5s,
+    background-color 0.5s;
+  flex-shrink: 0;
+  svg {
+    transition: transform 0.5s var(--easing);
+  }
+  &:hover,
+  &:focus-visible {
+    background-color: var(--primary-300);
+    svg {
+      transform: scaleX(1.1);
+    }
+  }
+  &:disabled {
+    opacity: 0.62;
+    pointer-events: none;
+  }
+}
+
+.embla__dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.embla__dot {
+  display: block;
+  border-radius: 50%;
+  width: 8px;
+  height: 8px;
+  background-color: var(--primary-500);
+  opacity: 0.48;
+  transition:
+    transform 0.5s var(--easing),
+    opacity 0.5s;
+  &[aria-current='true'] {
+    transform: scale(1.5);
+    opacity: 1;
+  }
+  &:hover,
+  &:focus-visible {
+    opacity: 0.8;
+  }
+}

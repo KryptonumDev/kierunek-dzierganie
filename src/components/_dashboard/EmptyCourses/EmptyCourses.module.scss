@@ -1,0 +1,107 @@
+.EmptyCourses {
+  >h2 {
+    margin-top: clamp(48px, calc(48vw / 7.68), 64px);
+    margin-bottom: clamp(16px, calc(16vw / 7.68), 28px);
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    position: relative;
+    width: fit-content;
+
+    .count {
+      position: absolute;
+      right: -4px;
+      transform: translateX(100%);
+      top: -6px;
+      border-radius: 200px;
+      background: var(--primary-300, #efe8e7);
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: calc(14rem / 16);
+    }
+  }
+
+  >p {
+    text-align: center;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(16px, calc(24vw / 7.68), 24px);
+    margin: 0 auto;
+    width: fit-content;
+    margin-top: clamp(20px, calc(48vw / 7.68), 48px);
+
+    >div {
+      max-width: 400px;
+      width: 100%;
+
+      .img {
+        border-radius: 6px;
+        overflow: hidden;
+        position: relative;
+        display: block;
+        margin-bottom: 20px;
+
+        &:after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(180deg, rgba(253, 251, 248, 0.00) 0%, #FDFBF8 93.5%);
+          z-index: 1;
+        }
+
+        .image {
+          border-radius: inherit;
+          transition: transform 0.4s var(--easing);
+          aspect-ratio: 1/1;
+          object-fit: cover;
+          width: 100%;
+          height: auto;
+        }
+      }
+
+      .iconWrapper {
+        position: absolute;
+        z-index: 2;
+        display: grid;
+        overflow: hidden;
+        bottom: 0;
+        left: 50%;
+        transform: translate(-50%);
+
+        >svg {
+          height: 100%;
+          width: 100%;
+        }
+
+        &[data-crocheting="true"] {
+          bottom: clamp(15px, calc(25vw/7.68), 32px);
+        }
+      }
+
+      a {
+        margin: 0 auto;
+
+        @media (max-width: 480px) {
+          font-size: calc(14rem / 16);
+        }
+      }
+
+      .img:hover,
+      &:has(.cta:hover),
+      &:has(.cta:focus-visible) {
+        .image {
+          transform: scale(1.05);
+        }
+      }
+    }
+  }
+}

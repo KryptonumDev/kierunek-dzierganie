@@ -1,0 +1,21 @@
+.percentChart {
+  position: relative;
+  display: flex;
+  width: 58px;
+  height: 58px;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--primary-700, #766965);
+  text-align: center;
+  font-size: calc(14rem/16);
+  font-weight: 300;
+  line-height: 21px;
+
+  svg {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(-90deg);
+  }
+}

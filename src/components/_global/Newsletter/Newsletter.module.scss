@@ -1,0 +1,111 @@
+.Newsletter {
+  border-radius: 4px;
+  border: 1px solid var(--primary-400);
+  padding: clamp(16px, calc(24vw / 7.68), 24px);
+  display: grid;
+  gap: clamp(20px, calc(36vw / 7.68), 80px);
+  align-items: center;
+  @media (max-width: 799px) {
+    .heading {
+      text-align: center;
+    }
+    .cta {
+      margin: 0 auto;
+    }
+  }
+  @media (min-width: 800px) {
+    grid-template-columns: 1fr 1.5fr;
+  }
+  @media (min-width: 900px) {
+    grid-template-columns: 1fr 1.4fr;
+  }
+  img {
+    border-radius: 4px;
+    width: 100%;
+    max-width: 460px;
+    margin: 0 auto;
+  }
+}
+
+.Form {
+  display: grid;
+  gap: clamp(12px, calc(16vw / 7.68), 24px);
+  .heading {
+    margin-bottom: clamp(12px, calc(12vw / 7.68), 24px);
+  }
+  .column {
+    display: grid;
+    gap: clamp(12px, calc(16vw / 7.68), 24px);
+    @media (min-width: 900px) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  position: relative;
+  &:has(.State) {
+    > *:not(.State) {
+      visibility: hidden;
+    }
+  }
+}
+
+.State {
+  position: absolute;
+  left: -5px;
+  top: -5px;
+  right: -5px;
+  bottom: -5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: var(--primary-100);
+  h3 {
+    color: var(--success-800, #2d4031);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: clamp(calc(24rem / 16), calc(36vw / 7.68), calc(36rem / 16));
+    svg {
+      width: 28px;
+      height: auto;
+      margin-top: 0.2em;
+    }
+  }
+  &[data-success='false'] {
+    h3 {
+      color: var(--error-700);
+      svg {
+        width: 48px;
+        margin-top: 0.1em;
+      }
+    }
+  }
+  p {
+    margin-top: 16px;
+  }
+  button {
+    margin-top: 48px;
+  }
+  animation: Status 0.5s forwards;
+  @keyframes Status {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+}
+
+.Loading {
+  position: absolute;
+  left: -5px;
+  top: -5px;
+  right: -5px;
+  bottom: -5px;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+  background-color: rgba(253, 251, 248, 0.42);
+  backdrop-filter: blur(4px);
+}

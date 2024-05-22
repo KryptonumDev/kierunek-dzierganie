@@ -1,0 +1,13 @@
+.select {
+  p {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+    color: var(--primary-800, #53423c);
+    font-size: calc(14rem/16);
+    font-weight: 300;
+    line-height: 150%;
+  }
+}

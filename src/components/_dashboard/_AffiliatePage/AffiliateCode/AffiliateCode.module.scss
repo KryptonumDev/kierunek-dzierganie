@@ -1,0 +1,36 @@
+.AffiliateCode {
+  padding: clamp(24px, calc(28vw / 7.68), 36px) clamp(16px, calc(24vw / 7.68), 36px);
+  border-radius: 6px;
+  background: var(--primary-200);
+  text-align: center;
+  .max-width {
+    max-width: calc(690rem / 16);
+    margin: 0 auto;
+  }
+  h2 {
+    margin-bottom: clamp(16px, calc(28vw / 7.68), 36px);
+  }
+  .paragraph {
+    margin: clamp(16px, calc(28vw / 7.68), 36px) 0;
+    & > *:not(:last-child) {
+      margin-bottom: 12px;
+    }
+  }
+  .code {
+    .paragraph {
+      font-size: calc(14rem / 16);
+      margin-bottom: 8px;
+    }
+    .box {
+      border-radius: 4px;
+      border: 1px solid var(--primary-600);
+      padding: 8px;
+      gap: 8px;
+      display: inline-flex;
+      align-items: center;
+    }
+  }
+  .cta {
+    margin: 0 auto;
+  }
+}
