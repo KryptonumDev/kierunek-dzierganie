@@ -96,11 +96,11 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
         )}
         <h1>{name}</h1>
         <div className={styles.attributes}>
-          {attributes.map((el) => (
+          {attributes.map((el, i) => (
             <>
               {el.type === 'color' ? (
                 <div
-                  key={el.name}
+                  key={i}
                   className={styles.colorPicker}
                 >
                   <span>Wybierz {el.name}</span>
@@ -114,7 +114,7 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
                   ))}
                 </div>
               ) : (
-                <p key={el.name}>
+                <p key={i}>
                   <span>Wybierz {el.name}</span>
                   <Select
                     className='select'
