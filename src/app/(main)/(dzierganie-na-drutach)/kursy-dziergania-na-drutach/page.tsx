@@ -140,7 +140,7 @@ const query = async (searchParams: { [key: string]: string }): Promise<KnittingP
       bundle: searchParams.pakiet ?? null,
       discount: searchParams.promocja ?? null,
     },
-    tags: ['KnittingCourses_Page'],
+    tags: ['KnittingCourses_Page', 'course', 'bundle', 'courseCategory', 'CourseAuthor_Collection'],
   });
 };
 
