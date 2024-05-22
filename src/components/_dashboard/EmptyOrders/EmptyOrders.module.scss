@@ -85,7 +85,7 @@
         margin: 0 auto;
 
         @media (max-width: 480px) {
-          font-size: 14px;
+          font-size: calc(14rem / 16);
         }
       }
 

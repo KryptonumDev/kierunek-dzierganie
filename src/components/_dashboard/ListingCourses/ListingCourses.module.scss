@@ -18,7 +18,7 @@
       text-align: center;
       aspect-ratio: 1;
       min-width: 28px;
-      font-size: 14px;
+      font-size: calc(14rem/16);
       font-weight: 300;
       line-height: 150%;
       display: flex;
@@ -59,6 +59,7 @@
 
   .filters-button-wrap {
     border-bottom: 1px solid var(--primary-400, #e5d8d4);
+
     .filters-button {
       display: flex;
       align-items: center;
@@ -88,9 +89,11 @@
     @media (max-width: 1024px) {
       gap: 24px;
     }
+
     @media (max-width: 680px) {
       grid-template-columns: 1fr 1fr;
     }
+
     @media (max-width: 380px) {
       grid-template-columns: 1fr;
     }
@@ -99,10 +102,10 @@
       display: none;
     }
 
-    > div {
+    >div {
       h3 {
         margin-bottom: clamp(12px, calc(16vw / 7.68), 24px);
-        font-size: 18px;
+        font-size: calc(18rem/16);
       }
 
       button {
@@ -113,7 +116,7 @@
         text-align: left;
         padding: 10px 8px;
         color: var(--primary-800, #53423c);
-        font-size: 14px;
+        font-size: calc(14rem/16);
         font-weight: 300;
         line-height: 150%;
         margin: 0;
@@ -148,11 +151,11 @@
     gap: 16px;
     justify-content: space-between;
 
-    > button {
+    >button {
       height: fit-content;
     }
 
-    > div {
+    >div {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
@@ -162,7 +165,7 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        font-size: clamp(14px, calc(14vw / 7.68), 18px);
+        font-size: clamp(calc(14rem/16), calc(14vw/7.68), calc(18rem/16));
         padding: 10px 14px 10px 16px;
         border-radius: 4px;
         border: 1px solid var(--primary-500, #b4a29c);

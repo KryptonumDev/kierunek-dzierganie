@@ -21,7 +21,7 @@
         background: var(--primary-200);
         color: var(--primary-700);
         font-family: var(--font-city-streetwear);
-        font-size: clamp(32px, calc(48vw / 7.68), 48px);
+        font-size: clamp(calc(32rem/16), calc(48vw/7.68), calc(48rem/16));
         text-align: center;
         line-height: 2;
       }

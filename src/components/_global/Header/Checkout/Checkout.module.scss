@@ -106,7 +106,7 @@
 
     legend {
       color: var(--primary-700, #766965);
-      font-size: 24px;
+      font-size: calc(24rem/16);
       font-weight: 300;
       line-height: 130%;
       display: block;
@@ -146,7 +146,7 @@
 
     .payment-inform {
       text-align: right;
-      font-size: 14px;
+      font-size: calc(14rem/16);
       font-weight: 300;
       line-height: 150%;
       margin-bottom: 48px;
@@ -224,7 +224,7 @@
 
     color: var(--primary-800, #53423c);
 
-    font-size: 14px;
+    font-size: calc(14rem/16);
     font-weight: 300;
     line-height: 150%;
 
@@ -251,7 +251,7 @@
       }
 
       .badge {
-        font-size: 14px;
+        font-size: calc(14rem/16);
         position: absolute;
         display: block;
         top: 0;
@@ -271,7 +271,7 @@
 
     .title {
       color: var(--primary-800, #53423c);
-      font-size: 18px;
+      font-size: calc(18rem/16);
       font-weight: 300;
       line-height: 150%;
       margin-bottom: 16px;
@@ -279,7 +279,7 @@
 
     .price {
       color: var(--primary-800, #53423c);
-      font-size: 14px;
+      font-size: calc(14rem/16);
       font-weight: 300;
       line-height: 150%;
 

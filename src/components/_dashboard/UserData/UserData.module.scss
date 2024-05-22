@@ -32,7 +32,7 @@
     .switch-annotation {
       margin-top: 8px;
       color: var(--primary-800, #53423c);
-      font-size: 14px;
+      font-size: calc(14rem/16);
       font-weight: 300;
       line-height: 150%;
       margin-bottom: clamp(24px, calc(36vw / 7.68), 48px);

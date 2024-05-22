@@ -29,7 +29,7 @@
   }
 
   .text {
-    font-size: clamp(16px, calc(18vw/7.68), 28px);
+    font-size: clamp(calc(16rem/16), calc(18vw/7.68), calc(28rem/16));
     padding-top: clamp(8px, calc(15vw/7.68), 32px);
     margin-top: unset;
   }

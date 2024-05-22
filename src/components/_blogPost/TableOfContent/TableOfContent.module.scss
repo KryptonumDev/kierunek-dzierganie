@@ -57,7 +57,7 @@
       overflow-y: auto;
       max-height: calc(100vh - 300px);
       padding: 10px 10px 10px 0px;
-      font-size: 18px;
+      font-size: calc(18rem / 16);
       display: grid;
       gap: 16px;
       color: var(--primary-600);
@@ -68,7 +68,7 @@
       }
 
       .subList {
-        font-size: 14px;
+        font-size: calc(14rem / 16);
         gap: 16px;
         display: grid;
         color: var(--primary-600);

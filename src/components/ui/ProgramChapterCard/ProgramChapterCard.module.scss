@@ -78,7 +78,7 @@
       left: 50%;
       transform: translateX(-50%);
       display: none;
-      font-size: 14px;
+      font-size: calc(14rem/16);
 
       &.mobile {
         display: flex;
@@ -105,13 +105,13 @@
     margin-bottom: clamp(4px, calc(8vw / 7.68), 8px);
 
     color: var(--primary-800, #53423c);
-    font-size: 24px;
+    font-size: calc(24rem/16);
     font-weight: 300;
     line-height: 130%;
 
     span {
       color: var(--primary-700, #766965);
-      font-size: clamp(16px, calc(18vw / 7.68), 18px);
+      font-size: clamp(calc(16rem/16), calc(18vw/7.68), calc(18rem/16));
       font-weight: 300;
       line-height: 150%;
     }
@@ -119,7 +119,7 @@
 
   p {
     color: var(--primary-800, #53423c);
-    font-size: 14px;
+    font-size: calc(14rem/16);
     font-weight: 300;
     line-height: 150%;
   }

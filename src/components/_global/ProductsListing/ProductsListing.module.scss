@@ -3,6 +3,7 @@
 
   .products {
     margin-top: clamp(28px, calc(48vw / 7.68), 64px);
+
     .grid {
       margin-top: 48px;
       display: grid;
@@ -12,6 +13,7 @@
       @media (max-width: 899px) {
         grid-template-columns: 1fr 1fr;
       }
+
       @media (max-width: 520px) {
         grid-template-columns: 1fr;
       }
@@ -24,7 +26,7 @@
     margin: 0 auto 36px auto;
   }
 
-  h2 + div {
+  h2+div {
     text-align: center;
     max-width: 800px;
     margin: 0 auto 36px auto;
@@ -44,6 +46,7 @@
 
   .filters-button-wrap {
     border-bottom: 1px solid var(--primary-400, #e5d8d4);
+
     .filters-button {
       display: flex;
       align-items: center;
@@ -73,9 +76,11 @@
     @media (max-width: 1024px) {
       gap: 24px;
     }
+
     @media (max-width: 640px) {
       grid-template-columns: 1fr 1fr;
     }
+
     @media (max-width: 350px) {
       grid-template-columns: 1fr;
     }
@@ -84,10 +89,10 @@
       display: none;
     }
 
-    > div {
+    >div {
       h3 {
         margin-bottom: clamp(12px, calc(16vw / 7.68), 24px);
-        font-size: clamp(16px, calc(18vw / 7.68), 24px);
+        font-size: clamp(calc(16rem/16), calc(18vw/7.68), calc(24rem/16));
       }
 
       button {
@@ -98,7 +103,7 @@
         text-align: left;
         padding: 10px 8px;
         color: var(--primary-800, #53423c);
-        font-size: clamp(14px, calc(14vw / 7.68), 18px);
+        font-size: clamp(calc(14rem/16), calc(14vw/7.68), calc(18rem/16));
         font-weight: 300;
         line-height: 150%;
         margin: 0;
@@ -133,11 +138,11 @@
     gap: 16px;
     justify-content: space-between;
 
-    > button {
+    >button {
       height: fit-content;
     }
 
-    > div {
+    >div {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
@@ -147,7 +152,7 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        font-size: clamp(14px, calc(14vw / 7.68), 18px); 
+        font-size: clamp(calc(14rem/16), calc(14vw/7.68), calc(18rem/16));
         padding: 10px 14px 10px 16px;
         border-radius: 4px;
         border: 1px solid var(--primary-500, #b4a29c);

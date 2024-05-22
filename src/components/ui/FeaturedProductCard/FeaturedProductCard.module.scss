@@ -39,12 +39,12 @@
     margin-bottom: clamp(4px, calc(4vw/7.68), 24px);
 
     span {
-      font-size: 14px;
+      font-size: calc(14rem/16);
       color: var(--primary-800, #53423c);
 
       b {
         font-weight: 300;
-        font-size: 32px;
+        font-size: calc(32rem/16);
         font-family: var(--font-city-streetwear);
       }
     }
@@ -80,7 +80,7 @@
       transform: translate(-50%, -50%);
 
       strong {
-        font-size: 48px;
+        font-size: calc(48rem/16);
       }
     }
   }
@@ -101,13 +101,13 @@
 
   .excerpt {
     color: var(--primary-700, #766965);
-    font-size: 14px;
+    font-size: calc(14rem/16);
     font-weight: 300;
     line-height: 150%;
   }
 
   h3 {
-    font-size: clamp(18px, calc(24vw / 7.68), 24px);
+    font-size: clamp(calc(18rem/16), calc(24vw/7.68), calc(24rem/16));
     margin-bottom: clamp(8px, calc(8vw/7.68), 16px);
   }
 
@@ -123,7 +123,7 @@
     grid-area: image-wrap;
 
     .badge {
-      font-size: 18px;
+      font-size: calc(18rem/16);
       position: absolute;
       display: block;
       top: 0;
@@ -177,13 +177,13 @@
 
     span {
       color: var(--primary-800, #53423c);
-      font-size: 18px;
+      font-size: calc(18rem/16);
       font-weight: 300;
       line-height: 150%;
 
       &.discount {
         color: var(--primary-600, #9a827a);
-        font-size: 14px;
+        font-size: calc(14rem/16);
         line-height: 150%;
         text-decoration: line-through;
       }

@@ -207,24 +207,30 @@ h4,
     left: 0;
     bottom: -3px;
   }
+
   @keyframes link {
+
     0%,
     100% {
       transform: scaleX(1);
     }
+
     50% {
       transform: scaleX(0);
       transform-origin: right;
     }
+
     0%,
     50% {
       transform-origin: right;
     }
+
     51%,
     100% {
       transform-origin: left;
     }
   }
+
   &:hover,
   &:focus-visible {
     &::after {
@@ -259,13 +265,14 @@ main {
   display: grid;
   grid-template-columns: 1fr;
   margin: clamp(36px, calc(52vw / 7.68), 64px) auto var(--space-gap);
-  & > *:not(:last-child) {
+
+  &>*:not(:last-child) {
     margin-bottom: var(--space-gap);
   }
 }
 
-* + .unorderedList,
-.unorderedList + * {
+*+.unorderedList,
+.unorderedList+* {
   margin-top: clamp(12px, calc(20vw / 7.68), 20px);
 }
 
@@ -326,6 +333,7 @@ main {
 
 .select {
   cursor: pointer;
+
   .select__control {
     border-radius: 4px;
     border: 1px solid var(--primary-400, #e5d8d4);
@@ -343,18 +351,22 @@ main {
       background: var(--primary-200, #faf4f0);
     }
   }
+
   .select__input-container {
     margin-left: 0;
   }
+
   .select__value-container {
     padding: 0px 8px;
   }
+
   .select__indicator-separator {
     display: none;
   }
+
   .select__single-value {
     color: var(--primary-800, #53423c);
-    font-size: 14px;
+    font-size: calc(14rem/16);
     font-weight: 300;
     line-height: 130%;
   }
@@ -373,12 +385,14 @@ main {
       .select__option {
         cursor: pointer;
         color: var(--primary-800, #53423c);
-        font-size: 14px;
+        font-size: calc(14rem/16);
         font-weight: 300;
         line-height: 130%;
+
         &.select__option--is-focused {
           background: var(--primary-200, #faf4f0);
         }
+
         &.select__option--is-selected {
           background: var(--primary-300, #efe8e7);
           color: var(--primary-800, #53423c);
@@ -390,9 +404,9 @@ main {
 }
 
 .Toastify__toast-body {
-  > div {
+  >div {
     color: var(--primary-800, #53423c);
-    font-size: 17px;
+    font-size: calc(17rem/16);
     font-weight: 300;
     line-height: 150%;
   }

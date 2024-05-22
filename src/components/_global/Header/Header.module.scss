@@ -587,13 +587,13 @@
           justify-content: space-between;
           align-items: center;
           color: var(--primary-700, #766965);
-          font-size: 14px;
+          font-size: calc(14rem/16);
           font-weight: 300;
           line-height: 150%;
 
           span:last-child {
             color: var(--primary-800, #53423c);
-            font-size: 18px;
+            font-size: calc(18rem/16);
           }
         }
       }
@@ -857,7 +857,7 @@
             }
 
             @media (max-width: 480px) {
-              font-size: 14px;
+              font-size: calc(14rem/16);
             }
           }
         }
@@ -887,7 +887,7 @@
 
       h3 {
         color: var(--primary-800, #53423c);
-        font-size: clamp(16px, calc(16vw / 7.68), 18px);
+        font-size: clamp(calc(16rem/16), calc(16vw/7.68), calc(18rem/16));
         font-weight: 300;
         line-height: 155%;
         margin-bottom: 12px;
@@ -896,7 +896,7 @@
 
     .omnibus {
       color: var(--primary-600, #9a827a);
-      font-size: 14px;
+      font-size: calc(14rem/16);
       font-weight: 300;
       line-height: 150%;
     }
@@ -919,13 +919,13 @@
 
         span {
           color: var(--primary-800, #53423c);
-          font-size: 18px;
+          font-size: calc(18rem/16);
           font-weight: 300;
           line-height: 150%;
 
           &.discount {
             color: var(--primary-600, #9a827a);
-            font-size: 14px;
+            font-size: calc(14rem/16);
             line-height: 150%;
             text-decoration: line-through;
           }
