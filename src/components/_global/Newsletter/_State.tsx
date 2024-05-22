@@ -5,11 +5,11 @@ import { StatusProps } from './Newsletter.types';
 
 const getIcon = (success: boolean) => (success ? <SuccessIcon /> : <ErrorIcon />);
 const getHeading = (success: boolean) =>
-  success ? 'Dziękujemy za zapis do <strong>newslettera</strong>' : 'Coś poszło <strong>nie tak</strong>';
+  success ? 'Już prawie <strong>gotowe</strong>!' : 'Coś poszło <strong>nie tak</strong>';
 const getParagraph = (success: boolean) =>
   success
-    ? 'Od dawki fascynującej wiedzy dzieli Cię już tylko jeden krok. Sprawdź swojego maila i kliknij link z potwierdzeniem.'
-    : 'Nie udało nam się zapisać Cię do naszego newslettera. Jeśli zależy Ci na subskrypcji, spróbuj ponownie!';
+    ? 'Sprawdź teraz swoją pocztę i potwierdź adres e-mail, żebym mogła się z Tobą kontaktować. Pamiętaj, aby sprawdzić SPAM lub zakładki Oferty, Społeczności, bo tam lubią chować się maile.'
+    : 'Nie udało nam się zapisać Cię do naszego newslettera. Spróbuj ponownie!';
 
 const State = ({
   success,
