@@ -1,8 +1,9 @@
 import sanityFetch from '@/utils/sanity.fetch';
 import Components, { Components_Query } from '@/components/Components';
+import { QueryMetadata } from '@/global/Seo/query-metadata';
 import type { PageQueryProps } from '@/global/types';
 
-const NotFoundPage = async () => {
+export default async function NotFoundPage() {
   const { content }: PageQueryProps = await query();
 
   return (
@@ -10,9 +11,11 @@ const NotFoundPage = async () => {
       <Components data={content} />
     </>
   );
-};
+}
 
-export default NotFoundPage;
+export async function generateMetadata() {
+  return await QueryMetadata('NotFound_Page', '/404');
+}
 
 const query = async (): Promise<PageQueryProps> => {
   const data = await sanityFetch({
