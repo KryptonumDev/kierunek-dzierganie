@@ -33,12 +33,12 @@ export async function GET(request: NextRequest) {
           ? 'Proszę aktywować link w tej samej przeglądarce z której wysłałeś zapytanie!'
           : typedError.code === 'flow_state_not_found'
             ? 'Czas na aktywację linku wygasł! Proszę spróbować ponownie.'
-            : 'Wystąpił błąd podczas autoryzacji! Proszę spróbować ponownie.';
+            : typedError.message;
 
       return NextResponse.redirect(`https://kierunekdzierganie.pl/moje-konto/kursy?error_description=${message}`);
     }
   } else {
     console.log('No code provided! ', request);
-    return NextResponse.redirect('https://kierunekdzierganie.pl/moje-konto/autoryzacja');
+    return NextResponse.redirect('https://kierunekdzierganie.pl/moje-konto/autoryzacja?error_decr=Błąd+podczas+autoryzacji!+Proszę+spróbować+ponownie.');
   }
 }

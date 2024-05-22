@@ -10,14 +10,14 @@ const Authorization = () => {
   const params = useSearchParams();
 
   useEffect(() => {
-    if (params.get('error_description')) {
-      let message = params.get('error_description');
+    if (params.get('error_description') || params.get('error_decr')) {
+      let message = params.get('error_description') ?? params.get('error_decr');
 
       if (message === 'Email link is invalid or has expired') {
         message = 'Link aktywacyjny jest nieprawidłowy lub wygasł! Proszę spróbować ponownie.';
       }
 
-      if(message === 'Invalid login credentials') {
+      if (message === 'Invalid login credentials') {
         message = 'Nieprawidłowe dane logowania! Proszę spróbować ponownie.';
       }
 
