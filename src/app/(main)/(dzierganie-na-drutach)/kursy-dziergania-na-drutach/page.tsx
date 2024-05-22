@@ -35,18 +35,23 @@ const KnittingPage = async ({ searchParams }: { searchParams: { [key: string]: s
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const res = await supabase
-    .from('profiles')
-    .select(
-      `
+
+  let res;
+
+  if (user) {
+    res = await supabase
+      .from('profiles')
+      .select(
+        `
         id,
         courses_progress (
           course_id
         )
       `
-    )
-    .eq('id', user?.id)
-    .single();
+      )
+      .eq('id', user?.id)
+      .single();
+  }
 
   const title = <Markdown.h2>{listing_title}</Markdown.h2>;
   const text = <Markdown>{listing_text}</Markdown>;
@@ -69,7 +74,7 @@ const KnittingPage = async ({ searchParams }: { searchParams: { [key: string]: s
         courses={true}
         productsTotalCount={productsTotalCount}
         authors={authors}
-        ownedCourses={res.data?.courses_progress?.map((course) => course.course_id as string)}
+        ownedCourses={res?.data?.courses_progress?.map((course) => course.course_id as string)}
         bestSeller={listing_HighlightedCourse}
         bestSellerBadge={listing_HighlightedCourse_Badge}
       />

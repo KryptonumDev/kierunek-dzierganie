@@ -8,30 +8,24 @@ export async function GET(request: NextRequest) {
 
   if (code) {
     const supabase = createClient();
-    await supabase.auth
-      .exchangeCodeForSession(code)
-      .then((response) => {
-        console.log(response);
-        if (response.error) {
-          return NextResponse.redirect(
-            `https://kierunekdzierganie.pl/moje-konto/kursy?error_code=${response.error.code}&error_description=${response.error.message}&error_detail=${response.error.status}`
-          );
-        }
+    const response = await supabase.auth.exchangeCodeForSession(code);
 
-        if (backRoute) {
-          return NextResponse.redirect(`https://kierunekdzierganie.pl${backRoute}`);
-        }
+    if (response.error) {
+      return NextResponse.redirect(
+        `https://kierunekdzierganie.pl/moje-konto/kursy?error_code=${response.error.code}&error_description=${response.error.message}&error_detail=${response.error.status}`
+      );
+    }
 
-        // URL to redirect to after sign in process completes
-        return NextResponse.redirect('https://kierunekdzierganie.pl/moje-konto/kursy');
-      })
-      .catch((error) => {
-        return NextResponse.redirect(
-          `https://kierunekdzierganie.pl/moje-konto/kursy?error_code=${error.code}&error_description=${error.message}&error_detail=${error.status}`
-        );
-      });
+    if (backRoute) {
+      return NextResponse.redirect(`https://kierunekdzierganie.pl${backRoute}`);
+    }
+
+    // URL to redirect to after sign in process completes
+    return NextResponse.redirect('https://kierunekdzierganie.pl/moje-konto/kursy');
   } else {
-    console.log('No code provided!');
-    return NextResponse.redirect('https://kierunekdzierganie.pl/moje-konto/autoryzacja');
+    console.log('No code provided! ', request);
+    return NextResponse.redirect(
+      'https://kierunekdzierganie.pl/moje-konto/autoryzacja?error_description=Brak+ważnego+kodu+autoryzacji!'
+    );
   }
 }

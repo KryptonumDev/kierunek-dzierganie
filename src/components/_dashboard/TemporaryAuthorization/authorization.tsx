@@ -1,10 +1,19 @@
 'use client';
 import styles from './authorization.module.scss';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AuthorizationForm from './authorization_Form';
+import { useSearchParams } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 const Authorization = () => {
   const [isRegister, setRegister] = useState(false);
+  const params = useSearchParams();
+
+  useEffect(() => {
+    if (params.get('error_description')) {
+      toast.error(params.get('error_description'));
+    }
+  }, [params]);
 
   return (
     <section className={styles['Authorization']}>

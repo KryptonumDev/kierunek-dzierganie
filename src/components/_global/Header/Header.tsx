@@ -17,23 +17,29 @@ const Header = async () => {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data } = await supabase
-    .from('profiles')
-    .select(
-      `
-      id,
-      billing_data,
-      shipping_data,
-      virtual_wallet (
-        amount
-      ),
-      courses_progress (
-        course_id
-      )
-    `
+  let data;
+
+  if (user) {
+    const response = await supabase
+      .from('profiles')
+      .select(
+        `
+    id,
+    billing_data,
+    shipping_data,
+    virtual_wallet (
+      amount
+    ),
+    courses_progress (
+      course_id
     )
-    .eq('id', user?.id)
-    .single();
+  `
+      )
+      .eq('id', user?.id)
+      .single();
+
+    data = response.data;
+  }
 
   const adminClient = createAdminClient();
 

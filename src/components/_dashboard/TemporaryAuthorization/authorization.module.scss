@@ -40,4 +40,15 @@
       margin: 36px auto;
     }
   }
+
+  .error {
+    color: var(--error-800);
+    display: inline-flex;
+    align-items: center;
+    text-align: center;
+    margin: 0 auto;
+    gap: 2px;
+    font-size: calc(14rem/16);
+    font-weight: 300;
+  }
 }
