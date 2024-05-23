@@ -49,6 +49,6 @@ export async function GET(request: NextRequest) {
         ? 'Link jest nieprawidłowy lub wygasł! Proszę spróbować ponownie.'
         : 'Błąd podczas autoryzacji! Proszę spróbować ponownie.';
 
-    return NextResponse.redirect(`https://kierunekdzierganie.pl/moje-konto/autoryzacja?${message.replace(/ /g, '+')}`);
+    return NextResponse.redirect(`https://kierunekdzierganie.pl/moje-konto/autoryzacja?error_decr=${message.replace(/ /g, '+')}`);
   }
 }
