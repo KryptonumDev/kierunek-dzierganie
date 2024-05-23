@@ -8,8 +8,8 @@ const getHeading = (success: boolean) =>
   success ? 'Już prawie <strong>gotowe</strong>!' : 'Coś poszło <strong>nie tak</strong>';
 const getParagraph = (success: boolean) =>
   success
-    ? 'Sprawdź teraz swoją pocztę i potwierdź adres e-mail, żebym mogła się z Tobą kontaktować. Pamiętaj, aby sprawdzić SPAM lub zakładki Oferty, Społeczności, bo tam lubią chować się maile.'
-    : 'Nie udało nam się zapisać Cię do naszego newslettera. Spróbuj ponownie!';
+    ? 'Sprawdź swoją skrzynkę pocztową i potwierdź adres e-mail, abym mogła się z Tobą kontaktować. Pamiętaj, aby sprawdzić foldery SPAM, Oferty lub Społeczności, bo tam lubią chować się maile. Jeśli już wcześniej zapisałaś się do naszego newslettera, nie musisz nic robić bo jesteś na liście :)'
+    : 'Nie udało nam się zapisać Cię do mojego newslettera. Spróbuj ponownie!';
 
 const State = ({
   success,
