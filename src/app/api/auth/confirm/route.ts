@@ -31,20 +31,24 @@ export async function GET(request: NextRequest) {
       const message =
         typedError.code === 'bad_code_verifier'
           ? 'Proszę aktywować link w tej samej przeglądarce z której wysłałeś zapytanie!'
-          : typedError.code === 'flow_state_not_found'
+          : typedError.code === 'flow_state_expired'
             ? 'Czas na aktywację linku wygasł! Proszę spróbować ponownie.'
             : typedError.code === 'validation_failed'
-              ? 'Brak informacji w ciasteczkach, proszę skontaktować się z administracją.'
+              ? 'Brak informacji w ciasteczkach odnośnie zapytania, proszę skontaktować się z administracją.'
               : typedError.message ?? 'Błąd podczas autoryzacji! Proszę spróbować ponownie.';
-
+      //flow_state_not_found ??
       return NextResponse.redirect(
         `https://kierunekdzierganie.pl/moje-konto/autoryzacja?error_description=${message.replace(/ /g, '+')}`
       );
     }
   } else {
     console.log('No code provided! ', request);
-    return NextResponse.redirect(
-      'https://kierunekdzierganie.pl/moje-konto/autoryzacja?error_decr=Błąd+podczas+autoryzacji!+Proszę+spróbować+ponownie.'
-    );
+    const error = requestUrl.searchParams.get('error_description');
+    const message =
+      error === 'Email link is invalid or has expired'
+        ? 'Link jest nieprawidłowy lub wygasł! Proszę spróbować ponownie.'
+        : 'Błąd podczas autoryzacji! Proszę spróbować ponownie.';
+
+    return NextResponse.redirect(`https://kierunekdzierganie.pl/moje-konto/autoryzacja?${message.replace(/ /g, '+')}`);
   }
 }
