@@ -1,12 +1,12 @@
 import sanityFetch from '@/utils/sanity.fetch';
+import { createClient } from '@/utils/supabase-server';
+import { createClient as createAdminClient } from '@/utils/supabase-admin';
+import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
 import Balance from '@/components/_dashboard/_AffiliatePage/Balance';
 import AffiliateCode, { AffiliateCode_Query } from '@/components/_dashboard/_AffiliatePage/AffiliateCode';
 import TextSection, { TextSection_Query } from '@/components/_dashboard/_AffiliatePage/TextSection';
 import type { AffiliatePage_QueryTypes } from './page.types';
-import { createClient } from '@/utils/supabase-server';
-import { createClient as createAdminClient } from '@/utils/supabase-admin';
-import Breadcrumbs from '@/components/_global/Breadcrumbs';
 
 const currentPath = '/moje-konto/program-lojalnosciowy';
 const page = [{ name: 'Program lojalnościowy', path: currentPath }];
