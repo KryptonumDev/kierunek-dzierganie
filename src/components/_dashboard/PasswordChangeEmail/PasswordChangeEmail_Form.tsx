@@ -8,13 +8,12 @@ import { REGEX } from '@/global/constants';
 import { toast } from 'react-toastify';
 import { useState } from 'react';
 import { createClient } from '@/utils/supabase-client';
-// import { useRouter } from 'next/navigation';
 
 const PasswordChangeEmailForm = () => {
   const [fetching, setFetching] = useState(false);
   const supabase = createClient();
+  const [isSended, setIsSended] = useState(false);
 
-  //   const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -26,14 +25,12 @@ const PasswordChangeEmailForm = () => {
   const onSubmit: SubmitHandler<FormTypes> = async (data) => {
     setFetching(true);
     try {
-      const res = await supabase.auth.resetPasswordForEmail(data.email, {
-        redirectTo:
-          'https://kierunekdzierganie.pl/api/auth/confirm?backRoute=/moje-konto/ustaw-haslo',
-      });
+      const res = await supabase.auth.resetPasswordForEmail(data.email);
       if (res.error) throw new Error(res.error.message);
 
       toast('Link do zmiany hasła został wysłany na podany adres e-mail');
       setFetching(false);
+      setIsSended(true);
     } catch (err) {
       if (err instanceof Error) toast(err.message);
       setFetching(false);
@@ -59,7 +56,9 @@ const PasswordChangeEmailForm = () => {
         })}
         errors={errors}
       />
-      <Button disabled={fetching}>Wyślij link do zmiany hasła</Button>
+      <Button disabled={fetching || isSended}>
+        {isSended ? 'Link do zmiany hasła został wysłany' : 'Wyślij link do zmiany hasła'}
+      </Button>
     </form>
   );
 };

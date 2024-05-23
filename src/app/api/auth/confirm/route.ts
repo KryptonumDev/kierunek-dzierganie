@@ -33,10 +33,12 @@ export async function GET(request: NextRequest) {
           ? 'Proszę aktywować link w tej samej przeglądarce z której wysłałeś zapytanie!'
           : typedError.code === 'flow_state_expired'
             ? 'Czas na aktywację linku wygasł! Proszę spróbować ponownie.'
-            : typedError.code === 'validation_failed'
+            : typedError.code === 'flow_state_not_found'
               ? 'Brak informacji w ciasteczkach odnośnie zapytania, proszę skontaktować się z administracją.'
-              : typedError.message ?? 'Błąd podczas autoryzacji! Proszę spróbować ponownie.';
-      //flow_state_not_found ??
+              : typedError.code === 'validation_failed'
+                ? 'Brak informacji w ciasteczkach odnośnie zapytania, proszę skontaktować się z administracją.'
+                : typedError.message ?? 'Błąd podczas autoryzacji! Proszę spróbować ponownie.';
+
       return NextResponse.redirect(
         `https://kierunekdzierganie.pl/moje-konto/autoryzacja?error_description=${message.replace(/ /g, '+')}`
       );
@@ -49,6 +51,8 @@ export async function GET(request: NextRequest) {
         ? 'Link jest nieprawidłowy lub wygasł! Proszę spróbować ponownie.'
         : 'Błąd podczas autoryzacji! Proszę spróbować ponownie.';
 
-    return NextResponse.redirect(`https://kierunekdzierganie.pl/moje-konto/autoryzacja?error_decr=${message.replace(/ /g, '+')}`);
+    return NextResponse.redirect(
+      `https://kierunekdzierganie.pl/moje-konto/autoryzacja?error_decr=${message.replace(/ /g, '+')}`
+    );
   }
 }

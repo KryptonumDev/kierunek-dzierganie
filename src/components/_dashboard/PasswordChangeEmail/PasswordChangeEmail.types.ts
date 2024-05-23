@@ -1,4 +1,4 @@
 export type FormTypes = {
-    email: string;
-  };
-  
+  email: string;
+  token: string;
+};
