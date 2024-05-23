@@ -55,13 +55,13 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
         })
         .then((res) => {
           if (res.error) throw res.error;
-
+          router.refresh();
           router.push('/moje-konto/kursy');
         })
         .catch((error) => {
           let message = error.message;
           if (message === 'Invalid login credentials') {
-            message = 'Nieprawidłowe dane logowania! Proszę spróbować ponownie.';
+            message = 'Nieprawidłowe dane logowania!';
           }
           toast(message);
           console.error(error); // TODO: Add error handling

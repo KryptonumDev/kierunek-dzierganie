@@ -28,19 +28,8 @@ export async function GET(request: NextRequest) {
       const typedError = error as AuthError;
       console.error(typedError);
 
-      const message =
-        typedError.code === 'bad_code_verifier'
-          ? 'Proszę aktywować link w tej samej przeglądarce z której wysłałeś zapytanie!'
-          : typedError.code === 'flow_state_expired'
-            ? 'Czas na aktywację linku wygasł! Proszę spróbować ponownie.'
-            : typedError.code === 'flow_state_not_found'
-              ? 'Brak informacji w ciasteczkach odnośnie zapytania, proszę skontaktować się z administracją.'
-              : typedError.code === 'validation_failed'
-                ? 'Brak informacji w ciasteczkach odnośnie zapytania, proszę skontaktować się z administracją.'
-                : typedError.message ?? 'Błąd podczas autoryzacji! Proszę spróbować ponownie.';
-
       return NextResponse.redirect(
-        `https://kierunekdzierganie.pl/moje-konto/autoryzacja?error_description=${message.replace(/ /g, '+')}`
+        `https://kierunekdzierganie.pl/moje-konto/autoryzacja?error_description=${typedError.message.replace(/ /g, '+')}`
       );
     }
   } else {

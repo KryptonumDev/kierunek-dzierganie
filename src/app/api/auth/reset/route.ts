@@ -22,19 +22,9 @@ export async function GET(request: NextRequest) {
     });
 
     if (error) {
-      const message =
-        error.code === 'bad_code_verifier'
-          ? 'Proszę aktywować link w tej samej przeglądarce z której wysłałeś zapytanie!'
-          : error.code === 'flow_state_expired'
-            ? 'Czas na aktywację linku wygasł! Proszę spróbować ponownie.'
-            : error.code === 'flow_state_not_found'
-              ? 'Brak informacji w ciasteczkach odnośnie zapytania, proszę skontaktować się z administracją.'
-              : error.code === 'validation_failed'
-                ? 'Brak informacji w ciasteczkach odnośnie zapytania, proszę skontaktować się z administracją.'
-                : error.message ?? 'Błąd podczas autoryzacji! Proszę spróbować ponownie.';
-
       redirectTo.searchParams.delete('next');
-      redirectTo.pathname = `/moje-konto/autoryzacja?error_description=${message.replace(/ /g, '+')}`;
+      redirectTo.pathname = '/moje-konto/autoryzacja';
+      redirectTo.searchParams.append('error_description', error.message.replace(/ /g, '+'));
       return NextResponse.redirect(redirectTo);
     }
 
@@ -42,7 +32,16 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(redirectTo);
   }
 
+  console.log('No code provided! ', request);
+  const error = searchParams.get('error_description');
+
+  const message =
+    error === 'Email link is invalid or has expired'
+      ? 'Link jest nieprawidłowy lub wygasł! Proszę spróbować ponownie.'
+      : error ?? 'Błąd podczas autoryzacji! Proszę spróbować ponownie.';
+
   // return the user to an error page with some instructions
-  redirectTo.pathname = '/moje-konto/autoryzacja?error_description=Brak+ważnego+tokena+autoryzacyjnego!';
+  redirectTo.pathname = '/moje-konto/autoryzacja';
+  redirectTo.searchParams.append('error_description', message.replace(/ /g, '+'));
   return NextResponse.redirect(redirectTo);
 }
