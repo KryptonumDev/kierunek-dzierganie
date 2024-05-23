@@ -55,8 +55,6 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
         })
         .then((res) => {
           if (res.error) throw res.error;
-          console.log(res);
-          toast('Zalogowano pomyślnie!');
           window.location.reload();
         })
         .catch((error) => {
