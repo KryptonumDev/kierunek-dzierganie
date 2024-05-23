@@ -6,8 +6,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const token = searchParams.get('token');
   const type = searchParams.get('type') as EmailOtpType | null;
-  let next = searchParams.get('next') ?? 'https://kierunekdzierganie.pl/';
-  if(!next.startsWith('http')) next = `https://kierunekdzierganie.pl${next}`;
+  const next = searchParams.get('next') ?? 'https://kierunekdzierganie.pl/';
 
   const redirectTo = request.nextUrl.clone();
   redirectTo.pathname = next;
@@ -35,7 +34,7 @@ export async function GET(request: NextRequest) {
                 : error.message ?? 'Błąd podczas autoryzacji! Proszę spróbować ponownie.';
 
       redirectTo.searchParams.delete('next');
-      redirectTo.pathname = `https://kierunekdzierganie.pl/moje-konto/autoryzacja?error_description=${message.replace(/ /g, '+')}`;
+      redirectTo.pathname = `/moje-konto/autoryzacja?error_description=${message.replace(/ /g, '+')}`;
       return NextResponse.redirect(redirectTo);
     }
 
@@ -44,6 +43,6 @@ export async function GET(request: NextRequest) {
   }
 
   // return the user to an error page with some instructions
-  redirectTo.pathname = '/error';
-  return NextResponse.redirect('https://kierunekdzierganie.pl/moje-konto/autoryzacja?error_description=Brak+ważnego+tokena+autoryzacyjnego!');
+  redirectTo.pathname = '/moje-konto/autoryzacja?error_description=Brak+ważnego+tokena+autoryzacyjnego!';
+  return NextResponse.redirect(redirectTo);
 }
