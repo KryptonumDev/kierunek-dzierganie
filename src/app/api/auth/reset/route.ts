@@ -16,15 +16,22 @@ export async function GET(request: NextRequest) {
   if (token && type) {
     const supabase = createClient();
 
-    const { error } = await supabase.auth.verifyOtp({
+    const res = await supabase.auth.verifyOtp({
       type,
       token_hash: token,
     });
-
+    console.log('res: ', res);
+    const { error } = res;
     if (error) {
       redirectTo.searchParams.delete('next');
       redirectTo.pathname = '/moje-konto/autoryzacja';
-      redirectTo.searchParams.append('error_description', error.message.replace(/ /g, '+'));
+
+      const message =
+        error.message === 'Email+link+is+invalid+or+has+expired'
+          ? 'Link jest nieprawidłowy lub wygasł! Proszę spróbować ponownie.'
+          : error.message ?? 'Błąd podczas autoryzacji! Proszę spróbować ponownie.';
+
+      redirectTo.searchParams.append('error_description', message.replace(/ /g, '+'));
       return NextResponse.redirect(redirectTo);
     }
 
@@ -36,7 +43,7 @@ export async function GET(request: NextRequest) {
   const error = searchParams.get('error_description');
 
   const message =
-    error === 'Email link is invalid or has expired'
+    error === 'Email+link+is+invalid+or+has+expired'
       ? 'Link jest nieprawidłowy lub wygasł! Proszę spróbować ponownie.'
       : error ?? 'Błąd podczas autoryzacji! Proszę spróbować ponownie.';
 
