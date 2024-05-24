@@ -26,7 +26,7 @@ export async function generateBill(data: any, id: string) {
 
       return {
         ...product,
-        rabat: discount,
+        rabat: Math.round((discount + Number.EPSILON) * 100) / 100,
       };
     }
 
