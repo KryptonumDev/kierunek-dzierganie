@@ -66,6 +66,7 @@ const Content = ({ CloseIcon, heading, paragraph, details }: ContentProps) => {
   }, []);
 
   const acceptAll = () => {
+    setShowBanner(false);
     const cookies: CookiesObject = cookieObjectKeys.reduce((acc, name) => {
       acc[name as keyof CookiesObject] = 'granted';
       return acc;
@@ -81,10 +82,10 @@ const Content = ({ CloseIcon, heading, paragraph, details }: ContentProps) => {
       security_storage: 'granted',
       wait_for_update: 2500,
     });
-    setShowBanner(false);
   };
 
   const rejectAll = () => {
+    setShowBanner(false);
     const cookies: CookiesObject = cookieObjectKeys.reduce((acc, name) => {
       acc[name as keyof CookiesObject] = 'denied';
       return acc;
@@ -100,7 +101,6 @@ const Content = ({ CloseIcon, heading, paragraph, details }: ContentProps) => {
       security_storage: 'granted',
       wait_for_update: 2500,
     });
-    setShowBanner(false);
   };
 
   const changeConsent = (name: keyof CookiesObject, event: React.MouseEvent<HTMLLabelElement>) => {
@@ -114,6 +114,7 @@ const Content = ({ CloseIcon, heading, paragraph, details }: ContentProps) => {
   };
 
   const acceptPart = () => {
+    setShowBanner(false);
     setCookie('CookieConsent', JSON.stringify(activeCookies), 90);
     gtag('consent', 'update', {
       ad_personalization: activeCookies.marketing,
@@ -125,7 +126,6 @@ const Content = ({ CloseIcon, heading, paragraph, details }: ContentProps) => {
       security_storage: 'granted',
       wait_for_update: 2500,
     });
-    setShowBanner(false);
   };
 
   return (
