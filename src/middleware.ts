@@ -8,6 +8,7 @@ export async function middleware(req: NextRequest) {
   if (
     !user &&
     !req.nextUrl.pathname.includes('/moje-konto/przypomnij-haslo') &&
+    !req.nextUrl.pathname.includes('/moje-konto/ustaw-haslo') &&
     !req.nextUrl.pathname.includes('moje-konto/potwierdzenie-rejestracji') &&
     req.nextUrl.pathname.includes('/moje-konto') &&
     !req.nextUrl.pathname.includes('autoryzacja') &&
