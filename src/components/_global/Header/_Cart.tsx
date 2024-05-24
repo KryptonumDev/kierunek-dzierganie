@@ -52,6 +52,7 @@ export default function Cart({
 
   const [isVirtualCoins, setIsVirtualCoins] = useState<boolean>(false);
   const [isPromoCode, setIsPromoCode] = useState(false);
+  const [couponVerifying, setCouponVerifying] = useState(false);
   const totalItemsCount = useMemo(() => {
     return cart?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
   }, [cart]);
@@ -69,14 +70,26 @@ export default function Cart({
     return () => removeEventListener('keydown', () => setShowCart());
   }, [setShowCart]);
 
+  useEffect(() => {
+    if (usedDiscount?.discounted_product) {
+      const product = cart?.find((item) => item._id === usedDiscount.discounted_product.id);
+
+      if (!product) {
+        setUsedDiscount(null);
+        toast('Produkt, do którego przypisany jest kupon, został usunięty z koszyka');
+      }
+    }
+  }, [cart]);
+
   const onSubmit = () => {
     goToCheckout();
   };
 
   const verifyCoupon = async () => {
+    setCouponVerifying(true);
     await fetch('/api/coupon/verify', {
       method: 'POST',
-      body: JSON.stringify({ code: discountCode, userId }),
+      body: JSON.stringify({ code: discountCode, userId, cart }),
     })
       .then((res) => res.json())
       .then((data) => {
@@ -90,12 +103,14 @@ export default function Cart({
           code: discountCode,
           id: data.id,
           type: data.coupons_types.coupon_type,
+          discounted_product: data.discounted_product,
           affiliatedBy: data.affiliation_of,
         });
       })
       .catch((error) => {
         toast(error.message);
-      });
+      })
+      .finally(() => setCouponVerifying(false));
   };
 
   function filterFetchedItems() {
@@ -207,6 +222,7 @@ export default function Cart({
                               </button>
                             </div>
                             <button
+                              disabled={couponVerifying}
                               type='button'
                               onClick={verifyCoupon}
                               className={`link ${styles.apply}`}

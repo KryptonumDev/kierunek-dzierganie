@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import Authorization from './_Authorization';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 import type { Billing, Shipping } from '@/global/types';
-import { toast } from 'react-toastify';
 
 const createInputState = (billing?: Billing, shipping?: Shipping, userEmail?: string) => ({
   firmOrder: false,
@@ -79,15 +78,6 @@ export default function Checkout({
       return;
     }
 
-    if (usedDiscount && usedDiscount.affiliatedBy === userId) {
-      setUsedDiscount(null);
-      toast('Nie możesz użyć własnego kodu afiliacyjnego');
-    }
-
-    //TODO: revalidate coupon after login,
-    // can be problem with per_user_limit if coupon code entered before loginx
-
-    //TODO: change delivery price calculation, currently it's hardcoded to 12.50zl
     setInput((prev) => ({
       ...prev,
       amount: fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0),
