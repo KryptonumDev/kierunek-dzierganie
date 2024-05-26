@@ -16,8 +16,12 @@ export async function generateBill(data: any, id: string) {
     if (data.used_discount) {
       if (data.used_discount.type === 'PERCENTAGE') {
         discount = data.used_discount.amount;
-      } else {
+      } else if (data.used_discount.type === 'FIXED CART') {
         discount = (data.used_discount.amount / data.products.array.length / (product.discount ?? product.price)) * 100;
+      } else if (data.used_discount.type === 'FIXED PRODUCT') {
+        data.used_discount.discounted_product.id === product.id
+          ? (discount = (data.used_discount.amount / product.quantity / (product.discount ?? product.price)) * 100)
+          : (discount = 0);
       }
 
       return {
@@ -115,6 +119,7 @@ export async function generateBill(data: any, id: string) {
   });
 
   const billId = await billRes.json();
+  console.log(billId);
 
   await supabase
     .from('orders')

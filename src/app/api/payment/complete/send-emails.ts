@@ -9,16 +9,16 @@ export async function sendEmails(data: any) {
     from: 'Kierunek Dzierganie <kontakt@kierunekdzierganie.pl>',
     to: [data.billing.email],
     subject: 'Nowe zamówienie!',
-    reply_to: 'kontakt@zrobmimamo.pl',
+    reply_to: 'kontakt@kierunekdzierganie.pl',
     text: '',
     react: Order({ data: data, type: data.need_delivery ? 'CREATE_ORDER' : 'ORDER_COMPLETED' }),
   });
 
   await resend.emails.send({
     from: 'Kierunek Dzierganie <kontakt@kierunekdzierganie.pl>',
-    to: ['kierunek.dzierganie@gmail.com'],
+    to: ['kontakt@kierunekdzierganie.pl'],
     subject: 'Nowe zamówienie!',
-    reply_to: 'kontakt@zrobmimamo.pl',
+    reply_to: 'kontakt@kierunekdzierganie.pl',
     text: '',
     react: Order({ data: data, type: 'NEW_ORDER' }),
   });

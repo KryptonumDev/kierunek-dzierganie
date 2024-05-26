@@ -109,7 +109,7 @@ const query = async (): Promise<QueryProps> => {
         }
       }
     `,
-    tags: ['global', 'cart'],
+    tags: ['global', 'Cart'],
   });
   return data;
 };

@@ -462,6 +462,10 @@ export type Discount = {
   code: string;
   id: string;
   type: string;
+  discounted_product: {
+    id: string;
+    name: string;
+  };
   affiliatedBy: string | null;
 };
 

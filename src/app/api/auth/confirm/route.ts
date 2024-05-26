@@ -1,47 +1,54 @@
 import { createClient } from '@/utils/supabase-server';
-import { type AuthError } from '@supabase/supabase-js';
+import { type EmailOtpType } from '@supabase/supabase-js';
 import { type NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
-  const requestUrl = new URL(request.url);
-  const code = requestUrl.searchParams.get('code');
-  const backRoute = requestUrl.searchParams.get('backRoute');
+  const { searchParams } = new URL(request.url);
+  const token = searchParams.get('token');
+  const type = searchParams.get('type') as EmailOtpType | null;
+  const next = searchParams.get('next') ?? '/moje-konto/kursy';
 
-  if (code) {
-    try {
-      const supabase = createClient();
-      const response = await supabase.auth.exchangeCodeForSession(code);
+  const redirectTo = request.nextUrl.clone();
+  redirectTo.pathname = next;
+  redirectTo.searchParams.delete('token');
+  redirectTo.searchParams.delete('type');
 
-      if (response.error) {
-        return NextResponse.redirect(
-          `https://kierunekdzierganie.pl/moje-konto/kursy?error_code=${response.error.code}&error_description=${response.error.message}&error_detail=${response.error.status}`
-        );
-      }
+  if (token && type) {
+    const supabase = createClient();
 
-      if (backRoute) {
-        return NextResponse.redirect(`https://kierunekdzierganie.pl${backRoute}`);
-      }
+    const res = await supabase.auth.verifyOtp({
+      type,
+      token_hash: token,
+    });
+    console.log('res: ', res);
+    const { error } = res;
+    if (error) {
+      redirectTo.searchParams.delete('next');
+      redirectTo.pathname = '/moje-konto/autoryzacja';
 
-      // URL to redirect to after sign in process completes
-      return NextResponse.redirect('https://kierunekdzierganie.pl/moje-konto/kursy');
-    } catch (error) {
-      const typedError = error as AuthError;
-      console.error(typedError);
+      const message =
+        error.message === 'Email+link+is+invalid+or+has+expired'
+          ? 'Link jest nieprawidłowy lub wygasł! Proszę spróbować ponownie.'
+          : error.message ?? 'Błąd podczas autoryzacji! Proszę spróbować ponownie.';
 
-      return NextResponse.redirect(
-        `https://kierunekdzierganie.pl/moje-konto/autoryzacja?error_description=${typedError.message.replace(/ /g, '+')}`
-      );
+      redirectTo.searchParams.append('error_description', message.replace(/ /g, '+'));
+      return NextResponse.redirect(redirectTo);
     }
-  } else {
-    console.log('No code provided! ', request);
-    const error = requestUrl.searchParams.get('error_description');
-    const message =
-      error === 'Email link is invalid or has expired'
-        ? 'Link jest nieprawidłowy lub wygasł! Proszę spróbować ponownie.'
-        : 'Błąd podczas autoryzacji! Proszę spróbować ponownie.';
 
-    return NextResponse.redirect(
-      `https://kierunekdzierganie.pl/moje-konto/autoryzacja?error_decr=${message.replace(/ /g, '+')}`
-    );
+    redirectTo.searchParams.delete('next');
+    return NextResponse.redirect(redirectTo);
   }
+
+  console.log('No code provided! ', request);
+  const error = searchParams.get('error_description');
+
+  const message =
+    error === 'Email+link+is+invalid+or+has+expired'
+      ? 'Link jest nieprawidłowy lub wygasł! Proszę spróbować ponownie.'
+      : error ?? 'Błąd podczas autoryzacji! Proszę spróbować ponownie.';
+
+  // return the user to an error page with some instructions
+  redirectTo.pathname = '/moje-konto/autoryzacja';
+  redirectTo.searchParams.append('error_description', message.replace(/ /g, '+'));
+  return NextResponse.redirect(redirectTo);
 }

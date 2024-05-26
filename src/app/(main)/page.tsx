@@ -4,7 +4,7 @@ import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import Components, { Components_Query } from '@/components/Components';
 import type { PageQueryProps } from '@/global/types';
 
-const page = { name: 'Strona główna', path: '/o-mnie' };
+const page = { name: 'Strona główna', path: '' };
 
 const IndexPage = async () => {
   const { content } = await query();
@@ -32,5 +32,5 @@ const query = async (): Promise<PageQueryProps> => {
     `,
     tags: ['homepage'],
   });
-  return data; 
+  return data;
 };

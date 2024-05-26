@@ -32,9 +32,6 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
         .signUp({
           email: data.email,
           password: data.password,
-          options: {
-            emailRedirectTo: `${location.origin}/api/auth/confirm`,
-          },
         })
         .then((res) => {
           if (res.error) throw res.error;
@@ -55,8 +52,6 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
         })
         .then((res) => {
           if (res.error) throw res.error;
-          console.log(res);
-          toast('Zalogowano pomyślnie!');
           window.location.reload();
         })
         .catch((error) => {

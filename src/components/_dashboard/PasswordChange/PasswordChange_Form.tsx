@@ -7,12 +7,13 @@ import Input from '@/components/ui/PasswordInput';
 import Button from '@/components/ui/Button';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/utils/supabase-client';
 
 const PasswordChangeForm = () => {
   const [fetching, setFetching] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClient();
 
   const {
@@ -27,6 +28,14 @@ const PasswordChangeForm = () => {
   const onSubmit: SubmitHandler<FormTypes> = async (data) => {
     setFetching(true);
     try {
+      const token = searchParams.get('token');
+      const type = searchParams.get('type');
+
+      if (token && type) {
+        const res = await fetch(`/api/auth/change-password?${searchParams.toString()}`).then((res) => res.json());
+        console.log('res: ', res);
+      }
+
       const { error } = await supabase.auth.updateUser({
         password: data.password,
       });
@@ -35,7 +44,11 @@ const PasswordChangeForm = () => {
       router.push('/moje-konto/potwierdzenie-zmiany-hasla');
       setFetching(false);
     } catch (err) {
-      if (err instanceof Error) toast(err.message);
+      const message =
+        (err as Error).message === 'Auth session missing!'
+          ? 'Brak autoryzacji do zmiany hasła. Proszę skontaktować się z administracją sklepu.'
+          : (err as Error).message;
+      if (err instanceof Error) toast.error(message);
       setFetching(false);
     }
   };

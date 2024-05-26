@@ -11,7 +11,7 @@ const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
-  const { code, userId } = await request.json();
+  const { code, userId, cart } = await request.json();
 
   try {
     const { data, error } = await supabase
@@ -27,7 +27,8 @@ export async function POST(request: Request) {
         use_limit,
         coupons_types (
           coupon_type
-        )
+        ),
+        discounted_product
         `
       )
       .eq('code', code)
@@ -46,6 +47,9 @@ export async function POST(request: Request) {
     }
 
     if (data?.per_user_limit) {
+      if (!userId)
+        return NextResponse.json({ error: 'Musisz być zalogowany, aby użyć tego kodu rabatowego' }, { status: 500 });
+
       const { count } = await supabase
         .from('coupons_uses')
         .select('*', { count: 'exact', head: true })
@@ -65,6 +69,35 @@ export async function POST(request: Request) {
 
       if (count && data?.use_limit >= count!) {
         return NextResponse.json({ error: 'Osiągnięto limit użyć kodu rabatowego' }, { status: 500 });
+      }
+    }
+
+    if (data?.affiliation_of) {
+      if (!userId)
+        return NextResponse.json({ error: 'Musisz być zalogowany, aby użyć tego kodu rabatowego' }, { status: 500 });
+
+      const { data: affiliationData } = await supabase
+        .from('profiles')
+        .select('courses_progress(count), orders(count)')
+        .eq('id', userId)
+        .single();
+
+      if (affiliationData) {
+        if (affiliationData.courses_progress[0]!.count >= 1 || affiliationData.orders[0]!.count >= 1) {
+          return NextResponse.json(
+            { error: 'Tylko nowi użytkownicy mogą skorzystać z kodu afiliacyjnego' },
+            { status: 500 }
+          );
+        }
+      }
+    }
+
+    // @ts-expect-error wrong types from supabase
+    if (data?.coupons_types?.coupon_type === 'FIXED PRODUCT') {
+      const inCart = cart.find((item: { id: string }) => item.id === data?.discounted_product.id);
+
+      if (!inCart) {
+        return NextResponse.json({ error: 'Kod rabatowy nie dotyczy żadnego produktu w koszyku' }, { status: 500 });
       }
     }
 
