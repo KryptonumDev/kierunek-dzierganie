@@ -5,7 +5,7 @@ export function calculateDiscountAmount(price: number, discount: Discount) {
     return -price * (discount.amount / 100);
   }
 
-  if (discount.type === 'FIXED CART') {
+  if (discount.type === 'FIXED CART' || discount.type === 'FIXED PRODUCT') {
     return -discount.amount;
   }
 
