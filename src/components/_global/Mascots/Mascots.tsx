@@ -27,6 +27,7 @@ const query = async (): Promise<MascotsQueryTypes['mascots']> => {
         }
       }
     `,
+    tags: ['global'],
   });
 
   return data?.mascots;

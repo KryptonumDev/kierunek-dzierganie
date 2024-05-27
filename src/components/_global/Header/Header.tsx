@@ -24,16 +24,16 @@ const Header = async () => {
       .from('profiles')
       .select(
         `
-    id,
-    billing_data,
-    shipping_data,
-    virtual_wallet (
-      amount
-    ),
-    courses_progress (
-      course_id
-    )
-  `
+          id,
+          billing_data,
+          shipping_data,
+          virtual_wallet (
+            amount
+          ),
+          courses_progress (
+            course_id
+          )
+        `
       )
       .eq('id', user?.id)
       .single();

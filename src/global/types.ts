@@ -31,6 +31,7 @@ export type ProductCard = {
   basis: 'crocheting' | 'knitting';
   slug: string;
   name: string;
+  visible: boolean;
   excerpt?: string;
   price?: number;
   discount?: number;
@@ -105,6 +106,10 @@ export type ProductCard = {
     _id: string;
     automatizationId: string;
   }>;
+  related?: {
+    _id: string;
+    name: string;
+  };
 };
 
 export type ProductVariant = {

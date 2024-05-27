@@ -150,6 +150,7 @@ const query = async (slug: string): Promise<QueryProps> => {
         ${PRODUCT_CARD_QUERY}
       }
     }`,
+    tags: ['course'],
     params: {
       slug: slug,
       courses: ownedCourses,

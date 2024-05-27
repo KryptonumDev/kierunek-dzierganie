@@ -1,6 +1,9 @@
+'use client';
+
 import { type ProductCard } from '@/global/types';
 import styles from './Popup.module.scss';
 import Items from './Items';
+import { useEffect } from 'react';
 
 export default function Popup({
   data,
@@ -17,6 +20,12 @@ export default function Popup({
   className: string | undefined;
   setShowCart: (variable: boolean) => void;
 }) {
+  useEffect(() => {
+    if (data?.every((item) => !item.materials_link && !item.printed_manual)) {
+      setPopupState(false);
+    }
+  }, [data,setPopupState]);
+
   return (
     <div className={`${styles.Popup} ${className}`}>
       <button

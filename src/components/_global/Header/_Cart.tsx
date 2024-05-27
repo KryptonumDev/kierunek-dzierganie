@@ -79,7 +79,19 @@ export default function Cart({
         toast('Produkt, do którego przypisany jest kupon, został usunięty z koszyka');
       }
     }
-  }, [cart]);
+  }, [cart, usedDiscount, setUsedDiscount]);
+
+  useEffect(() => {
+    fetchedItems?.forEach((el) => {
+      if (!el.visible && el.related?._id && el._type === 'product') {
+        // check is related in cart or in ownedCourses, if no, delete from cart
+        if (!fetchedItems?.some((item) => item._id === el.related!._id) && !ownedCourses?.includes(el.related._id)) {
+          removeItem(el._id + (el.variant?._id ? `variant:${el.variant?._id}` : ''));
+          toast(`${el.name} został usunięty z koszyka, ponieważ nie posiadasz ${el.related.name}`);
+        }
+      }
+    });
+  }, [fetchedItems, ownedCourses]);
 
   const onSubmit = () => {
     goToCheckout();
@@ -113,22 +125,23 @@ export default function Cart({
       .finally(() => setCouponVerifying(false));
   };
 
-  function filterFetchedItems() {
-    let filteredFetchItems = fetchedItems;
+  const filteredFetchItems = useMemo(() => {
+    if (!fetchedItems) return;
+    const items = [...fetchedItems];
 
-    const materials_linkIds = filteredFetchItems?.map((item) => item.materials_link?._id);
-    const printed_manualIds = filteredFetchItems?.map((item) => item.printed_manual?._id);
+    const materials_linkIds = items?.map((item) => item.materials_link?._id);
+    const printed_manualIds = items?.map((item) => item.printed_manual?._id);
 
-    filteredFetchItems?.map((product) => {
+    items?.map((product) => {
       if (materials_linkIds?.includes(product._id)) {
-        filteredFetchItems?.forEach((item) => {
+        items?.forEach((item) => {
           if (item.materials_link?._id === product._id) {
             item.materials_link = undefined;
           }
         });
       }
       if (printed_manualIds?.includes(product._id)) {
-        filteredFetchItems?.forEach((item) => {
+        items?.forEach((item) => {
           if (item.printed_manual?._id === product._id) {
             item.printed_manual = undefined;
           }
@@ -136,18 +149,14 @@ export default function Cart({
       }
     });
 
-    filteredFetchItems = filteredFetchItems?.filter((item) => item.popup == true) ?? [];
+    return items;
+  }, [fetchedItems]);
 
-    return filteredFetchItems;
-  }
-
-  const filteredFetchItems = filterFetchedItems();
-
-  if (filteredFetchItems?.length == 0) {
-    setPopupState(false);
-  }
-
-  if (fetchedItems && filteredFetchItems?.length == undefined) setPopupState(false);
+  useEffect(() => {
+    if (cart?.length === 0 || filteredFetchItems?.length == 0 || (fetchedItems && filteredFetchItems?.length == undefined)) {
+      setPopupState(false);
+    }
+  }, [filteredFetchItems, setPopupState, fetchedItems, cart]);
 
   return (
     <>
@@ -168,16 +177,17 @@ export default function Cart({
               {NavigationCrossIcon}
             </button>
           </div>
-          {(filteredFetchItems?.length ?? 0) > 0 && (
-            <div className={styles.linkWrapper}>
-              <p
-                className={`link ${styles.link}`}
-                onClick={() => setPopupState(!popupState)}
-              >
-                Pokaż materiały do kursów{' '}
-              </p>
-            </div>
-          )}
+          {(filteredFetchItems?.length ?? 0) > 0 &&
+            filteredFetchItems?.some((item) => item.materials_link || item.printed_manual) && (
+              <div className={styles.linkWrapper}>
+                <p
+                  className={`link ${styles.link}`}
+                  onClick={() => setPopupState(!popupState)}
+                >
+                  Pokaż materiały do kursów{' '}
+                </p>
+              </div>
+            )}
           <div>
             {cart?.length ? (
               <CartGrid
@@ -363,7 +373,7 @@ export default function Cart({
         </div>
         {popupState && (filteredFetchItems?.length ?? 0) > 0 && (
           <Popup
-            data={filteredFetchItems}
+            data={filteredFetchItems!}
             closeIcon={PopupCrossIcon}
             setPopupState={setPopupState}
             popupState={popupState}
@@ -487,7 +497,7 @@ const CartGrid = ({ fetchedItems, removeItem, updateItemQuantity }: Grid) => {
               </div>
               <span className={styles['omnibus']}>
                 Najniższa cena z 30 dni przed obniżką:{' '}
-                <span dangerouslySetInnerHTML={{ __html: formatPrice(item.discount ?? item.price!) }} />
+                <span dangerouslySetInnerHTML={{ __html: formatPrice(item.price!) }} />
               </span>
             </div>
             <button
