@@ -39,10 +39,10 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
     <>
       <ProductSchema
         name={name}
-        image={gallery?.[0] ?? undefined}
-        price={price}
+        image={gallery?.[0] ?? variants[0]?.gallery?.[0]}
+        price={price ?? variants[0]?.price}
         reviews={reviews}
-        countInStock={countInStock}
+        countInStock={countInStock ?? variants[0]?.countInStock}
       />
       <Breadcrumbs
         data={[
