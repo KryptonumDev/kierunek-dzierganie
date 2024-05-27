@@ -42,6 +42,7 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
         image={gallery?.[0] ?? undefined}
         price={price}
         reviews={reviews}
+        countInStock={countInStock}
       />
       <Breadcrumbs
         data={[

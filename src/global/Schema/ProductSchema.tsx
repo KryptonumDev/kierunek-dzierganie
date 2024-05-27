@@ -6,6 +6,7 @@ export default async function ProductSchema({
   image,
   price,
   reviews,
+  countInStock,
 }: {
   name: string;
   price: number | undefined;
@@ -15,6 +16,7 @@ export default async function ProductSchema({
     review: string;
     nameOfReviewer: string;
   }[];
+  countInStock?: number | undefined;
 }) {
   return (
     <Script
@@ -31,9 +33,17 @@ export default async function ProductSchema({
               '@type': 'Offer',
               price,
               priceCurrency: 'PLN',
+              availability: countInStock == 0 ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
             },
           }),
           ...(reviews && {
+            aggregateRating: {
+              '@type': 'AggregateRating',
+              ratingValue: parseFloat(
+                (reviews.reduce((acc, { rating }) => acc + rating, 0) / reviews.length).toFixed(2)
+              ),
+              reviewCount: reviews.length,
+            },
             review: [
               reviews.map(({ rating, review, nameOfReviewer }) => ({
                 '@type': 'Review',
