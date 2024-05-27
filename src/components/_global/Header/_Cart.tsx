@@ -168,16 +168,17 @@ export default function Cart({
               {NavigationCrossIcon}
             </button>
           </div>
-          {(filteredFetchItems?.length ?? 0) > 0 && (
-            <div className={styles.linkWrapper}>
-              <p
-                className={`link ${styles.link}`}
-                onClick={() => setPopupState(!popupState)}
-              >
-                Pokaż materiały do kursów{' '}
-              </p>
-            </div>
-          )}
+          {(filteredFetchItems?.length ?? 0) > 0 &&
+            filteredFetchItems?.every((item) => item?.materials_link || item?.printed_manual) && (
+              <div className={styles.linkWrapper}>
+                <p
+                  className={`link ${styles.link}`}
+                  onClick={() => setPopupState(!popupState)}
+                >
+                  Pokaż materiały do kursów{' '}
+                </p>
+              </div>
+            )}
           <div>
             {cart?.length ? (
               <CartGrid
