@@ -107,6 +107,7 @@ const query = async (slug: string): Promise<QueryProps> => {
         },
       }
     }`,
+    tags: ['course'],
     params: {
       slug: slug,
     },

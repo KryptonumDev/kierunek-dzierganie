@@ -170,7 +170,7 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
     }
     `,
     params: { slug },
-    tags: ['product'],
+    tags: ['product','course','productReviewCollection'],
   });
   !data && notFound();
 
