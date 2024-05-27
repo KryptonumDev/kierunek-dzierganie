@@ -95,6 +95,7 @@ const query = async (): Promise<QueryProps> => {
         ${PRODUCT_CARD_QUERY}
       },
     }`,
+    tags: ['global', 'product', 'course', 'bundle'],
     params: {
       products: allUniqueProductsId,
     },

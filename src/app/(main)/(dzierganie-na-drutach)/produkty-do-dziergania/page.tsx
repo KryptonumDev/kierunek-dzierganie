@@ -105,7 +105,7 @@ const query = async (searchParams: { [key: string]: string }): Promise<KnittingP
       category: searchParams.rodzaj ?? null,
       discount: searchParams.promocja ?? null,
     },
-    tags: ['KnittingProducts_Page', 'products', 'productCategory'],
+    tags: ['KnittingProducts_Page', 'product', 'productCategory'],
   });
 };
 

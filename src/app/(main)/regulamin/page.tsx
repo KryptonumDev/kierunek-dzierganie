@@ -48,7 +48,7 @@ async function getData(): Promise<StatutePage_QueryTypes> {
         }
       }
     `,
-    tags: ['Statute_Page'],
+    tags: ['Statute_Page','global'],
   });
 }
 

@@ -24,6 +24,7 @@ const query = async (): Promise<PageQueryProps> => {
         ${Components_Query}
       }
     `,
+    tags: ['NotFound_Page'],
   });
   return data as PageQueryProps;
 };

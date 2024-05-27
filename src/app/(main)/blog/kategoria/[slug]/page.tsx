@@ -69,7 +69,7 @@ async function getData(slug: string) {
       }
     `,
     params: { slug },
-    tags: ['Blog_Page'],
+    tags: ['BlogCategory_Collection'],
   });
   !data?.HeroSimple && notFound();
   return data;

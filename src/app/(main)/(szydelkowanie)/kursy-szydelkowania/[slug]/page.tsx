@@ -195,7 +195,7 @@ const query = async (slug: string): Promise<CoursePageQuery> => {
     }
     `,
     params: { slug, id },
-    tags: ['course', 'bundle'],
+    tags: ['course', 'bundle', 'productReviewCollection'],
   });
   !data?.product?._id && notFound();
   return { data: data, user: res.data?.firstName as string, courses_progress: res.data?.courses_progress };

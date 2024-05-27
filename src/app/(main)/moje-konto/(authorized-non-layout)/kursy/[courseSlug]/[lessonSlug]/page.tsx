@@ -264,6 +264,7 @@ const query = async (courseSlug: string, lessonSlug: string) => {
       },
     }
     }`,
+    tags: ['lesson', 'course'],
     params: {
       lessonSlug: lessonSlug,
       courseSlug: courseSlug,

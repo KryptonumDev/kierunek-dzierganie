@@ -146,6 +146,7 @@ const query = async (): Promise<QueryProps> => {
         }[],
       },
     }`,
+    tags: ['global', 'course'],
     params: {
       id: res.data!.courses_progress.map((course) => course.course_id),
     },
