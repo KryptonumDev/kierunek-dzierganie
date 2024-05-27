@@ -13,32 +13,54 @@
     margin-bottom: 4px;
 
     span {
-      font-size: calc(14rem/16);
+      font-size: calc(14rem / 16);
       color: var(--primary-800, #53423c);
 
       b {
         font-weight: 300;
-        font-size: calc(32rem/16);
+        font-size: calc(32rem / 16);
         font-family: var(--font-city-streetwear);
       }
     }
   }
 
-  .flex{
+  .flex {
     display: flex;
     flex-wrap: wrap;
     gap: 24px;
     justify-content: space-between;
     align-items: center;
-    margin-top: clamp(16px, calc(28vw/7.68), 36px);
+    margin-top: clamp(16px, calc(28vw / 7.68), 36px);
+
+    .price {
+      p {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        span {
+          color: var(--primary-800, #53423c);
+          font-size: calc(18rem / 16);
+          font-weight: 300;
+          line-height: 150%;
+
+          &.discount {
+            color: var(--primary-600, #9a827a);
+            font-size: calc(14rem / 16);
+            line-height: 150%;
+            text-decoration: line-through;
+          }
+        }
+      }
+    }
   }
 
   .pay-po {
     color: var(--primary-700, #766965);
-    font-size: calc(14rem/16);
+    font-size: calc(14rem / 16);
     font-weight: 300;
     line-height: 150%;
-    display: flex;  
+    display: flex;
     align-items: center;
     gap: 8px;
     margin-top: 16px;
@@ -52,19 +74,19 @@
     grid-template-columns: 60px 1fr;
     gap: 16px;
     align-items: center;
-    margin-top: clamp(20px, calc(28vw/7.68), 36px);
+    margin-top: clamp(20px, calc(28vw / 7.68), 36px);
 
     > div {
       > p {
         color: var(--primary-800, #53423c);
-        font-size: calc(14rem/16);
+        font-size: calc(14rem / 16);
         font-weight: 300;
         line-height: 150%;
 
         &:first-child {
           font-family: var(--font-city-streetwear);
           color: var(--primary-700, #766965);
-          font-size: calc(32rem/16);
+          font-size: calc(32rem / 16);
           font-weight: 400;
           line-height: 112.5%;
           letter-spacing: -0.32px;
