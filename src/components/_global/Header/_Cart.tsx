@@ -153,10 +153,10 @@ export default function Cart({
   }, [fetchedItems]);
 
   useEffect(() => {
-    if (filteredFetchItems?.length == 0 || (fetchedItems && filteredFetchItems?.length == undefined)) {
+    if (cart?.length === 0 || filteredFetchItems?.length == 0 || (fetchedItems && filteredFetchItems?.length == undefined)) {
       setPopupState(false);
     }
-  }, [filteredFetchItems, setPopupState, fetchedItems]);
+  }, [filteredFetchItems, setPopupState, fetchedItems, cart]);
 
   return (
     <>
