@@ -31,7 +31,7 @@ export default async function ProductSchema({
           ...(price && {
             offers: {
               '@type': 'Offer',
-              price,
+              price: `${price / 100}`,
               priceCurrency: 'PLN',
               availability: countInStock == 0 ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
             },
