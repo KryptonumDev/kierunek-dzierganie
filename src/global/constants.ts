@@ -118,6 +118,7 @@ export const PRODUCT_CARD_QUERY = `
   name,
   excerpt,
   'slug': slug.current,
+  visible,
   basis,
   _type,
   "reviewsCount": count(*[_type == 'productReviewCollection' && references(^._id)]),

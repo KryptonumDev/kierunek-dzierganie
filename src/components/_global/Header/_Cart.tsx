@@ -79,7 +79,19 @@ export default function Cart({
         toast('Produkt, do którego przypisany jest kupon, został usunięty z koszyka');
       }
     }
-  }, [cart]);
+  }, [cart, usedDiscount, setUsedDiscount]);
+
+  useEffect(() => {
+    fetchedItems?.forEach((el) => {
+      if (!el.visible && el.related?._id && el._type === 'product') {
+        // check is related in cart or in ownedCourses, if no, delete from cart
+        if (!fetchedItems?.some((item) => item._id === el.related!._id) && !ownedCourses?.includes(el.related._id)) {
+          removeItem(el._id);
+          toast(`${el.name} został usunięty z koszyka, ponieważ nie posiadasz ${el.related.name}`);
+        }
+      }
+    });
+  }, [fetchedItems, ownedCourses]);
 
   const onSubmit = () => {
     goToCheckout();
