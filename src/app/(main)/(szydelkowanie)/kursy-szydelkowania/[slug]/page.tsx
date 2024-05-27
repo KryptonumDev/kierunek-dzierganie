@@ -189,7 +189,7 @@ const query = async (slug: string): Promise<CoursePageQuery> => {
       "card": *[_type == 'bundle' && basis == 'crocheting' && slug.current == $slug][0] {
         ${PRODUCT_CARD_QUERY}
       },
-      "relatedCourses": *[_type == "course" && basis == 'crocheting' && !(_id in $id) && !(slug.current == $slug)][0...3] {
+      "relatedCourses": *[_type == "course" && basis == 'crocheting' && visible == true && !(_id in $id) && !(slug.current == $slug)][0...3] {
         ${PRODUCT_CARD_QUERY}
       }
     }
