@@ -487,7 +487,7 @@ const CartGrid = ({ fetchedItems, removeItem, updateItemQuantity }: Grid) => {
               </div>
               <span className={styles['omnibus']}>
                 Najniższa cena z 30 dni przed obniżką:{' '}
-                <span dangerouslySetInnerHTML={{ __html: formatPrice(item.discount ?? item.price!) }} />
+                <span dangerouslySetInnerHTML={{ __html: formatPrice(item.price!) }} />
               </span>
             </div>
             <button
