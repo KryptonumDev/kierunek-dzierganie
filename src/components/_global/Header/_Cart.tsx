@@ -178,7 +178,7 @@ export default function Cart({
             </button>
           </div>
           {(filteredFetchItems?.length ?? 0) > 0 &&
-            filteredFetchItems?.every((item) => item?.materials_link || item?.printed_manual) && (
+            filteredFetchItems?.some((item) => item.materials_link || item.printed_manual) && (
               <div className={styles.linkWrapper}>
                 <p
                   className={`link ${styles.link}`}
