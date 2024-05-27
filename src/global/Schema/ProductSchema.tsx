@@ -36,7 +36,7 @@ export default async function ProductSchema({
               availability: countInStock == 0 ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
             },
           }),
-          ...(reviews && {
+          ...(reviews.length != 0 && {
             aggregateRating: {
               '@type': 'AggregateRating',
               ratingValue: parseFloat(
