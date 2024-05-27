@@ -18,8 +18,9 @@ export async function POST(request: NextRequest) {
     return new Response('Unauthorized', { status: 401 });
   }
   console.log('Revalidating', tag, id);
-  const { references } = await query(tag, id);
-
+  const res = await query(tag, id);
+  console.log('Revalidated', res);
+  const { references } = res;
   if (tag) {
     revalidateTag(tag);
     if (references?.length > 0) {
