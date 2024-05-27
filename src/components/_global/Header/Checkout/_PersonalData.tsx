@@ -359,8 +359,17 @@ export default function PersonalData({ goToCart, setInput, input, deliverySettin
             options={countryList().native().nativeData}
           />
           <Input
-            register={register('phoneNumber')}
-            label='Numer telefonu (opcjonalnie)'
+            register={register('phoneNumber', {
+              required: {
+                value: true,
+                message: 'Pole wymagane',
+              },
+              pattern: {
+                value: /^[0-9]{9,11}$/,
+                message: 'Niepoprawny numer telefonu',
+              },
+            })}
+            label='Numer telefonu'
             errors={errors}
           />
         </fieldset>
