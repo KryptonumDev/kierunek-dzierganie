@@ -127,6 +127,7 @@ export const PRODUCT_CARD_QUERY = `
   },
   countInStock,
   materials_link -> {
+    _type,
     _id,
     name,
     gallery[0] {
@@ -151,6 +152,7 @@ export const PRODUCT_CARD_QUERY = `
   },
   automatizationId,
   printed_manual -> {
+    _type,
     _id,
     name,
     "slug": slug.current,
