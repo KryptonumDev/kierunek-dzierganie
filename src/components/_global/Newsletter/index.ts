@@ -9,5 +9,6 @@ export const Newsletter_Query = `
     img {
       ${Img_Query}
     },
+    groupId,
   },
 `;

@@ -1,9 +1,10 @@
 import { ImgType } from '@/global/types';
 
 export type Props = {
+  index?: number;
   heading: string;
   img: ImgType;
-  index?: number;
+  groupId?: string;
 };
 
 export type StatusProps = {
