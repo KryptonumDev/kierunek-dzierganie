@@ -104,7 +104,7 @@ const query = async (searchParams: { [key: string]: string }): Promise<Crochetin
       category: searchParams.rodzaj ?? null,
       discount: searchParams.promocja ?? null,
     },
-    tags: ['CrochetingProducts_Page', 'products', 'productCategory'],
+    tags: ['CrochetingProducts_Page', 'product', 'productCategory'],
   });
 };
 

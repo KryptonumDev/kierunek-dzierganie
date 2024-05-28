@@ -165,6 +165,7 @@ const query = async (searchParams: { [key: string]: string }): Promise<QueryProp
         _id
       }
     }`,
+    tags: ['global', 'course', 'courseCategory', 'CourseAuthor_Collection'],
     params: {
       totalCourses: res.data!.courses_progress.map((course) => course.course_id),
       id: res

@@ -187,7 +187,7 @@ const query = async (slug: string): Promise<CoursePageQuery> => {
       "card": *[_type == 'bundle' && basis == 'knitting' && slug.current == $slug][0] {
         ${PRODUCT_CARD_QUERY}
       },
-      "relatedCourses": *[_type == "course" && basis == 'knitting' && !(_id in $id) && !(slug.current == $slug)][0...3] {
+      "relatedCourses": *[_type == "course" && basis == 'knitting' && visible == true && !(_id in $id) && !(slug.current == $slug)][0...3] {
         ${PRODUCT_CARD_QUERY}
       }
     }
@@ -196,7 +196,7 @@ const query = async (slug: string): Promise<CoursePageQuery> => {
       slug,
       id,
     },
-    tags: ['course', 'bundle'],
+    tags: ['course', 'bundle', 'productReviewCollection'],
   });
   !data && notFound();
   return { data: data, user: res.data?.firstName as string, courses_progress: res.data?.courses_progress };

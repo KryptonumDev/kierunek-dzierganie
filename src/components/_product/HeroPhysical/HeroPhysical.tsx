@@ -195,7 +195,7 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
               {chosenVariant!.discount && <span>{chosenVariant!.discount / 100}&nbsp;zł</span>}
             </p>
             <small>
-              Najniższa cena z 30 dni przed obniżką: {formatPrice(chosenVariant!.discount ?? chosenVariant!.price!)}
+              Najniższa cena z 30 dni przed obniżką: {formatPrice(chosenVariant!.price)}
             </small>
           </div>
         </div>

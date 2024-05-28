@@ -42,7 +42,7 @@ const HeroVirtual = ({ alreadyBought, course }: HeroVirtualTypes) => {
               <span className={course!.discount ? styles['discount'] : ''}>{formatPrice(course.price!)}</span>{' '}
               {course!.discount && <span>{formatPrice(course.discount)}</span>}
             </p>
-            <small>Najniższa cena z 30 dni przed obniżką: {formatPrice(course.discount ?? course.price!)}</small>
+            <small>Najniższa cena z 30 dni przed obniżką: {formatPrice(course.price!)}</small>
           </div>
         </div>
         <div className={styles['flex']}>

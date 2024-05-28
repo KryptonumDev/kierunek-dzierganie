@@ -28,18 +28,20 @@ export async function updateItemsQuantity(data: any) {
           };
         });
         const promiseContent = await Promise.all(newCourses);
-        await supabase.from('courses_progress').insert(promiseContent);
-
-        // add to mailerlite group for integration
+        console.log('Promises', promiseContent);
+        const res = await supabase.from('courses_progress').insert(promiseContent);
+        console.log('Add progress', res);
       }
 
       // TODO: maybe move this to create step??
       if (product.variantId) {
         // decrease quantity of chosen variant of variable product
-        await sanityPatchQuantityInVariant(product.id, product.variantId, product.quantity);
+        const res = await sanityPatchQuantityInVariant(product.id, product.variantId, product.quantity);
+        console.log('Update variant quantity',res);
       } else if (product.type === 'product') {
         // decrease quantity of each physical product
-        await sanityPatchQuantity(product.id, product.quantity);
+        const res = await sanityPatchQuantity(product.id, product.quantity);
+        console.log('Update product quantity',res);
       }
     }
   );

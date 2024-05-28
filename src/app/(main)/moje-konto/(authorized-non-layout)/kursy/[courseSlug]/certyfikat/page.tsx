@@ -146,10 +146,11 @@ const query = async (slug: string): Promise<QueryProps> => {
           },
         },
       },
-      "suggestedCourse": *[_type=="product" && type=="digital" && !(course->_id in $courses)][0]{
+      "suggestedCourse": *[_type=="course" && visible == true  && !(course->_id in $courses)][0]{
         ${PRODUCT_CARD_QUERY}
       }
     }`,
+    tags: ['course'],
     params: {
       slug: slug,
       courses: ownedCourses,

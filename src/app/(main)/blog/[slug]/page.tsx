@@ -80,7 +80,7 @@ async function getData(slug: string) {
       },
   }`,
     params: { slug },
-    tags: ['BlogPost_Collection'],
+    tags: ['BlogPost_Collection','global'],
   });
   return data;
 }

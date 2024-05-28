@@ -19,7 +19,7 @@ const HeroBackgroundImg = ({ isReversed, heading, paragraph, cta, cta_Annotation
       <header>
         <Markdown.h1>{heading}</Markdown.h1>
         <Markdown className={styles.paragraph}>{paragraph}</Markdown>
-        {cta.href && (
+        {cta && (
           <>
             <Button
               data={cta}
