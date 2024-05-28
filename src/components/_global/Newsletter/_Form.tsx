@@ -10,7 +10,7 @@ import State from './_State';
 import Loading from './_Loading';
 import type { StatusProps } from './Newsletter.types';
 
-const Form = ({ Heading }: { Heading: React.ReactNode }) => {
+const Form = ({ Heading, groupId }: { Heading: React.ReactNode, groupId?: string }) => {
   const [status, setStatus] = useState<StatusProps>({ sending: false });
   const {
     register,
@@ -21,7 +21,7 @@ const Form = ({ Heading }: { Heading: React.ReactNode }) => {
 
   const onSubmit = async (data: FieldValues) => {
     setStatus({ sending: true });
-    data.groupID = mailerLiteGroup.newsletter;
+    data.groupID = groupId || mailerLiteGroup.newsletter;
     try {
       const response = await fetch('/api/mailerlite', {
         method: 'POST',
