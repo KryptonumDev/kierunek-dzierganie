@@ -97,6 +97,12 @@ export const useCartItems = () => {
       // revalidate quantity
       const newArr = fetchedItems
         .filter((_, i) => rawCart[i]?.quantity && rawCart[i]!.quantity! > 0)
+        .filter((el) => {
+          return !!rawCart.find((item) => {
+            const productId = el.variant ? el._id + 'variant:' + el.variant._id : el._id;
+            return item.id === productId;
+          })!;
+        })
         .map((el) => {
           const itemInRawCart = rawCart.find((item) => {
             const productId = el.variant ? el._id + 'variant:' + el.variant._id : el._id;
