@@ -87,9 +87,9 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
           courses={courses}
         />
       )}
-      <Informations tabs={['Spis treści', 'Opis', 'Opinie']}>
-        {chapters && <TableOfContent chapters={chapters} />}
+      <Informations tabs={['Opis', 'Spis treści', 'Opinie']}>
         {description?.length > 0 && <Description data={description} />}
+        {chapters && <TableOfContent chapters={chapters} />}
         <Reviews
           user={user}
           alreadyBought={!!courses_progress?.find((course) => course.course_id === product._id)}

@@ -73,9 +73,9 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
           courses={courses}
         />
       )}
-      <Informations tabs={['Spis treści', 'Opis', 'Opinie']}>
-        {chapters && <TableOfContent chapters={chapters} />}
+      <Informations tabs={['Opis', 'Spis treści', 'Opinie']}>
         {description?.length > 0 && <Description data={description} />}
+        {chapters && <TableOfContent chapters={chapters} />}
         <Reviews
           user={user}
           alreadyBought={!!courses_progress?.find((course) => course.course_id === product._id)}
@@ -156,6 +156,9 @@ const query = async (slug: string): Promise<CoursePageQuery> => {
             title,
             lengthInMinutes
           }
+        },
+        previewLessons[0] -> {
+          "slug": slug.current,
         },
         printed_manual->{
           ${PRODUCT_CARD_QUERY}

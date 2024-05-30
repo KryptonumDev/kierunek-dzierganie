@@ -10,6 +10,7 @@ import type { Chapter, Course, CoursesProgress, File, ImgType } from '@/global/t
 import { checkCourseProgress } from '@/utils/check-course-progress';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createClient } from '@/utils/supabase-server';
+import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
 type QueryProps = {
@@ -83,6 +84,8 @@ export default async function Course({
     return { currentChapter, currentChapterIndex, currentLessonIndex };
   })();
 
+  const closedMaterials = cookies().get(`relatedMaterials-${id}`);
+
   return (
     <>
       <Breadcrumbs
@@ -92,7 +95,13 @@ export default async function Course({
           { name: lesson.title, path: `/moje-konto/kursy/${course.slug}/${lesson.slug}` },
         ]}
       />
-      {course.materials_link && <RelatedMaterials data={course.materials_link} />}
+      {course.materials_link && (
+        <RelatedMaterials
+          closedMaterials={!!closedMaterials}
+          close={id}
+          data={course.materials_link}
+        />
+      )}
       <LessonHero
         id={id}
         left_handed={left_handed}
@@ -104,12 +113,12 @@ export default async function Course({
         currentLessonIndex={currentChapterInfo.currentLessonIndex}
         progress={courses_progress}
       />
+      <LessonDescription lesson={lesson} />
       <LessonNotes
         progress={courses_progress}
         currentChapter={currentChapterInfo.currentChapter as Chapter}
         currentLessonIndex={currentChapterInfo.currentLessonIndex}
       />
-      <LessonDescription lesson={lesson} />
       {course.printed_manual && <PrintedManual data={course.printed_manual} />}
       {/* comments */}
     </>

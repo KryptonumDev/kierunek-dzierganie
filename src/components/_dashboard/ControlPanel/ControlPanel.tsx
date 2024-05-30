@@ -2,7 +2,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './ControlPanel.module.scss';
-import { useRouter } from 'next/navigation';
 import { createClient } from '@/utils/supabase-client';
 
 const links = [
@@ -33,14 +32,13 @@ const links = [
 ];
 
 const ControlPanel = () => {
-  const router = useRouter();
   const pathname = usePathname();
   const isCurrentPage = (href: string) => pathname.includes(href);
   const supabase = createClient();
 
   const logOut = async () => {
     await supabase.auth.signOut();
-    router.push('/moje-konto/wylogowano');
+    window.location.href = '/moje-konto/wylogowano';
   };
 
   return (

@@ -1,14 +1,40 @@
 .RelatedMaterials {
-  margin-bottom: clamp(24px, calc(36vw/7.68), 48px) !important;
+  position: relative;
+  margin-bottom: clamp(24px, calc(36vw / 7.68), 48px) !important;
   display: grid;
   grid-template-columns: 488fr 690fr;
-  gap: clamp(24px, calc(28vw/7.68), 32px);
+  gap: clamp(24px, calc(28vw / 7.68), 32px);
+  border-radius: 6px;
+  background: var(--primary-200, #faf4f0);
+  padding: 16px;
 
-  h2{
-    margin-bottom: clamp(12px, calc(20vw/7.68), 36px);
+  h2 {
+    margin-bottom: clamp(12px, calc(20vw / 7.68), 36px);
   }
 
   @media (max-width: 976px) {
     grid-template-columns: 1fr;
+
+    .info{
+      padding-right: 24px;
+    }
+  }
+
+  .close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 10px;
+    z-index: 4;
+
+    svg {
+      transition: transform 0.3s;
+    }
+
+    &:hover {
+      svg {
+        transform: scale(1.1);
+      }
+    }
   }
 }

@@ -11,23 +11,25 @@ const LessonDescription = ({ lesson }: LessonDescriptionTypes) => {
         Czego się dzisiaj <strong>nauczysz</strong>
       </h2>
       <Markdown>{lesson.description}</Markdown>
-      <div className={styles['grid']}>
-        {lesson.flex?.map((item, index) => (
-          <div
-            key={index}
-            className={`${styles['item']} ${index % 2 === 0 ? styles['left'] : styles['right']}`}
-          >
-            <div>
-              <Markdown.h3>{item.title}</Markdown.h3>
-              <Markdown>{item.description}</Markdown>
+      {lesson.flex && (
+        <div className={styles['grid']}>
+          {lesson.flex?.map((item, index) => (
+            <div
+              key={index}
+              className={`${styles['item']} ${index % 2 === 0 ? styles['left'] : styles['right']}`}
+            >
+              <div>
+                <Markdown.h3>{item.title}</Markdown.h3>
+                <Markdown>{item.description}</Markdown>
+              </div>
+              <Img
+                sizes='485px'
+                data={item.img}
+              />
             </div>
-            <Img
-              sizes='485px'
-              data={item.img}
-            />
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 };

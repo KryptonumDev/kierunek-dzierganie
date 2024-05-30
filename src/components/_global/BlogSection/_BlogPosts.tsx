@@ -31,7 +31,7 @@ export default async function BlogPosts({
       className={styles.blogPosts}
       id='wpisy'
     >
-      {blogPosts.map(({ hero: { heading, img, paragraph }, portableText, slug }, i) => (
+      {blogPosts?.map(({ hero: { heading, img, paragraph }, portableText, slug }, i) => (
         <div
           key={i}
           className={styles.item}
