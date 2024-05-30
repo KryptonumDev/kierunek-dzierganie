@@ -151,6 +151,7 @@ export const PRODUCT_CARD_QUERY = `
       },
     },
   },
+  previewGroupMailerLite,
   automatizationId,
   printed_manual -> {
     _type,

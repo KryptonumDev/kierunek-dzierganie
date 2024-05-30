@@ -1,6 +1,6 @@
 import { sanityPatchQuantity, sanityPatchQuantityInVariant } from '@/utils/sanity.fetch';
 import { createClient } from '@/utils/supabase-admin';
-import { addToGroup } from './mailer-lite';
+import { addToGroup, removeFromGroup } from './mailer-lite';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function updateItemsQuantity(data: any) {
@@ -12,11 +12,15 @@ export async function updateItemsQuantity(data: any) {
       type: string;
       variantId: string;
       id: string;
-      courses: null | { _id: string; automatizationId: string }[];
+      courses: null | { _id: string; automatizationId?: string; previewGroupMailerLite?: string }[];
     }) => {
       // create courses_progress record for each course
       if (product.courses) {
         const newCourses = product.courses.map(async (el) => {
+          if (el.previewGroupMailerLite) {
+            await removeFromGroup(data.billing.email, el.previewGroupMailerLite);
+          }
+
           if (el.automatizationId) {
             await addToGroup(data.billing.email, data.billing.firstName, el.automatizationId);
           }
@@ -37,11 +41,11 @@ export async function updateItemsQuantity(data: any) {
       if (product.variantId) {
         // decrease quantity of chosen variant of variable product
         const res = await sanityPatchQuantityInVariant(product.id, product.variantId, product.quantity);
-        console.log('Update variant quantity',res);
+        console.log('Update variant quantity', res);
       } else if (product.type === 'product') {
         // decrease quantity of each physical product
         const res = await sanityPatchQuantity(product.id, product.quantity);
-        console.log('Update product quantity',res);
+        console.log('Update product quantity', res);
       }
     }
   );

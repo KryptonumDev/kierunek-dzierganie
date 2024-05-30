@@ -1,0 +1,221 @@
+.LessonHero {
+  margin-top: 0 !important;
+
+  h1 {
+    font-size: clamp(24px, calc(28vw / 7.68), 28px);
+    margin-bottom: 24px;
+  }
+
+  .grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: clamp(12px, calc(24vw / 7.68), 32px);
+
+    @media (max-width: 1080px) {
+      grid-template-columns: 1fr;
+    }
+
+    .returnLink {
+      grid-column: 1/-1;
+      width: fit-content;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: 4px;
+      position: relative;
+      z-index: 3;
+
+      @media (max-width: 599px) {
+        display: none;
+      }
+
+      svg {
+        transition: transform 0.3s var(--easing);
+      }
+
+      &:hover {
+        svg {
+          transform: translateX(-4px);
+        }
+      }
+    }
+  }
+
+  .video {
+    aspect-ratio: 16/9;
+    background-color: var(--background-300);
+    margin-bottom: clamp(16px, calc(16vw / 7.68), 24px);
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 16/9;
+    }
+  }
+
+  .chapter {
+    margin-bottom: 24px;
+  }
+
+  .lessonsWrapper {
+    position: relative;
+    height: 300px;
+
+    &::after {
+      content: '';
+      pointer-events: none;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 45px;
+      background: linear-gradient(to top, var(--primary-100), transparent);
+    }
+  }
+
+  .lessons {
+    overflow-y: auto;
+    max-height: 300px;
+    padding-right: 16px;
+
+    &::-webkit-scrollbar {
+      width: 3px;
+      height: 16px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: var(--primary-300);
+      border-radius: 2px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--primary-600);
+      border-radius: 2px;
+    }
+
+    a {
+      margin-top: 4px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      padding: 10px 8px;
+      transition:
+        background-color 0.3s var(--easing),
+        color 0.3s var(--easing),
+        font-size 0.3s var(--easing);
+
+      color: var(--primary-700, #766965);
+      font-size: calc(14rem / 16);
+      font-weight: 300;
+      line-height: 27px;
+
+      p {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+      }
+
+      small {
+        color: var(--primary-500, #b4a29c);
+        font-size: calc(14rem / 16);
+        font-weight: 300;
+      }
+
+      &[data-checked='true'] {
+        background: #d0dad2;
+      }
+
+      &[data-current='true'] {
+        background: var(--primary-200, #faf4f0);
+        color: var(--primary-800, #53423c);
+        font-size: calc(18rem / 16);
+      }
+
+      &:hover {
+        background: var(--primary-200, #faf4f0);
+        color: var(--primary-800, #53423c);
+      }
+    }
+  }
+}
+
+.popup {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 4px;
+  border: 1px solid var(--primary-500, #b4a29c);
+  background: var(--primary-100, #fdfbf8);
+  padding: 36px;
+  z-index: 5;
+  width: 90%;
+
+  @media (max-width: 899px) {
+    width: 90vw;
+  }
+
+  > div {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 48px;
+
+    @media (max-width: 899px) {
+      gap: 20px;
+    }
+
+    @media (max-width: 680px) {
+      grid-template-columns: 1fr;
+    }
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+
+    label {
+      margin-bottom: 20px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  > button {
+    margin: 36px auto 0 auto;
+  }
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(253, 251, 248, 0.5);
+  z-index: 1;
+}
+
+.video {
+  position: relative;
+
+  @media (max-width: 1240px) and (min-width: 1081px) {
+    position: static;
+  }
+
+  @media (max-width: 800px) {
+    position: static;
+  }
+
+  &.popup-opened {
+    &::after {
+      content: '';
+      position: absolute;
+      inset: -5px;
+      z-index: 1;
+      backdrop-filter: blur(2px);
+    }
+  }
+}

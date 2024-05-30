@@ -284,6 +284,10 @@ export type CoursePageQueryProps = {
     reviewsCount: number;
     description: DescriptionTypes[];
     printed_manual: ProductCard;
+    previewLessons?: {
+      slug: string;
+    };
+    previewGroupMailerLite?: string;
     author: {
       name: string;
       slug: string;
@@ -310,6 +314,13 @@ export type CoursePageQuery = {
 
 export type generateStaticParamsProps = {
   slug: string;
+};
+
+export type generateLessonStaticParamsProps = {
+  slug: string;
+  previewLessons: {
+    slug: string;
+  }[];
 };
 
 export type generateBlogCategoryPageStaticParamsProps = {

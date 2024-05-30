@@ -16,13 +16,12 @@ const Reviews = ({ user, alreadyBought, reviews, course, product }: ReviewsTypes
           Ten {course ? 'kurs' : 'produkt'} jeszcze <strong>nie ma</strong> opinii
         </h2>
         <p>Twoja może być tą pierwszą! Dodaj opinię, aby pomóc innym zdecydować, czy to coś dla nich</p>
-        {/* TODO: add check is already added comment */}
         {user ? (
           <>
             {!course || alreadyBought ? (
               <Button onClick={() => setAddReview(true)}>Dodaj opinię</Button>
             ) : (
-              <p>Kup ten produkt żeby zostawić opinię</p>
+              <p>Kup ten kurs żeby zostawić opinię</p>
             )}
           </>
         ) : (

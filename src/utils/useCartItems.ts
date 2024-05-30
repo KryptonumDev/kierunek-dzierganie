@@ -115,6 +115,14 @@ export const useCartItems = () => {
           };
         });
 
+      rawCart.forEach((el) => {
+        if (
+          !newArr.find((item) => item._id === el.product) // check if product isn't filtrated in newArr
+        ) {
+          removeItem(el.id);
+        }
+      });
+
       setFetchedItems(newArr);
       setLoading(false);
     } else {

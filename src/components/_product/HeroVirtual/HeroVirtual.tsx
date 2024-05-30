@@ -10,7 +10,7 @@ import { Hearth, PayPo } from '@/components/ui/Icons';
 import Img from '@/components/ui/image';
 import Button from '@/components/ui/Button';
 
-const HeroVirtual = ({ alreadyBought, course }: HeroVirtualTypes) => {
+const HeroVirtual = ({ alreadyBought, course, previewLessons }: HeroVirtualTypes) => {
   const images = useMemo(() => {
     const images: Array<{ data: ImgType | string; type: 'video' | 'image' }> = [];
     // add video as first element if exists
@@ -46,12 +46,19 @@ const HeroVirtual = ({ alreadyBought, course }: HeroVirtualTypes) => {
           </div>
         </div>
         <div className={styles['flex']}>
-          {/* <button className='link'>Obejrzyj pierwszy moduł za darmo</button> */}
           {/* TODO: check is course already bought by user and show link to dashboard */}
           {alreadyBought ? (
             <Button href={`/moje-konto/kursy/${course.slug}`}>Przejdź do kursu</Button>
           ) : (
             <AddToCart id={course._id} />
+          )}
+          {!alreadyBought && previewLessons?.slug && (
+            <a
+              className='link'
+              href={`./${course.slug}/${previewLessons.slug}`}
+            >
+              Obejrzyj pierwszy moduł za darmo
+            </a>
           )}
         </div>
         <p className={styles['pay-po']}>

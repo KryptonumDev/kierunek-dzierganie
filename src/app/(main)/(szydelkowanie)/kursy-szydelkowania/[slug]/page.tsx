@@ -19,7 +19,18 @@ import ProductSchema from '@/global/Schema/ProductSchema';
 const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
   const {
     data: {
-      product: { _id, _type, printed_manual, relatedBundle, name, description, chapters, reviews, courses },
+      product: {
+        _id,
+        _type,
+        printed_manual,
+        relatedBundle,
+        name,
+        description,
+        chapters,
+        reviews,
+        courses,
+        previewLessons,
+      },
       product,
       card,
       relatedCourses,
@@ -54,6 +65,7 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
       <HeroVirtual
         alreadyBought={alreadyBought}
         course={product}
+        previewLessons={previewLessons}
       />
       {relatedBundle && (
         <Package
@@ -158,6 +170,9 @@ const query = async (slug: string): Promise<CoursePageQuery> => {
             title,
             lengthInMinutes
           }
+        },
+        previewLessons[0] -> {
+          "slug": slug.current,
         },
         printed_manual->{
           ${PRODUCT_CARD_QUERY}
