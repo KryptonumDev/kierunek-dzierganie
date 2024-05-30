@@ -404,6 +404,7 @@ export type Order = {
   profiles: {
     firstName: string;
   };
+  bill?: string;
   products: {
     array: {
       complexity: Complexity;

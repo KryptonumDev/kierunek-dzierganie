@@ -74,6 +74,30 @@ const OrderData = ({ order }: OrderDataTypes) => {
       });
   };
 
+  const getBillUrl = async (bill: string) => {
+    await fetch('/api/ifirma/download-faktura', {
+      method: 'POST',
+      body: JSON.stringify({ bill }),
+    })
+      .then((res) => res.blob())
+      .then((blob) => URL.createObjectURL(blob))
+      .then((blob) => {
+        const a = document.createElement('a');
+        a.href = blob;
+        a.download = `faktura_${bill}.pdf`; // Możesz ustawić nazwę pliku tutaj
+        document.body.appendChild(a);
+
+        // Kliknięcie w element a w celu pobrania pliku
+        a.click();
+
+        // Usunięcie elementu a
+        window.URL.revokeObjectURL(blob);
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  };
+
   return (
     <section className={styles['OrderData']}>
       <Link
@@ -165,6 +189,22 @@ const OrderData = ({ order }: OrderDataTypes) => {
             {order.billing.city}, {order.billing.postcode}
             <br />
             {order.billing.phone}
+            {order.bill && (
+              <>
+                <br />
+                <br />
+                <span>
+                  Faktura:{' '}
+                  <button
+                    className='link'
+                    onClick={() => getBillUrl(order.bill!)}
+                  >
+                    {order.bill}
+                  </button>
+                </span>
+                <br />
+              </>
+            )}
           </p>
         </div>
       </div>
