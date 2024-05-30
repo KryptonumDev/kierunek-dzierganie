@@ -124,7 +124,7 @@ export async function generateBill(data: any, id: string) {
   await supabase
     .from('orders')
     .update({
-      bill: String(billId.response.Identyfikator),
+      bill: billId.response.Identyfikator ? String(billId.response.Identyfikator) : null,
       status: data.need_delivery ? 2 : 3,
     })
     .eq('id', id);
