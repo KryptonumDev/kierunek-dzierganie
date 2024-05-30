@@ -34,10 +34,11 @@ export const DEFAULT_TITLE: string = 'Kierunek Dzierganie';
  * Global declaration of REGEX.
  * @constant
  */
-export const REGEX: { email: RegExp; phone: RegExp; string: RegExp } = {
+export const REGEX: { email: RegExp; phone: RegExp; string: RegExp; zip: RegExp } = {
   email: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
   phone: /^(?:\+(?:\d{1,3}))?(?:[ -]?\(?\d{1,4}\)?[ -]?\d{1,5}[ -]?\d{1,5}[ -]?\d{1,6})$/,
   string: /^(?!\s+$)(.*?)\s*$/,
+  zip: /^\d{2}-\d{3}$/,
 };
 
 /**

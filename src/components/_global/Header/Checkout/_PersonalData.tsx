@@ -13,6 +13,7 @@ import type { MapPoint } from '@/global/types';
 import Select from '@/components/ui/Select';
 import countryList from 'react-select-country-list';
 import Script from 'next/script';
+import { REGEX } from '@/global/constants';
 
 const generateNewInput = (
   data: FormValues,
@@ -314,6 +315,10 @@ export default function PersonalData({ goToCart, setInput, input, deliverySettin
                 value: true,
                 message: 'Pole wymagane',
               },
+              pattern: {
+                value: REGEX.email,
+                message: 'Niepoprawny adres email',
+              },
             })}
             label='Email'
             errors={errors}
@@ -334,6 +339,11 @@ export default function PersonalData({ goToCart, setInput, input, deliverySettin
                 required: {
                   value: true,
                   message: 'Pole wymagane',
+                },
+                pattern: {
+                  // 00-000 pattern
+                  value: REGEX.zip,
+                  message: 'Niepoprawny kod pocztowy',
                 },
               })}
               label='Kod pocztowy'
