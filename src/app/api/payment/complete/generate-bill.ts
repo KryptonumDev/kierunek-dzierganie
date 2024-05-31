@@ -12,20 +12,22 @@ export async function generateBill(data: any, id: string) {
   // @ts-expect-error TODO: implement types
   const productsWithDiscount = data.products.array.map((product) => {
     let discount = 0;
+    let amount = product.discount ?? product.price;
 
     if (data.used_discount) {
       if (data.used_discount.type === 'PERCENTAGE') {
         discount = data.used_discount.amount;
       } else if (data.used_discount.type === 'FIXED CART') {
-        discount = (data.used_discount.amount / data.products.array.length / (product.discount ?? product.price)) * 100;
+        amount = (product.discount ?? product.price) - data.used_discount.amount / data.products.array.length;
       } else if (data.used_discount.type === 'FIXED PRODUCT') {
         data.used_discount.discounted_product.id === product.id
-          ? (discount = (data.used_discount.amount / product.quantity / (product.discount ?? product.price)) * 100)
+          ? (amount = (product.discount ?? product.price) - data.used_discount.amount / product.quantity)
           : (discount = 0);
       }
 
       return {
         ...product,
+        amount: amount,
         rabat: discount,
       };
     }
