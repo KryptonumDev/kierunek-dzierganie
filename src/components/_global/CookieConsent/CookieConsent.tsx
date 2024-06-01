@@ -17,6 +17,7 @@ export default async function CookieConsent() {
     },
   };
 
+  
   return (
     <aside className={styles['CookieConsent']}>
       <Content
