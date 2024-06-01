@@ -128,6 +128,8 @@ const Content = ({ CloseIcon, heading, paragraph, details }: ContentProps) => {
     });
   };
 
+  return;
+
   return (
     <div
       className={styles['Content']}
