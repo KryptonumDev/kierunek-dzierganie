@@ -32,7 +32,7 @@ export async function generateMetadata({ params: { id } }: { params: { id: strin
   });
 }
 
-const query = async (id: string): Promise<Order> => {
+const query = async (id: string): Promise<Order & { refundAmount?: number; statement?: string }> => {
   const supabase = createClient();
 
   const res = await supabase
@@ -43,6 +43,8 @@ const query = async (id: string): Promise<Order> => {
         id, 
         amount, 
         payment_method, 
+        payment_data->statement,
+        refundAmount:refund->amount,
         created_at, 
         billing, 
         shipping, 

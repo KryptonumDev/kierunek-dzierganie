@@ -21,7 +21,6 @@ export async function POST(request: Request) {
     const { data, error } = await updateOrder(
       {
         paid_at: new Date(),
-        payment_id: sessionId,
         payment_data: requestData,
         status: 2,
       },

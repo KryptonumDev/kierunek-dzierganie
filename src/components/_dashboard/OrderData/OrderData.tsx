@@ -116,58 +116,63 @@ const OrderData = ({ order }: OrderDataTypes) => {
         </div>
         <div className={styles['main']}>
           <p className={styles['title']}>Płatność</p>
-          <p className={styles['flex-text']}>
-            {formatPrice(order.amount)} <span className={styles['text']}>({order.payment_method})</span>
-            {order.orders_statuses.status_name === 'AWAITING PAYMENT' && (
-              <button
-                onClick={createIntent}
-                className='link'
-              >
-                Opłać
-              </button>
-            )}
-          </p>
+          <div>
+            <p className={styles['flex-text']}>
+              {formatPrice(order.amount)} <span className={styles['text']}>({order.payment_method})</span>
+              {order.orders_statuses.status_name === 'AWAITING PAYMENT' && (
+                <button
+                  onClick={createIntent}
+                  className='link'
+                >
+                  Opłać
+                </button>
+              )}
+            </p>
+            <span className={styles['text']}>{order.statement}</span>
+          </div>
         </div>
-        <div>
-          <p className={styles['title']}>Dane dostawy</p>
-          <p className={styles['text']}>
-            {order.shipping && (
-              <>
-                {order.shipping.firstName}
-                <br />
-                {order.shipping.address1}
-                <br />
-                {order.shipping.city}, {order.shipping.postcode}
-                <br />
-                {order.shipping.phone}
-              </>
-            )}
-            {order.shippingMethod && (
-              <>
-                {order.shipping && (
-                  <>
-                    <br />
-                    <br />
-                  </>
-                )}
-                Metoda dostawy: {order.shippingMethod.name}
-                {order.shippingMethod.data && (
-                  <>
-                    <br />
-                    <span>
-                      Adres: {order.shippingMethod.data.street}, {order.shippingMethod.data.postal_code}{' '}
-                      {order.shippingMethod.data.city}
-                    </span>
-                    <br />
-                    <span>Punkt: {order.shippingMethod.data.foreign_access_point_id}</span>
-                    <br />
-                    <span>Dostawca: {order.shippingMethod.data.supplier}</span>
-                  </>
-                )}
-              </>
-            )}
-          </p>
-        </div>
+        {order.shipping && (
+          <div>
+            <p className={styles['title']}>Dane dostawy</p>
+            <p className={styles['text']}>
+              {order.shipping && (
+                <>
+                  {order.shipping.firstName}
+                  <br />
+                  {order.shipping.address1}
+                  <br />
+                  {order.shipping.city}, {order.shipping.postcode}
+                  <br />
+                  {order.shipping.phone}
+                </>
+              )}
+              {order.shippingMethod && (
+                <>
+                  {order.shipping && (
+                    <>
+                      <br />
+                      <br />
+                    </>
+                  )}
+                  Metoda dostawy: {order.shippingMethod.name}
+                  {order.shippingMethod.data && (
+                    <>
+                      <br />
+                      <span>
+                        Adres: {order.shippingMethod.data.street}, {order.shippingMethod.data.postal_code}{' '}
+                        {order.shippingMethod.data.city}
+                      </span>
+                      <br />
+                      <span>Punkt: {order.shippingMethod.data.foreign_access_point_id}</span>
+                      <br />
+                      <span>Dostawca: {order.shippingMethod.data.supplier}</span>
+                    </>
+                  )}
+                </>
+              )}
+            </p>
+          </div>
+        )}
         <div>
           <p className={styles['title']}>Dane faktury</p>
           <p className={styles['text']}>
@@ -313,7 +318,7 @@ const OrderData = ({ order }: OrderDataTypes) => {
           </p>
         )}
         <p>
-          <span>Razem</span>
+          <span>{order.statement ? 'Zapłacono' : 'Razem'}</span>
           <span>
             {formatPrice(
               totalItemsPrice +
@@ -323,6 +328,12 @@ const OrderData = ({ order }: OrderDataTypes) => {
             )}
           </span>
         </p>
+        {order.refundAmount && (
+          <p>
+            <span>Zwrócono</span>
+            <span>{formatPrice(order.refundAmount)}</span>
+          </p>
+        )}
       </div>
     </section>
   );
