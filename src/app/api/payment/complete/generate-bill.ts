@@ -34,6 +34,8 @@ export async function generateBill(data: any, id: string) {
 
     return product;
   });
+  console.log(data.products.array);
+  console.log(productsWithDiscount);
 
   const requestContent = {
     Zaplacono: data.amount / 100,
@@ -57,7 +59,7 @@ export async function generateBill(data: any, id: string) {
             StawkaVat: product.vat / 100,
             StawkaRyczaltu: product.ryczalt / 100,
             Ilosc: product.quantity,
-            CenaJednostkowa: (product.discount ?? product.price) / 100,
+            CenaJednostkowa: product.amount / 100,
             NazwaPelna: product.name,
             Jednostka: 'szt',
             TypStawkiVat: 'PRC',
@@ -69,7 +71,7 @@ export async function generateBill(data: any, id: string) {
           StawkaVat: product.vat / 100,
           StawkaRyczaltu: product.ryczalt / 100,
           Ilosc: 1,
-          CenaJednostkowa: (product.discount ?? product.price) / 100,
+          CenaJednostkowa: product.amount / 100,
           NazwaPelna: product.name,
           Jednostka: 'szt',
           TypStawkiVat: 'PRC',
