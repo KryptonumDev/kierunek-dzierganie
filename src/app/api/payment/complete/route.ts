@@ -9,7 +9,8 @@ import { generateBill } from './generate-bill';
 
 export async function POST(request: Request) {
   try {
-    const { sessionId, amount, currency, orderId } = await request.json();
+    const requestData = await request.json();
+    const { sessionId, amount, currency, orderId } = requestData;
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 
@@ -21,6 +22,7 @@ export async function POST(request: Request) {
       {
         paid_at: new Date(),
         payment_id: sessionId,
+        payment_data: requestData,
         status: 2,
       },
       id
