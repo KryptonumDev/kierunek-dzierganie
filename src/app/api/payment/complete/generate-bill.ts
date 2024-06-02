@@ -24,15 +24,13 @@ export async function generateBill(data: any, id: string) {
           ? (amount = (product.discount ?? product.price) - data.used_discount.amount / product.quantity)
           : (discount = 0);
       }
-
-      return {
-        ...product,
-        amount: amount,
-        rabat: discount,
-      };
     }
 
-    return product;
+    return {
+      ...product,
+      amount: amount,
+      rabat: discount,
+    };
   });
   console.log(data.products.array);
   console.log(productsWithDiscount);
