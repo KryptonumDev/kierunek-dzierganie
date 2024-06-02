@@ -4,7 +4,6 @@ import SummaryAside from './_SummaryAside';
 import PersonalData from './_PersonalData';
 import { useEffect, useState } from 'react';
 import Authorization from './_Authorization';
-import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 import type { Billing, Shipping } from '@/global/types';
 
 const createInputState = (billing?: Billing, shipping?: Shipping, userEmail?: string) => ({
@@ -81,11 +80,6 @@ export default function Checkout({
     setInput((prev) => ({
       ...prev,
       amount: fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0),
-      totalAmount:
-        fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0) +
-        (usedDiscount ? calculateDiscountAmount(input.amount, usedDiscount) : 0) -
-        (usedVirtualMoney ? usedVirtualMoney * 100 : 0) +
-        (fetchedItems.some((item) => item._type === 'product') ? Number(deliverySettings?.deliveryPrice) : 0),
       needDelivery: fetchedItems.some((item) => item._type === 'product'),
       delivery: fetchedItems.some((item) => item._type === 'product') ? Number(deliverySettings?.deliveryPrice) : 0,
       discount: usedDiscount?.affiliatedBy === userId ? null : usedDiscount,

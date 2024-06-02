@@ -14,6 +14,7 @@ import Select from '@/components/ui/Select';
 import countryList from 'react-select-country-list';
 import Script from 'next/script';
 import { REGEX } from '@/global/constants';
+import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 
 const generateNewInput = (
   data: FormValues,
@@ -30,6 +31,11 @@ const generateNewInput = (
       price: shippingMethods.find((method) => method.name === data.shippingMethod)?.price || 0,
       data: shippingMethods.find((method) => method.name === data.shippingMethod)?.map ? selectedMapPoint : '',
     },
+    totalAmount:
+      input.amount +
+      (input.discount ? calculateDiscountAmount(input.amount, input.discount) : 0) -
+      (input.virtualMoney ? input.virtualMoney * 100 : 0) +
+      (input.needDelivery ? Number(input.delivery) : 0),
     client_notes: data.client_notes,
     shipping: {
       firstName: data.shippingSameAsBilling ? data.fullName : data.shippingFullName,
