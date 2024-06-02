@@ -102,26 +102,57 @@ export async function generateBill(data: any, id: string) {
     });
   }
 
-  const url = 'https://www.ifirma.pl/iapi/fakturakraj.json';
-  const user = 'martyna_prochowska@o2.pl';
-  const keyType = 'faktura';
+  const createBill = async () => {
+    const url = 'https://www.ifirma.pl/iapi/fakturakraj.json';
+    const user = 'martyna_prochowska@o2.pl';
+    const keyType = 'faktura';
 
-  const key = CryptoJS.enc.Hex.parse(process.env.IFIRMA_API_KEY!);
-  const hmac = CryptoJS.HmacSHA1(url + user + keyType + JSON.stringify(requestContent), key);
-  const hash = Hex.stringify(hmac);
+    const key = CryptoJS.enc.Hex.parse(process.env.IFIRMA_API_KEY!);
+    const hmac = CryptoJS.HmacSHA1(url + user + keyType + JSON.stringify(requestContent), key);
+    const hash = Hex.stringify(hmac);
 
-  const billRes = await fetch(url, {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-type': 'application/json; charset=UTF-8',
-      Authentication: `IAPIS user=${user}, hmac-sha1=${hash}`,
-    },
-    body: JSON.stringify(requestContent),
-  });
+    const billRes = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-type': 'application/json; charset=UTF-8',
+        Authentication: `IAPIS user=${user}, hmac-sha1=${hash}`,
+      },
+      body: JSON.stringify(requestContent),
+    });
 
-  const billId = await billRes.json();
-  console.log(billId);
+    return await billRes.json();
+  };
+
+  let billId = await createBill();
+
+  if (billId.response.Informacja === 'Data sprzedaży musi być zgodna z miesiącem i rokiem księgowym') {
+    const url = 'https://www.ifirma.pl/iapi/abonent/miesiacksiegowy.json';
+    const user = 'martyna_prochowska@o2.pl';
+    const keyType = 'abonent';
+    const dataa = {
+      MiesiacKsiegowy: 'NAST',
+      PrzeniesDaneZPoprzedniegoRoku: false,
+    };
+
+    const key = CryptoJS.enc.Hex.parse(process.env.IFIRMA_ABONENT_KEY!);
+    const hmac = CryptoJS.HmacSHA1(url + user + keyType + JSON.stringify(dataa), key);
+    const hash = Hex.stringify(hmac);
+
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-type': 'application/json; charset=UTF-8',
+        Authentication: `IAPIS user=${user}, hmac-sha1=${hash}`,
+      },
+      body: JSON.stringify(dataa),
+    });
+
+    const json = await res.json();
+
+    if (json.response.kod === 0) billId = await createBill();
+  }
 
   await supabase
     .from('orders')
