@@ -32,8 +32,6 @@ export async function generateBill(data: any, id: string) {
       rabat: discount,
     };
   });
-  console.log(data.products.array);
-  console.log(productsWithDiscount);
 
   const requestContent = {
     Zaplacono: data.amount / 100,
@@ -125,6 +123,7 @@ export async function generateBill(data: any, id: string) {
   };
 
   let billId = await createBill();
+  console.log(billId);
 
   if (billId.response.Informacja === 'Data sprzedaży musi być zgodna z miesiącem i rokiem księgowym') {
     const url = 'https://www.ifirma.pl/iapi/abonent/miesiacksiegowy.json';
@@ -151,7 +150,9 @@ export async function generateBill(data: any, id: string) {
 
     const json = await res.json();
 
-    if (json.response.kod === 0) billId = await createBill();
+    if (json.response.kod === 0) {
+      billId = await createBill();
+    }
   }
 
   await supabase
