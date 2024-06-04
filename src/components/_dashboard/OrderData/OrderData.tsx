@@ -118,7 +118,8 @@ const OrderData = ({ order }: OrderDataTypes) => {
           <p className={styles['title']}>Płatność</p>
           <div>
             <p className={styles['flex-text']}>
-              {formatPrice(order.amount)} <span className={styles['text']}>({order.payment_method})</span>
+              {formatPrice(order.amount, 0)}{' '}
+              {order.amount > 0 && <span className={styles['text']}>({order.payment_method})</span>}
               {order.orders_statuses.status_name === 'AWAITING PAYMENT' && (
                 <button
                   onClick={createIntent}
@@ -302,7 +303,7 @@ const OrderData = ({ order }: OrderDataTypes) => {
         {order.discount && (
           <p>
             <span>Kupon: {order.discount.code}</span>
-            <span>{formatPrice(calculateDiscountAmount(totalItemsPrice, order.discount))}</span>
+            <span>{formatPrice(calculateDiscountAmount(totalItemsPrice, order.discount), -totalItemsPrice)}</span>
           </p>
         )}
         {order.shippingMethod && (
@@ -324,7 +325,8 @@ const OrderData = ({ order }: OrderDataTypes) => {
               totalItemsPrice +
                 (order.discount ? calculateDiscountAmount(totalItemsPrice, order.discount) : 0) -
                 (order.virtualMoney ? order.virtualMoney * 100 : 0) +
-                (order.shippingMethod ? order.shippingMethod.price : 0)
+                (order.shippingMethod ? order.shippingMethod.price : 0),
+              0
             )}
           </span>
         </p>

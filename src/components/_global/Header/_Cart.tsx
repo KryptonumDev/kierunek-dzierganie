@@ -153,7 +153,11 @@ export default function Cart({
   }, [fetchedItems]);
 
   useEffect(() => {
-    if (cart?.length === 0 || filteredFetchItems?.length == 0 || (fetchedItems && filteredFetchItems?.length == undefined)) {
+    if (
+      cart?.length === 0 ||
+      filteredFetchItems?.length == 0 ||
+      (fetchedItems && filteredFetchItems?.length == undefined)
+    ) {
       setPopupState(false);
     }
   }, [filteredFetchItems, setPopupState, fetchedItems, cart]);
@@ -306,7 +310,9 @@ export default function Cart({
                         {usedDiscount && (
                           <p>
                             <span>Kupon: {usedDiscount.code}</span>
-                            <span>{formatPrice(calculateDiscountAmount(totalItemsPrice, usedDiscount))}</span>
+                            <span>
+                              {formatPrice(calculateDiscountAmount(totalItemsPrice, usedDiscount), -totalItemsPrice)}
+                            </span>
                           </p>
                         )}
                         {usedVirtualMoney && usedVirtualMoney > 0 && (
@@ -321,7 +327,8 @@ export default function Cart({
                             {formatPrice(
                               totalItemsPrice +
                                 (usedDiscount ? calculateDiscountAmount(totalItemsPrice, usedDiscount) : 0) -
-                                (usedVirtualMoney ? usedVirtualMoney * 100 : 0)
+                                (usedVirtualMoney ? usedVirtualMoney * 100 : 0),
+                              0 
                             )}
                           </span>
                         </p>

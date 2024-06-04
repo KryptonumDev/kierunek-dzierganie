@@ -50,7 +50,7 @@ const OrderCard = ({ order, product }: OrderCardTypes) => {
           <p>{formatDateToPolishLocale(order.created_at)}</p>
         </div>
         <div className={styles['payment']}>
-          <p>{formatPrice(order.amount)}</p>
+          <p>{formatPrice(order.amount, 0)}</p>
           <span>{order.payment_method}</span>
         </div>
       </div>

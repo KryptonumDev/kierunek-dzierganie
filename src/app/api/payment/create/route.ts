@@ -2,6 +2,9 @@ import { P24, Currency, Country, Language, Encoding } from '@ingameltd/node-prze
 import { NextResponse } from 'next/server';
 import type { InputState } from '@/components/_global/Header/Checkout/Checkout.types';
 import { createClient } from '@/utils/supabase-admin';
+import { updateItemsQuantity } from '../complete/update-items-quantity';
+import { sendEmails } from '../complete/send-emails';
+import { checkUsedModifications } from '../complete/check-used-modifications';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,7 +13,6 @@ export async function POST(request: Request) {
   const supabase = createClient();
 
   // update user default data for next orders
-
   await supabase
     .from('profiles')
     .update({ billing_data: input.billing, shipping_data: input.shipping })
@@ -41,6 +43,7 @@ export async function POST(request: Request) {
             ryczalt: product.courses ? settingsData?.value.ryczaltCourses : settingsData?.value.ryczaltPhysical,
           })),
         },
+        status: input.totalAmount <= 0 ? (input.needDelivery ? 2 : 3) : 1,
         billing: input.billing,
         shipping: input.needDelivery && !input.shippingMethod?.data ? input.shipping : null,
         amount: input.totalAmount,
@@ -53,34 +56,42 @@ export async function POST(request: Request) {
         need_delivery: input.needDelivery,
         client_notes: input.client_notes,
       })
-      .select('id')
+      .select('*')
       .single();
 
     if (!data || error) throw new Error(error?.message || 'Error while creating order');
 
-    const session = String(data.id + 'X' + Math.floor(Math.random() * 10000));
+    if (input.totalAmount <= 0) {
+      await checkUsedModifications(data);
+      await updateItemsQuantity(data);
+      await sendEmails(data);
 
-    const order = {
-      sessionId: session,
-      amount: Number(input.totalAmount),
-      currency: Currency.PLN,
-      description: description,
-      email: input.billing.email,
-      country: Country.Poland,
-      language: Language.PL,
-      urlReturn: `https://kierunekdzierganie.pl/api/payment/verify/?session=${session}&id=${data.id}`,
-      urlStatus: `https://kierunekdzierganie.pl/api/payment/complete/?session=${session}&id=${data.id}`,
-      timeLimit: 60,
-      encoding: Encoding.UTF8,
-      city: input.billing.city,
-      address: input.billing.address1,
-      zip: input.billing.postcode,
-      client: input.billing.firstName,
-    };
+      return NextResponse.json({ link: `https://kierunekdzierganie.pl/moje-konto/zakupy/${data.id}` });
+    } else {
+      const session = String(data.id + 'X' + Math.floor(Math.random() * 10000));
 
-    const response = await p24.createTransaction(order);
+      const order = {
+        sessionId: session,
+        amount: Number(input.totalAmount),
+        currency: Currency.PLN,
+        description: description,
+        email: input.billing.email,
+        country: Country.Poland,
+        language: Language.PL,
+        urlReturn: `https://kierunekdzierganie.pl/api/payment/verify/?session=${session}&id=${data.id}`,
+        urlStatus: `https://kierunekdzierganie.pl/api/payment/complete/?session=${session}&id=${data.id}`,
+        timeLimit: 60,
+        encoding: Encoding.UTF8,
+        city: input.billing.city,
+        address: input.billing.address1,
+        zip: input.billing.postcode,
+        client: input.billing.firstName,
+      };
 
-    return NextResponse.json(response);
+      const response = await p24.createTransaction(order);
+
+      return NextResponse.json(response);
+    }
   } catch (error) {
     console.log(error);
     return NextResponse.json({ error }, { status: 500 });

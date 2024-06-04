@@ -23,7 +23,7 @@ export default function SummaryAside({ input }: AsideProps) {
       {input.discount && (
         <p>
           <span>Kupon: {input.discount.code}</span>
-          <span>{formatPrice(calculateDiscountAmount(input.amount, input.discount))}</span>
+          <span>{formatPrice(calculateDiscountAmount(input.amount, input.discount), -input.amount)}</span>
         </p>
       )}
       {input.virtualMoney && input.virtualMoney > 0 && (
@@ -45,7 +45,8 @@ export default function SummaryAside({ input }: AsideProps) {
             input.amount +
               (input.discount ? calculateDiscountAmount(input.amount, input.discount) : 0) -
               (input.virtualMoney ? input.virtualMoney * 100 : 0) +
-              (input.needDelivery ? input.delivery : 0)
+              (input.needDelivery ? input.delivery : 0),
+              0
           )}
         </span>
       </p>
