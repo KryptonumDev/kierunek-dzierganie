@@ -4,7 +4,7 @@ import type { SelectTypes } from './Select.types';
 import ReactSelect from 'react-select';
 import Error from '../Error';
 
-export default function Select<T>({ control, label, name, rules, options, errors }: SelectTypes<T>) {
+export default function Select<T>({ control, label, name, rules, options, errors, tabIndex = 0 }: SelectTypes<T>) {
   return (
     <label className={styles['select']}>
       <p>
@@ -25,6 +25,7 @@ export default function Select<T>({ control, label, name, rules, options, errors
             value={options.find((c: { value: string }) => c.value === value)}
             onChange={(val) => onChange(val!.value)}
             placeholder=''
+            tabIndex={tabIndex}
           />
         )}
       />

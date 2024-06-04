@@ -76,7 +76,6 @@ export default function Checkout({
 
       return;
     }
-    debugger;
     setInput((prev) => ({
       ...prev,
       amount: fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0),

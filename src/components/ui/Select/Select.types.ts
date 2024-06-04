@@ -12,4 +12,5 @@ export type SelectTypes<T> = {
     label: string;
   }[];
   errors: FieldErrors;
+  tabIndex?: -1 | 0;
 };

@@ -158,7 +158,6 @@ export default function PersonalData({ goToCart, setInput, input, deliverySettin
   const onSubmit = handleSubmit(async (data) => {
     setSubmitting(true);
     const newInput = generateNewInput(data, input, selectedMapPoint, shippingMethods);
-    debugger
     setInput(newInput as InputState);
     await fetch('/api/payment/create', {
       method: 'POST',
@@ -351,7 +350,6 @@ export default function PersonalData({ goToCart, setInput, input, deliverySettin
                   message: 'Pole wymagane',
                 },
                 pattern: {
-                  // 00-000 pattern
                   value: REGEX.zip,
                   message: 'Niepoprawny kod pocztowy',
                 },
@@ -405,14 +403,24 @@ export default function PersonalData({ goToCart, setInput, input, deliverySettin
               {!shippingSameAsBilling && (
                 <>
                   <Input
-                    register={register('shippingFullName')}
+                    register={register('shippingFullName', {
+                      required: {
+                        value: true,
+                        message: 'Pole wymagane',
+                      },
+                    })}
                     label='Imię i nazwisko'
                     errors={errors}
                     readOnly={shippingSameAsBilling}
                     tabIndex={shippingSameAsBilling ? -1 : 0}
                   />
                   <Input
-                    register={register('shippingAddress')}
+                    register={register('shippingAddress', {
+                      required: {
+                        value: true,
+                        message: 'Pole wymagane',
+                      },
+                    })}
                     label='Adres'
                     errors={errors}
                     readOnly={shippingSameAsBilling}
@@ -420,25 +428,41 @@ export default function PersonalData({ goToCart, setInput, input, deliverySettin
                   />
                   <div className={styles['zip']}>
                     <Input
-                      register={register('shippingZipCode')}
+                      register={register('shippingZipCode', {
+                        required: {
+                          value: true,
+                          message: 'Pole wymagane',
+                        },
+                        pattern: {
+                          value: REGEX.zip,
+                          message: 'Niepoprawny kod pocztowy',
+                        },
+                      })}
                       label='Kod pocztowy'
                       errors={errors}
                       readOnly={shippingSameAsBilling}
                       tabIndex={shippingSameAsBilling ? -1 : 0}
                     />
                     <Input
-                      register={register('shippingCity')}
+                      register={register('shippingCity', {
+                        required: {
+                          value: true,
+                          message: 'Pole wymagane',
+                        },
+                      })}
                       label='Miasto'
                       errors={errors}
                       readOnly={shippingSameAsBilling}
                       tabIndex={shippingSameAsBilling ? -1 : 0}
                     />
                   </div>
-                  <Input
-                    register={register('shippingCountry')}
+                  <Select<FormValues>
+                    control={control}
+                    name={'shippingCountry'}
+                    rules={{ required: 'Pole wymagane' }}
                     label='Kraj'
                     errors={errors}
-                    readOnly={shippingSameAsBilling}
+                    options={countryList().native().nativeData}
                     tabIndex={shippingSameAsBilling ? -1 : 0}
                   />
                 </>
