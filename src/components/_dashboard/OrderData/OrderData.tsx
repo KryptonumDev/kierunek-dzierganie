@@ -303,7 +303,7 @@ const OrderData = ({ order }: OrderDataTypes) => {
         {order.discount && (
           <p>
             <span>Kupon: {order.discount.code}</span>
-            <span>{formatPrice(calculateDiscountAmount(totalItemsPrice, order.discount), -totalItemsPrice)}</span>
+            <span>{formatPrice(calculateDiscountAmount(totalItemsPrice, order.discount))}</span>
           </p>
         )}
         {order.shippingMethod && (

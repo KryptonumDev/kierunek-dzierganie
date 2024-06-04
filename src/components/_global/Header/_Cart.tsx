@@ -311,7 +311,7 @@ export default function Cart({
                           <p>
                             <span>Kupon: {usedDiscount.code}</span>
                             <span>
-                              {formatPrice(calculateDiscountAmount(totalItemsPrice, usedDiscount), -totalItemsPrice)}
+                              {formatPrice(calculateDiscountAmount(totalItemsPrice, usedDiscount))}
                             </span>
                           </p>
                         )}
