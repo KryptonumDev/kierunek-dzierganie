@@ -72,8 +72,7 @@ export default function Cart({
 
   useEffect(() => {
     if (usedDiscount?.discounted_product) {
-      const product = cart?.find((item) => item._id === usedDiscount.discounted_product.id);
-
+      const product = cart?.find((item) => item.id === usedDiscount.discounted_product.id);
       if (!product) {
         setUsedDiscount(null);
         toast('Produkt, do którego przypisany jest kupon, został usunięty z koszyka');
