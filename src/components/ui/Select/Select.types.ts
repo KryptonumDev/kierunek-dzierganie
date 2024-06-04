@@ -13,4 +13,8 @@ export type SelectTypes<T> = {
   }[];
   errors: FieldErrors;
   tabIndex?: -1 | 0;
+  defaultValue?: {
+    value: string;
+    label: string;
+  };
 };

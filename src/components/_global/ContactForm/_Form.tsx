@@ -11,13 +11,15 @@ import State from './_State';
 import Loading from './_Loading';
 import { formatPhoneNumber } from '@/utils/format-phone-number';
 import type { StatusProps } from './ContactForm.types';
+import Select from '@/components/ui/Select';
 
-const Form = ({ aboveTheFold }: { aboveTheFold: boolean }) => {
+const Form = ({ aboveTheFold, emails }: { aboveTheFold: boolean; emails: {label: string; value: string}[] }) => {
   const [status, setStatus] = useState<StatusProps>({ sending: false });
   const {
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm({ mode: 'onTouched' });
 
@@ -46,6 +48,15 @@ const Form = ({ aboveTheFold }: { aboveTheFold: boolean }) => {
       className={styles['Form']}
       onSubmit={handleSubmit(onSubmit)}
     >
+      <Select<FieldValues>
+        control={control}
+        name={'subject'}
+        rules={{ required: 'Pole wymagane' }}
+        label='Temat wiadomości'
+        errors={errors}
+        defaultValue={emails[0]}
+        options={emails}
+      />
       <Input
         label='Imię'
         autoFocus={aboveTheFold}
