@@ -6,6 +6,8 @@ export type Props = {
 
 export type QueryProps = {
   email: string;
+  email_orders?: string;
+  email_support?: string;
   tel: string;
   messenger: string;
 };

@@ -12,4 +12,8 @@ export type SelectTypes<T> = {
     label: string;
   }[];
   errors: FieldErrors;
+  defaultValue?: {
+    value: string;
+    label: string;
+  };
 };

@@ -171,7 +171,7 @@ h6 {
   strong {
     font-family: var(--font-city-streetwear);
     font-weight: inherit;
-    font-size: 1.6em;
+    font-size: 1.8em;
     line-height: 0.62;
     margin: -0.15em 4px;
   }
@@ -181,7 +181,7 @@ h1,
 .h1,
 h2,
 .h2 {
-  font-size: clamp(calc(24rem / 16), calc(26vw / 7.68), calc(36rem / 16));
+  font-size: clamp(calc(24rem / 16), calc(26vw / 7.68), calc(32rem / 16));
 }
 
 h3,

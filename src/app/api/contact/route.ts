@@ -9,23 +9,24 @@ type RequestProps = {
   tel?: string;
   message: string;
   legal: boolean;
+  subject: string;
 };
 
 const resend = new Resend(process.env.RESEND_API_TOKEN);
 
-const emailData = {
-  from: 'Martyna z Kierunek Dzierganie <formularz@kierunekdzierganie.pl>',
-  to: 'kontakt@kierunekdzierganie.pl',
-};
-
-const headers = {
-  'Access-Control-Allow-Origin': DOMAIN,
-  'Access-Control-Allow-Methods': 'POST',
-};
-
 export async function POST(request: Request) {
   const req = await request.json();
-  const { name, email, tel, message, legal }: RequestProps = req;
+  const { name, email, tel, message, legal, subject }: RequestProps = req;
+
+  const emailData = {
+    from: 'Martyna z Kierunek Dzierganie <formularz@kierunekdzierganie.pl>',
+    to: subject,
+  };
+
+  const headers = {
+    'Access-Control-Allow-Origin': DOMAIN,
+    'Access-Control-Allow-Methods': 'POST',
+  };
 
   if (!name || (!email && !REGEX.email.test(email)) || (tel && !REGEX.phone.test(tel)) || !message || !legal) {
     return NextResponse.json({ success: false }, { status: 422, headers });

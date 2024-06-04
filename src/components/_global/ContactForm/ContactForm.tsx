@@ -7,7 +7,13 @@ import type { Props } from './ContactForm.types';
 import type { QueryProps } from './ContactForm.types';
 
 const ContactForm = async ({ heading, paragraph, aboveTheFold }: Props) => {
-  const { email, tel, messenger } = await query();
+  const { email, tel, messenger, email_orders, email_support } = await query();
+
+  // tematy wiadomości
+  const emails = [{ label: 'Obsługa sklepu', value: email }];
+  if (email_orders) emails.push({ label: 'Wysyłki i zamówienia', value: email_orders });
+  if (email_support) emails.push({ label: 'Kwestie techniczne', value: email_support });
+  emails.push({ label: 'Inne', value: email });
 
   return (
     <section className={styles['ContactForm']}>
@@ -25,6 +31,36 @@ const ContactForm = async ({ heading, paragraph, aboveTheFold }: Props) => {
             </a>
             <CopyToClipboard copy={email} />
           </p>
+          {email_orders && (
+            <div>
+              Wysyłki i zamówienia <br />
+              <p>
+                <a
+                  href={`mailto:${email_orders}`}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                >
+                  {email_orders}
+                </a>
+                <CopyToClipboard copy={email_orders} />
+              </p>
+            </div>
+          )}
+          {email_support && (
+            <div>
+              Kwestie techniczne związane z kursami lub dostępem do konta <br />
+              <p>
+                <a
+                  href={`mailto:${email_support}`}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                >
+                  {email_support}
+                </a>
+                <CopyToClipboard copy={email_support} />
+              </p>
+            </div>
+          )}
           <p>
             <a
               href={`tel:${tel}`}
@@ -47,7 +83,10 @@ const ContactForm = async ({ heading, paragraph, aboveTheFold }: Props) => {
           </p>
         </div>
       </header>
-      <Form aboveTheFold={aboveTheFold} />
+      <Form
+        emails={emails}
+        aboveTheFold={aboveTheFold}
+      />
     </section>
   );
 };
@@ -59,6 +98,8 @@ const query = async (): Promise<QueryProps> => {
     query: /* groq */ `
       *[_id == "global"][0]{
         email,
+        email_orders,
+        email_support,
         tel,
         messenger,
       }

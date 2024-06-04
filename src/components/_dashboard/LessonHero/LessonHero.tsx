@@ -11,6 +11,7 @@ import Switch from '@/components/ui/Switch';
 import { useRouter } from 'next/navigation';
 import parseFileName from '@/utils/parse-file-name';
 import { createClient } from '@/utils/supabase-client';
+import { toast } from 'react-toastify';
 
 const LessonHero = ({
   progress,
@@ -27,6 +28,7 @@ const LessonHero = ({
   const supabase = createClient();
   const [leftHanded, setLeftHanded] = useState(left_handed);
   const [autoplay, setAutoplay] = useState(auto_play);
+  const [fileFetching, setFileFetching] = useState(false);
   const [isCompleted, setIsCompleted] = useState(
     () => progress.progress[currentChapter._id]![lesson._id]?.ended ?? false
   );
@@ -116,6 +118,26 @@ const LessonHero = ({
   const files = useMemo(() => {
     return leftHanded ? lesson.files_alter : lesson.files;
   }, [leftHanded, lesson.files, lesson.files_alter]);
+
+  const download = (url: string, name: string) => {
+    if (!url) {
+      throw new Error('Resource URL not provided! You need to provide one');
+    }
+    setFileFetching(true);
+    fetch(url)
+      .then((response) => response.blob())
+      .then((blob) => {
+        setFileFetching(false);
+        const blobURL = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobURL;
+
+        if (name && name.length) a.download = name;
+        document.body.appendChild(a);
+        a.click();
+      })
+      .catch(() => toast('Błąd podczas pobierania pliku'));
+  };
 
   return (
     <section className={styles['LessonHero']}>
@@ -267,15 +289,13 @@ const LessonHero = ({
           <ul className={styles['list']}>
             {files?.map((el, i) => (
               <li key={i}>
-                <a
-                  href={el.asset.url}
+                <button
+                  disabled={fileFetching}
                   className='link'
-                  download
-                  target='_blank'
-                  rel='noreferrer noopener'
+                  onClick={() => download(el.asset.url, el.asset.originalFilename)}
                 >
                   {parseFileName(el.asset.originalFilename)} <small>({formatBytes(el.asset.size)})</small>
-                </a>
+                </button>
               </li>
             ))}
           </ul>
