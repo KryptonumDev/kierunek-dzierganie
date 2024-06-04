@@ -106,6 +106,7 @@ export default function PersonalData({ goToCart, setInput, input, deliverySettin
     ];
   }, [deliverySettings]);
   const [selectedMapPoint, setSelectedMapPoint] = useState<MapPoint | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const [apaczka, setApaczka] = useState(null);
   const { emptyCart } = useCart();
   const {
@@ -155,7 +156,9 @@ export default function PersonalData({ goToCart, setInput, input, deliverySettin
   };
 
   const onSubmit = handleSubmit(async (data) => {
+    setSubmitting(true);
     const newInput = generateNewInput(data, input, selectedMapPoint, shippingMethods);
+    debugger
     setInput(newInput as InputState);
     await fetch('/api/payment/create', {
       method: 'POST',
@@ -177,7 +180,8 @@ export default function PersonalData({ goToCart, setInput, input, deliverySettin
       .catch((err) => {
         toast('Błąd podczas tworzenia zamówienia');
         console.log(err);
-      });
+      })
+      .finally(() => setSubmitting(false));
   });
 
   return (
@@ -464,6 +468,7 @@ export default function PersonalData({ goToCart, setInput, input, deliverySettin
         <Button
           form='hook-form'
           type='submit'
+          disabled={submitting}
         >
           Przechodzę do płatności
         </Button>

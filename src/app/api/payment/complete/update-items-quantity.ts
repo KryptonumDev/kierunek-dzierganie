@@ -1,6 +1,6 @@
 import { sanityPatchQuantity, sanityPatchQuantityInVariant } from '@/utils/sanity.fetch';
 import { createClient } from '@/utils/supabase-admin';
-import { addToGroup, removeFromGroup } from './mailer-lite';
+import { addToGroup } from './mailer-lite';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function updateItemsQuantity(data: any) {
@@ -17,9 +17,6 @@ export async function updateItemsQuantity(data: any) {
       // create courses_progress record for each course
       if (product.courses) {
         const newCourses = product.courses.map(async (el) => {
-          if (el.previewGroupMailerLite) {
-            await removeFromGroup(data.billing.email, el.previewGroupMailerLite);
-          }
 
           if (el.automatizationId) {
             await addToGroup(data.billing.email, data.billing.firstName, el.automatizationId);

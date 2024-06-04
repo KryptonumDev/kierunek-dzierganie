@@ -76,7 +76,7 @@ export default function Checkout({
 
       return;
     }
-
+    debugger;
     setInput((prev) => ({
       ...prev,
       amount: fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0),
@@ -99,7 +99,7 @@ export default function Checkout({
           return {
             url: 'https://kierunekdzierganie.pl' + basis + '/' + item.slug,
             id: item._id,
-            name: item.name,
+            name: item.name + (item.variant?.name ? ` - ${item.variant.name}` : ''),
             price: item.price!,
             discount: item.discount!,
             quantity: item.quantity!,
