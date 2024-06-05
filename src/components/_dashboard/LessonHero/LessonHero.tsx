@@ -136,7 +136,11 @@ const LessonHero = ({
         document.body.appendChild(a);
         a.click();
       })
-      .catch(() => toast('Błąd podczas pobierania pliku'));
+      .catch((err) => {
+        console.error(err);
+        toast('Błąd podczas pobierania pliku');
+      })
+      .finally(() => setFileFetching(false));
   };
 
   return (
