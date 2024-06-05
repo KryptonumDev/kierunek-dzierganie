@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 
 const AddToCart = ({ id, variant, disabled, quantity = 1 }: Props) => {
   const { addItem } = useCart();
-  const productId = variant ? id + 'variant:' + variant : id;
+  const productId = variant ? (id + 'variant:' + variant) : id;
 
   const addItemToCart = () => {
     addItem({ id: productId, product: id, variant, price: 0 }, quantity);

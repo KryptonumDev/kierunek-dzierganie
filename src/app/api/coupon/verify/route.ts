@@ -12,7 +12,6 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   const { code, userId, cart } = await request.json();
-
   try {
     const { data, error } = await supabase
       .from('coupons')
@@ -94,7 +93,7 @@ export async function POST(request: Request) {
 
     // @ts-expect-error wrong types from supabase
     if (data?.coupons_types?.coupon_type === 'FIXED PRODUCT') {
-      const inCart = cart.find((item: { id: string }) => item.id === data?.discounted_product.id);
+      const inCart = cart.find((item: { product: string }) => item.product === data?.discounted_product.id);
 
       if (!inCart) {
         return NextResponse.json({ error: 'Kod rabatowy nie dotyczy żadnego produktu w koszyku' }, { status: 500 });
