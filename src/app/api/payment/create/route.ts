@@ -46,7 +46,7 @@ export async function POST(request: Request) {
         status: input.totalAmount <= 0 ? (input.needDelivery ? 2 : 3) : 1,
         billing: input.billing,
         shipping: input.needDelivery && !input.shippingMethod?.data ? input.shipping : null,
-        amount: input.totalAmount,
+        amount: input.totalAmount < 0 ? 0 : input.totalAmount,
         shipping_method: input.needDelivery ? input.shippingMethod : null,
         used_discount: input.discount || null,
         used_virtual_money: input.virtualMoney,

@@ -15,20 +15,21 @@ export async function POST(request: Request) {
     return Response.json({ success: false }, { status: 422 });
   }
 
-  if (!process.env.MAILERLITE_API_KEY) {
-    return Response.json({ success: false }, { status: 422 });
-  }
-
   try {
     const api = await fetch(`https://api.mailerlite.com/api/v2/groups/${groupID}/subscribers`, {
       method: 'POST',
       headers: {
-        'X-MailerLite-ApiKey': process.env.MAILERLITE_API_KEY,
+        'X-MailerLite-ApiKey': process.env.MAILERLITE_API_KEY!,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, name, signup_time: time }),
+      body: JSON.stringify({
+        email,
+        name,
+        signup_time: time,
+        resubscribe: true,
+      }),
     });
-    if (!api.ok) {
+    if (api.status !== 200) {
       return Response.json({ success: false }, { status: 422 });
     }
     return Response.json({ success: true });

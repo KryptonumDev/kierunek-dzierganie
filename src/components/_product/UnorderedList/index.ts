@@ -7,6 +7,5 @@ export const UnorderedList_Query = `
     _type,
     heading,
     paragraph,
-    list[],
   },
 `;

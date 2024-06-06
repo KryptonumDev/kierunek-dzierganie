@@ -8,7 +8,6 @@ export const useCartItems = () => {
   const { items: rawCart, updateItemQuantity, updateItem, removeItem, totalItems } = useCart();
   const [fetchedItems, setFetchedItems] = useState<ProductCard[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-
   useEffect(() => {
     const fetchCartItems = async () => {
       setLoading(true);

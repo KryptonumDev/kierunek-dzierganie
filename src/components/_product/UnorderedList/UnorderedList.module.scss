@@ -7,6 +7,12 @@
   }
   .paragraph {
     text-align: center;
+    ul {
+      text-align: left;
+      > li {
+        margin-top: 8px;
+      }
+    }
     max-width: calc(585rem / 16);
     margin: 0 auto clamp(16px, calc(28vw / 7.68), 28px);
   }

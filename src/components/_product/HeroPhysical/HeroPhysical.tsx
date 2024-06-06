@@ -201,7 +201,7 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
         </div>
         <AddToCart
           id={id}
-          variant={chosenVariant?._id}
+          variant={variants ? chosenVariant?._id : undefined}
           disabled={!count || chosenVariant!.countInStock === 0}
           quantity={count}
         />
