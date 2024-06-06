@@ -13,7 +13,7 @@ const ContactForm = async ({ heading, paragraph, aboveTheFold }: Props) => {
   const emails = [{ label: 'Obsługa sklepu', value: email }];
   if (email_orders) emails.push({ label: 'Wysyłki i zamówienia', value: email_orders });
   if (email_support) emails.push({ label: 'Kwestie techniczne', value: email_support });
-  emails.push({ label: 'Inne', value: email });
+  emails.push({ label: 'Inne', value: email + ' ' });
 
   return (
     <section className={styles['ContactForm']}>
