@@ -71,7 +71,7 @@ export default function Cart({
   }, [setShowCart]);
 
   useEffect(() => {
-    if (usedDiscount?.discounted_product) {
+    if (usedDiscount?.type === 'FIXED PRODUCT') {
       const product = cart?.find((item) => item.id === usedDiscount.discounted_product.id);
       if (!product) {
         setUsedDiscount(null);
