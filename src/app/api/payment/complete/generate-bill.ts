@@ -85,8 +85,8 @@ export async function generateBill(data: any, id: string) {
       }),
     ],
     Kontrahent: {
-      Nazwa: data.billing.firstName,
-      Identyfikator: data.billing.invoiceType === 'Firma' ? data.billing.company : '',
+      Nazwa: data.billing.invoiceType === 'Firma' ? data.billing.company : data.billing.firstName,
+      Identyfikator: '',
       NIP: data.billing.invoiceType === 'Firma' ? data.billing.nip : '',
       Ulica: data.billing.address1,
       KodPocztowy: data.billing.postcode,
