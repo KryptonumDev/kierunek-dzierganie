@@ -28,7 +28,7 @@ export async function POST(request: Request) {
     );
 
     if (error) throw new Error(error.message);
-
+    console.log(data);
     await checkUsedModifications(data);
     await updateItemsQuantity(data);
     await sendEmails(data);
