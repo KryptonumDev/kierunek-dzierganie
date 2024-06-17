@@ -131,7 +131,7 @@ export async function generateBill(data: any, id: string) {
     return await billRes.json();
   };
 
-  let billId = await createBill();
+  const billId = await createBill();
   console.log(billId);
 
   if (billId.response.Informacja === 'Data sprzedaży musi być zgodna z miesiącem i rokiem księgowym') {
@@ -160,15 +160,23 @@ export async function generateBill(data: any, id: string) {
     const json = await res.json();
 
     if (json.response.kod === 0) {
-      billId = await createBill();
-    }
-  }
+      const newBillId = await createBill();
 
-  await supabase
-    .from('orders')
-    .update({
-      bill: billId.response.Identyfikator ? String(billId.response.Identyfikator) : null,
-      status: data.need_delivery ? 2 : 3,
-    })
-    .eq('id', id);
+      await supabase
+        .from('orders')
+        .update({
+          bill: newBillId.response.Identyfikator ? String(newBillId.response.Identyfikator) : null,
+          status: data.need_delivery ? 2 : 3,
+        })
+        .eq('id', id);
+    }
+  } else {
+    await supabase
+      .from('orders')
+      .update({
+        bill: billId.response.Identyfikator ? String(billId.response.Identyfikator) : null,
+        status: data.need_delivery ? 2 : 3,
+      })
+      .eq('id', id);
+  }
 }
