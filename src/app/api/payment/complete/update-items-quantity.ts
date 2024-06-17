@@ -4,6 +4,7 @@ import { addToGroup } from './mailer-lite';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function updateItemsQuantity(data: any) {
+  console.log('Dane użytkownika przed zmianą ilości produktów', data);
   const supabase = createClient();
 
   data?.products.array.forEach(
@@ -19,7 +20,9 @@ export async function updateItemsQuantity(data: any) {
         const newCourses = product.courses.map(async (el) => {
 
           if (el.automatizationId) {
-            await addToGroup(data.billing.email, data.billing.firstName, el.automatizationId);
+            console.log('Dane użytkownika przed Włączenie automatyzacji w mailerlite', data);
+            const res = await addToGroup(data.billing.email, data.billing.firstName, el.automatizationId);
+            console.log('Add to group', res);
           }
 
           return {

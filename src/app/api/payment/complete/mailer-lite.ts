@@ -9,7 +9,8 @@ export async function addToGroup(email: string, name: string, groupID: string) {
     },
     body: JSON.stringify({ email, name, signup_time: time }),
   });
-  console.log(res);
+  
+  return res;
 }
 
 export async function removeFromGroup(email: string, groupID: string) {
