@@ -21,7 +21,13 @@ export async function updateItemsQuantity(data: any) {
 
           if (el.automatizationId) {
             console.log('Dane użytkownika przed Włączenie automatyzacji w mailerlite', data);
-            const res = await addToGroup(data.billing.email, data.billing.firstName, el.automatizationId);
+            const addToGroupData = {
+              email: data.billing?.email,
+              name: data.billing?.firstName,
+              group: el.automatizationId,
+            };
+            console.log('Add to group data', addToGroupData);
+            const res = await addToGroup(addToGroupData.email, addToGroupData.name, addToGroupData.group);
             console.log('Add to group', res);
           }
 
