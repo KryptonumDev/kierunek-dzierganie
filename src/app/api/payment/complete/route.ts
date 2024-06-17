@@ -28,7 +28,6 @@ export async function POST(request: Request) {
     );
 
     if (error) throw new Error(error.message);
-    console.log('Dane użytkownika przed automatyzacjami', data);
     await checkUsedModifications(data);
     await updateItemsQuantity(data);
     await sendEmails(data);

@@ -18,17 +18,18 @@ export async function updateItemsQuantity(data: any) {
       // create courses_progress record for each course
       if (product.courses) {
         const newCourses = product.courses.map(async (el) => {
-
           if (el.automatizationId) {
-            console.log('Dane użytkownika przed Włączenie automatyzacji w mailerlite', data);
-            const addToGroupData = {
-              email: data.billing?.email,
-              name: data.billing?.firstName,
-              group: el.automatizationId,
-            };
-            console.log('Add to group data', addToGroupData);
-            const res = await addToGroup(addToGroupData.email, addToGroupData.name, addToGroupData.group);
-            console.log('Add to group', res);
+            try {
+              const addToGroupData = {
+                email: data.billing?.email,
+                name: data.billing?.firstName,
+                group: el.automatizationId,
+              };
+              const res = await addToGroup(addToGroupData.email, addToGroupData.name, addToGroupData.group);
+              console.log('Add to group', res);
+            } catch (error) {
+              console.error('Error while adding to group', error);
+            }
           }
 
           return {
