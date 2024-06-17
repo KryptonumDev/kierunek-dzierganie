@@ -5,6 +5,8 @@ import countryList from 'react-select-country-list';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function generateBill(data: any, id: string) {
+  console.log('Dane użytkownika przed wystawieniem faktury', data);
+
   const supabase = createClient();
 
   const { data: settingsData } = await supabase.from('settings').select('value').eq('name', 'ifirma').single();
