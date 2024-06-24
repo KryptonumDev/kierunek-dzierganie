@@ -634,7 +634,7 @@
         .apply {
           margin-bottom: 6px;
 
-          &::after{
+          &::after {
             bottom: 0;
           }
 
@@ -642,8 +642,8 @@
             cursor: default;
             opacity: 0.6;
 
-            &::after{
-              opacity: .6;
+            &::after {
+              opacity: 0.6;
             }
           }
         }
@@ -721,8 +721,10 @@
     }
 
     .linkWrapper {
-      display: grid;
-      padding-top: 20px;
+      border-radius: 6px;
+      background: var(--primary-300, #efe8e7);
+      padding: 12px;
+      margin-top: 8px;
 
       .link {
         display: grid;
@@ -730,6 +732,7 @@
         justify-self: center;
         align-self: center;
         width: fit-content;
+        margin-top: 8px;
 
         &:hover {
           cursor: pointer;

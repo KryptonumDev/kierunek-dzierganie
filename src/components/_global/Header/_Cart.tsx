@@ -180,17 +180,6 @@ export default function Cart({
               {NavigationCrossIcon}
             </button>
           </div>
-          {(filteredFetchItems?.length ?? 0) > 0 &&
-            filteredFetchItems?.some((item) => item.materials_link || item.printed_manual) && (
-              <div className={styles.linkWrapper}>
-                <p
-                  className={`link ${styles.link}`}
-                  onClick={() => setPopupState(!popupState)}
-                >
-                  Pokaż materiały do kursów{' '}
-                </p>
-              </div>
-            )}
           <div>
             {cart?.length ? (
               <CartGrid
@@ -205,6 +194,18 @@ export default function Cart({
                 setShowCart={setShowCart}
               />
             )}
+            {(filteredFetchItems?.length ?? 0) > 0 &&
+              filteredFetchItems?.some((item) => item.materials_link || item.printed_manual) && (
+                <div className={styles.linkWrapper}>
+                  <p>Psst. Szukasz materiałów do kupowanych kursów? Sprawdź, co może Ci się przydać!</p>
+                  <button
+                    className={`link ${styles.link}`}
+                    onClick={() => setPopupState(!popupState)}
+                  >
+                    Pokaż materiały
+                  </button>
+                </div>
+              )}
             {cart?.length != 0 && (
               <>
                 {fetchedItems && typeof totalItemsPrice === 'number' ? (
@@ -309,9 +310,7 @@ export default function Cart({
                         {usedDiscount && (
                           <p>
                             <span>Kupon: {usedDiscount.code}</span>
-                            <span>
-                              {formatPrice(calculateDiscountAmount(totalItemsPrice, usedDiscount))}
-                            </span>
+                            <span>{formatPrice(calculateDiscountAmount(totalItemsPrice, usedDiscount))}</span>
                           </p>
                         )}
                         {usedVirtualMoney && usedVirtualMoney > 0 && (
@@ -327,7 +326,7 @@ export default function Cart({
                               totalItemsPrice +
                                 (usedDiscount ? calculateDiscountAmount(totalItemsPrice, usedDiscount) : 0) -
                                 (usedVirtualMoney ? usedVirtualMoney * 100 : 0),
-                              0 
+                              0
                             )}
                           </span>
                         </p>
