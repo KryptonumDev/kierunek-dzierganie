@@ -55,6 +55,7 @@ export async function POST(request: Request) {
         payment_method: 'Przelewy24',
         need_delivery: input.needDelivery,
         client_notes: input.client_notes,
+        free_delivery: input.freeDelivery,
       })
       .select('*')
       .single();

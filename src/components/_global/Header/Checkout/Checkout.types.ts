@@ -20,9 +20,11 @@ export type Props = {
     deliveryPrice: number;
     paczkomatPrice: number;
   } | null;
+  freeShipping: number;
 };
 
 export type InputState = {
+  freeDelivery: boolean;
   firmOrder: boolean;
   shippingSameAsBilling: boolean;
   shipping: Shipping;

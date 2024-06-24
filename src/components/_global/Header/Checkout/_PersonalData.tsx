@@ -35,8 +35,9 @@ const generateNewInput = (
       input.amount +
       (input.discount ? calculateDiscountAmount(input.amount, input.discount) : 0) -
       (input.virtualMoney ? input.virtualMoney * 100 : 0) +
-      (input.needDelivery ? Number(input.delivery) : 0),
+      (input.needDelivery && !input.freeDelivery ? Number(input.delivery) : 0),
     client_notes: data.client_notes,
+    freeDelivery: input.freeDelivery,
     shipping: {
       firstName: data.shippingSameAsBilling ? data.fullName : data.shippingFullName,
       address1: data.shippingSameAsBilling ? data.address : data.shippingAddress,

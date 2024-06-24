@@ -46,6 +46,7 @@ export type QueryProps = {
     deliveryPrice: number;
     paczkomatPrice: number;
   } | null;
+  freeShipping: number;
 };
 
 export type EmptyCart = {
@@ -55,6 +56,7 @@ export type EmptyCart = {
 };
 
 export type Cart = {
+  freeShipping: number;
   ownedCourses?: string[];
   goToCheckout: () => void;
   setShowCart: () => void;

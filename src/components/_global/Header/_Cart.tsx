@@ -41,6 +41,7 @@ export default function Cart({
   setUsedDiscount,
   userId,
   ownedCourses,
+  freeShipping,
 }: Cart) {
   const {
     register,
@@ -180,6 +181,21 @@ export default function Cart({
               {NavigationCrossIcon}
             </button>
           </div>
+          {freeShipping > 0 && cart?.length && fetchedItems?.some((item) => item._type === 'product') && (
+            <div className={styles['freeDelivery']}>
+              <span
+                className={styles['line']}
+                style={
+                  {
+                    '--filled': totalItemsPrice! > freeShipping ? '100%' : (totalItemsPrice! / freeShipping) * 100,
+                  } as React.CSSProperties
+                }
+              />
+              <p>
+                Darmowa dostawa od <strong>{formatPrice(freeShipping)}</strong>
+              </p>
+            </div>
+          )}
           <div>
             {cart?.length ? (
               <CartGrid

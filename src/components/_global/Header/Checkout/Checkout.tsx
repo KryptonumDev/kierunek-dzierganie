@@ -14,6 +14,7 @@ const createInputState = (billing?: Billing, shipping?: Shipping, userEmail?: st
   totalAmount: 0,
   needDelivery: false,
   client_notes: '',
+  freeDelivery: false,
   shipping: {
     firstName: shipping?.firstName ?? '',
     address1: shipping?.address1 ?? '',
@@ -55,6 +56,7 @@ export default function Checkout({
   userId,
   setUsedDiscount,
   deliverySettings,
+  freeShipping,
   // virtualWallet,
 }: Props) {
   const [step, setStep] = useState(1);
@@ -81,6 +83,9 @@ export default function Checkout({
       amount: fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0),
       needDelivery: fetchedItems.some((item) => item._type === 'product'),
       delivery: fetchedItems.some((item) => item._type === 'product') ? Number(deliverySettings?.deliveryPrice) : 0,
+      freeDelivery:
+        freeShipping > 0 &&
+        fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0) >= freeShipping,
       discount: usedDiscount?.affiliatedBy === userId ? null : usedDiscount,
       virtualMoney: usedVirtualMoney,
       user_id: userId,

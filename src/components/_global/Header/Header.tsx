@@ -50,6 +50,12 @@ const Header = async () => {
     .returns<{ deliveryPrice: number; paczkomatPrice: number }[]>()
     .single();
 
+  const {data: freeShipping} = await adminClient
+    .from('settings')
+    .select('value->freeDeliveryAmount')
+    .eq('name', 'general')
+    .single();
+
   return (
     <Content
       global={global}
@@ -72,6 +78,7 @@ const Header = async () => {
       // @ts-expect-error - virtual_wallet is not array, bug in supabase
       virtualWallet={data?.virtual_wallet?.amount}
       ownedCourses={data?.courses_progress?.map((course) => course.course_id as string)}
+      freeShipping={freeShipping?.freeDeliveryAmount as number ?? 0}
     />
   );
 };
