@@ -17,6 +17,7 @@ export async function updateItemsQuantity(data: any) {
     }) => {
       // create courses_progress record for each course
       if (product.courses) {
+        console.log('Produkt z kursem:', product);
         const newCourses = product.courses.map(async (el) => {
           if (el.automatizationId) {
             try {
@@ -47,12 +48,20 @@ export async function updateItemsQuantity(data: any) {
       // TODO: maybe move this to create step??
       if (product.variantId) {
         // decrease quantity of chosen variant of variable product
-        const res = await sanityPatchQuantityInVariant(product.id, product.variantId, product.quantity);
-        console.log('Update variant quantity', res);
+        try {
+          const res = await sanityPatchQuantityInVariant(product.id, product.variantId, product.quantity);
+          console.log('Update variant quantity', res);
+        } catch (error) {
+          console.error('Error while updating variant quantity', error);
+        }
       } else if (product.type === 'product') {
         // decrease quantity of each physical product
-        const res = await sanityPatchQuantity(product.id, product.quantity);
-        console.log('Update product quantity', res);
+        try {
+          const res = await sanityPatchQuantity(product.id, product.quantity);
+          console.log('Update product quantity', res);
+        } catch (error) {
+          console.error('Error while updating product quantity', error);
+        }
       }
     }
   );
