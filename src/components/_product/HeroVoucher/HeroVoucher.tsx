@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import styles from './HeroVoucher.module.scss';
 import type { Props } from './HeroVoucher.types';
 import { ImgType } from '@/global/types';
@@ -8,8 +8,6 @@ import { formatPrice } from '@/utils/price-formatter';
 import Gallery from '@/components/ui/Gallery';
 import { Hearth, PayPo } from '@/components/ui/Icons';
 import Radio from '@/components/ui/Radio';
-import Voucher from '@/components/ui/Voucher';
-import { PDFDownloadLink, pdf } from '@react-pdf/renderer';
 
 const HeroVoucher = ({ data }: Props) => {
   const [voucherData, setVoucherData] = useState<{
@@ -52,35 +50,6 @@ const HeroVoucher = ({ data }: Props) => {
     data?.gallery!.forEach((el) => images.push({ type: 'image', data: el }));
     return images;
   }, [data]);
-
-  useEffect(() => {
-    const generatePdfBlob = async () => {
-      const blob = await pdf(<Voucher />).toBlob();
-    };
-
-    generatePdfBlob();
-  }, []);
-
-  return (
-    <>
-      <PDFDownloadLink
-        className={`${styles.link} link`}
-        fileName='test'
-        document={
-          <Voucher
-            amount='100 zł'
-            dedication={{
-              from: 'Bogdan',
-              to: 'Kasia',
-              message: 'With love',
-            }}
-          />
-        }
-      >
-        test
-      </PDFDownloadLink>
-    </>
-  );
 
   return (
     <section className={styles['HeroPhysical']}>

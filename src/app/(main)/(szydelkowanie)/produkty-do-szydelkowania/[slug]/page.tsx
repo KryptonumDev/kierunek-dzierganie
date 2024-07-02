@@ -11,6 +11,7 @@ import { Img_Query } from '@/components/ui/image';
 import Reviews from '@/components/_product/Reviews';
 import { createClient } from '@/utils/supabase-server';
 import ProductSchema from '@/global/Schema/ProductSchema';
+import HeroVoucher from '@/components/_product/HeroVoucher/HeroVoucher';
 
 const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
   const {
@@ -56,23 +57,39 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
         ]}
         visible={true}
       />
-      <HeroPhysical
-        name={name}
-        id={_id}
-        type={type}
-        variants={variants}
-        physical={{
-          _id,
-          name,
-          price: price!,
-          discount,
-          countInStock: countInStock!,
-          featuredVideo,
-          gallery: gallery!,
-          rating,
-          reviewsCount: reviews.length,
-        }}
-      />
+      {_type === 'voucher' ? (
+        <HeroVoucher
+          data={{
+            _id,
+            name,
+            price: price!,
+            discount,
+            countInStock: countInStock!,
+            featuredVideo,
+            gallery: gallery!,
+            rating,
+            reviewsCount: reviews.length,
+          }}
+        />
+      ) : (
+        <HeroPhysical
+          name={name}
+          id={_id}
+          type={type}
+          variants={variants}
+          physical={{
+            _id,
+            name,
+            price: price!,
+            discount,
+            countInStock: countInStock!,
+            featuredVideo,
+            gallery: gallery!,
+            rating,
+            reviewsCount: reviews.length,
+          }}
+        />
+      )}
       <Informations tabs={['Opis', 'Parametry', 'Opinie']}>
         {description?.length > 0 && <Description data={description} />}
         {parameters?.length > 0 && <Parameters parameters={parameters} />}
@@ -94,7 +111,7 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
 export default Product;
 
 export async function generateMetadata({ params: { slug } }: { params: { slug: string } }) {
-  return await QueryMetadata('product', `/kursy-szydelkowania/${slug}`, slug);
+  return await QueryMetadata(['product', 'voucher'], `/kursy-szydelkowania/${slug}`, slug);
 }
 
 const query = async (slug: string): Promise<ProductPageQuery> => {
@@ -119,58 +136,58 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
 
   const data = await sanityFetch<ProductPageQueryProps>({
     query: /* groq */ `
-    {
-      
-      "product": *[_type == "product" && slug.current == $slug && basis == 'crocheting'][0] {
-        name,
-        'slug': slug.current,
-        visible,
-        _id,
-        basis,
-        type,
-        price,
-        discount,
-        featuredVideo,
-        countInStock,
-        gallery[]{
-          ${Img_Query}
-        },
-        ${Description_Query}
-        parameters[]{
+      {
+        "product": *[(_type == "product" || _type=='voucher') && slug.current == $slug && basis == 'crocheting'][0] {
           name,
-          value
-        },
-        variants[]{
-          "_id": _key,
-          name,
+          visible,
+          'slug': slug.current,
+          _id,
+          _type,
+          basis,
+          type,
           price,
           discount,
-          countInStock,
           featuredVideo,
+          countInStock,
           gallery[]{
             ${Img_Query}
           },
-          attributes[]{
-            type,
+          ${Description_Query}
+          parameters[]{
             name,
             value
-          }
-        },
-        "relatedCourses": *[_type == 'course' && references(^._id)][]{
-          _id
-        },
-        "reviews": *[_type == 'productReviewCollection' && visible == true && references(^._id)][0...10]{
-          rating,
-          review,
-          nameOfReviewer,
-          _id
-        },
-        "rating": math::avg(*[_type == 'productReviewCollection' && references(^._id)]{rating}.rating),
+          },
+          variants[]{
+            "_id": _key,
+            name,
+            price,
+            discount,
+            countInStock,
+            featuredVideo,
+            gallery[]{
+              ${Img_Query}
+            },
+            attributes[]{
+              type,
+              name,
+              value
+            }
+          },
+          "relatedCourses": *[_type == 'course' && references(^._id)][]{
+            _id
+          },
+          "reviews": *[_type == 'productReviewCollection' && visible == true && references(^._id)][0...10]{
+            rating,
+            review,
+            nameOfReviewer,
+            _id
+          },
+          "rating": math::avg(*[_type == 'productReviewCollection' && references(^._id)]{rating}.rating),
+        }
       }
-    }
-    `,
+      `,
     params: { slug },
-    tags: ['product','course','productReviewCollection'],
+    tags: ['product', 'course', 'voucher', 'productReviewCollection'],
   });
   !data && notFound();
 
@@ -180,7 +197,7 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
 export async function generateStaticParams(): Promise<generateStaticParamsProps[]> {
   const data: generateStaticParamsProps[] = await sanityFetch({
     query: /* groq */ `
-      *[_type == "product" && basis == 'crocheting'] {
+      *[(_type == "product" || _type=='voucher') && basis == 'crocheting'] {
         'slug': slug.current,
       }
     `,
