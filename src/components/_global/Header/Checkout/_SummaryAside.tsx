@@ -46,7 +46,7 @@ export default function SummaryAside({ input }: AsideProps) {
               (input.discount ? calculateDiscountAmount(input.amount, input.discount) : 0) -
               (input.virtualMoney ? input.virtualMoney * 100 : 0) +
               (input.needDelivery && !input.freeDelivery ? input.delivery : 0),
-              0
+            0
           )}
         </span>
       </p>
@@ -84,6 +84,21 @@ export default function SummaryAside({ input }: AsideProps) {
                 className={styles['price']}
                 dangerouslySetInnerHTML={{ __html: formatPrice(product.discount * product.quantity) }}
               />
+            )}
+            {product.type === 'voucher' && (
+              <div className={styles['voucher-data']}>
+                <p>
+                  {product.voucherData?.type === 'PHYSICAL' ? (
+                    <>
+                      Wersja <strong>fizyczna</strong>
+                    </>
+                  ) : (
+                    <>
+                      Wersja <strong>elektroniczna</strong>
+                    </>
+                  )}
+                </p>
+              </div>
             )}
           </div>
         </div>

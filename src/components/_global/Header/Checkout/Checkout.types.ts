@@ -38,6 +38,7 @@ export type InputState = {
   };
   products?: {
     array: {
+      type: string;
       id: string;
       name: string;
       price: number;
@@ -45,6 +46,15 @@ export type InputState = {
       discount: number;
       image: ImgType;
       complexity: Complexity | null;
+      voucherData?: {
+        dedication: {
+          from: string;
+          to: string;
+          message: string;
+        } | null;
+        amount: number;
+        type: 'PHYSICAL' | 'DIGITAL';
+      };
     }[];
   };
   client_notes: string;

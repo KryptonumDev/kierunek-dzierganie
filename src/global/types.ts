@@ -26,7 +26,7 @@ export type ImgType = {
 };
 
 export type ProductCard = {
-  _type: 'product' | 'course' | 'bundle';
+  _type: 'product' | 'course' | 'bundle' | 'voucher';
   _id: string;
   basis: 'crocheting' | 'knitting';
   slug: string;
@@ -42,6 +42,7 @@ export type ProductCard = {
   complexity?: Complexity;
   reviewsCount: number;
   rating: number;
+  needDelivery: boolean;
   automatizationId: string | null;
   materials_link?: {
     _id: string;
@@ -109,6 +110,15 @@ export type ProductCard = {
   related?: {
     _id: string;
     name: string;
+  };
+  voucherData?: {
+    type: 'DIGITAL' | 'PHYSICAL';
+    dedication: {
+      from: string;
+      to: string;
+      message: string;
+    } | null;
+    amount: number;
   };
 };
 
@@ -241,7 +251,7 @@ export type ProductPageQueryProps = {
     visible: boolean;
     name: string;
     slug: string;
-    _type: 'product' | 'course' | 'bundle';
+    _type: 'product' | 'course' | 'bundle' | 'voucher';
     _id: string;
     type: string;
     variants: Array<ProductVariant>;
@@ -272,7 +282,7 @@ export type CoursePageQueryProps = {
     name: string;
     slug: string;
     _id: string;
-    _type: 'product' | 'course' | 'bundle';
+    _type: 'product' | 'course' | 'bundle' | 'voucher';
     type: string;
     gallery?: Array<ImgType>;
     featuredVideo?: string;
@@ -411,7 +421,7 @@ export type Order = {
       courses: ProductCard;
       discount: number;
       image: ImgType;
-      type: 'product' | 'course' | 'bundle';
+      type: 'product' | 'course' | 'bundle' | 'voucher';
       variantId: string;
       id: string;
       name: string;

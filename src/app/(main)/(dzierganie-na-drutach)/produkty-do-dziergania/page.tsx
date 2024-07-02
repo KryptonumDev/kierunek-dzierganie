@@ -75,7 +75,7 @@ const query = async (searchParams: { [key: string]: string }): Promise<KnittingP
         listing_HighlightedCourse_Badge,
       },
       "products": *[
-        _type == 'product'
+        (_type == "product" || _type=='voucher')
         && visible == true 
         && basis == 'knitting' 
         && (!defined($category) || category->slug.current == $category)
@@ -85,7 +85,7 @@ const query = async (searchParams: { [key: string]: string }): Promise<KnittingP
         ${PRODUCT_CARD_QUERY}
       },
       "productsTotalCount": count(*[
-        _type == 'product'
+        (_type == "product" || _type=='voucher')
         && visible == true 
         && basis == 'knitting' 
         && (!defined($category) || category->slug.current == $category)

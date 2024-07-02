@@ -78,11 +78,12 @@ export default function Checkout({
 
       return;
     }
+
     setInput((prev) => ({
       ...prev,
       amount: fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0),
-      needDelivery: fetchedItems.some((item) => item._type === 'product'),
-      delivery: fetchedItems.some((item) => item._type === 'product') ? Number(deliverySettings?.deliveryPrice) : 0,
+      needDelivery: fetchedItems.some((item) => item.needDelivery),
+      delivery: fetchedItems.some((item) => item.needDelivery) ? Number(deliverySettings?.deliveryPrice) : 0,
       freeDelivery:
         freeShipping > 0 &&
         fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0) >= freeShipping,
@@ -115,6 +116,7 @@ export default function Checkout({
                 : item.courses ?? null,
             variantId: item.variant?._id ?? null,
             type: item._type,
+            voucherData: item.voucherData,
           };
         }),
       },

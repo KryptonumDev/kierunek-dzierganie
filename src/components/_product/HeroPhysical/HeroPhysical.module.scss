@@ -7,6 +7,24 @@
     grid-template-columns: 1fr;
   }
 
+  .add-to-cart {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+    .pay-po {
+      color: var(--primary-700, #766965);
+      font-size: calc(14rem / 16);
+      font-weight: 300;
+      line-height: 150%;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+    }
+  }
+
   .rating {
     display: flex;
     gap: 4px;

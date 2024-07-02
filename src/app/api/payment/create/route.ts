@@ -5,6 +5,7 @@ import { createClient } from '@/utils/supabase-admin';
 import { updateItemsQuantity } from '../complete/update-items-quantity';
 import { sendEmails } from '../complete/send-emails';
 import { checkUsedModifications } from '../complete/check-used-modifications';
+// import { pdf } from '@react-pdf/renderer';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,13 +36,27 @@ export async function POST(request: Request) {
       .insert({
         user_id: input.user_id,
         products: {
-          array: input.products?.array.map((product) => ({
-            ...product,
-            // @ts-expect-error - product.courses is not defined in types... todo later
-            vat: product.courses ? settingsData?.value.vatCourses : settingsData?.value.vatPhysical,
-            // @ts-expect-error - product.courses is not defined in types... todo later
-            ryczalt: product.courses ? settingsData?.value.ryczaltCourses : settingsData?.value.ryczaltPhysical,
-          })),
+          array: input.products?.array.map((product) => {
+
+            // if(product.type === 'voucher'){
+            //   // generate pdf of voucher
+            //   const blob = await pdf(
+            //     <Certificate
+            //       courseName={course.name}
+            //       full_name={full_name}
+            //       authorName={authorName}
+            //     />
+            //   ).toBlob();
+            // }
+
+            return {
+              ...product,
+              // @ts-expect-error - product.courses is not defined in types... todo later
+              vat: product.courses ? settingsData?.value.vatCourses : settingsData?.value.vatPhysical,
+              // @ts-expect-error - product.courses is not defined in types... todo later
+              ryczalt: product.courses ? settingsData?.value.ryczaltCourses : settingsData?.value.ryczaltPhysical,
+            };
+          }),
         },
         status: input.totalAmount <= 0 ? (input.needDelivery ? 2 : 3) : 1,
         billing: input.billing,

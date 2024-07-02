@@ -5,12 +5,16 @@ import styles from './AddToCart.module.scss';
 import type { Props } from './AddToCart.types';
 import { toast } from 'react-toastify';
 
-const AddToCart = ({ id, variant, disabled, quantity = 1 }: Props) => {
-  const { addItem } = useCart();
-  const productId = variant ? (id + 'variant:' + variant) : id;
+const AddToCart = ({ id, variant, disabled, quantity = 1, voucherData }: Props) => {
+  const { addItem, inCart, updateItem } = useCart();
+  const productId = variant ? id + 'variant:' + variant : id;
 
   const addItemToCart = () => {
-    addItem({ id: productId, product: id, variant, price: 0 }, quantity);
+    if (voucherData?.amount && inCart(productId)) {
+      updateItem(productId, { id: productId, product: id, variant, price: 0, voucherData: voucherData, quantity: 1 });
+    } else {
+      addItem({ id: productId, product: id, variant, price: 0, voucherData: voucherData }, quantity);
+    }
     toast('Produkt dodany do koszyka');
   };
 

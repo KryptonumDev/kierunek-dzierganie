@@ -10,6 +10,6 @@ export type ReviewsTypes = {
   course: boolean;
   product: {
     id: string;
-    type: 'product' | 'course' | 'bundle';
+    type: 'product' | 'course' | 'bundle' | 'voucher';
   };
 };

@@ -42,11 +42,11 @@ const Content = ({
   const [usedDiscount, setUsedDiscount] = useState<Discount | null>(null);
   const [usedVirtualMoney, setUsedVirtualMoney] = useState<number | null>(null);
   const [totalItemsCount, setTotalItemsCount] = useState<number>(0);
-  const { cart, fetchedItems, updateItemQuantity, removeItem, totalItems } = useCartItems();
+  const { cart, fetchedItems, updateItemQuantity, removeItem, totalUniqueItems } = useCartItems();
 
   useEffect(() => {
-    setTotalItemsCount(totalItems);
-  }, [totalItems]);
+    setTotalItemsCount(totalUniqueItems);
+  }, [totalUniqueItems]);
 
   const [logoReversed, setLogoReversed] = useState(false);
   useEffect(() => {

@@ -488,9 +488,26 @@ const CartGrid = ({ fetchedItems, removeItem, updateItemQuantity }: Grid) => {
             />
           )}
           <div>
-            <h3>
-              {item.name} {item.variant ? `- ${item.variant.name}` : ''}
-            </h3>
+            <div>
+              <h3>
+                {item.name} {item.variant ? `- ${item.variant.name}` : ''}
+              </h3>
+              {item._type === 'voucher' && (
+                <div className={styles['voucher-data']}>
+                  <p>
+                    {item.voucherData!.dedication ? (
+                      <>
+                        Od: {item.voucherData?.dedication.from},<br />
+                        Do: {item.voucherData?.dedication.to},<br />
+                        Wiadomość: {item.voucherData?.dedication.message}
+                      </>
+                    ) : (
+                      <>Bez dedykacji</>
+                    )}
+                  </p>
+                </div>
+              )}
+            </div>
             {item._type === 'product' && (
               <div>
                 <div className={styles['calculator']}>
@@ -516,10 +533,24 @@ const CartGrid = ({ fetchedItems, removeItem, updateItemQuantity }: Grid) => {
                 />
                 {item.discount ? <span dangerouslySetInnerHTML={{ __html: formatPrice(item.discount) }} /> : null}
               </div>
-              <span className={styles['omnibus']}>
-                Najniższa cena z 30 dni przed obniżką:{' '}
-                <span dangerouslySetInnerHTML={{ __html: formatPrice(item.price!) }} />
-              </span>
+              {item._type !== 'voucher' ? (
+                <span className={styles['omnibus']}>
+                  Najniższa cena z 30 dni przed obniżką:{' '}
+                  <span dangerouslySetInnerHTML={{ __html: formatPrice(item.price!) }} />
+                </span>
+              ) : (
+                <p>
+                  {item.voucherData?.type === 'PHYSICAL' ? (
+                    <>
+                      Wersja <strong>fizyczna</strong>
+                    </>
+                  ) : (
+                    <>
+                      Wersja <strong>elektroniczna</strong>
+                    </>
+                  )}
+                </p>
+              )}
             </div>
             <button
               className={`link ${styles['remove']}`}
