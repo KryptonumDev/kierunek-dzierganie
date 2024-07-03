@@ -29,9 +29,12 @@ export async function POST(request: Request) {
 
     if (error) throw new Error(error.message);
     await checkUsedModifications(data);
-    await updateItemsQuantity(data);
+    console.log('przed wysłaniem emaili');
     await sendEmails(data);
+    console.log('przed generowaniem rachunku');
     await generateBill(data, id);
+    console.log('przed zmianą ilości');
+    await updateItemsQuantity(data);
 
     return NextResponse.json({}, { status: 200 });
   } catch (error) {

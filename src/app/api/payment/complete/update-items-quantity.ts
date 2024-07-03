@@ -26,6 +26,7 @@ export async function updateItemsQuantity(data: any) {
                 name: data.billing?.firstName,
                 group: el.automatizationId,
               };
+              console.log('Add to group data', addToGroupData);
               const res = await addToGroup(addToGroupData.email, addToGroupData.name, addToGroupData.group);
               console.log('Add to group', res);
             } catch (error) {
