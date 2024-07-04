@@ -303,7 +303,7 @@ const OrderData = ({ order }: OrderDataTypes) => {
         {order.discount && (
           <p>
             <span>Kupon: {order.discount.code}</span>
-            <span>{formatPrice(calculateDiscountAmount(totalItemsPrice, order.discount))}</span>
+            <span>{formatPrice(calculateDiscountAmount(totalItemsPrice, order.discount, order.shippingMethod?.price))}</span>
           </p>
         )}
         {order.shippingMethod && (
@@ -323,7 +323,7 @@ const OrderData = ({ order }: OrderDataTypes) => {
           <span>
             {formatPrice(
               totalItemsPrice +
-                (order.discount ? calculateDiscountAmount(totalItemsPrice, order.discount) : 0) -
+                (order.discount ? calculateDiscountAmount(totalItemsPrice, order.discount, order.shippingMethod?.price) : 0) -
                 (order.virtualMoney ? order.virtualMoney * 100 : 0) +
                 (order.shippingMethod ? order.shippingMethod.price : 0),
               0

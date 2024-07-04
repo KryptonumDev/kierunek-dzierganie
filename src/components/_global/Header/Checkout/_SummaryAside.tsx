@@ -20,10 +20,16 @@ export default function SummaryAside({ input }: AsideProps) {
         </span>
         <span>{formatPrice(input.amount)}</span>
       </p>
+      {input.needDelivery && (
+        <p>
+          <span>Dostawa</span>
+          <span>{input.freeDelivery ? formatPrice(0) : formatPrice(input.delivery)}</span>
+        </p>
+      )}
       {input.discount && (
         <p>
           <span>Kupon: {input.discount.code}</span>
-          <span>{formatPrice(calculateDiscountAmount(input.amount, input.discount))}</span>
+          <span>{formatPrice(calculateDiscountAmount(input.amount, input.discount, input.delivery))}</span>
         </p>
       )}
       {input.virtualMoney && input.virtualMoney > 0 && (
@@ -32,18 +38,12 @@ export default function SummaryAside({ input }: AsideProps) {
           <span>-{formatPrice(input.virtualMoney * 100)}</span>
         </p>
       )}
-      {input.needDelivery && (
-        <p>
-          <span>Dostawa</span>
-          <span>{input.freeDelivery ? formatPrice(0) : formatPrice(input.delivery)}</span>
-        </p>
-      )}
       <p>
         <span>Razem</span>
         <span>
           {formatPrice(
             input.amount +
-              (input.discount ? calculateDiscountAmount(input.amount, input.discount) : 0) -
+              (input.discount ? calculateDiscountAmount(input.amount, input.discount, input.delivery) : 0) -
               (input.virtualMoney ? input.virtualMoney * 100 : 0) +
               (input.needDelivery && !input.freeDelivery ? input.delivery : 0),
             0

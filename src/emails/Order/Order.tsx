@@ -251,7 +251,7 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
                     lineHeight: '150%',
                   }}
                 >
-                  {formatPrice(calculateDiscountAmount(totalItemsPrice, data.used_discount))}
+                  {formatPrice(calculateDiscountAmount(totalItemsPrice, data.used_discount, data.shipping_method?.price))}
                 </span>
               </p>
             )}
@@ -374,7 +374,7 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
               >
                 {formatPrice(
                   totalItemsPrice +
-                    (data.used_discount ? calculateDiscountAmount(totalItemsPrice, data.used_discount) : 0) -
+                    (data.used_discount ? calculateDiscountAmount(totalItemsPrice, data.used_discount, data.shipping_method?.price) : 0) -
                     (data.virtualMoney ? data.virtualMoney * 100 : 0) +
                     (data.shipping_method ? data.shipping_method.price : 0)
                 )}

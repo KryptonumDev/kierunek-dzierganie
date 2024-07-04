@@ -76,6 +76,10 @@ export type Cart = {
   usedVirtualMoney: number | null;
   usedDiscount: Discount | null;
   userId?: string;
+  deliverySettings: {
+    deliveryPrice: number;
+    paczkomatPrice: number;
+  } | null;
 } & useCartItems;
 
 export type Grid = {

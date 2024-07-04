@@ -33,7 +33,7 @@ const generateNewInput = (
     },
     totalAmount:
       input.amount +
-      (input.discount ? calculateDiscountAmount(input.amount, input.discount) : 0) -
+      (input.discount ? calculateDiscountAmount(input.amount, input.discount, shippingMethods.find((method) => method.name === data.shippingMethod)?.price) : 0) -
       (input.virtualMoney ? input.virtualMoney * 100 : 0) +
       (input.needDelivery && !input.freeDelivery ? Number(input.delivery) : 0),
     client_notes: data.client_notes,

@@ -33,7 +33,7 @@ const Content = ({
   userId,
   ownedCourses,
   deliverySettings,
-  freeShipping
+  freeShipping,
 }: QueryProps) => {
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
@@ -106,6 +106,7 @@ const Content = ({
         setUsedDiscount={setUsedDiscount}
         userId={userId}
         ownedCourses={ownedCourses}
+        deliverySettings={deliverySettings}
         freeShipping={freeShipping}
       />
       <a

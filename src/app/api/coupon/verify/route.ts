@@ -27,6 +27,7 @@ export async function POST(request: Request) {
         coupons_types (
           coupon_type
         ),
+        voucher_amount_left,
         discounted_product
         `
       )
@@ -97,6 +98,13 @@ export async function POST(request: Request) {
 
       if (!inCart) {
         return NextResponse.json({ error: 'Kod rabatowy nie dotyczy żadnego produktu w koszyku' }, { status: 500 });
+      }
+    }
+
+    // @ts-expect-error wrong types from supabase
+    if (data?.coupons_types.coupon_type === 'VOUCHER') {
+      if (data.voucher_amount_left === 0) {
+        return NextResponse.json({ error: 'Voucher jest wyczerpany' }, { status: 500 });
       }
     }
 

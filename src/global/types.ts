@@ -489,6 +489,7 @@ export type Discount = {
   code: string;
   id: string;
   type: string;
+  totalVoucherAmount: number | null;
   discounted_product: {
     id: string;
     name: string;

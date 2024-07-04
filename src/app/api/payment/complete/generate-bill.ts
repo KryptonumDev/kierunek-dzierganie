@@ -5,7 +5,6 @@ import countryList from 'react-select-country-list';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function generateBill(data: any, id: string) {
-
   const supabase = createClient();
 
   const { data: settingsData } = await supabase.from('settings').select('value').eq('name', 'ifirma').single();
@@ -20,8 +19,7 @@ export async function generateBill(data: any, id: string) {
     if (data.used_discount) {
       if (data.used_discount.type === 'PERCENTAGE') {
         discount = data.used_discount.amount;
-      } else if (data.used_discount.type === 'FIXED CART') {
-        console.log(fixedDiscountAmount, amount);
+      } else if (data.used_discount.type === 'FIXED CART' || data.used_discount.type === 'VOUCHER') {
         if (amount > fixedDiscountAmount) {
           amount = amount - fixedDiscountAmount;
           fixedDiscountAmount = 0;
@@ -107,6 +105,7 @@ export async function generateBill(data: any, id: string) {
       NazwaPelna: data.shipping_method.name,
       Jednostka: 'szt',
       TypStawkiVat: 'PRC',
+      Rabat: data.used_discount.type === 'DELIVERY' ? 100 : 0,
     });
   }
 
