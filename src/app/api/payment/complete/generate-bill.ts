@@ -146,7 +146,7 @@ export async function generateBill(data: any, id: string) {
   };
 
   const billId = await createBill();
-
+  console.log(billId);
   if (billId.response.Informacja === 'Data sprzedaży musi być zgodna z miesiącem i rokiem księgowym') {
     const url = 'https://www.ifirma.pl/iapi/abonent/miesiacksiegowy.json';
     const user = 'martyna_prochowska@o2.pl';
