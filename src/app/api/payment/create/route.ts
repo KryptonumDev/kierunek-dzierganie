@@ -111,7 +111,10 @@ export async function POST(request: Request) {
       .select('*')
       .single();
 
-    if (!data || error) throw new Error(error?.message || 'Error while creating order');
+    if (!data || error) {
+      console.error(error);
+      throw new Error(error?.message || 'Error while creating order');
+    }
 
     if (input.totalAmount <= 0) {
       await checkUsedModifications(data);
