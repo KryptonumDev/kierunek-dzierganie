@@ -33,67 +33,66 @@ export async function POST(request: Request) {
     );
     const { data: settingsData } = await supabase.from('settings').select('value').eq('name', 'ifirma').single();
 
+    const products = input.products?.array.map(async (product) => {
+      if (product.type === 'voucher') {
+        // create instance in supabase
+        const { data, error } = await supabase
+          .from('coupons')
+          .insert({
+            description: 'Voucher',
+            type: 5,
+            code: generateRandomCode(),
+            state: 2,
+            amount: product.voucherData!.amount,
+            voucher_amount_left: product.voucherData!.amount,
+            // three months from now
+            expiration_date: new Date(new Date().setMonth(new Date().getMonth() + 3)),
+          })
+          .select('*')
+          .single();
+
+        if (error) {
+          console.log('Error while creating voucher: ', error.message);
+          return {
+            ...product,
+            voucherBase64: null,
+            vat: 0,
+            ryczalt: 0,
+          };
+        }
+
+        const code = data.code;
+        const amount = formatPrice(product.voucherData!.amount);
+        const date = data.expiration_date;
+
+        product.voucherData!.dedication;
+        const blob = product.voucherData!.dedication
+          ? await dedicatedVoucher({ code, date, amount, dedication: product.voucherData!.dedication })
+          : await voucher({ code, amount, date });
+
+        return {
+          ...product,
+          voucherBase64: blob,
+          vat: 0,
+          ryczalt: 0,
+        };
+      } else {
+        return {
+          ...product,
+          // @ts-expect-error - product.courses is not defined in types... todo later
+          vat: product.courses ? settingsData?.value.vatCourses : settingsData?.value.vatPhysical,
+          // @ts-expect-error - product.courses is not defined in types... todo later
+          ryczalt: product.courses ? settingsData?.value.ryczaltCourses : settingsData?.value.ryczaltPhysical,
+        };
+      }
+    });
+
     const { data, error } = await supabase
       .from('orders')
       .insert({
         user_id: input.user_id,
         products: {
-          array: input.products?.array.map(async (product) => {
-            if (product.type === 'voucher') {
-              // generate pdf of voucher
-
-              // create instance in supabase
-
-              const { data, error } = await supabase
-                .from('coupons')
-                .insert({
-                  description: 'Voucher',
-                  type: 2,
-                  code: generateRandomCode(),
-                  state: 2,
-                  amount: product.voucherData!.amount,
-                  voucher_amount_left: product.voucherData!.amount,
-                  // three months from now
-                  expiration_date: new Date(new Date().setMonth(new Date().getMonth() + 3)),
-                })
-                .select('*')
-                .single();
-
-              if (error) {
-                console.log('Error while creating voucher: ', error.message);
-                return {
-                  ...product,
-                  voucherBase64: null,
-                  vat: 0,
-                  ryczalt: 0,
-                };
-              }
-
-              const code = data.code;
-              const amount = formatPrice(product.voucherData!.amount);
-              const date = data.expiration_date;
-
-              product.voucherData!.dedication;
-              const blob = product.voucherData!.dedication
-                ? dedicatedVoucher({ code, date, amount, dedication: product.voucherData!.dedication })
-                : voucher({ code, amount, date });
-
-              return {
-                ...product,
-                voucherBase64: blob,
-                vat: 0,
-                ryczalt: 0,
-              };
-            } else {
-              return {
-                ...product,
-                // @ts-expect-error - product.courses is not defined in types... todo later
-                vat: product.courses ? settingsData?.value.vatCourses : settingsData?.value.vatPhysical,
-                // @ts-expect-error - product.courses is not defined in types... todo later
-                ryczalt: product.courses ? settingsData?.value.ryczaltCourses : settingsData?.value.ryczaltPhysical,
-              };
-            }
-          }),
+          array: await Promise.all(products!),
         },
         status: input.totalAmount <= 0 ? (input.needDelivery ? 2 : 3) : 1,
         billing: input.billing,
@@ -154,7 +153,7 @@ export async function POST(request: Request) {
 function generateRandomCode() {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let code = '';
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 12; i++) {
     code += characters.charAt(Math.floor(Math.random() * characters.length));
   }
   return code;

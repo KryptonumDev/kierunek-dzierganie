@@ -10,7 +10,7 @@ export async function checkUsedModifications(data: any) {
 
     let usedAmount = null;
 
-    if (data.used_discount.type === 'VOUCHER') {
+    if (data.used_discount?.type === 'VOUCHER') {
       const totalAmount =
         data.products.array.reduce(
           (acc: number, product: { price: number; discount: number | null; quantity: number }) =>
@@ -35,7 +35,7 @@ export async function checkUsedModifications(data: any) {
       const updateVoucherData = await supabase
         .from('coupons')
         .update({
-          voucher_used_amount: voucher.data?.voucher_amount_left - usedAmount,
+          voucher_amount_left: voucher.data?.voucher_amount_left - usedAmount,
         })
         .eq('id', data.used_discount.id);
 
