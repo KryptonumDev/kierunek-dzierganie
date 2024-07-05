@@ -111,8 +111,9 @@ export async function POST(request: Request) {
       .select('*')
       .single();
 
+    console.log(data, error);
+
     if (!data || error) {
-      console.error(error);
       throw new Error(error?.message || 'Error while creating order');
     }
 
