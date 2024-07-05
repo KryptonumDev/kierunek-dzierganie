@@ -7,7 +7,7 @@ import { ImgType } from '@/global/types';
 import AddToCart from '@/components/ui/AddToCart';
 import { formatPrice } from '@/utils/price-formatter';
 import Gallery from '@/components/ui/Gallery';
-import { Hearth } from '@/components/ui/Icons';
+import { Hearth, PayPo } from '@/components/ui/Icons';
 import ColorPicker from './ColorPicker';
 
 const HeroPhysical = ({ name, id, variants, physical }: Props) => {
@@ -194,17 +194,21 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
               </span>{' '}
               {chosenVariant!.discount && <span>{chosenVariant!.discount / 100}&nbsp;zł</span>}
             </p>
-            <small>
-              Najniższa cena z 30 dni przed obniżką: {formatPrice(chosenVariant!.price)}
-            </small>
+            <small>Najniższa cena z 30 dni przed obniżką: {formatPrice(chosenVariant!.price)}</small>
           </div>
         </div>
-        <AddToCart
-          id={id}
-          variant={variants ? chosenVariant?._id : undefined}
-          disabled={!count || chosenVariant!.countInStock === 0}
-          quantity={count}
-        />
+        <div className={styles['add-to-cart']}>
+          <p className={styles['pay-po']}>
+            Kup dzisiaj i zapłać za 30 dni z PayPo
+            <PayPo />
+          </p>
+          <AddToCart
+            id={id}
+            variant={variants ? chosenVariant?._id : undefined}
+            disabled={!count || chosenVariant!.countInStock === 0}
+            quantity={count}
+          />
+        </div>
         <div className={styles['divider']} />
         <div className={styles['annotations']}>
           {/* TODO: Rework to fetch from sanity */}

@@ -33,6 +33,7 @@ const ProductCard = ({
       type?: 'normal' | 'variable';
       name?: string;
       countInStock?: number | null;
+      _type: string;
     } = {
       price: '',
       discount: undefined,
@@ -41,6 +42,7 @@ const ProductCard = ({
       type: 'normal',
       name: data.name,
       countInStock: data._type === 'product' ? data.countInStock : 1,
+      _type: data._type,
     };
 
     if (data.variants && data.variants?.length > 0) {
@@ -118,19 +120,21 @@ const ProductCard = ({
             </p>
           )}
           <h3 className={styles['names']}>{mainVariant.name}</h3>
-          <p className={styles['price']}>
-            <span
-              className={mainVariant.discount ? styles['discount'] : ''}
-              dangerouslySetInnerHTML={{ __html: mainVariant.price }}
-            />
-            {mainVariant.discount ? <span dangerouslySetInnerHTML={{ __html: mainVariant.discount }} /> : null}
-          </p>
+          {mainVariant._type !== 'voucher' && (
+            <p className={styles['price']}>
+              <span
+                className={mainVariant.discount ? styles['discount'] : ''}
+                dangerouslySetInnerHTML={{ __html: mainVariant.price }}
+              />
+              {mainVariant.discount ? <span dangerouslySetInnerHTML={{ __html: mainVariant.discount }} /> : null}
+            </p>
+          )}
         </div>
         {owned ? (
           <Button href={`/moje-konto/kursy/${data.slug}`}>Przejdź do kursu</Button>
         ) : (
           <>
-            {mainVariant.type === 'variable' ? (
+            {mainVariant.type === 'variable' || mainVariant._type === 'voucher' ? (
               <Button
                 href={`${basis ? basis : pageUrls[data.basis]}/${data.slug}`}
                 onClick={onClick}

@@ -1,6 +1,6 @@
 .checkout {
   max-width: 976px;
-  padding: clamp(32px, calc(48vw / 7.68), 48px) clamp(16px, calc(80vw / 7.68), 96px);
+  padding: clamp(32px, calc(48vw / 7.68), 48px) clamp(16px, calc(32vw / 7.68), 48px) clamp(32px, calc(48vw / 7.68), 48px) clamp(16px, calc(80vw / 7.68), 96px);
   @media (max-width: 640px) {
     padding-left: 16px;
     padding-right: 16px;

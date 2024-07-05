@@ -5,7 +5,6 @@ import countryList from 'react-select-country-list';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function generateBill(data: any, id: string) {
-
   const supabase = createClient();
 
   const { data: settingsData } = await supabase.from('settings').select('value').eq('name', 'ifirma').single();
@@ -21,7 +20,6 @@ export async function generateBill(data: any, id: string) {
       if (data.used_discount.type === 'PERCENTAGE') {
         discount = data.used_discount.amount;
       } else if (data.used_discount.type === 'FIXED CART') {
-        console.log(fixedDiscountAmount, amount);
         if (amount > fixedDiscountAmount) {
           amount = amount - fixedDiscountAmount;
           fixedDiscountAmount = 0;
@@ -43,8 +41,22 @@ export async function generateBill(data: any, id: string) {
     };
   });
 
+  let payedAmount = data.amount;
+
+  if (data.used_discount?.type === 'VOUCHER') {
+    // reset amount to original without voucher discount
+    payedAmount =
+      data.products.array.reduce(
+        (acc: number, product: { price: number; discount: number | null; quantity: number }) =>
+          acc + (product.discount ?? product.price) * product.quantity,
+        0
+      ) +
+      (data.shipping_method?.price ?? 0) -
+      (data.used_virtual_money ?? 0);
+  }
+
   const requestContent = {
-    Zaplacono: data.amount / 100,
+    Zaplacono: payedAmount / 100,
     LiczOd: 'BRT',
     DataWystawienia: new Date().toISOString().split('T')[0],
     MiejsceWystawienia: 'Miasto',
@@ -107,6 +119,7 @@ export async function generateBill(data: any, id: string) {
       NazwaPelna: data.shipping_method.name,
       Jednostka: 'szt',
       TypStawkiVat: 'PRC',
+      Rabat: data.used_discount?.type === 'DELIVERY' ? 100 : 0,
     });
   }
 
@@ -133,7 +146,6 @@ export async function generateBill(data: any, id: string) {
   };
 
   const billId = await createBill();
-  console.log(billId);
 
   if (billId.response.Informacja === 'Data sprzedaży musi być zgodna z miesiącem i rokiem księgowym') {
     const url = 'https://www.ifirma.pl/iapi/abonent/miesiacksiegowy.json';

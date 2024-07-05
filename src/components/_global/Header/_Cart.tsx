@@ -42,6 +42,7 @@ export default function Cart({
   userId,
   ownedCourses,
   freeShipping,
+  deliverySettings,
 }: Cart) {
   const {
     register,
@@ -54,6 +55,10 @@ export default function Cart({
   const [isVirtualCoins, setIsVirtualCoins] = useState<boolean>(false);
   const [isPromoCode, setIsPromoCode] = useState(false);
   const [couponVerifying, setCouponVerifying] = useState(false);
+  const delivery = useMemo<number | null>(
+    () => (fetchedItems?.some((item) => item.needDelivery) ? Number(deliverySettings?.deliveryPrice) : null),
+    [fetchedItems, deliverySettings]
+  );
   const totalItemsCount = useMemo(() => {
     return cart?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
   }, [cart]);
@@ -111,7 +116,8 @@ export default function Cart({
         }
 
         setUsedDiscount({
-          amount: data.amount,
+          totalVoucherAmount: data.coupons_types.coupon_type === 'VOUCHER' ? data.amount : null,
+          amount: data.coupons_types.coupon_type === 'VOUCHER' ? data.voucher_amount_left : data.amount,
           code: discountCode,
           id: data.id,
           type: data.coupons_types.coupon_type,
@@ -323,10 +329,16 @@ export default function Cart({
                           </span>
                           <span>{formatPrice(totalItemsPrice)}</span>
                         </p>
+                        {delivery !== null && (
+                          <p>
+                            <span>Dostawa</span>
+                            <span>{formatPrice(delivery)}</span>
+                          </p>
+                        )}
                         {usedDiscount && (
                           <p>
                             <span>Kupon: {usedDiscount.code}</span>
-                            <span>{formatPrice(calculateDiscountAmount(totalItemsPrice, usedDiscount))}</span>
+                            <span>{formatPrice(calculateDiscountAmount(totalItemsPrice, usedDiscount, delivery))}</span>
                           </p>
                         )}
                         {usedVirtualMoney && usedVirtualMoney > 0 && (
@@ -340,7 +352,8 @@ export default function Cart({
                           <span>
                             {formatPrice(
                               totalItemsPrice +
-                                (usedDiscount ? calculateDiscountAmount(totalItemsPrice, usedDiscount) : 0) -
+                                (delivery ? delivery : 0) +
+                                (usedDiscount ? calculateDiscountAmount(totalItemsPrice, usedDiscount, delivery) : 0) -
                                 (usedVirtualMoney ? usedVirtualMoney * 100 : 0),
                               0
                             )}
@@ -488,9 +501,26 @@ const CartGrid = ({ fetchedItems, removeItem, updateItemQuantity }: Grid) => {
             />
           )}
           <div>
-            <h3>
-              {item.name} {item.variant ? `- ${item.variant.name}` : ''}
-            </h3>
+            <div>
+              <h3>
+                {item.name} {item.variant ? `- ${item.variant.name}` : ''}
+              </h3>
+              {item._type === 'voucher' && (
+                <div className={styles['voucher-data']}>
+                  <p>
+                    {item.voucherData!.dedication ? (
+                      <>
+                        Od: {item.voucherData?.dedication.from},<br />
+                        Do: {item.voucherData?.dedication.to},<br />
+                        Wiadomość: {item.voucherData?.dedication.message}
+                      </>
+                    ) : (
+                      <>Bez dedykacji</>
+                    )}
+                  </p>
+                </div>
+              )}
+            </div>
             {item._type === 'product' && (
               <div>
                 <div className={styles['calculator']}>
@@ -516,10 +546,24 @@ const CartGrid = ({ fetchedItems, removeItem, updateItemQuantity }: Grid) => {
                 />
                 {item.discount ? <span dangerouslySetInnerHTML={{ __html: formatPrice(item.discount) }} /> : null}
               </div>
-              <span className={styles['omnibus']}>
-                Najniższa cena z 30 dni przed obniżką:{' '}
-                <span dangerouslySetInnerHTML={{ __html: formatPrice(item.price!) }} />
-              </span>
+              {item._type !== 'voucher' ? (
+                <span className={styles['omnibus']}>
+                  Najniższa cena z 30 dni przed obniżką:{' '}
+                  <span dangerouslySetInnerHTML={{ __html: formatPrice(item.price!) }} />
+                </span>
+              ) : (
+                <p>
+                  {item.voucherData?.type === 'PHYSICAL' ? (
+                    <>
+                      Wersja <strong>fizyczna</strong>
+                    </>
+                  ) : (
+                    <>
+                      Wersja <strong>elektroniczna</strong>
+                    </>
+                  )}
+                </p>
+              )}
             </div>
             <button
               className={`link ${styles['remove']}`}

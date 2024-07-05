@@ -9,6 +9,7 @@ const page = { name: 'Strona główna', path: '' };
 const IndexPage = async () => {
   const { content } = await query();
 
+
   return (
     <>
       <Breadcrumbs />

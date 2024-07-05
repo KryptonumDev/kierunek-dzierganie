@@ -5,7 +5,7 @@ import type { ProductCard } from '@/global/types';
 import { PRODUCT_CARD_QUERY } from 'src/global/constants';
 
 export const useCartItems = () => {
-  const { items: rawCart, updateItemQuantity, updateItem, removeItem, totalItems } = useCart();
+  const { items: rawCart, updateItemQuantity, updateItem, removeItem, totalItems, totalUniqueItems } = useCart();
   const [fetchedItems, setFetchedItems] = useState<ProductCard[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   useEffect(() => {
@@ -14,7 +14,7 @@ export const useCartItems = () => {
       try {
         const res = await sanityFetch<ProductCard[]>({
           query: `
-            *[(_type == 'product' || _type == 'course' || _type == 'bundle') && _id in $id]{
+            *[(_type == 'product' || _type == 'course' || _type == 'bundle' || _type == 'voucher') && _id in $id]{
               ${PRODUCT_CARD_QUERY}
               "related": *[_type == 'course' && references(^._id)][0]{
                 _id,
@@ -37,7 +37,7 @@ export const useCartItems = () => {
               return false;
             }
 
-            if (item._type === 'course' || item._type === 'bundle') return true;
+            if (item._type === 'course' || item._type === 'bundle' || item._type === 'voucher') return true;
 
             const variant = item.variants?.find((v) => v._id === el.variant) || null;
 
@@ -49,7 +49,7 @@ export const useCartItems = () => {
             // check if quantity is not higher than 0
             return item.countInStock! > 0;
           })
-          .filter((el) => res.find((item) => item._id === el.product))
+          .filter((el) => res.find((item) => item._id === el.product)) // double check if we delete some items on previous step
           .map((el) => {
             const item = res.find((item) => item._id === el.product)!;
 
@@ -57,11 +57,23 @@ export const useCartItems = () => {
 
             // check if quantity is not higher than countInStock
             const quantity =
-              item._type === 'course' || item._type === 'bundle'
+              item._type === 'course' || item._type === 'bundle' || item._type === 'voucher'
                 ? 1
                 : variant
                   ? Math.min(el.quantity!, variant.countInStock)
                   : Math.min(el.quantity!, item.countInStock!);
+
+            if (item._type === 'voucher') {
+              return {
+                ...item,
+                quantity: quantity,
+                price: el.voucherData.amount!,
+                voucherData: el.voucherData,
+                variant: null,
+                variants: null,
+                needDelivery: el.voucherData.type === 'PHYSICAL',
+              };
+            }
 
             return {
               ...item,
@@ -70,6 +82,7 @@ export const useCartItems = () => {
               discount: variant ? variant.discount : item.discount,
               variant: variant,
               variants: variant ? item.variants : [],
+              needDelivery: item._type === 'product',
             };
           });
 
@@ -131,5 +144,5 @@ export const useCartItems = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rawCart]);
 
-  return { cart: rawCart, fetchedItems, updateItemQuantity, updateItem, removeItem, loading, totalItems };
+  return { cart: rawCart, fetchedItems, updateItemQuantity, updateItem, removeItem, loading, totalItems, totalUniqueItems };
 };

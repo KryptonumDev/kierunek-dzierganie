@@ -4,7 +4,7 @@ export type AddReviewTypes = {
   user: string;
   product: {
     id: string;
-    type: 'product' | 'course' | 'bundle';
+    type: 'product' | 'course' | 'bundle' | 'voucher';
   };
 };
 

@@ -33,7 +33,7 @@ const Content = ({
   userId,
   ownedCourses,
   deliverySettings,
-  freeShipping
+  freeShipping,
 }: QueryProps) => {
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
@@ -42,11 +42,11 @@ const Content = ({
   const [usedDiscount, setUsedDiscount] = useState<Discount | null>(null);
   const [usedVirtualMoney, setUsedVirtualMoney] = useState<number | null>(null);
   const [totalItemsCount, setTotalItemsCount] = useState<number>(0);
-  const { cart, fetchedItems, updateItemQuantity, removeItem, totalItems } = useCartItems();
+  const { cart, fetchedItems, updateItemQuantity, removeItem, totalUniqueItems } = useCartItems();
 
   useEffect(() => {
-    setTotalItemsCount(totalItems);
-  }, [totalItems]);
+    setTotalItemsCount(totalUniqueItems);
+  }, [totalUniqueItems]);
 
   const [logoReversed, setLogoReversed] = useState(false);
   useEffect(() => {
@@ -106,6 +106,7 @@ const Content = ({
         setUsedDiscount={setUsedDiscount}
         userId={userId}
         ownedCourses={ownedCourses}
+        deliverySettings={deliverySettings}
         freeShipping={freeShipping}
       />
       <a

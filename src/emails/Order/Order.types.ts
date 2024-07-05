@@ -12,7 +12,7 @@ export type CreateOrderTypes = {
         courses: ProductCard;
         discount: number;
         image: ImgType;
-        type: 'product' | 'course' | 'bundle';
+        type: 'product' | 'course' | 'bundle' | 'voucher';
         variantId: string;
         id: string;
         name: string;
