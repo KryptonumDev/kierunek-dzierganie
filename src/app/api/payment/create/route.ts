@@ -86,13 +86,15 @@ export async function POST(request: Request) {
         };
       }
     });
-
+    const awaitedProducts = await Promise.all(products!);
+    console.log(awaitedProducts);
+    
     const { data, error } = await supabase
       .from('orders')
       .insert({
         user_id: input.user_id,
         products: {
-          array: await Promise.all(products!),
+          array: awaitedProducts,
         },
         status: input.totalAmount <= 0 ? (input.needDelivery ? 2 : 3) : 1,
         billing: input.billing,
@@ -110,8 +112,6 @@ export async function POST(request: Request) {
       })
       .select('*')
       .single();
-
-    console.log(data, error);
 
     if (!data || error) {
       throw new Error(error?.message || 'Error while creating order');
