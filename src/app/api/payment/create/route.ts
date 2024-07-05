@@ -86,15 +86,13 @@ export async function POST(request: Request) {
         };
       }
     });
-    const awaitedProducts = await Promise.all(products!);
-    console.log(awaitedProducts);
-    
+
     const { data, error } = await supabase
       .from('orders')
       .insert({
         user_id: input.user_id,
         products: {
-          array: awaitedProducts,
+          array: await Promise.all(products!),
         },
         status: input.totalAmount <= 0 ? (input.needDelivery ? 2 : 3) : 1,
         billing: input.billing,

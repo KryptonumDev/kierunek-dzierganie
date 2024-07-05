@@ -2,12 +2,12 @@ import { PDFDocument, rgb } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 
 export async function voucher({ amount, date, code }: { amount: string; date: string; code: string }) {
-  const url = 'http://localhost:3000/Voucher-bez-dedykacji.pdf';
+  const url = 'https://kierunekdzierganie.pl/Voucher-bez-dedykacji.pdf';
   const existingPdfBytes = await fetch(url).then((res) => res.arrayBuffer());
 
   const pdfDoc = await PDFDocument.load(existingPdfBytes);
 
-  const fontUrl = 'http://localhost:3000/fonts/Lato-Light.ttf'; // Fetch custom font from FULL UNTAINTED URL
+  const fontUrl = 'https://kierunekdzierganie.pl/fonts/Lato-Light.ttf'; // Fetch custom font from FULL UNTAINTED URL
   const fontBytes = await fetch(fontUrl).then((res) => res.arrayBuffer());
   pdfDoc.registerFontkit(fontkit); // Register the `fontkit` instance
   const Lato = await pdfDoc.embedFont(fontBytes);
@@ -57,12 +57,12 @@ export async function dedicatedVoucher({
     message: string;
   };
 }) {
-  const url = 'http://localhost:3000/Voucher-dedykacja.pdf';
+  const url = 'https://kierunekdzierganie.pl/Voucher-dedykacja.pdf';
   const existingPdfBytes = await fetch(url).then((res) => res.arrayBuffer());
 
   const pdfDoc = await PDFDocument.load(existingPdfBytes);
 
-  const fontUrl = 'http://localhost:3000/fonts/Lato-Light.ttf'; // Fetch custom font from FULL UNTAINTED URL
+  const fontUrl = 'https://kierunekdzierganie.pl/fonts/Lato-Light.ttf'; // Fetch custom font from FULL UNTAINTED URL
   const fontBytes = await fetch(fontUrl).then((res) => res.arrayBuffer());
   pdfDoc.registerFontkit(fontkit); // Register the `fontkit` instance
   const Lato = await pdfDoc.embedFont(fontBytes);
