@@ -8,10 +8,10 @@
   z-index: 10;
   display: grid;
   place-items: center;
-  &:has(.Content[aria-hidden='true']) {
+  &[aria-hidden='true'] {
     display: none;
   }
-  .Content {
+  .content {
     @media (min-width: 900px) {
       padding-left: clamp(82px, calc(96vw / 7.68), 136px);
       padding-right: clamp(82px, calc(96vw / 7.68), 136px);

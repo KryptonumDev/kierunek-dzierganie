@@ -2,10 +2,10 @@ import '@/global/global.scss';
 import localFont from 'next/font/local';
 import { LOCALE, THEME_COLOR } from '@/global/constants';
 import SchemaOrganization from '@/global/Schema/Ogranization';
-// import CookieConsent from '@/components/_global/CookieConsent';
+import CookieConsent from '@/components/_global/CookieConsent';
 import { GoogleTagManager } from '@next/third-parties/google';
-import type { Viewport } from 'next';
 import Mascots from '@/components/_global/Mascots';
+import type { Viewport } from 'next';
 
 const Lato = localFont({
   src: [
@@ -50,7 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       {process.env.NODE_ENV === 'production' && <GoogleTagManager gtmId='GTM-PSPN2NCN' />}
       <body className={`${Lato.className} ${CityStreetWear.variable}`}>
         {children}
-        {/* <CookieConsent /> */}
+        {process.env.NODE_ENV === 'production' && <CookieConsent />}
         <Mascots />
       </body>
     </html>
