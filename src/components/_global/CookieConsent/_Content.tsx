@@ -7,15 +7,8 @@ import { getCookie } from '@/utils/get-cookie';
 import { setCookie } from '@/utils/set-cookie';
 import type { ContentProps } from './CookieConsent.types';
 
-declare global {
-  interface Window {
-    dataLayer?: unknown[];
-  }
-}
-
-function gtag(...args: unknown[]) {
-  window.dataLayer?.push(args);
-}
+// eslint-disable-next-line prefer-rest-params
+const gtag: Gtag.Gtag = function () { window.dataLayer?.push(arguments); };
 
 const cookieObjectKeys = ['preferences', 'statistics', 'marketing'];
 
@@ -128,8 +121,6 @@ const Content = ({ CloseIcon, heading, paragraph, details }: ContentProps) => {
     });
   };
 
-  return;
-
   return (
     <div
       className={styles['Content']}
@@ -165,29 +156,6 @@ const Content = ({ CloseIcon, heading, paragraph, details }: ContentProps) => {
             Niezbędne
           </Switch>
           <p className={styles.description}>{details.necessary_Description}</p>
-          {details.necessary?.map(({ service, cookies }, i) => (
-            <div
-              className={styles.groupItem}
-              key={i}
-            >
-              <p>{service}</p>
-              <div className={styles.cookies}>
-                {cookies?.map(({ name, description, expiry, type }, i) => (
-                  <div
-                    className={styles.cookiesItem}
-                    key={i}
-                  >
-                    <p className={styles.name}>{name}</p>
-                    <p className={styles.description}>{description}</p>
-                    <div className={styles.info}>
-                      <p>Data ważności: {expiry}</p>
-                      <p>Typ: {type}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
         </div>
         <div className={styles.group}>
           <Switch
@@ -198,29 +166,6 @@ const Content = ({ CloseIcon, heading, paragraph, details }: ContentProps) => {
             Preferencje
           </Switch>
           <p className={styles.description}>{details.preferences_Description}</p>
-          {details.preferences?.map(({ service, cookies }, i) => (
-            <div
-              className={styles.groupItem}
-              key={i}
-            >
-              <p>{service}</p>
-              <div className={styles.cookies}>
-                {cookies?.map(({ name, description, expiry, type }, i) => (
-                  <div
-                    className={styles.cookiesItem}
-                    key={i}
-                  >
-                    <p className={styles.name}>{name}</p>
-                    <p className={styles.description}>{description}</p>
-                    <div className={styles.info}>
-                      <p>Data ważności: {expiry}</p>
-                      <p>Typ: {type}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
         </div>
         <div className={styles.group}>
           <Switch
@@ -231,29 +176,6 @@ const Content = ({ CloseIcon, heading, paragraph, details }: ContentProps) => {
             Statystyka
           </Switch>
           <p className={styles.description}>{details.statistical_Description}</p>
-          {details.statistical?.map(({ service, cookies }, i) => (
-            <div
-              className={styles.groupItem}
-              key={i}
-            >
-              <p>{service}</p>
-              <div className={styles.cookies}>
-                {cookies?.map(({ name, description, expiry, type }, i) => (
-                  <div
-                    className={styles.cookiesItem}
-                    key={i}
-                  >
-                    <p className={styles.name}>{name}</p>
-                    <p className={styles.description}>{description}</p>
-                    <div className={styles.info}>
-                      <p>Data ważności: {expiry}</p>
-                      <p>Typ: {type}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
         </div>
         <div className={styles.group}>
           <Switch
@@ -264,56 +186,10 @@ const Content = ({ CloseIcon, heading, paragraph, details }: ContentProps) => {
             Marketing
           </Switch>
           <p className={styles.description}>{details.marketing_Description}</p>
-          {details.marketing?.map(({ service, cookies }, i) => (
-            <div
-              className={styles.groupItem}
-              key={i}
-            >
-              <p>{service}</p>
-              <div className={styles.cookies}>
-                {cookies?.map(({ name, description, expiry, type }, i) => (
-                  <div
-                    className={styles.cookiesItem}
-                    key={i}
-                  >
-                    <p className={styles.name}>{name}</p>
-                    <p className={styles.description}>{description}</p>
-                    <div className={styles.info}>
-                      <p>Data ważności: {expiry}</p>
-                      <p>Typ: {type}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
         </div>
         <div className={styles.group}>
           <p>Nieklasyfikowane</p>
           <p className={styles.description}>{details.unclassified_Description}</p>
-          {details.unclassified?.map(({ service, cookies }, i) => (
-            <div
-              className={styles.groupItem}
-              key={i}
-            >
-              <p>{service}</p>
-              <div className={styles.cookies}>
-                {cookies?.map(({ name, description, expiry, type }, i) => (
-                  <div
-                    className={styles.cookiesItem}
-                    key={i}
-                  >
-                    <p className={styles.name}>{name}</p>
-                    <p className={styles.description}>{description}</p>
-                    <div className={styles.info}>
-                      <p>Data ważności: {expiry}</p>
-                      <p>Typ: {type}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
         </div>
       </div>
       <div className={styles.controls}>

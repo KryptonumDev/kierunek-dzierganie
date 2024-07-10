@@ -17,9 +17,9 @@ export default async function CookieConsent() {
     },
   };
 
-  
+
   return (
-    <aside className={styles['CookieConsent']}>
+    <aside className={styles['cookie-consent']}>
       <Content
         CloseIcon={CloseIcon}
         {...CookieConsent}
