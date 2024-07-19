@@ -6,7 +6,7 @@ import { addToGroup } from './mailer-lite';
 export async function updateItemsQuantity(data: any) {
   const supabase = createClient();
 
-  const res = await data?.products.map.forEach(
+  const res = await data?.products.map(
     async (product: {
       quantity: number;
       type: string;
