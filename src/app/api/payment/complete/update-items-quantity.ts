@@ -4,10 +4,9 @@ import { addToGroup } from './mailer-lite';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function updateItemsQuantity(data: any) {
-  console.log('Dane użytkownika przed zmianą ilości produktów', data);
   const supabase = createClient();
 
-  await data?.products.array.forEach(
+  const res = await data?.products.map.forEach(
     async (product: {
       quantity: number;
       type: string;
@@ -66,4 +65,7 @@ export async function updateItemsQuantity(data: any) {
       }
     }
   );
+  console.log('Promises ', res);
+  const promiseResult = await Promise.all(res);
+  console.log('Promise result ', promiseResult);
 }
