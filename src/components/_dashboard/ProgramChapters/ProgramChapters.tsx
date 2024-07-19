@@ -7,7 +7,7 @@ const ProgramChapters = ({ courses_progress, course }: ProgramChaptersTypes) => 
     <section className={styles['ProgramChapters']}>
       <h1>{course.name}</h1>
       <div className={styles['grid']}>
-        {course.chapters.map((chapter, index) => {
+        {course.chapters?.map((chapter, index) => {
           let circleType: '1' | '2' | '3' | '4' | '5' = '1';
           let timeLeft = 0;
 

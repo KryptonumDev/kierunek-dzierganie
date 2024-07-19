@@ -45,7 +45,7 @@ function CourseChapters({ courses_progress, course }: Props) {
           <ChevronRight />
           Wszystkie kursy
         </Link>
-        {course.chapters.map((chapter, index) => (
+        {course.chapters?.map((chapter, index) => (
           <ChapterCard
             key={index}
             name={chapter.chapterName}

@@ -12,7 +12,7 @@ const ListingFiles = ({ courses, left_handed, progress }: ListingFilesTypes) => 
 
     const newArr: ArrElement[] = [];
 
-    courses.forEach((course) => {
+    courses?.forEach((course) => {
       const obj: ArrElement = {
         name: course.name,
         slug: course.slug,
@@ -22,7 +22,7 @@ const ListingFiles = ({ courses, left_handed, progress }: ListingFilesTypes) => 
       };
 
       // get all files from lessons
-      course.chapters.forEach((chapter) => {
+      course.chapters?.forEach((chapter) => {
         chapter.lessons.forEach((lesson) => {
           if (lesson.files) obj.files.push(...lesson.files);
           if (lesson.files_alter) obj.filesAlt.push(...lesson.files_alter);
@@ -41,7 +41,7 @@ const ListingFiles = ({ courses, left_handed, progress }: ListingFilesTypes) => 
         if (completedLessons === course.chapters.find((el) => el._id === chapterId)!.lessons.length)
           completedChapters++;
       }
-      if (completedChapters === course.chapters.length && course.generateCertificate) {
+      if (completedChapters === course.chapters?.length && course.generateCertificate) {
         obj.showCert = true;
       }
 

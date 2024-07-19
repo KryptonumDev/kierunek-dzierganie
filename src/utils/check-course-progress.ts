@@ -3,11 +3,13 @@ import type { Course, CoursesProgress } from '@/global/types';
 import { createClient } from './supabase-admin';
 
 export async function checkCourseProgress(course: Course, progress: CoursesProgress) {
+  if(!course.chapters) return progress;
+
   const supabase = createClient();
   // check if there is new lessons/chapters or some lessons/chapters were removed and update progress
   const newProgress = {
     ...progress,
-    progress: course.chapters.reduce(
+    progress: course.chapters?.reduce(
       (acc, el) => {
         acc[el._id] = el.lessons.reduce(
           (inAcc, inEl) => {
