@@ -7,7 +7,7 @@ export async function updateItemsQuantity(data: any) {
   console.log('Dane użytkownika przed zmianą ilości produktów', data);
   const supabase = createClient();
 
-  data?.products.array.forEach(
+  await data?.products.array.forEach(
     async (product: {
       quantity: number;
       type: string;
