@@ -74,9 +74,8 @@ const query = async (searchParams: { [key: string]: string }): Promise<Crochetin
         listing_HighlightedCourse_Badge,
       },
       "products": *[
-        _type == 'product'
+        ((_type == "product" && basis == 'crocheting') || _type=='voucher')
         && visible == true 
-        && basis == 'crocheting' 
         && (!defined($category) || category->slug.current == $category)
         && (!defined($discount) || type =='variable' || defined(discount))
         && (!defined($discount) || type =='physical' || defined(math::avg(variants[].discount)) )
@@ -84,9 +83,8 @@ const query = async (searchParams: { [key: string]: string }): Promise<Crochetin
         ${PRODUCT_CARD_QUERY}
       },
       "productsTotalCount": count(*[
-        _type == 'product'
+        ((_type == "product" && basis == 'crocheting') || _type=='voucher')
         && visible == true 
-        && basis == 'crocheting' 
         && (!defined($category) || category->slug.current == $category)
         && (!defined($discount) || type =='variable' || defined(discount))
         && (!defined($discount) || type =='physical' || defined(math::avg(variants[].discount)) )

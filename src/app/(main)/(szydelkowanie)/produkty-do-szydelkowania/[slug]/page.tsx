@@ -137,7 +137,7 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
   const data = await sanityFetch<ProductPageQueryProps>({
     query: /* groq */ `
       {
-        "product": *[(_type == "product" || _type=='voucher') && slug.current == $slug && basis == 'crocheting'][0] {
+        "product": *[((_type == "product" && basis == 'crocheting') || _type=='voucher') && slug.current == $slug][0] {
           name,
           visible,
           'slug': slug.current,

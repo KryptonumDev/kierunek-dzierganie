@@ -75,9 +75,8 @@ const query = async (searchParams: { [key: string]: string }): Promise<KnittingP
         listing_HighlightedCourse_Badge,
       },
       "products": *[
-        (_type == "product" || _type=='voucher')
+        ((_type == "product" && basis == 'knitting') || _type=='voucher')
         && visible == true 
-        && basis == 'knitting' 
         && (!defined($category) || category->slug.current == $category)
         && (!defined($discount) || type =='variable' || defined(discount))
         && (!defined($discount) || type =='physical' || defined(math::avg(variants[].discount)) )
@@ -85,9 +84,8 @@ const query = async (searchParams: { [key: string]: string }): Promise<KnittingP
         ${PRODUCT_CARD_QUERY}
       },
       "productsTotalCount": count(*[
-        (_type == "product" || _type=='voucher')
+        ((_type == "product" && basis == 'knitting') || _type=='voucher')
         && visible == true 
-        && basis == 'knitting' 
         && (!defined($category) || category->slug.current == $category)
         && (!defined($discount) || type =='variable' || defined(discount))
         && (!defined($discount) || type =='physical' || defined(math::avg(variants[].discount)) )
