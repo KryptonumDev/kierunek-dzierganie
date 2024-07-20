@@ -105,6 +105,7 @@ export default function Cart({
   const verifyCoupon = async () => {
     setCouponVerifying(true);
     await fetch('/api/coupon/verify', {
+      cache: 'no-cache',
       method: 'POST',
       body: JSON.stringify({ code: discountCode, userId, cart }),
     })
