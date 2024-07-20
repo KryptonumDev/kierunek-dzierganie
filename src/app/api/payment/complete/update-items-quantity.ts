@@ -66,4 +66,6 @@ export async function updateItemsQuantity(data: any) {
     }
   );
   console.log('Promises ', res);
+  const promiseResult = await Promise.all(res);
+  console.log('Promise result ', promiseResult);
 }
