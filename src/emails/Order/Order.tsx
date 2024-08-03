@@ -251,7 +251,9 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
                     lineHeight: '150%',
                   }}
                 >
-                  {formatPrice(calculateDiscountAmount(totalItemsPrice, data.used_discount, data.shipping_method?.price))}
+                  {formatPrice(
+                    calculateDiscountAmount(totalItemsPrice, data.used_discount, data.shipping_method?.price)
+                  )}
                 </span>
               </p>
             )}
@@ -374,7 +376,9 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
               >
                 {formatPrice(
                   totalItemsPrice +
-                    (data.used_discount ? calculateDiscountAmount(totalItemsPrice, data.used_discount, data.shipping_method?.price) : 0) -
+                    (data.used_discount
+                      ? calculateDiscountAmount(totalItemsPrice, data.used_discount, data.shipping_method?.price)
+                      : 0) -
                     (data.virtualMoney ? data.virtualMoney * 100 : 0) +
                     (data.shipping_method ? data.shipping_method.price : 0)
                 )}
@@ -417,40 +421,46 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
                   >
                     Dane dostawy:
                   </p>
-                  <p
-                    style={{
-                      marginTop: '4px',
-                      color: '#332621',
-                      fontSize: '14px',
-                      fontWeight: '300',
-                      lineHeight: '150%',
-                    }}
-                  >
-                    {data.shipping.firstName}
-                  </p>
-                  <p
-                    style={{
-                      marginTop: '4px',
-                      color: '#332621',
-                      fontSize: '14px',
-                      fontWeight: '300',
-                      lineHeight: '150%',
-                    }}
-                  >
-                    {data.shipping.address1}
-                  </p>
-                  <p
-                    style={{
-                      marginTop: '4px',
-                      color: '#332621',
-                      fontSize: '14px',
-                      fontWeight: '300',
-                      lineHeight: '150%',
-                    }}
-                  >
-                    {data.shipping.postcode}, {countryList().getLabel(data.shipping.country)}
-                  </p>
-                  {data.shipping.phone && (
+                  {data.shipping?.firstName && (
+                    <p
+                      style={{
+                        marginTop: '4px',
+                        color: '#332621',
+                        fontSize: '14px',
+                        fontWeight: '300',
+                        lineHeight: '150%',
+                      }}
+                    >
+                      {data.shipping.firstName}
+                    </p>
+                  )}
+                  {data.shipping?.address1 && (
+                    <p
+                      style={{
+                        marginTop: '4px',
+                        color: '#332621',
+                        fontSize: '14px',
+                        fontWeight: '300',
+                        lineHeight: '150%',
+                      }}
+                    >
+                      {data.shipping.address1}
+                    </p>
+                  )}
+                  {data.shipping?.postcode && data.shipping?.country && (
+                    <p
+                      style={{
+                        marginTop: '4px',
+                        color: '#332621',
+                        fontSize: '14px',
+                        fontWeight: '300',
+                        lineHeight: '150%',
+                      }}
+                    >
+                      {data.shipping.postcode}, {countryList().getLabel(data.shipping.country)}
+                    </p>
+                  )}
+                  {data.shipping?.phone && (
                     <p
                       style={{
                         marginTop: '4px',
