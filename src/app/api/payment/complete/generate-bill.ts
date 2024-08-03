@@ -123,73 +123,111 @@ export async function generateBill(data: any, id: string) {
     });
   }
 
-  const createBill = async () => {
-    const url = 'https://www.ifirma.pl/iapi/fakturakraj.json';
-    const user = 'martyna_prochowska@o2.pl';
-    const keyType = 'faktura';
+  const currentMonth = await setAccountingMonthToTimestamp(data.created_at);
+  console.log(currentMonth);
+  const billId = await createBill(requestContent as never);
+  console.log(billId);
 
-    const key = CryptoJS.enc.Hex.parse(process.env.IFIRMA_API_KEY!);
-    const hmac = CryptoJS.HmacSHA1(url + user + keyType + JSON.stringify(requestContent), key);
-    const hash = Hex.stringify(hmac);
+  await supabase
+    .from('orders')
+    .update({
+      bill: billId.response.Identyfikator ? String(billId.response.Identyfikator) : null,
+      status: data.need_delivery ? 2 : 3,
+    })
+    .eq('id', id);
+}
 
-    const billRes = await fetch(url, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-type': 'application/json; charset=UTF-8',
-        Authentication: `IAPIS user=${user}, hmac-sha1=${hash}`,
-      },
-      body: JSON.stringify(requestContent),
-    });
+const getAccountingMonth = async () => {
+  const url = 'https://www.ifirma.pl/iapi/abonent/miesiacksiegowy.json';
+  const user = 'martyna_prochowska@o2.pl';
+  const keyType = 'abonent';
 
-    return await billRes.json();
+  const key = CryptoJS.enc.Hex.parse(process.env.IFIRMA_ABONENT_KEY!);
+  const hmac = CryptoJS.HmacSHA1(url + user + keyType, key);
+  const hash = Hex.stringify(hmac);
+
+  const { response } = await fetch(url, {
+    method: 'GET',
+    cache: 'no-cache',
+    headers: {
+      Accept: 'application/json',
+      'Content-type': 'application/json; charset=UTF-8',
+      Authentication: `IAPIS user=${user}, hmac-sha1=${hash}`,
+    },
+  }).then((res) => res.json());
+
+  return {
+    accountingYear: response.RokKsiegowy,
+    accountingMonth: response.MiesiacKsiegowy,
+  };
+};
+
+const changeAccountingMonth = async (direction: 'NAST' | 'POPRZ') => {
+  const url = 'https://www.ifirma.pl/iapi/abonent/miesiacksiegowy.json';
+  const user = 'martyna_prochowska@o2.pl';
+  const keyType = 'abonent';
+  const data = {
+    MiesiacKsiegowy: direction,
+    PrzeniesDaneZPoprzedniegoRoku: false,
   };
 
-  const billId = await createBill();
-  console.log(billId);
-  if (billId.response.Informacja === 'Data sprzedaży musi być zgodna z miesiącem i rokiem księgowym') {
-    const url = 'https://www.ifirma.pl/iapi/abonent/miesiacksiegowy.json';
-    const user = 'martyna_prochowska@o2.pl';
-    const keyType = 'abonent';
-    const dataa = {
-      MiesiacKsiegowy: 'NAST',
-      PrzeniesDaneZPoprzedniegoRoku: false,
-    };
+  const key = CryptoJS.enc.Hex.parse(process.env.IFIRMA_ABONENT_KEY!);
+  const hmac = CryptoJS.HmacSHA1(url + user + keyType + JSON.stringify(data), key);
+  const hash = Hex.stringify(hmac);
 
-    const key = CryptoJS.enc.Hex.parse(process.env.IFIRMA_ABONENT_KEY!);
-    const hmac = CryptoJS.HmacSHA1(url + user + keyType + JSON.stringify(dataa), key);
-    const hash = Hex.stringify(hmac);
+  const { response } = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      Accept: 'application/json',
+      'Content-type': 'application/json; charset=UTF-8',
+      Authentication: `IAPIS user=${user}, hmac-sha1=${hash}`,
+    },
+    cache: 'no-cache',
+    body: JSON.stringify(data),
+  }).then((res) => res.json());
 
-    const res = await fetch(url, {
-      method: 'PUT',
-      headers: {
-        Accept: 'application/json',
-        'Content-type': 'application/json; charset=UTF-8',
-        Authentication: `IAPIS user=${user}, hmac-sha1=${hash}`,
-      },
-      body: JSON.stringify(dataa),
-    });
+  return response;
+};
 
-    const json = await res.json();
+const setAccountingMonthToTimestamp = async (timestamp: string) => {
+  const year = new Date(timestamp).getFullYear();
+  const month = new Date(timestamp).getMonth() + 1; // getMonth() returns 0-11, so add 1
 
-    if (json.response.kod === 0) {
-      const newBillId = await createBill();
-
-      await supabase
-        .from('orders')
-        .update({
-          bill: newBillId.response.Identyfikator ? String(newBillId.response.Identyfikator) : null,
-          status: data.need_delivery ? 2 : 3,
-        })
-        .eq('id', id);
+  let currentAccountingMonth = await getAccountingMonth();
+  while (currentAccountingMonth.accountingYear !== year || currentAccountingMonth.accountingMonth !== month) {
+    if (
+      currentAccountingMonth.accountingYear < year ||
+      (currentAccountingMonth.accountingYear === year && currentAccountingMonth.accountingMonth < month)
+    ) {
+      await changeAccountingMonth('NAST');
+    } else {
+      await changeAccountingMonth('POPRZ');
     }
-  } else {
-    await supabase
-      .from('orders')
-      .update({
-        bill: billId.response.Identyfikator ? String(billId.response.Identyfikator) : null,
-        status: data.need_delivery ? 2 : 3,
-      })
-      .eq('id', id);
+
+    currentAccountingMonth = await getAccountingMonth();
   }
-}
+
+  return currentAccountingMonth;
+};
+
+const createBill = async (requestContent: never) => {
+  const url = 'https://www.ifirma.pl/iapi/fakturakraj.json';
+  const user = 'martyna_prochowska@o2.pl';
+  const keyType = 'faktura';
+
+  const key = CryptoJS.enc.Hex.parse(process.env.IFIRMA_API_KEY!);
+  const hmac = CryptoJS.HmacSHA1(url + user + keyType + JSON.stringify(requestContent), key);
+  const hash = Hex.stringify(hmac);
+
+  const billRes = await fetch(url, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-type': 'application/json; charset=UTF-8',
+      Authentication: `IAPIS user=${user}, hmac-sha1=${hash}`,
+    },
+    body: JSON.stringify(requestContent),
+  });
+
+  return await billRes.json();
+};
