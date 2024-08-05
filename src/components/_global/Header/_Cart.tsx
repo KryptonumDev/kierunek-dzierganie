@@ -487,7 +487,7 @@ const EmptyLayout = ({ image_crochet, image_knitting, setShowCart }: EmptyCart) 
 
 const CartGrid = ({ fetchedItems, removeItem, updateItemQuantity }: Grid) => {
   if (!fetchedItems) return;
-  debugger;
+
   return (
     <div className={styles['grid']}>
       {fetchedItems.map((item, i) => (
