@@ -32,9 +32,9 @@ const HeroVirtual = ({ alreadyBought, course, previewLessons }: HeroVirtualTypes
         {
           id: course._id,
           name: course.name,
-          discount: course.discount ? (course.price! - course.discount) / 100 : null,
+          discount: course.discount ? (course.price! - course.discount) / 100 : undefined,
           price: course.price! / 100,
-          item_category: course._type,
+          item_category: course.type,
           item_category2: course.basis,
         },
       ],
