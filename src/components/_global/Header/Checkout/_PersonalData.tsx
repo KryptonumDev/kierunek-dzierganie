@@ -350,10 +350,6 @@ export default function PersonalData({ goToCart, setInput, input, deliverySettin
                   value: true,
                   message: 'Pole wymagane',
                 },
-                pattern: {
-                  value: REGEX.zip,
-                  message: 'Niepoprawny kod pocztowy',
-                },
               })}
               label='Kod pocztowy'
               errors={errors}
@@ -433,10 +429,6 @@ export default function PersonalData({ goToCart, setInput, input, deliverySettin
                         required: {
                           value: true,
                           message: 'Pole wymagane',
-                        },
-                        pattern: {
-                          value: REGEX.zip,
-                          message: 'Niepoprawny kod pocztowy',
                         },
                       })}
                       label='Kod pocztowy'
