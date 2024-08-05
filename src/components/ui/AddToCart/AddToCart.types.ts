@@ -12,4 +12,13 @@ export type Props = {
       message: string;
     } | null;
   };
+  data: {
+    price: number;
+    discount?: number;
+    _id: string;
+    name: string;
+    _type: string;
+    variant?: string;
+    basis?: string;
+  }
 };

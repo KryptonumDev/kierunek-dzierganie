@@ -232,6 +232,15 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
             variant={variants ? chosenVariant?._id : undefined}
             disabled={!count || chosenVariant!.countInStock === 0}
             quantity={count}
+            data={{
+              price: chosenVariant!.price,
+              discount: chosenVariant!.discount,
+              _id: id,
+              name: chosenVariant!.name,
+              _type: 'product',
+              variant: variants ? chosenVariant!._id : undefined,
+              basis: physical.basis,
+            }}
           />
         </div>
         <div className={styles['divider']} />

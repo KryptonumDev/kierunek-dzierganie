@@ -72,7 +72,17 @@ const HeroVirtual = ({ alreadyBought, course, previewLessons }: HeroVirtualTypes
           {alreadyBought ? (
             <Button href={`/moje-konto/kursy/${course.slug}`}>Przejdź do kursu</Button>
           ) : (
-            <AddToCart id={course._id} />
+            <AddToCart
+              data={{
+                price: course.price!,
+                discount: course.discount,
+                _id: course._id,
+                name: course.name,
+                _type: course.type,
+                basis: course.basis,
+              }}
+              id={course._id}
+            />
           )}
           {!alreadyBought && previewLessons?.slug && (
             <a

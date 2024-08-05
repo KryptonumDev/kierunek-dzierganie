@@ -10,7 +10,7 @@ import { toast } from 'react-toastify';
 //   window.dataLayer?.push(arguments);
 // };
 
-const AddToCart = ({ id, variant, disabled, quantity = 1, voucherData }: Props) => {
+const AddToCart = ({ id, variant, disabled, quantity = 1, voucherData, data }: Props) => {
   const { addItem, inCart, updateItem } = useCart();
   const productId = variant ? id + 'variant:' + variant : id;
 
@@ -18,17 +18,22 @@ const AddToCart = ({ id, variant, disabled, quantity = 1, voucherData }: Props) 
     if (voucherData?.amount && inCart(productId)) {
       updateItem(productId, { id: productId, product: id, variant, price: 0, voucherData: voucherData, quantity: 1 });
     } else {
-      // gtag('event', 'add_to_cart', {
-      //   currency: 'PLN',
-      //   value: 100,
-      //   items: [
-      //     {
-      //       id: data._id,
-      //       name: data.name,
-      //       price: 100,
-      //     },
-      //   ],
-      // });
+      gtag('event', 'add_to_cart', {
+        currency: 'PLN',
+        value: data.discount ? (data.discount / 100) * quantity : (data.price! / 100) * quantity,
+        items: [
+          {
+            id: data._id,
+            name: data.name,
+            discount: data.discount ? (data.price! - data.discount) / 100 : undefined,
+            price: data.price! / 100,
+            item_variant: data.variant,
+            item_category: data._type,
+            item_category2: data.basis,
+            quantity: quantity,
+          },
+        ],
+      });
 
       addItem({ id: productId, product: id, variant, price: 0, voucherData: voucherData }, quantity);
     }

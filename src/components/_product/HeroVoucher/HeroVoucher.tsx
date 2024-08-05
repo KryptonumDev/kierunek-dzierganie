@@ -289,6 +289,12 @@ const HeroVoucher = ({ data }: Props) => {
             disabled={!allParametersAdded}
             quantity={1}
             voucherData={voucherData}
+            data={{
+              price: voucherData.amount * 100,
+              _id: data._id,
+              name: data.name,
+              _type: 'voucher',
+            }}
           />
         </div>
       </div>
