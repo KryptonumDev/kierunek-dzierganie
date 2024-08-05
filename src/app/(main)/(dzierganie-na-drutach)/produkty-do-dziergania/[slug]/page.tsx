@@ -60,6 +60,7 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
       {_type === 'voucher' ? (
         <HeroVoucher
           data={{
+            basis: 'crocheting',
             _id,
             name,
             price: price!,
