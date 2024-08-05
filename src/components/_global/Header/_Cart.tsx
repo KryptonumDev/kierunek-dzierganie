@@ -17,6 +17,11 @@ import Link from 'next/link';
 import { CrochetingLogo, KnittingLogo } from '@/components/ui/Icons';
 import Popup from './Popup/Popup';
 
+const gtag: Gtag.Gtag = function () {
+  // eslint-disable-next-line prefer-rest-params
+  window.dataLayer?.push(arguments);
+};
+
 export default function Cart({
   goToCheckout,
   setShowCart,
@@ -570,7 +575,7 @@ const CartGrid = ({ fetchedItems, removeItem, updateItemQuantity }: Grid) => {
               className={`link ${styles['remove']}`}
               onClick={() => {
                 removeItem(item.variant ? item._id + 'variant:' + item.variant._id : item._id);
-
+                debugger
                 gtag('event', 'remove_from_cart', {
                   currency: 'PLN',
                   value: item.discount
