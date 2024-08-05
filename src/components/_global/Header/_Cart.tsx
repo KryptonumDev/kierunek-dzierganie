@@ -487,7 +487,7 @@ const EmptyLayout = ({ image_crochet, image_knitting, setShowCart }: EmptyCart) 
 
 const CartGrid = ({ fetchedItems, removeItem, updateItemQuantity }: Grid) => {
   if (!fetchedItems) return;
-
+  debugger;
   return (
     <div className={styles['grid']}>
       {fetchedItems.map((item, i) => (
@@ -568,7 +568,28 @@ const CartGrid = ({ fetchedItems, removeItem, updateItemQuantity }: Grid) => {
             </div>
             <button
               className={`link ${styles['remove']}`}
-              onClick={() => removeItem(item.variant ? item._id + 'variant:' + item.variant._id : item._id)}
+              onClick={() => {
+                removeItem(item.variant ? item._id + 'variant:' + item.variant._id : item._id);
+
+                gtag('event', 'remove_from_cart', {
+                  currency: 'PLN',
+                  value: item.discount
+                    ? (item.discount / 100) * (item.quantity ?? 1)
+                    : (item.price! / 100) * (item.quantity ?? 1),
+                  items: [
+                    {
+                      id: item._id,
+                      name: item.name,
+                      discount: item.discount ? (item.price! - item.discount) / 100 : undefined,
+                      price: item.price! / 100,
+                      item_variant: item.variant?._id,
+                      item_category: item._type,
+                      item_category2: item.basis,
+                      quantity: item.quantity ?? 1,
+                    },
+                  ],
+                });
+              }}
             >
               Usuń
             </button>

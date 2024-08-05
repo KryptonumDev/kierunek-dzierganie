@@ -44,11 +44,7 @@ const PasswordChangeForm = () => {
       router.push('/moje-konto/potwierdzenie-zmiany-hasla');
       setFetching(false);
     } catch (err) {
-      const message =
-        (err as Error).message === 'Auth session missing!'
-          ? 'Brak autoryzacji do zmiany hasła. Proszę skontaktować się z administracją sklepu.'
-          : (err as Error).message;
-      if (err instanceof Error) toast.error(message);
+      if (err instanceof Error) toast.error((err as Error).message);
       setFetching(false);
     }
   };
