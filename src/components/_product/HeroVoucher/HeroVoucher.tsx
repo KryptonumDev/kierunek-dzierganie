@@ -1,5 +1,5 @@
 'use client';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styles from './HeroVoucher.module.scss';
 import type { Props } from './HeroVoucher.types';
 import { ImgType } from '@/global/types';
@@ -8,6 +8,11 @@ import { formatPrice } from '@/utils/price-formatter';
 import Gallery from '@/components/ui/Gallery';
 import { Hearth, PayPo } from '@/components/ui/Icons';
 import Radio from '@/components/ui/Radio';
+
+const gtag: Gtag.Gtag = function () {
+  // eslint-disable-next-line prefer-rest-params
+  window.dataLayer?.push(arguments);
+};
 
 const HeroVoucher = ({ data }: Props) => {
   const [voucherData, setVoucherData] = useState<{
@@ -50,6 +55,21 @@ const HeroVoucher = ({ data }: Props) => {
     data?.gallery!.forEach((el) => images.push({ type: 'image', data: el }));
     return images;
   }, [data]);
+
+  useEffect(() => {
+    gtag('event', 'view_item', {
+      currency: 'PLN',
+      value: 100,
+      items: [
+        {
+          id: data._id,
+          name: data.name,
+          price: 100,
+          item_category: 'voucher',
+        },
+      ],
+    });
+  }, []);
 
   return (
     <section className={styles['HeroPhysical']}>

@@ -78,6 +78,7 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
           type={type}
           variants={variants}
           physical={{
+            basis: 'crocheting',
             _id,
             name,
             price: price!,

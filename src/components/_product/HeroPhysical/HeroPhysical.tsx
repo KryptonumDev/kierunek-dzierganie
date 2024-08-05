@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './HeroPhysical.module.scss';
 import type { AttributesTypes, Props, SelectedAttributesTypes } from './HeroPhysical.types';
 import Select, { SingleValue } from 'react-select';
@@ -9,6 +9,11 @@ import { formatPrice } from '@/utils/price-formatter';
 import Gallery from '@/components/ui/Gallery';
 import { Hearth, PayPo } from '@/components/ui/Icons';
 import ColorPicker from './ColorPicker';
+
+const gtag: Gtag.Gtag = function () {
+  // eslint-disable-next-line prefer-rest-params
+  window.dataLayer?.push(arguments);
+};
 
 const HeroPhysical = ({ name, id, variants, physical }: Props) => {
   const attributes = useMemo(() => {
@@ -77,6 +82,26 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
     },
     [variants, chosenAttributes]
   );
+
+  useEffect(() => {
+    if (chosenVariant) {
+      gtag('event', 'view_item', {
+        currency: 'PLN',
+        value: chosenVariant.discount ? chosenVariant.discount / 100 : chosenVariant.price / 100,
+        items: [
+          {
+            id: id,
+            name: chosenVariant.name,
+            discount: chosenVariant.discount ? (chosenVariant.price - chosenVariant.discount) / 100 : null,
+            price: chosenVariant.price / 100,
+            item_variant: attributes.length > 0 ? chosenVariant._id : null,
+            item_category: 'product',
+            item_category2: physical.basis,
+          },
+        ],
+      });
+    }
+  }, [chosenVariant, id]);
 
   return (
     <section className={styles['HeroPhysical']}>

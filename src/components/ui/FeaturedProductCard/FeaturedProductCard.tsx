@@ -11,6 +11,11 @@ import { courseComplexityEnum, pageUrls } from '@/global/constants';
 import Link from 'next/link';
 import { Hearth } from '../Icons';
 
+// const gtag: Gtag.Gtag = function () {
+//   // eslint-disable-next-line prefer-rest-params
+//   window.dataLayer?.push(arguments);
+// };
+
 const FeaturedProductCard = ({ excerpt, data, inCart = false, basis, badge }: Props) => {
   const { addItem } = useCart();
   const [buttonText, setButtonText] = useState(inCart ? 'Już w koszyku' : 'Dodaj do koszyka');
@@ -124,6 +129,20 @@ const FeaturedProductCard = ({ excerpt, data, inCart = false, basis, badge }: Pr
               disabled={buttonText !== 'Dodaj do koszyka'}
               onClick={() => {
                 addItem({ quantity: 1, id: data._id, product: data._id, price: 0 });
+                // gtag('event', 'add_to_cart', {
+                //   currency: 'PLN',
+                //   value: data.discount ? data.discount / 100 : data.price! / 100,
+                //   items: [
+                //     {
+                //       id: data._id,
+                //       name: data.name,
+                //       discount: data.discount ? (data.price! - data.discount) / 100 : null,
+                //       price: data.price! / 100,
+                //       item_category: data._type,
+                //       item_category2: data.basis,
+                //     },
+                //   ],
+                // });
                 setButtonText('Dodano do koszyka');
               }}
             >

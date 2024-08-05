@@ -1,5 +1,5 @@
 'use client';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import styles from './HeroVirtual.module.scss';
 import Gallery from '@/components/ui/Gallery';
 import type { HeroVirtualTypes } from './HeroVirtual.types';
@@ -10,6 +10,11 @@ import { Hearth, PayPo } from '@/components/ui/Icons';
 import Img from '@/components/ui/image';
 import Button from '@/components/ui/Button';
 
+const gtag: Gtag.Gtag = function () {
+  // eslint-disable-next-line prefer-rest-params
+  window.dataLayer?.push(arguments);
+};
+
 const HeroVirtual = ({ alreadyBought, course, previewLessons }: HeroVirtualTypes) => {
   const images = useMemo(() => {
     const images: Array<{ data: ImgType | string; type: 'video' | 'image' }> = [];
@@ -17,6 +22,23 @@ const HeroVirtual = ({ alreadyBought, course, previewLessons }: HeroVirtualTypes
     if (course?.featuredVideo) images.push({ type: 'video', data: course?.featuredVideo });
     course?.gallery!.forEach((el) => images.push({ type: 'image', data: el }));
     return images;
+  }, [course]);
+
+  useEffect(() => {
+    gtag('event', 'view_item', {
+      currency: 'PLN',
+      value: course.discount ? course.discount / 100 : course.price! / 100,
+      items: [
+        {
+          id: course._id,
+          name: course.name,
+          discount: course.discount ? (course.price! - course.discount) / 100 : null,
+          price: course.price! / 100,
+          item_category: course._type,
+          item_category2: course.basis,
+        },
+      ],
+    });
   }, [course]);
 
   return (

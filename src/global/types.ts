@@ -147,6 +147,7 @@ export type ProductPhysical = {
   gallery: Array<ImgType>;
   rating: number;
   reviewsCount: number;
+  basis: 'crocheting' | 'knitting';
 };
 
 export type generateMetadataProps = {
