@@ -5,10 +5,10 @@ import styles from './AddToCart.module.scss';
 import type { Props } from './AddToCart.types';
 import { toast } from 'react-toastify';
 
-// const gtag: Gtag.Gtag = function () {
-//   // eslint-disable-next-line prefer-rest-params
-//   window.dataLayer?.push(arguments);
-// };
+const gtag: Gtag.Gtag = function () {
+  // eslint-disable-next-line prefer-rest-params
+  window.dataLayer?.push(arguments);
+};
 
 const AddToCart = ({ id, variant, disabled, quantity = 1, voucherData, data }: Props) => {
   const { addItem, inCart, updateItem } = useCart();
