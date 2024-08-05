@@ -6,4 +6,5 @@ export type Props = {
   excerpt?: JSX.Element;
   basis?: string;
   badge?: string;
+  owned: boolean;
 };

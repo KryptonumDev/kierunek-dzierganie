@@ -19,6 +19,7 @@ export default function Listing({
           data={bestSeller}
           badge={bestSellerBadge}
           basis={basis}
+          owned={!!ownedCourses?.includes(bestSeller._id)}
         />
       )}
       <div className={styles['grid']}>

@@ -16,7 +16,7 @@ const gtag: Gtag.Gtag = function () {
   window.dataLayer?.push(arguments);
 };
 
-const FeaturedProductCard = ({ excerpt, data, inCart = false, basis, badge }: Props) => {
+const FeaturedProductCard = ({ excerpt, data, inCart = false, basis, badge, owned }: Props) => {
   const { addItem } = useCart();
   const [buttonText, setButtonText] = useState(inCart ? 'Już w koszyku' : 'Dodaj do koszyka');
   const mainVariant = useMemo(() => {
@@ -125,30 +125,36 @@ const FeaturedProductCard = ({ excerpt, data, inCart = false, basis, badge }: Pr
           {mainVariant.type === 'variable' ? (
             <Button href={`${basis ? basis : pageUrls[data.basis]}/${data.slug}`}>Wybierz wariant</Button>
           ) : (
-            <Button
-              disabled={buttonText !== 'Dodaj do koszyka'}
-              onClick={() => {
-                addItem({ quantity: 1, id: data._id, product: data._id, price: 0 });
-                gtag('event', 'add_to_cart', {
-                  currency: 'PLN',
-                  value: data.discount ? data.discount / 100 : data.price! / 100,
-                  items: [
-                    {
-                      id: data._id,
-                      name: data.name,
-                      discount: data.discount ? (data.price! - data.discount) / 100 : undefined,
-                      price: data.price! / 100,
-                      item_category: data._type,
-                      item_category2: data.basis,
-                      quantity: 1,
-                    },
-                  ],
-                });
-                setButtonText('Dodano do koszyka');
-              }}
-            >
-              {buttonText}
-            </Button>
+            <>
+              {owned ? (
+                <Button href={`/moje-konto/kursy/${data.slug}`}>Przejdź do kursu</Button>
+              ) : (
+                <Button
+                  disabled={buttonText !== 'Dodaj do koszyka'}
+                  onClick={() => {
+                    addItem({ quantity: 1, id: data._id, product: data._id, price: 0 });
+                    gtag('event', 'add_to_cart', {
+                      currency: 'PLN',
+                      value: data.discount ? data.discount / 100 : data.price! / 100,
+                      items: [
+                        {
+                          id: data._id,
+                          name: data.name,
+                          discount: data.discount ? (data.price! - data.discount) / 100 : undefined,
+                          price: data.price! / 100,
+                          item_category: data._type,
+                          item_category2: data.basis,
+                          quantity: 1,
+                        },
+                      ],
+                    });
+                    setButtonText('Dodano do koszyka');
+                  }}
+                >
+                  {buttonText}
+                </Button>
+              )}
+            </>
           )}
         </div>
       </div>

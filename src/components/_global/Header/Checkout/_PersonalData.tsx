@@ -182,19 +182,19 @@ export default function PersonalData({ goToCart, setInput, input, deliverySettin
       }),
     })
       .then((res) => res.json())
-      .then(({ link, token }) => {
+      .then(({ link }) => {
         if (!link) throw new Error('Błąd podczas tworzenia zamówienia');
 
-        gtag('event', 'purchase', {
+        gtag('event', 'begin_checkout', {
           currency: 'PLN',
-          value: newInput.totalAmount,
+          value: newInput.totalAmount / 100,
           coupon: newInput.discount?.code,
-          transaction_id: token,
-          shipping: newInput.needDelivery
-            ? newInput.freeDelivery
-              ? 0
-              : newInput.shippingMethod.price / 100
-            : undefined,
+          // transaction_id: token,
+          // shipping: newInput.needDelivery
+          //   ? newInput.freeDelivery
+          //     ? 0
+          //     : newInput.shippingMethod.price / 100
+          //   : undefined,
           items: newInput.products?.array.map((el) => ({
             id: el.id,
             name: el.name,
