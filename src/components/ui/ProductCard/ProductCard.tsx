@@ -162,6 +162,7 @@ const ProductCard = ({
                         price: data.price! / 100,
                         item_category: data._type,
                         item_category2: data.basis,
+                        quantity: 1,
                       },
                     ],
                   });
