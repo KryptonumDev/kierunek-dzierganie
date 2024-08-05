@@ -575,7 +575,6 @@ const CartGrid = ({ fetchedItems, removeItem, updateItemQuantity }: Grid) => {
               className={`link ${styles['remove']}`}
               onClick={() => {
                 removeItem(item.variant ? item._id + 'variant:' + item.variant._id : item._id);
-                debugger
                 gtag('event', 'remove_from_cart', {
                   currency: 'PLN',
                   value: item.discount
