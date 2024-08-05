@@ -114,9 +114,10 @@ export default function Checkout({
               item._type === 'course'
                 ? [{ _id: item._id, automatizationId: item.automatizationId }]
                 : item.courses ?? null,
-            variantId: item.variant?._id ?? null,
+            variantId: item.variant?._id,
             type: item._type,
             voucherData: item.voucherData,
+            basis: item.basis,
           };
         }),
       },

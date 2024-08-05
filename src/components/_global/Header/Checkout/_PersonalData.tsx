@@ -16,6 +16,11 @@ import Script from 'next/script';
 import { REGEX } from '@/global/constants';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 
+const gtag: Gtag.Gtag = function () {
+  // eslint-disable-next-line prefer-rest-params
+  window.dataLayer?.push(arguments);
+};
+
 const generateNewInput = (
   data: FormValues,
   input: InputState,
@@ -33,7 +38,13 @@ const generateNewInput = (
     },
     totalAmount:
       input.amount +
-      (input.discount ? calculateDiscountAmount(input.amount, input.discount, shippingMethods.find((method) => method.name === data.shippingMethod)?.price) : 0) -
+      (input.discount
+        ? calculateDiscountAmount(
+            input.amount,
+            input.discount,
+            shippingMethods.find((method) => method.name === data.shippingMethod)?.price
+          )
+        : 0) -
       (input.virtualMoney ? input.virtualMoney * 100 : 0) +
       (input.needDelivery && !input.freeDelivery ? Number(input.delivery) : 0),
     client_notes: data.client_notes,
@@ -171,8 +182,30 @@ export default function PersonalData({ goToCart, setInput, input, deliverySettin
       }),
     })
       .then((res) => res.json())
-      .then(({ link }) => {
+      .then(({ link, token }) => {
         if (!link) throw new Error('Błąd podczas tworzenia zamówienia');
+
+        gtag('event', 'purchase', {
+          currency: 'PLN',
+          value: newInput.totalAmount,
+          coupon: newInput.discount?.code,
+          transaction_id: token,
+          shipping: newInput.needDelivery
+            ? newInput.freeDelivery
+              ? 0
+              : newInput.shippingMethod.price / 100
+            : undefined,
+          items: newInput.products?.array.map((el) => ({
+            id: el.id,
+            name: el.name,
+            discount: el.discount ? (el.price! - el.discount) / 100 : undefined,
+            price: el.price! / 100,
+            item_variant: el.variantId,
+            item_category: el.type,
+            item_category2: el.basis,
+            quantity: el.quantity,
+          })),
+        });
 
         emptyCart();
         window.location.href = link;
