@@ -32,7 +32,9 @@ const PasswordChangeForm = () => {
       const type = searchParams.get('type');
 
       if (token && type) {
-        const res = await fetch(`/api/auth/change-password?${searchParams.toString()}`).then((res) => res.json());
+        const res = await fetch(`/api/auth/change-password?${searchParams.toString()}`, { cache: 'no-cache' }).then(
+          (res) => res.json()
+        );
         console.log('res: ', res);
       }
 
