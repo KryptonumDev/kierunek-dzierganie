@@ -47,11 +47,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <SchemaOrganization />
       </head>
-      {/* {process.env.NODE_ENV === 'production' && <GoogleTagManager gtmId='GTM-PSPN2NCN' />} */}
       <GoogleTagManager gtmId='GTM-PSPN2NCN' />
       <body className={`${Lato.className} ${CityStreetWear.variable}`}>
         {children}
-        {/* {process.env.NODE_ENV === 'production' && <CookieConsent />} */}
         <CookieConsent />
         <Mascots />
       </body>
