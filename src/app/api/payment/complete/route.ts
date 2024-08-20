@@ -6,6 +6,7 @@ import { checkUsedModifications } from './check-used-modifications';
 import { updateItemsQuantity } from './update-items-quantity';
 import { sendEmails } from './send-emails';
 import { generateBill } from './generate-bill';
+import { purchaseEvent } from './purchaseEvent';
 
 export async function POST(request: Request) {
   try {
@@ -35,6 +36,18 @@ export async function POST(request: Request) {
     await generateBill(data, id);
     console.log('przed zmianą ilości');
     await updateItemsQuantity(data);
+
+    await purchaseEvent({
+      user_id: data.user_id,
+      value: amount / 100,
+      transaction_id: orderId,
+      items: data.products.array.map(({ id, name, quantity, discount, price }: { id: string; name: string; quantity: number; discount: number; price: number; }) => ({
+        item_id: id,
+        item_name: name,
+        quantity: quantity,
+        price: discount ? discount / 100 : price / 100
+      })),
+    });
 
     return NextResponse.json({}, { status: 200 });
   } catch (error) {

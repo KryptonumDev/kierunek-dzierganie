@@ -101,7 +101,7 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
         ],
       });
     }
-  }, [chosenVariant, id]);
+  }, [attributes.length, chosenVariant, id, physical.basis]);
 
   return (
     <section className={styles['HeroPhysical']}>

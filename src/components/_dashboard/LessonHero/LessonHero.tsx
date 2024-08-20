@@ -256,8 +256,8 @@ const LessonHero = ({
       </div>
       <div className={styles['columns']}>
         <div className={styles['column']}>
-          <Switch inputProps={{ checked: autoplay, onChange: () => setIsAutoplay(!autoplay) }}>Autoodtwarzanie</Switch>
-          <Switch inputProps={{ checked: leftHanded, onChange: () => setIsLeftHanded(!leftHanded) }}>
+          <Switch inputProps={{ defaultChecked: autoplay, onChange: () => setIsAutoplay(!autoplay) }}>Autoodtwarzanie</Switch>
+          <Switch inputProps={{ defaultChecked: leftHanded, onChange: () => setIsLeftHanded(!leftHanded) }}>
             Jestem osobą leworęczną
           </Switch>
           <p>Ustawienie to dostosowuje w jaki sposób wyświetlają Ci się kursy i pliki do lekcji</p>

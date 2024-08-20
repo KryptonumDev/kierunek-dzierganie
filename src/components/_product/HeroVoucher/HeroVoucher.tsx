@@ -94,7 +94,7 @@ const HeroVoucher = ({ data }: Props) => {
             data-active={voucherData.selectedOption === 'one'}
           >
             <input
-              checked={voucherData.selectedOption === 'one'}
+              defaultChecked={voucherData.selectedOption === 'one'}
               onChange={() => setVoucherData({ ...voucherData, amount: 10000, selectedOption: 'one' })}
               value={10000}
               name='10000'
@@ -107,7 +107,7 @@ const HeroVoucher = ({ data }: Props) => {
             data-active={voucherData.selectedOption === 'two'}
           >
             <input
-              checked={voucherData.selectedOption === 'two'}
+              defaultChecked={voucherData.selectedOption === 'two'}
               onChange={() => setVoucherData({ ...voucherData, amount: 20000, selectedOption: 'two' })}
               value={20000}
               name='20000'
@@ -120,7 +120,7 @@ const HeroVoucher = ({ data }: Props) => {
             data-active={voucherData.selectedOption === 'three'}
           >
             <input
-              checked={voucherData.selectedOption === 'three'}
+              defaultChecked={voucherData.selectedOption === 'three'}
               onChange={() => setVoucherData({ ...voucherData, amount: 30000, selectedOption: 'three' })}
               value={30000}
               name='30000'
@@ -133,7 +133,7 @@ const HeroVoucher = ({ data }: Props) => {
             data-active={voucherData.selectedOption === 'four'}
           >
             <input
-              checked={voucherData.selectedOption === 'four'}
+              defaultChecked={voucherData.selectedOption === 'four'}
               onChange={() => setVoucherData({ ...voucherData, amount: 40000, selectedOption: 'four' })}
               value={40000}
               name='40000'
@@ -146,7 +146,7 @@ const HeroVoucher = ({ data }: Props) => {
             data-active={voucherData.selectedOption === 'other'}
           >
             <input
-              checked={voucherData.selectedOption === 'other'}
+              defaultChecked={voucherData.selectedOption === 'other'}
               value={'other'}
               name='other'
               type='radio'
@@ -176,7 +176,7 @@ const HeroVoucher = ({ data }: Props) => {
               <input
                 type='radio'
                 value='open'
-                checked={dedicationOpen}
+                defaultChecked={dedicationOpen}
                 onChange={() => {
                   setDedicationOpen(true);
                   setVoucherData({
@@ -195,7 +195,7 @@ const HeroVoucher = ({ data }: Props) => {
               <input
                 type='radio'
                 value='closed'
-                checked={!dedicationOpen}
+                defaultChecked={!dedicationOpen}
                 onChange={() => {
                   setDedicationOpen(false);
                   setVoucherData({
@@ -265,14 +265,14 @@ const HeroVoucher = ({ data }: Props) => {
         </div>
         <div className={styles['radios']}>
           <Radio
-            checked={voucherData.type === 'DIGITAL'}
+            defaultChecked={voucherData.type === 'DIGITAL'}
             onChange={() => setVoucherData({ ...voucherData, type: 'DIGITAL' })}
             label='<span>Wydrukuj i wręcz osobiście</span><small>Wyślemy e-maila z kartą podarunkową w pliku .pdf do wydrukowania na adres e-mail</small>'
             register={{ name: 'test' }}
             errors={{}}
           />
           <Radio
-            checked={voucherData.type === 'PHYSICAL'}
+            defaultChecked={voucherData.type === 'PHYSICAL'}
             onChange={() => setVoucherData({ ...voucherData, type: 'PHYSICAL' })}
             label='<span>Chcę dostać voucher w formie fizycznej</span><small>Dodaj kartę podarunkową do koszyka, a my dostarczymy ją pod Twoje drzwi.</small>'
             register={{ name: 'test' }}
