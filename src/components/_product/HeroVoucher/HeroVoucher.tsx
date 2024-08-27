@@ -57,19 +57,37 @@ const HeroVoucher = ({ data }: Props) => {
   }, [data]);
 
   useEffect(() => {
+    const product_id = data._id;
+    const product_name = data.name;
+    const product_price = voucherData.amount / 100;
+
+    if (typeof fbq !== 'undefined') {
+      fbq('track', 'ViewContent', {
+        content_ids: [product_id],
+        content_name: product_name,
+        contents: [{
+          id: product_id,
+          item_price: product_price,
+          quantity: 1,
+        }],
+        content_type: 'product',
+        value: product_price,
+        currency: 'PLN',
+      });
+    }
     gtag('event', 'view_item', {
       currency: 'PLN',
-      value: 100,
+      value: product_price,
       items: [
         {
-          id: data._id,
-          name: data.name,
-          price: 100,
+          id: product_id,
+          name: product_name,
+          price: product_price,
           item_category: 'voucher',
         },
       ],
     });
-  }, []);
+  }, [data._id, data.name, voucherData.amount]);
 
   return (
     <section className={styles['HeroPhysical']}>

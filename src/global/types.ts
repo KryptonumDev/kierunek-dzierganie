@@ -307,12 +307,12 @@ export type CoursePageQueryProps = {
       countOfCourse: number;
     };
     relatedBundle:
-      | null
-      | ({
-          courses: ProductCard[];
-        } & ProductCard);
+    | null
+    | ({
+      courses: ProductCard[];
+    } & ProductCard);
   } & TableOfContentTypes &
-    ReviewsTypes;
+  ReviewsTypes;
   card: ProductCard;
   relatedCourses: ProductCard[];
 };
@@ -442,14 +442,14 @@ export type Order = {
   orders_statuses: {
     id: string;
     status_name:
-      | 'AWAITING PAYMENT'
-      | 'PENDING'
-      | 'COMPLETED'
-      | 'REFUNDED'
-      | 'CANCELLED'
-      | 'AWAITING SEND'
-      | 'PARCEL GENERATED'
-      | 'SENDED';
+    | 'AWAITING PAYMENT'
+    | 'PENDING'
+    | 'COMPLETED'
+    | 'REFUNDED'
+    | 'CANCELLED'
+    | 'AWAITING SEND'
+    | 'PARCEL GENERATED'
+    | 'SENDED';
     complete_percent: number;
   };
 };
@@ -537,3 +537,7 @@ export type MapPoint = {
     timezone: string;
   };
 };
+
+declare global {
+  function fbq(command: string, eventName: string, data: object, options?: object): void;
+}
