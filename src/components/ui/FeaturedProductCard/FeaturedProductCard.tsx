@@ -133,6 +133,15 @@ const FeaturedProductCard = ({ excerpt, data, inCart = false, basis, badge, owne
                   disabled={buttonText !== 'Dodaj do koszyka'}
                   onClick={() => {
                     addItem({ quantity: 1, id: data._id, product: data._id, price: 0 });
+                    if (typeof fbq !== 'undefined') {
+                      fbq('track', 'AddToCart', {
+                        content_ids: [data._id],
+                        content_name: data.name,
+                        content_type: 'product',
+                        value: data.price! / 100,
+                        currency: 'PLN',
+                      });
+                    }
                     gtag('event', 'add_to_cart', {
                       currency: 'PLN',
                       value: data.discount ? data.discount / 100 : data.price! / 100,

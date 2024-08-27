@@ -18,6 +18,15 @@ const AddToCart = ({ id, variant, disabled, quantity = 1, voucherData, data }: P
     if (voucherData?.amount && inCart(productId)) {
       updateItem(productId, { id: productId, product: id, variant, price: 0, voucherData: voucherData, quantity: 1 });
     } else {
+      if (typeof fbq !== 'undefined') {
+        fbq('track', 'AddToCart', {
+          content_ids: [data._id],
+          content_name: data.name,
+          content_type: 'product',
+          value: data.price! / 100,
+          currency: 'PLN',
+        });
+      }
       gtag('event', 'add_to_cart', {
         currency: 'PLN',
         value: data.discount ? (data.discount / 100) * quantity : (data.price! / 100) * quantity,
