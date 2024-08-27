@@ -40,10 +40,10 @@ const generateNewInput = (
       input.amount +
       (input.discount
         ? calculateDiscountAmount(
-            input.amount,
-            input.discount,
-            shippingMethods.find((method) => method.name === data.shippingMethod)?.price
-          )
+          input.amount,
+          input.discount,
+          shippingMethods.find((method) => method.name === data.shippingMethod)?.price
+        )
         : 0) -
       (input.virtualMoney ? input.virtualMoney * 100 : 0) +
       (input.needDelivery && !input.freeDelivery ? Number(input.delivery) : 0),
@@ -184,6 +184,20 @@ export default function PersonalData({ goToCart, setInput, input, deliverySettin
       .then((res) => res.json())
       .then(({ link }) => {
         if (!link) throw new Error('Błąd podczas tworzenia zamówienia');
+
+        if (typeof fbq !== 'undefined') {
+          fbq('track', 'InitiateCheckout', {
+            content_ids: newInput.products?.array.map(({ id }) => id),
+            contents: newInput.products?.array.map((el) => ({
+              id: el.id,
+              item_price: el.price! / 100,
+              quantity: el.quantity,
+            })),
+            content_type: 'product',
+            value: newInput.totalAmount / 100,
+            currency: 'PLN',
+          });
+        }
 
         gtag('event', 'begin_checkout', {
           currency: 'PLN',
