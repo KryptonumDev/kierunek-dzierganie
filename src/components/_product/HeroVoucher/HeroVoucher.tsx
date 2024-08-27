@@ -61,32 +61,36 @@ const HeroVoucher = ({ data }: Props) => {
     const product_name = data.name;
     const product_price = voucherData.amount / 100;
 
-    if (typeof fbq !== 'undefined') {
-      fbq('track', 'ViewContent', {
-        content_ids: [product_id],
-        content_name: product_name,
-        contents: [{
-          id: product_id,
-          item_price: product_price,
-          quantity: 1,
-        }],
-        content_type: 'product',
-        value: product_price,
+    const timeoutId = setTimeout(() => {
+      if (typeof fbq !== 'undefined') {
+        fbq('track', 'ViewContent', {
+          content_ids: [product_id],
+          content_name: product_name,
+          contents: [{
+            id: product_id,
+            item_price: product_price,
+            quantity: 1,
+          }],
+          content_type: 'product',
+          value: product_price,
+          currency: 'PLN',
+        });
+      }
+      gtag('event', 'view_item', {
         currency: 'PLN',
+        value: product_price,
+        items: [
+          {
+            id: product_id,
+            name: product_name,
+            price: product_price,
+            item_category: 'voucher',
+          },
+        ],
       });
-    }
-    gtag('event', 'view_item', {
-      currency: 'PLN',
-      value: product_price,
-      items: [
-        {
-          id: product_id,
-          name: product_name,
-          price: product_price,
-          item_category: 'voucher',
-        },
-      ],
-    });
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
   }, [data._id, data.name, voucherData.amount]);
 
   return (

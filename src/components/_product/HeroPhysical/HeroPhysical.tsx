@@ -88,35 +88,40 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
       const product_id = chosenVariant._id;
       const product_name = chosenVariant.name;
       const product_price = chosenVariant.price / 100;
-      if (typeof fbq !== 'undefined') {
-        fbq('track', 'ViewContent', {
-          content_ids: [product_id],
-          content_name: product_name,
-          contents: [{
-            id: product_id,
-            item_price: product_price,
-            quantity: 1,
-          }],
-          content_type: 'product',
-          value: product_price,
+
+      const timeoutId = setTimeout(() => {
+        if (typeof fbq !== 'undefined') {
+          fbq('track', 'ViewContent', {
+            content_ids: [product_id],
+            content_name: product_name,
+            contents: [{
+              id: product_id,
+              item_price: product_price,
+              quantity: 1,
+            }],
+            content_type: 'product',
+            value: product_price,
+            currency: 'PLN',
+          });
+        }
+        gtag('event', 'view_item', {
           currency: 'PLN',
+          value: chosenVariant.discount ? chosenVariant.discount / 100 : chosenVariant.price / 100,
+          items: [
+            {
+              id: product_id,
+              name: product_name,
+              discount: chosenVariant.discount ? (chosenVariant.price - chosenVariant.discount) / 100 : null,
+              price: product_price,
+              item_variant: attributes.length > 0 ? chosenVariant._id : null,
+              item_category: 'product',
+              item_category2: physical.basis,
+            },
+          ],
         });
-      }
-      gtag('event', 'view_item', {
-        currency: 'PLN',
-        value: chosenVariant.discount ? chosenVariant.discount / 100 : chosenVariant.price / 100,
-        items: [
-          {
-            id: product_id,
-            name: product_name,
-            discount: chosenVariant.discount ? (chosenVariant.price - chosenVariant.discount) / 100 : null,
-            price: product_price,
-            item_variant: attributes.length > 0 ? chosenVariant._id : null,
-            item_category: 'product',
-            item_category2: physical.basis,
-          },
-        ],
-      });
+      }, 1000);
+
+      return () => clearTimeout(timeoutId);
     }
   }, [attributes.length, chosenVariant, id, physical.basis]);
 

@@ -28,34 +28,39 @@ const HeroVirtual = ({ alreadyBought, course, previewLessons }: HeroVirtualTypes
     const product_id = course._id;
     const product_name = course.name;
     const product_price = course.price! / 100;
-    if (typeof fbq !== 'undefined') {
-      fbq('track', 'ViewContent', {
-        content_ids: [product_id],
-        content_name: product_name,
-        contents: [{
-          id: product_id,
-          item_price: product_price,
-          quantity: 1,
-        }],
-        content_type: 'product',
-        value: product_price,
+
+    const timeoutId = setTimeout(() => {
+      if (typeof fbq !== 'undefined') {
+        fbq('track', 'ViewContent', {
+          content_ids: [product_id],
+          content_name: product_name,
+          contents: [{
+            id: product_id,
+            item_price: product_price,
+            quantity: 1,
+          }],
+          content_type: 'product',
+          value: product_price,
+          currency: 'PLN',
+        });
+      }
+      gtag('event', 'view_item', {
         currency: 'PLN',
+        value: course.discount ? course.discount / 100 : course.price! / 100,
+        items: [
+          {
+            id: product_id,
+            name: product_name,
+            discount: course.discount ? (course.price! - course.discount) / 100 : undefined,
+            price: product_price,
+            item_category: course.type,
+            item_category2: course.basis,
+          },
+        ],
       });
-    }
-    gtag('event', 'view_item', {
-      currency: 'PLN',
-      value: course.discount ? course.discount / 100 : course.price! / 100,
-      items: [
-        {
-          id: product_id,
-          name: product_name,
-          discount: course.discount ? (course.price! - course.discount) / 100 : undefined,
-          price: product_price,
-          item_category: course.type,
-          item_category2: course.basis,
-        },
-      ],
-    });
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
   }, [course]);
 
   return (
