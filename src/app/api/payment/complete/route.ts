@@ -6,7 +6,8 @@ import { checkUsedModifications } from './check-used-modifications';
 import { updateItemsQuantity } from './update-items-quantity';
 import { sendEmails } from './send-emails';
 import { generateBill } from './generate-bill';
-import { purchaseEvent } from './purchaseEvent';
+import { GAConversionPurchase } from './GAConversionPurchase';
+import { MetaConversionPurchase } from './MetaConversionPurchase';
 
 export async function POST(request: Request) {
   try {
@@ -37,7 +38,7 @@ export async function POST(request: Request) {
     console.log('przed zmianą ilości');
     await updateItemsQuantity(data);
 
-    await purchaseEvent({
+    await GAConversionPurchase({
       user_id: data.user_id,
       value: amount / 100,
       transaction_id: orderId,
@@ -47,6 +48,18 @@ export async function POST(request: Request) {
         quantity: quantity,
         price: discount ? discount / 100 : price / 100
       })),
+    });
+    await MetaConversionPurchase({
+      user_id: data.user_id,
+      value: amount / 100,
+      transaction_id: orderId,
+      items: data.products.array.map(({ id, name, quantity, discount, price }: { id: string; name: string; quantity: number; discount: number; price: number; }) => ({
+        item_id: id,
+        item_name: name,
+        quantity: quantity,
+        price: discount ? discount / 100 : price / 100
+      })),
+      email: data.billing.email,
     });
 
     return NextResponse.json({}, { status: 200 });

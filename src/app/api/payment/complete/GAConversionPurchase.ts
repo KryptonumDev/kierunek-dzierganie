@@ -14,7 +14,7 @@ function getSessionId() {
   return null;
 }
 
-export const purchaseEvent = async ({ user_id, transaction_id, value, items }: {
+export const GAConversionPurchase = async ({ user_id, transaction_id, value, items }: {
   user_id: string;
   transaction_id: string;
   value: number;
