@@ -25,6 +25,18 @@ export const purchaseEvent = async ({ user_id, transaction_id, value, items }: {
     price: number;
   }[];
 }) => {
+  const client_id = getClientId();
+  const session_id = getSessionId();
+
+  console.log('[GA4 Event] Sending purchase event with:', {
+    user_id,
+    client_id,
+    session_id,
+    transaction_id,
+    value,
+    items
+  });
+
   const measurementId = 'G-F5CD13WL6R';
   const apiSecret = process.env.GA4_MEASUREMENT_PROTOCOL_API;
   try {
@@ -33,12 +45,12 @@ export const purchaseEvent = async ({ user_id, transaction_id, value, items }: {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         user_id: user_id,
-        client_id: getClientId(),
-        timestamp_micros: Date.now() * 1000,
+        client_id: client_id,
+        timestamp_micros: Date.now() * 1000000,
         events: [{
           name: 'purchase',
           params: {
-            session_id: getSessionId(),
+            session_id: session_id,
             transaction_id: transaction_id,
             value: value,
             currency: 'PLN',
@@ -52,6 +64,7 @@ export const purchaseEvent = async ({ user_id, transaction_id, value, items }: {
         }]
       }),
     });
+    console.log('GA4 purchase event response:', await response.json());
     if (!response.ok) {
       console.error(`Error sending purchase event: ${response.statusText}`);
     } else {
