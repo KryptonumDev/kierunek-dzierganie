@@ -64,7 +64,7 @@ export const GAConversionPurchase = async ({ user_id, transaction_id, value, ite
         }]
       }),
     });
-    console.log('GA4 purchase event response:', await response.json());
+    console.log('GA4 purchase event response:', await response.text());
     if (!response.ok) {
       console.error(`Error sending purchase event: ${response.statusText}`);
     } else {
