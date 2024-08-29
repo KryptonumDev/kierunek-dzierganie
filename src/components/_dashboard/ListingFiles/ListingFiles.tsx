@@ -32,6 +32,8 @@ const ListingFiles = ({ courses, left_handed, progress }: ListingFilesTypes) => 
       // check if course is completed
       const courseProgress = progress.find((el) => el.course_id === course._id)!;
 
+      if (!courseProgress) return;
+
       let completedChapters = 0;
       for (const chapterId in courseProgress.progress) {
         let completedLessons = 0;
