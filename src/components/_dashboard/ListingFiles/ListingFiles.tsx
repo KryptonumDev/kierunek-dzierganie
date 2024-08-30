@@ -37,11 +37,17 @@ const ListingFiles = ({ courses, left_handed, progress }: ListingFilesTypes) => 
       let completedChapters = 0;
       for (const chapterId in courseProgress.progress) {
         let completedLessons = 0;
+
+        const chapter = course.chapters.find((el) => el._id === chapterId);
+
+        // case - course was updated and some old chapters was removed
+        if (!chapter) continue;
+
         for (const lessonId in courseProgress.progress[chapterId]) {
           if (courseProgress.progress[chapterId]![lessonId]!.ended) completedLessons++;
         }
-        if (completedLessons === course.chapters.find((el) => el._id === chapterId)!.lessons.length)
-          completedChapters++;
+
+        if (completedLessons === chapter!.lessons?.length) completedChapters++;
       }
       if (completedChapters === course.chapters?.length && course.generateCertificate) {
         obj.showCert = true;
