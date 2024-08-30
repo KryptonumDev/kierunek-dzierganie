@@ -28,14 +28,29 @@ export const GAConversionPurchase = async ({ user_id, transaction_id, value, ite
   const client_id = getClientId();
   const session_id = getSessionId();
 
-  console.log('[GA4 Event] Sending purchase event with:', {
-    user_id,
-    client_id,
-    session_id,
-    transaction_id,
-    value,
-    items
-  });
+  const payload = {
+    user_id: user_id,
+    client_id: client_id,
+    timestamp_micros: Date.now() * 1000000,
+    events: [{
+      name: 'purchase',
+      params: {
+        engagement_time_msec: 1,
+        session_id: session_id,
+        transaction_id: transaction_id,
+        value: value,
+        currency: 'PLN',
+        items: items.map(item => ({
+          item_id: item.item_id,
+          item_name: item.item_name,
+          quantity: item.quantity,
+          price: item.price
+        }))
+      }
+    }]
+  };
+
+  console.log(JSON.stringify(payload));
 
   const measurementId = 'G-F5CD13WL6R';
   const apiSecret = process.env.GA4_MEASUREMENT_PROTOCOL_API;
@@ -43,28 +58,9 @@ export const GAConversionPurchase = async ({ user_id, transaction_id, value, ite
     const response = await fetch(`https://www.google-analytics.com/mp/collect?measurement_id=${measurementId}&api_secret=${apiSecret}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        user_id: user_id,
-        client_id: client_id,
-        timestamp_micros: Date.now() * 1000000,
-        events: [{
-          name: 'purchase',
-          params: {
-            session_id: session_id,
-            transaction_id: transaction_id,
-            value: value,
-            currency: 'PLN',
-            items: items.map(item => ({
-              item_id: item.item_id,
-              item_name: item.item_name,
-              quantity: item.quantity,
-              price: item.price
-            }))
-          }
-        }]
-      }),
+      body: JSON.stringify(payload),
     });
-    console.log('GA4 purchase event response:', await response.text());
+    console.log('Response:', await response.json());
     if (!response.ok) {
       console.error(`Error sending purchase event: ${response.statusText}`);
     } else {

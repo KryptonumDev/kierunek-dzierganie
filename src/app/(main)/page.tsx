@@ -6,7 +6,6 @@ import type { PageQueryProps } from '@/global/types';
 
 const page = { name: 'Strona główna', path: '' };
 
-
 const IndexPage = async () => {
   const { content } = await query();
 
