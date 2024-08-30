@@ -60,7 +60,6 @@ export const GAConversionPurchase = async ({ user_id, transaction_id, value, ite
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
-    console.log('Response:', await response.json());
     if (!response.ok) {
       console.error(`Error sending purchase event: ${response.statusText}`);
     } else {
