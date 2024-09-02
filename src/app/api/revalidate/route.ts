@@ -18,11 +18,10 @@ export async function POST(request: NextRequest) {
     return new Response('Unauthorized', { status: 401 });
   }
   const res = await query(tag, id);
-  const { references } = res;
   if (tag) {
     revalidateTag(tag);
-    if (references?.length > 0) {
-      references.forEach((tag) => revalidateTag(tag));
+    if (res?.references?.length > 0) {
+      res.references.forEach((tag) => revalidateTag(tag));
     }
     return Response.json({ revalidated: true, now: Date.now() });
   } else {
