@@ -7,6 +7,7 @@ import { Img_Query } from '@/components/ui/image';
 import ArticleSchema from '@/global/Schema/ArticleSchema';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
 import { generateStaticParamsProps, type BlogPostQueryProps } from '@/global/types';
+import { removeMarkdown } from '@/utils/remove-markdown';
 import sanityFetch from '@/utils/sanity.fetch';
 
 export default async function BlogPostPage({ params: { slug } }: { params: { slug: string } }) {
@@ -15,7 +16,7 @@ export default async function BlogPostPage({ params: { slug } }: { params: { slu
 
   const page = [
     { name: 'Blog', path: '/blog' },
-    { name: hero.heading, path: `/blog/${slug}` },
+    { name: removeMarkdown(hero.heading), path: `/blog/${slug}` },
   ];
 
   return (
