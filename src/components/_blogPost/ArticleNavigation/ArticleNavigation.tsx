@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import styles from './ArticleNavigation.module.scss';
 import { ArticleNavigationTypes } from './ArticleNavigation.types';
+import Markdown from '@/components/ui/markdown';
 
 const ArticleNavigation = ({ previousBlog, nextBlog }: ArticleNavigationTypes) => {
   return (
@@ -15,7 +16,7 @@ const ArticleNavigation = ({ previousBlog, nextBlog }: ArticleNavigationTypes) =
               <ArrowLeftIcon />
             </div>
             <span className={styles.indicator}>Poprzedni artykuł</span>
-            <span className={styles.name}>{previousBlog.name}</span>
+            <Markdown.span className={styles.name}>{previousBlog.name}</Markdown.span>
           </Link>
         )}
       </div>
@@ -29,7 +30,7 @@ const ArticleNavigation = ({ previousBlog, nextBlog }: ArticleNavigationTypes) =
             <div className={styles.arrow}>
               <ArrowRightIcon />
             </div>
-            <span className={styles.name}>{nextBlog.name}</span>
+            <Markdown.span className={styles.name}>{nextBlog.name}</Markdown.span>
           </Link>
         )}
       </div>

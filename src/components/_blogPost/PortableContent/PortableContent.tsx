@@ -57,7 +57,6 @@ export default function PortableContent({ data, previousBlog, nextBlog, links }:
       h4: ({ value }: { value: [] }) => (
         <Markdown.h4 id={slugify(toPlainText(value))}>{portableTextToMarkdown(value as Node)}</Markdown.h4>
       ),
-      normal: ({ value }: { value: Node }) => <Markdown>{portableTextToMarkdown(value as Node)}</Markdown>,
     },
     listItem: {
       number: ({ children }: { children: React.ReactNode[] }) => <Markdown.li>{children[0] as string}</Markdown.li>,
@@ -73,13 +72,13 @@ export default function PortableContent({ data, previousBlog, nextBlog, links }:
       number: ({ children }: { children: React.ReactNode }) => <ol className={styles.orderedList}>{children}</ol>,
     },
     marks: {
-      link: ({ value, children }: { value: string; children: string }) => {
+      link: ({ value, children }: { value: { href: string }; children: string }) => {
         return (
           <a
-            href={value}
+            href={value.href}
             target='_blank'
             rel='noreferrer noopener'
-            className={styles.link}
+            className='link'
           >
             {children}
           </a>
