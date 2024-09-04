@@ -32,6 +32,7 @@ export const GAConversionPurchase = async ({ user_id, transaction_id, value, ite
     user_id: user_id,
     client_id: client_id,
     timestamp_micros: Date.now() * 1000000,
+    non_personalized_ads: false,
     events: [{
       name: 'purchase',
       params: {
