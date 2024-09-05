@@ -1,15 +1,22 @@
 import { cookies } from 'next/headers';
 
-function getClientId() {
+function generateGACompatibleId(): string {
+  const timestamp = Math.floor(Date.now() / 1000);
+  const random = Math.floor(Math.random() * 0x7FFFFFFF);
+  return `${timestamp}.${random}`;
+}
+
+function getClientId(): string {
   const gaCookie = cookies().get('_ga')?.value || '';
   const parts = gaCookie.split('.');
   if (parts.length >= 4) return `${parts[2]}.${parts[3]}`;
-  return null;
+  return generateGACompatibleId();
 }
 
 function getSessionId() {
   const pattern = /GS\d\.\d\.(\d+)\.(\d+)/;
-  const match = cookies().get('_ga_F5CD13WL6R')?.value.match(pattern);
+  const gaCookie = cookies().get('_ga_XXXXXXX')?.value || '';
+  const match = gaCookie.match(pattern);
   if (match) return match[1];
   return null;
 }
