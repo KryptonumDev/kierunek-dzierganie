@@ -32,6 +32,9 @@ const Form = ({ Heading, groupId }: { Heading: React.ReactNode, groupId?: string
       if (response.ok && responseData.success) {
         setStatus((prevStatus) => ({ ...prevStatus, success: true }));
         reset();
+        if (typeof fbq !== 'undefined') {
+          fbq('track', 'CompleteRegistration');
+        }
       } else {
         setStatus((prevStatus) => ({ ...prevStatus, success: false }));
       }

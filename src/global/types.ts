@@ -539,5 +539,5 @@ export type MapPoint = {
 };
 
 declare global {
-  function fbq(command: string, eventName: string, data: object, options?: object): void;
+  function fbq(command: string, eventName: string, data?: object, options?: object): void;
 }
