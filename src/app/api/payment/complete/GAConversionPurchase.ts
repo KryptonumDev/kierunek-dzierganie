@@ -44,7 +44,7 @@ export const GAConversionPurchase = async ({ user_id, transaction_id, value, ite
       name: 'purchase',
       params: {
         engagement_time_msec: 1,
-        session_id: session_id,
+        ...(session_id && { session_id: session_id }),
         transaction_id: transaction_id,
         value: value,
         currency: 'PLN',
