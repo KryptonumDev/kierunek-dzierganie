@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+import { redirects } from './redirects.mjs';
 
 const nextConfig = {
   reactStrictMode: false,
@@ -14,33 +15,7 @@ const nextConfig = {
     ],
   },
   async redirects() {
-    return [
-      {
-        source: '/szydelkowanie',
-        destination: '/kursy-szydelkowania',
-        permanent: true,
-      },
-      {
-        source: '/dzierganie-na-drutach',
-        destination: '/kursy-dziergania-na-drutach',
-        permanent: true,
-      },
-      {
-        source: '/dlaczego-kierunek-dzierganie',
-        destination: '/nasze-marki',
-        permanent: true,
-      },
-      {
-        source: '/o-nas',
-        destination: '/zespol',
-        permanent: true,
-      },
-      {
-        source: '/landing/program-rozwojowy-dziergania-na-drutach',
-        destination: '/',
-        permanent: false,
-      },
-    ];
+    return redirects;
   },
 };
 
