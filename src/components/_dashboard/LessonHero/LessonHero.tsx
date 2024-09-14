@@ -23,8 +23,6 @@ const LessonHero = ({
   auto_play,
   id,
 }: Props) => {
-  lesson.video = 'https://vimeo.com/904308264';
-  lesson.video_alter = 'https://vimeo.com/904308264';
   const router = useRouter();
   const supabase = createClient();
   const [leftHanded, setLeftHanded] = useState(left_handed);
