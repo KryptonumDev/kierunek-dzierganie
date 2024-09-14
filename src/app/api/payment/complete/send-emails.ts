@@ -51,7 +51,7 @@ export async function sendEmails(data: any) {
     from: 'Kierunek Dzierganie <kontakt@kierunekdzierganie.pl>',
     to: ['kontakt@kierunekdzierganie.pl'],
     subject: 'Nowe zamówienie!',
-    reply_to: 'kontakt@kierunekdzierganie.pl',
+    reply_to: data.billing.email,
     text: '',
     attachments: needToSendVoucher ? null : attachments,
     react: Order({ data: data, type: 'NEW_ORDER' }),

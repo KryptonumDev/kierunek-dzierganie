@@ -31,11 +31,8 @@ export async function POST(request: Request) {
 
     if (error) throw new Error(error.message);
     await checkUsedModifications(data);
-    console.log('przed wysłaniem emaili');
     await sendEmails(data);
-    console.log('przed generowaniem rachunku');
     await generateBill(data, id);
-    console.log('przed zmianą ilości');
     await updateItemsQuantity(data);
 
     await GAConversionPurchase({
