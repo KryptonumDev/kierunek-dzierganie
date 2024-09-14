@@ -1,5 +1,5 @@
 'use client';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styles from './LessonHero.module.scss';
 import type { Props } from './LessonHero.types';
 import Link from 'next/link';
@@ -27,6 +27,7 @@ const LessonHero = ({
   const supabase = createClient();
   const [leftHanded, setLeftHanded] = useState(left_handed);
   const [autoplay, setAutoplay] = useState(auto_play);
+  const [currentTime, setCurrentTime] = useState(0);
   const [isCompleted, setIsCompleted] = useState(
     () => progress.progress[currentChapter._id]![lesson._id]?.ended ?? false
   );
@@ -117,6 +118,30 @@ const LessonHero = ({
     return leftHanded ? lesson.files_alter : lesson.files;
   }, [leftHanded, lesson.files, lesson.files_alter]);
 
+  useEffect(() => {
+    const savedTime = localStorage.getItem(`vimeo-progress-${leftHanded ? lesson.video_alter : lesson.video}`);
+    if (savedTime) {
+      setCurrentTime(parseFloat(savedTime));
+    }
+  }, [leftHanded, lesson.video_alter, lesson.video]);
+
+  const handleTimeUpdate = ({ seconds }: { seconds: number }) => {
+    setCurrentTime(seconds);
+  };
+
+  useEffect(() => {
+    const saveProgress = () => {
+      localStorage.setItem(`vimeo-progress-${leftHanded ? lesson.video_alter : lesson.video}`, String(currentTime));
+    };
+
+    window.addEventListener('beforeunload', saveProgress);
+
+    return () => {
+      window.removeEventListener('beforeunload', saveProgress);
+      localStorage.setItem(`vimeo-progress-${leftHanded ? lesson.video_alter : lesson.video}`, String(currentTime));
+    };
+  }, [currentTime, leftHanded, lesson.video_alter, lesson.video]);
+
   return (
     <section className={styles['LessonHero']}>
       <div className={styles['grid']}>
@@ -137,6 +162,8 @@ const LessonHero = ({
                 onEnd={() => updateProgress('auto', true)}
                 className={styles['vimeo']}
                 autoplay={autoplay}
+                start={currentTime}
+                onTimeUpdate={handleTimeUpdate}
               />
             ) : (
               <Vimeo
@@ -146,6 +173,8 @@ const LessonHero = ({
                 onEnd={() => updateProgress('auto', true)}
                 className={styles['vimeo']}
                 autoplay={autoplay}
+                start={currentTime}
+                onTimeUpdate={handleTimeUpdate}
               />
             )}
           </div>
@@ -256,7 +285,9 @@ const LessonHero = ({
       </div>
       <div className={styles['columns']}>
         <div className={styles['column']}>
-          <Switch inputProps={{ defaultChecked: autoplay, onChange: () => setIsAutoplay(!autoplay) }}>Autoodtwarzanie</Switch>
+          <Switch inputProps={{ defaultChecked: autoplay, onChange: () => setIsAutoplay(!autoplay) }}>
+            Autoodtwarzanie
+          </Switch>
           <Switch inputProps={{ defaultChecked: leftHanded, onChange: () => setIsLeftHanded(!leftHanded) }}>
             Jestem osobą leworęczną
           </Switch>
