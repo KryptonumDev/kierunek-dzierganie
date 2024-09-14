@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import styles from './LessonHero.module.scss';
 import type { Props } from './LessonHero.types';
 import Link from 'next/link';
@@ -23,11 +23,12 @@ const LessonHero = ({
   auto_play,
   id,
 }: Props) => {
+  lesson.video = 'https://vimeo.com/904308264';
+  lesson.video_alter = 'https://vimeo.com/904308264';
   const router = useRouter();
   const supabase = createClient();
   const [leftHanded, setLeftHanded] = useState(left_handed);
   const [autoplay, setAutoplay] = useState(auto_play);
-  const [currentTime, setCurrentTime] = useState(0);
   const [isCompleted, setIsCompleted] = useState(
     () => progress.progress[currentChapter._id]![lesson._id]?.ended ?? false
   );
@@ -118,29 +119,9 @@ const LessonHero = ({
     return leftHanded ? lesson.files_alter : lesson.files;
   }, [leftHanded, lesson.files, lesson.files_alter]);
 
-  useEffect(() => {
-    const savedTime = localStorage.getItem(`vimeo-progress-${leftHanded ? lesson.video_alter : lesson.video}`);
-    if (savedTime) {
-      setCurrentTime(parseFloat(savedTime));
-    }
-  }, [leftHanded, lesson.video_alter, lesson.video]);
-
   const handleTimeUpdate = ({ seconds }: { seconds: number }) => {
-    setCurrentTime(seconds);
+    localStorage.setItem(`vimeo-progress-${leftHanded ? lesson.video_alter : lesson.video}`, String(seconds));
   };
-
-  useEffect(() => {
-    const saveProgress = () => {
-      localStorage.setItem(`vimeo-progress-${leftHanded ? lesson.video_alter : lesson.video}`, String(currentTime));
-    };
-
-    window.addEventListener('beforeunload', saveProgress);
-
-    return () => {
-      window.removeEventListener('beforeunload', saveProgress);
-      localStorage.setItem(`vimeo-progress-${leftHanded ? lesson.video_alter : lesson.video}`, String(currentTime));
-    };
-  }, [currentTime, leftHanded, lesson.video_alter, lesson.video]);
 
   return (
     <section className={styles['LessonHero']}>
@@ -162,7 +143,7 @@ const LessonHero = ({
                 onEnd={() => updateProgress('auto', true)}
                 className={styles['vimeo']}
                 autoplay={autoplay}
-                start={currentTime}
+                start={Number(localStorage.getItem(`vimeo-progress-${lesson.video_alter}`))}
                 onTimeUpdate={handleTimeUpdate}
               />
             ) : (
@@ -173,7 +154,7 @@ const LessonHero = ({
                 onEnd={() => updateProgress('auto', true)}
                 className={styles['vimeo']}
                 autoplay={autoplay}
-                start={currentTime}
+                start={Number(localStorage.getItem(`vimeo-progress-${lesson.video}`))}
                 onTimeUpdate={handleTimeUpdate}
               />
             )}

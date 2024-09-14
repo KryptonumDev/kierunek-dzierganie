@@ -50,6 +50,10 @@ const LessonHero = ({ lesson, course, alreadySubscribed }: Props) => {
     }
   };
 
+  const handleTimeUpdate = ({ seconds }: { seconds: number }) => {
+    localStorage.setItem(`vimeo-progress-${lesson.video}`, String(seconds));
+  };
+
   return (
     <section className={styles['LessonHero']}>
       <div className={styles['grid']}>
@@ -131,6 +135,8 @@ const LessonHero = ({ lesson, course, alreadySubscribed }: Props) => {
               video={lesson.video}
               loop={false}
               className={styles['vimeo']}
+              start={Number(localStorage.getItem(`vimeo-progress-${lesson.video}`))}
+              onTimeUpdate={handleTimeUpdate}
             />
           </div>
         </div>
