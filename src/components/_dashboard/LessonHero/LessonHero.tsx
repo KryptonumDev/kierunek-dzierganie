@@ -141,7 +141,7 @@ const LessonHero = ({
                 onEnd={() => updateProgress('auto', true)}
                 className={styles['vimeo']}
                 autoplay={autoplay}
-                start={Number(localStorage.getItem(`vimeo-progress-${lesson.video_alter}`))}
+                start={Number(localStorage?.getItem(`vimeo-progress-${lesson.video_alter}`) ?? 0)}
                 onTimeUpdate={handleTimeUpdate}
               />
             ) : (
@@ -152,7 +152,7 @@ const LessonHero = ({
                 onEnd={() => updateProgress('auto', true)}
                 className={styles['vimeo']}
                 autoplay={autoplay}
-                start={Number(localStorage.getItem(`vimeo-progress-${lesson.video}`))}
+                start={Number(localStorage?.getItem(`vimeo-progress-${lesson.video}`) ?? 0)}
                 onTimeUpdate={handleTimeUpdate}
               />
             )}

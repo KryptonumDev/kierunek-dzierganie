@@ -135,7 +135,7 @@ const LessonHero = ({ lesson, course, alreadySubscribed }: Props) => {
               video={lesson.video}
               loop={false}
               className={styles['vimeo']}
-              start={Number(localStorage.getItem(`vimeo-progress-${lesson.video}`))}
+              start={Number(localStorage?.getItem(`vimeo-progress-${lesson.video}`) ?? 0)}
               onTimeUpdate={handleTimeUpdate}
             />
           </div>
