@@ -201,7 +201,7 @@ const query = async (slug: string): Promise<CoursePageQuery> => {
     },
     tags: ['course', 'bundle', 'productReviewCollection'],
   });
-  !data && notFound();
+  !data?.product && notFound();
   return { data: data, user: res.data?.firstName as string, courses_progress: res.data?.courses_progress };
 };
 
