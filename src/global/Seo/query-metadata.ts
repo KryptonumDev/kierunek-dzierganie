@@ -7,6 +7,7 @@ type QueryType = {
   title: string;
   description: string;
   img?: string;
+  visible: boolean | null;
 };
 
 /**
@@ -25,13 +26,14 @@ export const QueryMetadata = async (name: string | string[], path: string, dynam
 
   const customQuery = dynamicSlug ? `*[(${stringQuery}) && slug.current == $slug][0]` : `*[(${stringQuery})][0]`;
 
-  const { title, description, img } = await query(customQuery, name, dynamicSlug);
+  const { title, description, img, visible } = await query(customQuery, name, dynamicSlug);
 
   return Seo({
     title,
     description,
     path: path,
     img,
+    visible: visible === false ? false : true,
   });
 };
 
@@ -39,6 +41,7 @@ const query = async (customQuery: string, tag: string[], dynamicSlug?: string): 
   const seo = await sanityFetch<QueryType>({
     query: /* groq */ `
       ${customQuery} {
+        visible,
         "title": seo.title,
         "description": seo.description,
         "img": seo.img.asset -> url + "?w=1200"
@@ -47,7 +50,7 @@ const query = async (customQuery: string, tag: string[], dynamicSlug?: string): 
     tags: tag,
     ...(dynamicSlug && { params: { slug: dynamicSlug } }),
   });
-
+  console.log(seo);
   !seo && notFound();
   return { ...seo };
 };

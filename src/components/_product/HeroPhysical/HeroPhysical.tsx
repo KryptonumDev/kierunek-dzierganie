@@ -161,7 +161,7 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
                   ))}
                 </div>
               ) : (
-                <p key={i}>
+                <div key={i}>
                   <span>Wybierz {el.name}</span>
                   <Select
                     className='select'
@@ -170,7 +170,7 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
                     onChange={(e) => selectVariant(e, el.name)}
                     options={(() => [...el.value.map((v) => ({ value: v, label: v }))])()}
                   />
-                </p>
+                </div>
               )}
             </>
           ))}

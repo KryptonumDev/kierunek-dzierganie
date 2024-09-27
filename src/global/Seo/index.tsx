@@ -3,7 +3,7 @@ import { DEFAULT_TITLE, DOMAIN, LOCALE } from '@/global/constants';
 import type { Metadata } from 'next';
 import type { GlobalQueryTypes, SeoTypes } from './Seo.types';
 
-const Seo = async ({ title, description, path, img, ...props }: SeoTypes): Promise<Metadata> => {
+const Seo = async ({ title, description, path, img, visible, ...props }: SeoTypes): Promise<Metadata> => {
   const { og_Img } = await query();
 
   const url = `${DOMAIN}${path}`;
@@ -21,6 +21,7 @@ const Seo = async ({ title, description, path, img, ...props }: SeoTypes): Promi
     metadataBase: new URL(DOMAIN),
     title: seo.title,
     description: seo.description,
+    robots: visible ? 'index, follow' : 'noindex, nofollow',
     alternates: {
       canonical: seo.url,
     },

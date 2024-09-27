@@ -99,16 +99,16 @@ const query = async (): Promise<FetchTypes> => {
         'CustomerCaseStudy_Collection': *[_type == 'CustomerCaseStudy_Collection'] {
           'slug': slug.current
         },
-        'CrochetingCourses_Collection': *[(_type == 'course' || _type == 'bundle') && basis =='crocheting'][] {
+        'CrochetingCourses_Collection': *[(_type == 'course' || _type == 'bundle') && basis =='crocheting' && visible == true][] {
           'slug': slug.current
         },
-        'KnittingCourses_Collection': *[(_type == 'course' || _type == 'bundle') && basis =='knitting'][] {
+        'KnittingCourses_Collection': *[(_type == 'course' || _type == 'bundle') && basis =='knitting' && visible == true][] {
           'slug': slug.current
         },
-        'CrochetingProducts_Collection': *[_type=='product' && basis =='crocheting'][] {
+        'CrochetingProducts_Collection': *[(_type=='product'|| _type=='voucher') && basis =='crocheting' && visible == true][] {
           'slug': slug.current
         },
-        'KnittingProducts_Collection': *[_type=='product' && basis =='knitting'][] {
+        'KnittingProducts_Collection': *[(_type=='product'|| _type=='voucher') && basis =='knitting' && visible == true][] {
           'slug': slug.current
         },
         'PartnersPage': *[_id=="Partners_Page"][] {
