@@ -7,7 +7,7 @@ type QueryType = {
   title: string;
   description: string;
   img?: string;
-  visible: boolean | null;
+  visible?: boolean | null;
 };
 
 /**
@@ -33,7 +33,7 @@ export const QueryMetadata = async (name: string | string[], path: string, dynam
     description,
     path: path,
     img,
-    visible: visible === false ? false : true,
+    visible: !visible,
   });
 };
 
