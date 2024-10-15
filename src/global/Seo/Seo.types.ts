@@ -5,7 +5,7 @@ export type SeoTypes = {
   description?: string;
   path: string;
   img?: string;
-  visible: boolean;
+  visible?: boolean;
 } & Metadata;
 
 export type GlobalQueryTypes = {

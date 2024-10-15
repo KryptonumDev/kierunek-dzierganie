@@ -1,13 +1,13 @@
-import { notFound } from 'next/navigation';
-import sanityFetch from '@/utils/sanity.fetch';
 import Seo from '@/global/Seo';
+import sanityFetch from '@/utils/sanity.fetch';
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
 type QueryType = {
   title: string;
   description: string;
   img?: string;
-  visible: boolean | null;
+  visible?: boolean | null;
 };
 
 /**
