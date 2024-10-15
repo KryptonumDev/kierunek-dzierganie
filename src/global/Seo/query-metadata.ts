@@ -33,7 +33,7 @@ export const QueryMetadata = async (name: string | string[], path: string, dynam
     description,
     path: path,
     img,
-    visible: !visible,
+    visible: visible === false ? false : true,
   });
 };
 
