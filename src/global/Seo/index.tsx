@@ -1,5 +1,5 @@
-import sanityFetch from '@/utils/sanity.fetch';
 import { DEFAULT_TITLE, DOMAIN, LOCALE } from '@/global/constants';
+import sanityFetch from '@/utils/sanity.fetch';
 import type { Metadata } from 'next';
 import type { GlobalQueryTypes, SeoTypes } from './Seo.types';
 
@@ -21,7 +21,12 @@ const Seo = async ({ title, description, path, img, visible, ...props }: SeoType
     metadataBase: new URL(DOMAIN),
     title: seo.title,
     description: seo.description,
-    robots: visible ? 'index, follow' : 'noindex, nofollow',
+    robots: visible
+      ? 'index, follow'
+      : {
+          index: false,
+          follow: false,
+        },
     alternates: {
       canonical: seo.url,
     },

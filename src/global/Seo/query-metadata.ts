@@ -1,7 +1,7 @@
-import { notFound } from 'next/navigation';
-import sanityFetch from '@/utils/sanity.fetch';
 import Seo from '@/global/Seo';
+import sanityFetch from '@/utils/sanity.fetch';
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
 type QueryType = {
   title: string;
@@ -33,7 +33,7 @@ export const QueryMetadata = async (name: string | string[], path: string, dynam
     description,
     path: path,
     img,
-    visible: visible === false ? false : true,
+    visible: !visible,
   });
 };
 
