@@ -1,4 +1,5 @@
 import type { Billing, Discount, ImgType, ProductCard, Shipping } from '@/global/types';
+import { ReactNode } from 'react';
 import type { Item } from 'react-use-cart';
 
 export type useCartItems = {
@@ -24,12 +25,18 @@ export type QueryProps = {
         href: string;
       }[];
     }[];
+    nav_courses: NavCourses;
+    nav_products: NavProducts;
   };
   cart: {
     highlighted: Array<ProductCard>;
   };
+  counts: Counts;
   ChevronDownIcon: React.ReactNode;
   ChevronBackIcon: React.ReactNode;
+  ShoppingBagIcon: React.ReactNode;
+  ChatIcon: React.ReactNode;
+  UserIcon: React.ReactNode;
   SearchIcon: React.ReactNode;
   CloseIcon: React.ReactNode;
   Logo: React.ReactNode[];
@@ -109,6 +116,9 @@ export type _NavProps = {
   ChevronBackIcon: React.ReactNode;
   SearchIcon: React.ReactNode;
   CloseIcon: React.ReactNode;
+  courses: NavCourses;
+  counts: Counts;
+  products: NavProducts;
   showMenu: boolean;
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -141,4 +151,83 @@ export type SearchResultType = {
     };
     slug: string;
   }[];
+};
+
+export type NavCourses = {
+  crocheting: {
+    href: string;
+    highlighted_courses: {
+      name: string;
+      slug: { current: string };
+      image: ImgType;
+    }[];
+  };
+  knitting: {
+    href: string;
+    highlighted_courses: {
+      name: string;
+      slug: { current: string };
+      image: ImgType;
+    }[];
+  };
+  additional_links: {
+    href: string;
+    name: string;
+  }[];
+};
+
+export type NavProducts = {
+  crocheting: {
+    href: string;
+    highlighted_products: {
+      name: string;
+      slug: { current: string };
+      image: ImgType;
+    }[];
+  };
+  knitting: {
+    href: string;
+    highlighted_products: {
+      name: string;
+      slug: { current: string };
+      image: ImgType;
+    }[];
+  };
+  additional_links: {
+    href: string;
+    name: string;
+  }[];
+};
+
+export type NavListProps = {
+  columns: {
+    name: string;
+    href: string;
+    showMore: string | null;
+    items: {
+      name: string;
+      slug: { current: string };
+      image: ImgType;
+    }[];
+  }[];
+  additionalLinks: {
+    name: string;
+    href: string;
+  }[];
+  name: string;
+  handleClose: () => void;
+  handleMenu: () => void;
+  ChevronBackIcon: ReactNode;
+  ChevronDownIcon: ReactNode;
+};
+
+type Counts = {
+  courses: {
+    crocheting: number;
+    knitting: number;
+  };
+  products: {
+    crocheting: number;
+    knitting: number;
+  };
 };

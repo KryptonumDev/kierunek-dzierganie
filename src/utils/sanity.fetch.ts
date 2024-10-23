@@ -4,7 +4,7 @@ import { isPreviewDeployment, isProductionDeployment } from './is-preview-deploy
 
 const projectId = process.env.SANITY_PROJECT_ID;
 const token = process.env.SANITY_API_TOKEN;
-const dataset = 'production';
+const dataset = 'development';
 const apiVersion = '2024-04-22';
 
 if (isPreviewDeployment && !token) {
@@ -16,7 +16,7 @@ const client = createClient({
   dataset,
   apiVersion,
   useCdn: false,
-  perspective: isPreviewDeployment ? 'previewDrafts' : 'published',
+  // perspective: isPreviewDeployment ? 'previewDrafts' : 'published',
   token,
 });
 
@@ -39,19 +39,19 @@ export default async function sanityFetch<QueryResponse>({
   return await client.fetch<QueryResponse>(query, params, {
     ...(!isProductionDeployment
       ? {
-        cache: 'reload',
-      }
+          cache: 'reload',
+        }
       : {
-        ...(isPreviewDeployment || !tags
-          ? {
-            cache: 'no-cache',
-          }
-          : {
-            next: {
-              tags,
-            },
-          }),
-      }),
+          ...(isPreviewDeployment || !tags
+            ? {
+                cache: 'no-cache',
+              }
+            : {
+                next: {
+                  tags,
+                },
+              }),
+        }),
   });
 }
 

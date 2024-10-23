@@ -1,21 +1,21 @@
 'use client';
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import type { Discount } from '@/global/types';
 import { useCartItems } from '@/utils/useCartItems';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import styles from './Header.module.scss';
+import type { QueryProps } from './Header.types';
 import Search from './Search/Search';
 import Annotation from './_Annotation';
 import Nav from './_Nav';
-import type { Discount } from '@/global/types';
-import type { QueryProps } from './Header.types';
 
 const Cart = dynamic(() => import('./_Cart'), { ssr: false });
 const Checkout = dynamic(() => import('./Checkout'), { ssr: false });
 
 const Content = ({
   markdownNavAnnotation,
-  global: { image_crochet, image_knitting, nav_Annotation, nav_Links },
+  global: { image_crochet, image_knitting, nav_Annotation, nav_Links, nav_courses, nav_products },
   Logo,
   ChevronDownIcon,
   ChevronBackIcon,
@@ -32,8 +32,12 @@ const Content = ({
   virtualWallet,
   userId,
   ownedCourses,
+  counts,
   deliverySettings,
   freeShipping,
+  ShoppingBagIcon,
+  ChatIcon,
+  UserIcon,
 }: QueryProps) => {
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
@@ -137,6 +141,9 @@ const Content = ({
           </Link>
           <Nav
             links={nav_Links}
+            courses={nav_courses}
+            counts={counts}
+            products={nav_products}
             ChevronDownIcon={ChevronDownIcon}
             ChevronBackIcon={ChevronBackIcon}
             SearchIcon={SearchIcon}
@@ -146,7 +153,16 @@ const Content = ({
           />
           <ul className={styles.quickLinks}>
             <li>
-              <Link href='/moje-konto/kursy'>{userId ? 'Profil' : 'Logowanie'}</Link>
+              <Link href='/kontakt'>
+                {ChatIcon}
+                <span>Kontakt</span>
+              </Link>
+            </li>
+            <li>
+              <Link href='/moje-konto/kursy'>
+                {UserIcon}
+                <span>Moje Konto</span>
+              </Link>
             </li>
             <li>
               <button
@@ -155,8 +171,9 @@ const Content = ({
                   setPopupState(popupState);
                 }}
                 className={styles.basket}
+                aria-label='Otwórz koszyk'
               >
-                Koszyk
+                {ShoppingBagIcon}
                 <span className={`${styles['total-items']} ${totalItemsCount > 0 ? styles['active'] : ''}`}>
                   {totalItemsCount}
                 </span>

@@ -14,7 +14,6 @@ export async function GET(request: NextRequest) {
       type,
       token_hash: token,
     });
-    console.log('res: ', res);
     const { error } = res;
     if (error) {
       return NextResponse.json(error);

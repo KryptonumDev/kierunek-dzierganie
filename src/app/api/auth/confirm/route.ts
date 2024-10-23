@@ -20,7 +20,6 @@ export async function GET(request: NextRequest) {
       type,
       token_hash: token,
     });
-    console.log('res: ', res);
     const { error } = res;
     if (error) {
       redirectTo.searchParams.delete('next');
@@ -29,7 +28,7 @@ export async function GET(request: NextRequest) {
       const message =
         error.message === 'Email+link+is+invalid+or+has+expired'
           ? 'Link jest nieprawidłowy lub wygasł! Proszę spróbować ponownie.'
-          : error.message ?? 'Błąd podczas autoryzacji! Proszę spróbować ponownie.';
+          : (error.message ?? 'Błąd podczas autoryzacji! Proszę spróbować ponownie.');
 
       redirectTo.searchParams.append('error_description', message.replace(/ /g, '+'));
       return NextResponse.redirect(redirectTo);
@@ -45,7 +44,7 @@ export async function GET(request: NextRequest) {
   const message =
     error === 'Email+link+is+invalid+or+has+expired'
       ? 'Link jest nieprawidłowy lub wygasł! Proszę spróbować ponownie.'
-      : error ?? 'Błąd podczas autoryzacji! Proszę spróbować ponownie.';
+      : (error ?? 'Błąd podczas autoryzacji! Proszę spróbować ponownie.');
 
   // return the user to an error page with some instructions
   redirectTo.pathname = '/moje-konto/autoryzacja';

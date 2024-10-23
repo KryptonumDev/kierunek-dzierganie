@@ -32,6 +32,7 @@
         clamp(24px, calc(36vw / 7.68), 36px);
       img {
         max-width: 274px;
+        width: 100%;
         @media (max-width: 499px) {
           margin: 0 auto;
         }

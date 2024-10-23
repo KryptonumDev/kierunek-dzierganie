@@ -1,14 +1,14 @@
-import sanityFetch from '@/utils/sanity.fetch';
-import Content from './_Content';
-import Markdown from '@/components/ui/markdown';
 import { Img_Query } from '@/components/ui/image';
+import Markdown from '@/components/ui/markdown';
 import { PRODUCT_CARD_QUERY } from '@/global/constants';
-import { createClient } from '@/utils/supabase-server';
+import sanityFetch from '@/utils/sanity.fetch';
 import { createClient as createAdminClient } from '@/utils/supabase-admin';
+import { createClient } from '@/utils/supabase-server';
+import Content from './_Content';
 import type { QueryProps } from './Header.types';
 
 const Header = async () => {
-  const { global, cart } = await query();
+  const { global, cart, counts } = await query();
   const nav_annotation = <Markdown>{global.nav_Annotation ?? ''}</Markdown>;
 
   const supabase = createClient();
@@ -50,7 +50,7 @@ const Header = async () => {
     .returns<{ deliveryPrice: number; paczkomatPrice: number }[]>()
     .single();
 
-  const {data: freeShipping} = await adminClient
+  const { data: freeShipping } = await adminClient
     .from('settings')
     .select('value->freeDeliveryAmount')
     .eq('name', 'general')
@@ -63,6 +63,9 @@ const Header = async () => {
       Logo={[Logo1, Logo2]}
       SearchIcon={SearchIcon}
       CloseIcon={CloseIcon}
+      ShoppingBagIcon={ShoppingBagIcon}
+      ChatIcon={ChatIcon}
+      UserIcon={UserIcon}
       ChevronDownIcon={ChevronDownIcon}
       ChevronBackIcon={ChevronBackIcon}
       VirtualCoinsCrossIcon={VirtualCoinsCrossIcon}
@@ -70,6 +73,7 @@ const Header = async () => {
       PopupCrossIcon={PopupCrossIcon}
       PromoCodeCrossIcon={PromoCodeCrossIcon}
       cart={cart}
+      counts={counts}
       userEmail={user?.email}
       shipping={data?.shipping_data}
       billing={data?.billing_data}
@@ -78,7 +82,7 @@ const Header = async () => {
       // @ts-expect-error - virtual_wallet is not array, bug in supabase
       virtualWallet={data?.virtual_wallet?.amount}
       ownedCourses={data?.courses_progress?.map((course) => course.course_id as string)}
-      freeShipping={freeShipping?.freeDeliveryAmount as number ?? 0}
+      freeShipping={(freeShipping?.freeDeliveryAmount as number) ?? 0}
     />
   );
 };
@@ -90,12 +94,6 @@ const query = async (): Promise<QueryProps> => {
     query: /* groq */ `
       {
         "global": *[_id == 'global'][0] {
-          image_crochet {
-            ${Img_Query}
-          },
-          image_knitting {
-            ${Img_Query}
-          },
           nav_Annotation,
           nav_Links {
             name,
@@ -108,15 +106,77 @@ const query = async (): Promise<QueryProps> => {
               href,
             }[],
           }[],
+          nav_courses {
+            knitting {
+            href,
+            highlighted_courses[]-> {
+                name,
+                slug,
+                "image": gallery[0]{
+                ${Img_Query}
+              },
+              },
+          },
+          crocheting {
+            href,
+            highlighted_courses[]-> {
+                name,
+                slug,
+                "image": gallery[0]{
+                ${Img_Query}
+              },
+            },
+          },
+          additional_links{
+            name,
+            href,
+          }[],
         },
+        nav_products {
+          knitting {
+            href,
+            highlighted_products[]-> {
+                name,
+                slug,
+                "image": gallery[0]{
+                ${Img_Query}
+              },
+            },
+          },
+          crocheting {
+            href,
+            highlighted_products[]-> {
+                name,
+                slug,
+                "image": gallery[0]{
+                ${Img_Query}
+              },
+            },
+          },
+          additional_links{
+            name,
+            href,
+          }[],
+        },
+  },
         "cart": *[_id == 'Cart'][0]{
           highlighted[]-> {
             ${PRODUCT_CARD_QUERY}
           }
-        }
+        },
+        "counts": {
+          "courses": {
+            "crocheting": count(*[_type == "course" && basis == "crocheting"]),
+            "knitting": count(*[_type == "course" && basis == "knitting"])
+          },
+          "products": {
+            "crocheting": count(*[_type == "product" && basis == "crocheting"]),
+            "knitting": count(*[_type == "product" && basis == "knitting"])
+          }
+        },
       }
     `,
-    tags: ['global', 'Cart'],
+    tags: ['global', 'Cart', 'course', 'product'],
   });
   return data;
 };
@@ -327,6 +387,61 @@ const PromoCodeCrossIcon = (
   >
     <path
       d='M17.25 17.5171L6.75 7.01709M17.25 7.01709L6.75 17.5171'
+      stroke='#9A827A'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    />
+  </svg>
+);
+
+const ChatIcon = (
+  <svg
+    width={25}
+    height={24}
+    fill='none'
+    xmlns='http://www.w3.org/2000/svg'
+  >
+    <path
+      d='M5.328 12a5 5 0 0 1 7 7m-7-7a4.993 4.993 0 0 0-1.999 4 5 5 0 0 0 .224 1.483c.273.88.076 1.86-.099 2.784a.468.468 0 0 0 .592.539c.848-.232 1.692-.43 2.557-.112A4.99 4.99 0 0 0 8.328 21a4.992 4.992 0 0 0 4-2m-7-7c0-4.685 2.875-9 8-9a8 8 0 0 1 7.532 10.7c-.476 1.326.037 3.102.337 4.568a.451.451 0 0 1-.583.526c-1.313-.41-2.853-.986-4.085-.466-1.335.562-2.737.672-4.201.672'
+      stroke='#9A827A'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    />
+  </svg>
+);
+
+const UserIcon = (
+  <svg
+    width={25}
+    height={24}
+    fill='none'
+    xmlns='http://www.w3.org/2000/svg'
+  >
+    <g
+      stroke='#9A827A'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    >
+      <circle
+        cx={12.328}
+        cy={9.1}
+        r={2.5}
+      />
+      <path d='M17.328 19.2c-.317-6.187-9.683-6.187-10 0' />
+      <path d='M10.04 3.64c.582-.495.873-.743 1.177-.888a2.577 2.577 0 0 1 2.223 0c.303.145.594.393 1.175.888.599.51 1.207.768 2.007.831.761.061 1.142.092 1.46.204.734.26 1.312.837 1.571 1.572.113.317.143.698.204 1.46.064.8.32 1.407.83 2.006.496.581.744.872.89 1.176.335.703.335 1.52 0 2.222-.146.304-.394.595-.89 1.176a3.305 3.305 0 0 0-.83 2.007c-.061.761-.091 1.142-.204 1.46a2.577 2.577 0 0 1-1.571 1.571c-.318.112-.699.143-1.46.204-.8.063-1.408.32-2.007.83-.58.496-.872.744-1.175.889a2.577 2.577 0 0 1-2.223 0c-.304-.145-.595-.393-1.176-.888a3.306 3.306 0 0 0-2.007-.831c-.761-.061-1.142-.092-1.46-.204a2.577 2.577 0 0 1-1.571-1.572c-.112-.317-.143-.698-.203-1.46a3.305 3.305 0 0 0-.832-2.006c-.495-.581-.743-.872-.888-1.176a2.577 2.577 0 0 1 0-2.222c.145-.304.393-.595.888-1.176.521-.611.769-1.223.832-2.007.06-.761.09-1.142.203-1.46a2.577 2.577 0 0 1 1.572-1.571c.317-.112.698-.143 1.46-.204a3.305 3.305 0 0 0 2.006-.83Z' />
+    </g>
+  </svg>
+);
+
+const ShoppingBagIcon = (
+  <svg
+    width={25}
+    height={24}
+    fill='none'
+    xmlns='http://www.w3.org/2000/svg'
+  >
+    <path
+      d='M9.263 7H8.101C7.03 7 6.14 7.81 6.063 8.857l-.73 10C5.25 20.016 6.186 21 7.371 21h9.914c1.186 0 2.122-.985 2.038-2.142l-.73-10C18.517 7.81 17.627 7 16.555 7h-1.162m-6.13 0V5c0-1.105.915-2 2.043-2h2.044c1.128 0 2.043.895 2.043 2v2m-6.13 0h6.13'
       stroke='#9A827A'
       strokeLinecap='round'
       strokeLinejoin='round'
