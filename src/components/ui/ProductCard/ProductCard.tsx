@@ -1,16 +1,16 @@
 'use client';
+import { courseComplexityEnum, pageUrls } from '@/global/constants';
+import { ImgType } from '@/global/types';
+import { formatPrice } from '@/utils/price-formatter';
+import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
+import { toast } from 'react-toastify';
+import { useCart } from 'react-use-cart';
+import Button from '../Button';
+import { Hearth } from '../Icons';
+import Img from '../image';
 import styles from './ProductCard.module.scss';
 import type { Props } from './ProductCard.types';
-import { ImgType } from '@/global/types';
-import Img from '../image';
-import { formatPrice } from '@/utils/price-formatter';
-import Button from '../Button';
-import { useCart } from 'react-use-cart';
-import { courseComplexityEnum, pageUrls } from '@/global/constants';
-import Link from 'next/link';
-import { Hearth } from '../Icons';
-import { toast } from 'react-toastify';
 
 const gtag: Gtag.Gtag = function () {
   // eslint-disable-next-line prefer-rest-params
@@ -89,6 +89,7 @@ const ProductCard = ({
         onClick={onClick}
         aria-label={mainVariant.image?.asset.altText ? mainVariant.image.asset.altText : `${mainVariant.name}`}
       />
+
       {mainVariant.image && (
         <div className={styles['image-wrap']}>
           {'complexity' in data && data.complexity && (

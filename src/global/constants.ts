@@ -192,3 +192,42 @@ export const PRODUCT_CARD_QUERY = `
     _id
   },
 `;
+
+export const MATERIAL_PACKAGE_QUERY = `materialsPackage[] {
+          _type,
+          heading,
+          listParagraph,
+          paragraph,
+          imageList[]{
+            ${Img_Query}
+          },
+          salesList,
+          additionalMaterialsList[]->{
+            ${PRODUCT_CARD_QUERY}
+          },
+          materialRef->{
+            _id,
+            "slug": slug.current,
+            basis,
+            rating,
+            reviewsCount,
+            name,
+            price,
+            discount,
+            countInStock,
+            _type,
+           "image": gallery[0] {
+              ${Img_Query}
+            },
+          },
+          materialsGroupsList[] {
+            title,
+            materialsList[] {
+              name,
+              materialRef->{
+                _id,
+                "slug": slug.current
+              }
+            }
+          },
+        },`;

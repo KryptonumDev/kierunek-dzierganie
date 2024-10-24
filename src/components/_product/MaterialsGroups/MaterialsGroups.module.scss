@@ -1,0 +1,68 @@
+.MaterialsGroups {
+  max-width: 637px;
+  .heading {
+    font-size: clamp(calc(24rem / 16), calc(36vw / 7.68), calc(36rem / 16));
+    margin-bottom: 28px;
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+    margin-bottom: 28px;
+    font-weight: 300;
+    line-height: 1.6;
+    list-style: none;
+
+    .group {
+      &_heading {
+        font-size: clamp(calc(16rem / 16), calc(18vw / 7.68), calc(18rem / 16));
+        display: inline-block;
+        margin-bottom: 20px;
+        padding: 4px 16px;
+        border-radius: 4px;
+        background: var(--primary-400, #e5d8d4);
+      }
+
+      &_list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+
+        > span:first-of-type {
+          display: grid;
+          place-items: center;
+          width: 32px;
+          height: 32px;
+          border-radius: 200px;
+          background: var(--primary-300, #efe8e7);
+          font-size: calc(14rem / 16);
+          flex-shrink: 0;
+        }
+
+        > a,
+        > span:last-of-type {
+          font-size: clamp(calc(16rem / 16), calc(18vw / 7.68), calc(18rem / 16));
+        }
+
+        > a {
+          text-decoration: underline;
+
+          &:hover {
+            text-decoration: none;
+          }
+        }
+      }
+    }
+  }
+
+  .paragraph {
+    line-height: 1.4;
+    font-size: clamp(calc(18rem / 16), calc(24vw / 7.68), calc(24rem / 16));
+  }
+}

@@ -1,25 +1,37 @@
-import { notFound } from 'next/navigation';
-import sanityFetch from '@/utils/sanity.fetch';
-import type { CoursePageQuery, CoursePageQueryProps, generateStaticParamsProps } from '@/global/types';
-import Breadcrumbs from '@/components/_global/Breadcrumbs';
-import { QueryMetadata } from '@/global/Seo/query-metadata';
-import Informations from '@/components/_product/Informations';
-import Description, { Description_Query } from '@/components/_product/Description';
-import { PRODUCT_CARD_QUERY } from '@/global/constants';
-import Package, { Package_Query } from '@/components/_product/Package';
-import TableOfContent from '@/components/_product/TableOfContent';
-import Reviews from '@/components/_product/Reviews';
-import HeroVirtual from '@/components/_product/HeroVirtual';
-import { Img_Query } from '@/components/ui/image';
-import RelatedProducts from '@/components/_product/RelatedProducts';
-import { createClient } from '@/utils/supabase-server';
 import PrintedManual from '@/components/_dashboard/PrintedManual';
+import Breadcrumbs from '@/components/_global/Breadcrumbs';
+import Description, { Description_Query } from '@/components/_product/Description';
+import HeroVirtual from '@/components/_product/HeroVirtual';
+import Informations from '@/components/_product/Informations';
+import Package, { Package_Query } from '@/components/_product/Package';
+import RelatedProducts from '@/components/_product/RelatedProducts';
+import RequiredMaterials from '@/components/_product/RequiredMaterials';
+import Reviews from '@/components/_product/Reviews';
+import TableOfContent from '@/components/_product/TableOfContent';
+import { Img_Query } from '@/components/ui/image';
+import { MATERIAL_PACKAGE_QUERY, PRODUCT_CARD_QUERY } from '@/global/constants';
 import ProductSchema from '@/global/Schema/ProductSchema';
+import { QueryMetadata } from '@/global/Seo/query-metadata';
+import type { CoursePageQuery, CoursePageQueryProps, generateStaticParamsProps } from '@/global/types';
+import sanityFetch from '@/utils/sanity.fetch';
+import { createClient } from '@/utils/supabase-server';
+import { notFound } from 'next/navigation';
 
 const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
   const {
     data: {
-      product: { _id, _type, printed_manual, relatedBundle, name, description, chapters, reviews, courses },
+      product: {
+        _id,
+        _type,
+        printed_manual,
+        relatedBundle,
+        name,
+        description,
+        chapters,
+        reviews,
+        courses,
+        materialsPackage,
+      },
       product,
       card,
       relatedCourses,
@@ -27,6 +39,8 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
     user,
     courses_progress,
   } = await query(slug);
+
+  console.log(materialsPackage);
 
   return (
     <>
@@ -73,7 +87,7 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
           courses={courses}
         />
       )}
-      <Informations tabs={['Opis', 'Spis treści', 'Opinie']}>
+      <Informations tabs={['Opis', 'Spis treści', 'Opinie', 'Potrzebne materiały']}>
         {description?.length > 0 && <Description data={description} />}
         {chapters && <TableOfContent chapters={chapters} />}
         <Reviews
@@ -86,6 +100,7 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
             type: _type,
           }}
         />
+        {materialsPackage && <RequiredMaterials materialsPackage={materialsPackage} />}
       </Informations>
       {printed_manual && <PrintedManual data={printed_manual} />}
       <RelatedProducts
@@ -163,6 +178,7 @@ const query = async (slug: string): Promise<CoursePageQuery> => {
         printed_manual->{
           ${PRODUCT_CARD_QUERY}
         },
+        ${MATERIAL_PACKAGE_QUERY}
         "reviews": *[_type == 'productReviewCollection' && visible == true && references(^._id)][0...10]{
           rating,
           review,

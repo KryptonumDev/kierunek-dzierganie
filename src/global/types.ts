@@ -1,6 +1,10 @@
 import type { ComponentProps } from '@/components/Components';
 import type { HeroSimpleTypes } from '@/components/_global/HeroSimple';
+import { AdditionalMaterialsTypes } from '@/components/_product/AdditionalMaterials';
 import type { DescriptionTypes } from '@/components/_product/Description/Description';
+import { MaterialsGroupsTypes } from '@/components/_product/MaterialsGroups';
+import { PartnerSalesTypes } from '@/components/_product/PartnerSales';
+import { RelatedMaterialsTypes } from '@/components/_product/RelatedMaterials';
 import type { ReviewsTypes } from '@/components/_product/Reviews';
 import type { TableOfContentTypes } from '@/components/_product/TableOfContent/TableOfContent.types';
 
@@ -298,6 +302,7 @@ export type CoursePageQueryProps = {
     previewLessons?: {
       slug: string;
     };
+    materialsPackage: MaterialsPackage;
     previewGroupMailerLite?: string;
     author: {
       name: string;
@@ -307,15 +312,28 @@ export type CoursePageQueryProps = {
       countOfCourse: number;
     };
     relatedBundle:
-    | null
-    | ({
-      courses: ProductCard[];
-    } & ProductCard);
+      | null
+      | ({
+          courses: ProductCard[];
+        } & ProductCard);
   } & TableOfContentTypes &
-  ReviewsTypes;
+    ReviewsTypes;
   card: ProductCard;
   relatedCourses: ProductCard[];
 };
+
+export type ProductReference = {
+  _id: string;
+  slug: string;
+  basis: 'knitting' | 'crocheting';
+};
+
+export type MaterialsPackage = (
+  | MaterialsGroupsTypes
+  | RelatedMaterialsTypes
+  | PartnerSalesTypes
+  | AdditionalMaterialsTypes
+)[];
 
 export type CoursePageQuery = {
   data: CoursePageQueryProps;
@@ -442,14 +460,14 @@ export type Order = {
   orders_statuses: {
     id: string;
     status_name:
-    | 'AWAITING PAYMENT'
-    | 'PENDING'
-    | 'COMPLETED'
-    | 'REFUNDED'
-    | 'CANCELLED'
-    | 'AWAITING SEND'
-    | 'PARCEL GENERATED'
-    | 'SENDED';
+      | 'AWAITING PAYMENT'
+      | 'PENDING'
+      | 'COMPLETED'
+      | 'REFUNDED'
+      | 'CANCELLED'
+      | 'AWAITING SEND'
+      | 'PARCEL GENERATED'
+      | 'SENDED';
     complete_percent: number;
   };
 };
