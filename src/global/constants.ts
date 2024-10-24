@@ -189,6 +189,7 @@ export const PRODUCT_CARD_QUERY = `
     }
   },
   courses[]->{
-    _id
+    _id,
+    automatizationId,
   },
 `;
