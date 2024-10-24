@@ -18,6 +18,18 @@ export async function updateItemsQuantity(data: any) {
       if (product.courses) {
         console.log('Produkt z kursem:', product);
         const newCourses = product.courses.map(async (el) => {
+          const { data: existingProgress } = await supabase
+            .from('courses_progress')
+            .select()
+            .eq('owner_id', data.user_id)
+            .eq('course_id', el._id)
+            .single();
+
+          if (existingProgress) {
+            console.log(`Progress already exists for user ${data.user_id} and course ${el._id}`);
+            return null;
+          }
+
           if (el.automatizationId) {
             try {
               const addToGroupData = {
@@ -40,8 +52,9 @@ export async function updateItemsQuantity(data: any) {
           };
         });
         const promiseContent = await Promise.all(newCourses);
-        console.log('Promises', promiseContent);
-        const res = await supabase.from('courses_progress').insert(promiseContent);
+        const filteredPromiseContent = promiseContent.filter((course) => course !== null);
+        console.log('Promises', filteredPromiseContent);
+        const res = await supabase.from('courses_progress').insert(filteredPromiseContent);
         console.log('Add progress', res);
       }
 
