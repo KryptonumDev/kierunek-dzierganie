@@ -1,9 +1,8 @@
-import sanityFetch from '@/utils/sanity.fetch';
-import type { PageQueryProps } from '@/global/types';
 import Components, { Components_Query } from '@/components/Components';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
-import { notFound } from 'next/navigation';
+import type { PageQueryProps } from '@/global/types';
+import sanityFetch from '@/utils/sanity.fetch';
 
 const page = { name: 'Partnerzy', path: '/partnerzy' };
 
@@ -34,9 +33,9 @@ const query = async (): Promise<PageQueryProps> => {
     tags: ['Partners_Page'],
   });
 
-  if (!data.displayPage) {
-    notFound();
-  }
+  // if (!data.displayPage) {
+  //   notFound();
+  // }
 
   return data as PageQueryProps;
 };

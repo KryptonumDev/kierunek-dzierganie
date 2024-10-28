@@ -34,4 +34,93 @@
   .cta {
     margin: clamp(28px, calc(36vw / 7.68), 64px) auto 0;
   }
+
+  &[data-image='true'] {
+    display: flex;
+    flex-direction: column;
+    .cta {
+      order: 1;
+      margin-top: clamp(12px, calc(32vw / 7.68), 32px);
+    }
+    header {
+      order: 0;
+      margin-bottom: 0;
+    }
+    .list {
+      order: 2;
+
+      li {
+        position: absolute;
+        max-width: clamp(292px, calc(292vw / 7.68), 481px);
+        width: 100%;
+        font-size: clamp(calc(14rem / 16), calc(14vw / 7.68), calc(18rem / 16));
+        line-height: 1.5;
+
+        &:first-child {
+          bottom: clamp(428px, calc(428vw / 7.68), 561px);
+          left: clamp(237px, calc(237vw / 7.68), 345px);
+        }
+
+        &:nth-child(2) {
+          right: clamp(182px, calc(182vw / 7.68), 415px);
+          top: clamp(47px, calc(47vw / 7.68), 76px);
+        }
+        &:nth-child(3) {
+          top: clamp(204px, calc(204vw / 7.68), 231px);
+          left: clamp(182px, calc(182vw / 7.68), 412px);
+        }
+        &:nth-child(4) {
+          top: clamp(294px, calc(294vw / 7.68), 334px);
+          right: 237px;
+        }
+        &:nth-child(5) {
+          top: clamp(339px, calc(339vw / 7.68), 489px);
+          left: clamp(237px, calc(237vw / 7.68), 380px);
+        }
+        &:nth-child(6) {
+          top: clamp(431px, calc(431vw / 7.68), 541px);
+          right: clamp(237px, calc(237vw / 7.68), 309px);
+        }
+      }
+    }
+
+    .container {
+      position: relative;
+      margin: clamp(28px, calc(70vw / 7.68), 74px) auto 0;
+      order: 3;
+    }
+    img {
+      width: clamp(450px, calc(450vw / 7.68), 587px);
+      aspect-ratio: 1/1;
+      object-fit: cover;
+    }
+    @media (max-width: 639px) {
+      .list {
+        grid-template-columns: 1fr;
+        width: 100%;
+
+        li {
+          position: static;
+          max-width: none;
+
+          > :first-child {
+            transform: none;
+          }
+
+          > :nth-child(6) {
+            transform: translateY(0);
+          }
+        }
+      }
+
+      .container {
+        margin-top: 32px;
+      }
+
+      img {
+        width: 100%;
+        margin-top: 28px;
+      }
+    }
+  }
 }

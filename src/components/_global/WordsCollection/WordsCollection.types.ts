@@ -1,7 +1,8 @@
-import { CtaType } from '@/global/types';
+import { CtaType, ImgType } from '@/global/types';
 import type { MotionValue } from 'framer-motion';
 
 export type Props = {
+  image?: ImgType;
   heading: string;
   list: string[];
   cta?: CtaType;

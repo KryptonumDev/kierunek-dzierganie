@@ -1,5 +1,5 @@
-import Markdown from '@/components/ui/markdown';
 import Img from '@/components/ui/image';
+import Markdown from '@/components/ui/markdown';
 import styles from './TilesIcon.module.scss';
 import type { Props } from './TilesIcon.types';
 
@@ -14,10 +14,11 @@ const TilesIcon = ({ heading, paragraph, list, index }: Props) => {
         <Markdown className={styles.paragraph}>{paragraph}</Markdown>
       </header>
       <div className={styles.list}>
-        {list.map(({ icon, title, description }, i) => (
+        {list.map(({ icon, title, description, image }, i) => (
           <div
             key={i}
             className={styles.item}
+            data-image={!!image}
           >
             <div className={styles.icon}>
               <Img
@@ -28,7 +29,13 @@ const TilesIcon = ({ heading, paragraph, list, index }: Props) => {
               />
             </div>
             <TitleComponent>{title}</TitleComponent>
-            <Markdown>{description}</Markdown>
+            <Markdown className={styles.content}>{description}</Markdown>
+            {image && (
+              <Img
+                data={image}
+                sizes=''
+              />
+            )}
           </div>
         ))}
       </div>
