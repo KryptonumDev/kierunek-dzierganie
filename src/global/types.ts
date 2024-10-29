@@ -390,6 +390,8 @@ export type Course = {
   slug: string;
   generateCertificate: boolean;
   type: 'course' | 'program';
+  files?: File[];
+  files_alter?: File[];
   chapters: {
     _id: string;
     chapterDescription: string;

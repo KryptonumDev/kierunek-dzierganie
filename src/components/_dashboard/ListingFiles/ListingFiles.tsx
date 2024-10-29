@@ -1,10 +1,9 @@
+import FileItem from '@/components/ui/FileItem';
+import type { File } from '@/global/types';
+import Link from 'next/link';
 import { useMemo } from 'react';
 import styles from './ListingFiles.module.scss';
 import type { ListingFilesTypes } from './ListingFiles.types';
-import type { File } from '@/global/types';
-import { formatBytes } from '@/utils/format-bytes';
-import Link from 'next/link';
-import parseFileName from '@/utils/parse-file-name';
 
 const ListingFiles = ({ courses, left_handed, progress }: ListingFilesTypes) => {
   const transformFiles = useMemo(() => {
@@ -72,15 +71,7 @@ const ListingFiles = ({ courses, left_handed, progress }: ListingFilesTypes) => 
               <ul>
                 {el.filesAlt.map((file) => (
                   <li key={file.asset._id}>
-                    <a
-                      href={file.asset.url}
-                      target='_blank'
-                      rel='noreferrer'
-                      download
-                    >
-                      <Icon />
-                      {parseFileName(file.asset.originalFilename)} <small>({formatBytes(file.asset.size)})</small>
-                    </a>
+                    <FileItem file={file} />
                   </li>
                 ))}
                 {/* TODO: przerobić na wyświetlenie procentów kursu */}
@@ -98,15 +89,7 @@ const ListingFiles = ({ courses, left_handed, progress }: ListingFilesTypes) => 
               <ul>
                 {el.files.map((file) => (
                   <li key={file.asset._id}>
-                    <a
-                      href={file.asset.url}
-                      target='_blank'
-                      rel='noreferrer'
-                      download
-                    >
-                      <Icon />
-                      {parseFileName(file.asset.originalFilename)} <small>({formatBytes(file.asset.size)})</small>
-                    </a>
+                    <FileItem file={file} />
                   </li>
                 ))}
               </ul>

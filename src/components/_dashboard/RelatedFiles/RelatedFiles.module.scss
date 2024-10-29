@@ -1,3 +1,39 @@
 .RelatedFiles {
-  
+  margin-top: clamp(42px, calc(48vw / 7.68), 64px);
+  max-width: 816px;
+  width: 100%;
+
+  h2 {
+    margin-bottom: clamp(28px, calc(32vw / 7.68), 32px);
+    font-size: clamp(calc(24rem / 16), calc(36vw / 7.68), calc(36rem / 16));
+  }
+
+  .container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px 80px;
+
+    h3 {
+      margin-bottom: clamp(12px, calc(20vw / 7.68), 20px);
+      font-size: clamp(calc(18rem / 16), calc(24vw / 7.68), calc(24rem / 16));
+    }
+
+    .list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: clamp(16px, calc(20vw / 7.68), 20px);
+    }
+
+    .empty {
+      grid-column: 1/-1;
+      color: var(--primary-600);
+      font-size: clamp(calc(14rem / 16), calc(16vw / 7.68), calc(16rem / 16));
+      min-height: 86px;
+    }
+
+    @media (max-width: 899px) {
+      max-width: 368px;
+      grid-template-columns: 1fr;
+    }
+  }
 }
