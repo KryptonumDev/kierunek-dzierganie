@@ -1,10 +1,10 @@
 import { courseComplexityEnum } from '@/global/constants';
+import Link from 'next/link';
 import Button from '../Button';
 import Img from '../image';
+import PercentChart from '../PercentChart';
 import styles from './CourseCard.module.scss';
 import type { Props } from './CourseCard.types';
-import PercentChart from '../PercentChart';
-import Link from 'next/link';
 
 const CourseCard = ({ name, slug, image, complexity, progressPercentage }: Props) => {
   return (
@@ -37,7 +37,15 @@ const CourseCard = ({ name, slug, image, complexity, progressPercentage }: Props
         <p>
           Ukończono <PercentChart p={progressPercentage} />
         </p>
-        <Button href={`/moje-konto/kursy/${slug}`}>Oglądaj</Button>
+        <nav>
+          <Link
+            className={styles.relatedFiles}
+            href={`/moje-konto/kursy/${slug}#materialy-do-pobrania`}
+          >
+            Zobacz materiały do pobrania
+          </Link>
+          <Button href={`/moje-konto/kursy/${slug}`}>Oglądaj</Button>
+        </nav>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
 import type { PageQueryProps } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
+import { notFound } from 'next/navigation';
 
 const page = { name: 'Partnerzy', path: '/partnerzy' };
 
@@ -33,9 +34,9 @@ const query = async (): Promise<PageQueryProps> => {
     tags: ['Partners_Page'],
   });
 
-  // if (!data.displayPage) {
-  //   notFound();
-  // }
+  if (!data.displayPage) {
+    notFound();
+  }
 
   return data as PageQueryProps;
 };

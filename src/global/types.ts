@@ -396,6 +396,8 @@ export type Course = {
     chapterName: string;
     chapterImage: ImgType;
     dateOfUnlock?: Date;
+    files?: File[];
+    files_alter?: File[];
     lessons: {
       _id: string;
       name: string;

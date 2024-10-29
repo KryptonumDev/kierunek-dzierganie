@@ -1,7 +1,8 @@
 import CourseChapters from '@/components/_dashboard/CourseChapters';
 import ProgramChapters from '@/components/_dashboard/ProgramChapters';
+import RelatedFiles from '@/components/_dashboard/RelatedFiles';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
-import type { CoursesProgress, Course } from '@/global/types';
+import type { Course, CoursesProgress } from '@/global/types';
 import { checkCourseProgress } from '@/utils/check-course-progress';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createClient } from '@/utils/supabase-server';
@@ -27,6 +28,10 @@ export default async function Course({ params: { courseSlug } }: { params: { cou
           course={course}
         />
       )}
+      <RelatedFiles
+        courses_progress={courses_progress}
+        course={course}
+      />
     </div>
   );
 }
@@ -84,6 +89,22 @@ const query = async (slug: string): Promise<QueryProps> => {
           }, 
           chapterDescription,
           chapterName,
+          files[]{
+            asset->{
+              url,
+              size,
+              originalFilename,
+              _id
+            }
+          },
+          files_alter[]{
+            asset->{
+              url,
+              size,
+              originalFilename,
+              _id
+            }
+          },
           lessons[]->{
             _id,
             name,
