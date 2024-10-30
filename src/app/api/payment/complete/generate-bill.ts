@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase-admin';
-import Hex from 'crypto-js/enc-hex';
 import CryptoJS from 'crypto-js';
+import Hex from 'crypto-js/enc-hex';
 import countryList from 'react-select-country-list';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -154,7 +154,10 @@ const getAccountingMonth = async () => {
       'Content-type': 'application/json; charset=UTF-8',
       Authentication: `IAPIS user=${user}, hmac-sha1=${hash}`,
     },
-  }).then((res) => res.json());
+  }).then((res) => {
+    console.log(`getAccountingMonth response: ${res}`);
+    return res.json();
+  });
 
   return {
     accountingYear: response.RokKsiegowy,
@@ -184,7 +187,10 @@ const changeAccountingMonth = async (direction: 'NAST' | 'POPRZ') => {
     },
     cache: 'no-cache',
     body: JSON.stringify(data),
-  }).then((res) => res.json());
+  }).then((res) => {
+    console.log(`changeAccountingMonth response: ${res}`);
+    return res.json();
+  });
 
   return response;
 };
@@ -228,6 +234,8 @@ const createBill = async (requestContent: never) => {
     },
     body: JSON.stringify(requestContent),
   });
+
+  console.log(`createBill response: ${billRes}`);
 
   return await billRes.json();
 };
