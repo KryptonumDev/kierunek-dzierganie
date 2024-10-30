@@ -1,13 +1,13 @@
 'use server';
 import { NextResponse } from 'next/server';
-import { verifyTransaction } from './verify-transaction';
-import { updateOrder } from './update-order';
 import { checkUsedModifications } from './check-used-modifications';
-import { updateItemsQuantity } from './update-items-quantity';
-import { sendEmails } from './send-emails';
-import { generateBill } from './generate-bill';
 import { GAConversionPurchase } from './GAConversionPurchase';
+import { generateBill } from './generate-bill';
 import { MetaConversionPurchase } from './MetaConversionPurchase';
+import { sendEmails } from './send-emails';
+import { updateItemsQuantity } from './update-items-quantity';
+import { updateOrder } from './update-order';
+import { verifyTransaction } from './verify-transaction';
 
 export async function POST(request: Request) {
   try {
@@ -32,30 +32,58 @@ export async function POST(request: Request) {
     if (error) throw new Error(error.message);
     await checkUsedModifications(data);
     await sendEmails(data);
-    await generateBill(data, id);
     await updateItemsQuantity(data);
+    await generateBill(data, id);
 
     await GAConversionPurchase({
       user_id: data.user_id,
       value: amount / 100,
       transaction_id: orderId,
-      items: data.products.array.map(({ id, name, quantity, discount, price }: { id: string; name: string; quantity: number; discount: number; price: number; }) => ({
-        item_id: id,
-        item_name: name,
-        quantity: quantity,
-        price: discount ? discount / 100 : price / 100
-      })),
+      items: data.products.array.map(
+        ({
+          id,
+          name,
+          quantity,
+          discount,
+          price,
+        }: {
+          id: string;
+          name: string;
+          quantity: number;
+          discount: number;
+          price: number;
+        }) => ({
+          item_id: id,
+          item_name: name,
+          quantity: quantity,
+          price: discount ? discount / 100 : price / 100,
+        })
+      ),
     });
     await MetaConversionPurchase({
       user_id: data.user_id,
       value: amount / 100,
       transaction_id: orderId,
-      items: data.products.array.map(({ id, name, quantity, discount, price }: { id: string; name: string; quantity: number; discount: number; price: number; }) => ({
-        item_id: id,
-        item_name: name,
-        quantity: quantity,
-        price: discount ? discount / 100 : price / 100
-      })),
+      items: data.products.array.map(
+        ({
+          id,
+          name,
+          quantity,
+          discount,
+          price,
+        }: {
+          id: string;
+          name: string;
+          quantity: number;
+          discount: number;
+          price: number;
+        }) => ({
+          item_id: id,
+          item_name: name,
+          quantity: quantity,
+          price: discount ? discount / 100 : price / 100,
+        })
+      ),
       email: data.billing.email,
     });
 
