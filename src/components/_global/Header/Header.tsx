@@ -95,6 +95,12 @@ const query = async (): Promise<QueryProps> => {
       {
         "global": *[_id == 'global'][0] {
           nav_Annotation,
+          image_crochet {
+            ${Img_Query}
+          },
+          image_knitting {
+            ${Img_Query}
+          },
           nav_Links {
             name,
             href,
