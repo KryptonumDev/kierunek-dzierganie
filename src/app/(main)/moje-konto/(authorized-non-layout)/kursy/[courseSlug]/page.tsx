@@ -4,6 +4,7 @@ import RelatedFiles from '@/components/_dashboard/RelatedFiles';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
 import type { Course, CoursesProgress, File } from '@/global/types';
 import { checkCourseProgress } from '@/utils/check-course-progress';
+import type { QueryProps as MapNotesQueryProps } from '@/utils/map-note';
 import mapNotes from '@/utils/map-note';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createClient } from '@/utils/supabase-server';
@@ -148,6 +149,7 @@ const query = async (slug: string): Promise<QueryProps> => {
           lessons[]->{
             _id,
             name,
+            title,
             video,
             lengthInMinutes,
             "slug": slug.current
@@ -178,7 +180,7 @@ const query = async (slug: string): Promise<QueryProps> => {
 
   const course_progress = res.data!.courses_progress.find((el) => el.course_id === data.course._id)!;
 
-  const notes = mapNotes(course_progress, data.course);
+  const notes = mapNotes(course_progress, data.course as unknown as MapNotesQueryProps['course']);
 
   const progress = await checkCourseProgress(
     data.course,

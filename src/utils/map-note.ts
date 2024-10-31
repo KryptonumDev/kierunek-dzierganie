@@ -1,4 +1,4 @@
-import { CoursesProgress, ProductCard } from '@/global/types';
+import { Chapter, CoursesProgress, ProductCard } from '@/global/types';
 
 export interface QueryProps {
   course: {
@@ -9,6 +9,7 @@ export interface QueryProps {
       name: string;
       surname: string;
     };
+    chapters: Chapter[];
   };
   course_progress: CoursesProgress;
   suggestedCourse: ProductCard;
