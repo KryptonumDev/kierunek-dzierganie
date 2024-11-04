@@ -11,35 +11,48 @@ export async function generateBill(data: any, id: string) {
 
   let fixedDiscountAmount = data.used_discount?.amount ?? 0;
 
-  // @ts-expect-error TODO: implement types
-  const productsWithDiscount = data.products.array.map((product) => {
-    let discount = 0;
-    let amount = product.discount ?? product.price;
+  const isDiscountBiggerOrEqual =
+    (data.used_discount?.type === 'FIXED CART' || data.used_discount?.type === 'VOUCHER') &&
+    fixedDiscountAmount >=
+      data.products.array.reduce(
+        (acc: number, product: { price: number; discount: number | null; quantity: number }) =>
+          acc + (product.discount ?? product.price) * product.quantity,
+        0
+      );
+  const productsWithDiscount = isDiscountBiggerOrEqual
+    ? // @ts-expect-error TODO: implement types
+      data.products.array.map((product) => {
+        let discount = 0;
+        let amount = product.discount ?? product.price;
+        let counter = 0;
 
-    if (data.used_discount) {
-      if (data.used_discount.type === 'PERCENTAGE') {
-        discount = data.used_discount.amount;
-      } else if (data.used_discount.type === 'FIXED CART' || data.used_discount.type === 'VOUCHER') {
-        if (amount > fixedDiscountAmount) {
-          amount = amount - fixedDiscountAmount;
-          fixedDiscountAmount = 0;
-        } else {
-          fixedDiscountAmount = fixedDiscountAmount - amount;
-          amount = 0;
+        if (data.used_discount) {
+          if (data.used_discount.type === 'PERCENTAGE') {
+            discount = data.used_discount.amount;
+          } else if (data.used_discount.type === 'FIXED CART' || data.used_discount.type === 'VOUCHER') {
+            if (amount > fixedDiscountAmount) {
+              amount = amount - fixedDiscountAmount;
+              fixedDiscountAmount = 0;
+              amount -= counter;
+            } else {
+              fixedDiscountAmount = fixedDiscountAmount - amount;
+              amount = 0.01;
+              counter += 0.01;
+            }
+          } else if (data.used_discount.type === 'FIXED PRODUCT') {
+            data.used_discount.discounted_product.id === product.id
+              ? (amount = (product.discount ?? product.price) - data.used_discount.amount / product.quantity)
+              : (discount = 0);
+          }
         }
-      } else if (data.used_discount.type === 'FIXED PRODUCT') {
-        data.used_discount.discounted_product.id === product.id
-          ? (amount = (product.discount ?? product.price) - data.used_discount.amount / product.quantity)
-          : (discount = 0);
-      }
-    }
 
-    return {
-      ...product,
-      amount: amount,
-      rabat: discount,
-    };
-  });
+        return {
+          ...product,
+          amount: amount,
+          rabat: discount,
+        };
+      })
+    : data.products.array;
 
   // if (data.used_discount?.type === 'VOUCHER') {
   //   // reset amount to original without voucher discount
