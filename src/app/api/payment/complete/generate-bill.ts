@@ -19,7 +19,7 @@ export async function generateBill(data: any, id: string) {
     if (data.used_discount) {
       if (data.used_discount.type === 'PERCENTAGE') {
         discount = data.used_discount.amount;
-      } else if (data.used_discount.type === 'FIXED CART' || data.used_discount.type === 'FIXED DELIVERY') {
+      } else if (data.used_discount.type === 'FIXED CART' || data.used_discount.type === 'VOUCHER') {
         if (amount > fixedDiscountAmount) {
           amount = amount - fixedDiscountAmount;
           fixedDiscountAmount = 0;
