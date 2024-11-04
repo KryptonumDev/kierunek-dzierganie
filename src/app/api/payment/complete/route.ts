@@ -33,6 +33,8 @@ export async function POST(request: Request) {
     await checkUsedModifications(data);
     await sendEmails(data);
     await updateItemsQuantity(data);
+    console.log('payment/complete:data');
+    console.log(data);
     await generateBill(data, id);
 
     await GAConversionPurchase({

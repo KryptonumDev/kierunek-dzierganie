@@ -1,12 +1,12 @@
-import { P24, Currency, Country, Language, Encoding } from '@ingameltd/node-przelewy24';
-import { NextResponse } from 'next/server';
 import type { InputState } from '@/components/_global/Header/Checkout/Checkout.types';
-import { createClient } from '@/utils/supabase-admin';
-import { updateItemsQuantity } from '../complete/update-items-quantity';
-import { sendEmails } from '../complete/send-emails';
-import { checkUsedModifications } from '../complete/check-used-modifications';
 import { dedicatedVoucher, voucher } from '@/utils/create-voucher';
 import { formatPrice } from '@/utils/price-formatter';
+import { createClient } from '@/utils/supabase-admin';
+import { Country, Currency, Encoding, Language, P24 } from '@ingameltd/node-przelewy24';
+import { NextResponse } from 'next/server';
+import { checkUsedModifications } from '../complete/check-used-modifications';
+import { sendEmails } from '../complete/send-emails';
+import { updateItemsQuantity } from '../complete/update-items-quantity';
 // import { pdf } from '@react-pdf/renderer';
 
 export const dynamic = 'force-dynamic';
@@ -14,6 +14,9 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: Request) {
   const { input, description }: { input: InputState; description: string } = await request.json();
   const supabase = createClient();
+
+  console.log('payment/create:input');
+  console.log(input);
 
   // update user default data for next orders
   await supabase
@@ -110,6 +113,9 @@ export async function POST(request: Request) {
       })
       .select('*')
       .single();
+
+    console.log('payment/create:data');
+    console.log(data);
 
     if (!data || error) {
       throw new Error(error?.message || 'Error while creating order');
