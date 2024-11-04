@@ -33,11 +33,11 @@ export async function generateBill(data: any, id: string) {
             if (amount > fixedDiscountAmount) {
               amount = amount - fixedDiscountAmount;
               fixedDiscountAmount = 0;
-              amount -= counter;
+              amount = amount - counter;
             } else {
               fixedDiscountAmount = fixedDiscountAmount - amount;
-              amount = 0.01;
-              counter += 0.01;
+              amount = 1;
+              counter = counter + 1;
             }
           } else if (data.used_discount.type === 'FIXED PRODUCT') {
             data.used_discount.discounted_product.id === product.id
