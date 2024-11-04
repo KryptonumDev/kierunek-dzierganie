@@ -19,7 +19,7 @@ export async function generateBill(data: any, id: string) {
     if (data.used_discount) {
       if (data.used_discount.type === 'PERCENTAGE') {
         discount = data.used_discount.amount;
-      } else if (data.used_discount.type === 'FIXED CART') {
+      } else if (data.used_discount.type === 'FIXED CART' || data.used_discount.type === 'VOUCHER') {
         if (amount > fixedDiscountAmount) {
           amount = amount - fixedDiscountAmount;
           fixedDiscountAmount = 0;
@@ -41,22 +41,20 @@ export async function generateBill(data: any, id: string) {
     };
   });
 
-  let payedAmount = data.amount;
-
-  if (data.used_discount?.type === 'VOUCHER') {
-    // reset amount to original without voucher discount
-    payedAmount =
-      data.products.array.reduce(
-        (acc: number, product: { price: number; discount: number | null; quantity: number }) =>
-          acc + (product.discount ?? product.price) * product.quantity,
-        0
-      ) +
-      (data.shipping_method?.price ?? 0) -
-      (data.used_virtual_money ?? 0);
-  }
+  // if (data.used_discount?.type === 'VOUCHER') {
+  //   // reset amount to original without voucher discount
+  //   payedAmount =
+  //     data.products.array.reduce(
+  //       (acc: number, product: { price: number; discount: number | null; quantity: number }) =>
+  //         acc + (product.discount ?? product.price) * product.quantity,
+  //       0
+  //     ) +
+  //     (data.shipping_method?.price ?? 0) -
+  //     (data.used_virtual_money ?? 0);
+  // }
 
   const requestContent = {
-    Zaplacono: payedAmount / 100,
+    Zaplacono: data.amount / 100,
     LiczOd: 'BRT',
     DataWystawienia: new Date().toISOString().split('T')[0],
     MiejsceWystawienia: 'Miasto',
