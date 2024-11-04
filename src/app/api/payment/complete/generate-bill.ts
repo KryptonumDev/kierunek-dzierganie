@@ -10,6 +10,7 @@ export async function generateBill(data: any, id: string) {
   const { data: settingsData } = await supabase.from('settings').select('value').eq('name', 'ifirma').single();
 
   let fixedDiscountAmount = data.used_discount?.amount ?? 0;
+  let counter = 0;
 
   const isDiscountBiggerOrEqual =
     (data.used_discount?.type === 'FIXED CART' || data.used_discount?.type === 'VOUCHER') &&
@@ -19,12 +20,12 @@ export async function generateBill(data: any, id: string) {
           acc + (product.discount ?? product.price) * product.quantity,
         0
       );
-  const productsWithDiscount = isDiscountBiggerOrEqual
+
+  const productsWithDiscount = !isDiscountBiggerOrEqual
     ? // @ts-expect-error TODO: implement types
       data.products.array.map((product) => {
         let discount = 0;
         let amount = product.discount ?? product.price;
-        let counter = 0;
 
         if (data.used_discount) {
           if (data.used_discount.type === 'PERCENTAGE') {
