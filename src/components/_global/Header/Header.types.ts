@@ -80,6 +80,12 @@ export type Cart = {
     deliveryPrice: number;
     paczkomatPrice: number;
   } | null;
+  shippingMethods: {
+    name: string;
+    price: number;
+    map: boolean;
+  }[];
+  currentShippingMethod: string;
 } & useCartItems;
 
 export type Grid = {

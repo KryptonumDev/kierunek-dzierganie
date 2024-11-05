@@ -1,6 +1,6 @@
 import type { Billing, Complexity, Discount, ImgType, MapPoint, Shipping } from '@/global/types';
-import type { useCartItems } from '../Header.types';
 import type { Dispatch, SetStateAction } from 'react';
+import type { useCartItems } from '../Header.types';
 
 export type Props = {
   setShowCheckout: () => void;
@@ -21,6 +21,13 @@ export type Props = {
     paczkomatPrice: number;
   } | null;
   freeShipping: number;
+  shippingMethods: {
+    name: string;
+    price: number;
+    map: boolean;
+  }[];
+  currentShippingMethod: string;
+  setCurrentShippingMethod: Dispatch<SetStateAction<string>>;
 };
 
 export type InputState = {
@@ -81,6 +88,13 @@ export type MappingProps = {
     deliveryPrice: number;
     paczkomatPrice: number;
   } | null;
+  shippingMethods: {
+    name: string;
+    price: number;
+    map: boolean;
+  }[];
+  currentShippingMethod: string;
+  setCurrentShippingMethod: Dispatch<SetStateAction<string>>;
 };
 
 export type AsideProps = {
