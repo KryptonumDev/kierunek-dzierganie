@@ -1,14 +1,14 @@
 'use client';
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import type { Discount } from '@/global/types';
 import { useCartItems } from '@/utils/useCartItems';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
 import styles from './Header.module.scss';
+import type { QueryProps } from './Header.types';
 import Search from './Search/Search';
 import Annotation from './_Annotation';
 import Nav from './_Nav';
-import type { Discount } from '@/global/types';
-import type { QueryProps } from './Header.types';
 
 const Cart = dynamic(() => import('./_Cart'), { ssr: false });
 const Checkout = dynamic(() => import('./Checkout'), { ssr: false });
@@ -44,6 +44,23 @@ const Content = ({
   const [totalItemsCount, setTotalItemsCount] = useState<number>(0);
   const { cart, fetchedItems, updateItemQuantity, removeItem, totalUniqueItems } = useCartItems();
 
+  const shippingMethods = useMemo(() => {
+    return [
+      {
+        name: 'Kurier InPost',
+        price: deliverySettings?.deliveryPrice ?? 2000,
+        map: false,
+      },
+      {
+        name: 'Paczkomat Inpost',
+        price: deliverySettings?.paczkomatPrice ?? 2000,
+        map: true,
+      },
+    ];
+  }, [deliverySettings]);
+
+  const [currentShippingMethod, setCurrentShippingMethod] = useState<string>(shippingMethods[0]!.name);
+
   useEffect(() => {
     setTotalItemsCount(totalUniqueItems);
   }, [totalUniqueItems]);
@@ -77,6 +94,9 @@ const Content = ({
         userId={userId}
         deliverySettings={deliverySettings}
         freeShipping={freeShipping}
+        shippingMethods={shippingMethods}
+        currentShippingMethod={currentShippingMethod}
+        setCurrentShippingMethod={setCurrentShippingMethod}
       />
       <Cart
         goToCheckout={() => {
@@ -108,6 +128,8 @@ const Content = ({
         ownedCourses={ownedCourses}
         deliverySettings={deliverySettings}
         freeShipping={freeShipping}
+        shippingMethods={shippingMethods}
+        currentShippingMethod={currentShippingMethod}
       />
       <a
         href='#main'

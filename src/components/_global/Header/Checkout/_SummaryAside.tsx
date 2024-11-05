@@ -1,16 +1,17 @@
-import { formatPrice } from '@/utils/price-formatter';
-import styles from './Checkout.module.scss';
-import type { AsideProps } from './Checkout.types';
-import { useMemo } from 'react';
 import Img from '@/components/ui/image';
 import { courseComplexityEnum } from '@/global/constants';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
+import { formatPrice } from '@/utils/price-formatter';
+import { useMemo } from 'react';
+import styles from './Checkout.module.scss';
+import type { AsideProps } from './Checkout.types';
 
 export default function SummaryAside({ input }: AsideProps) {
   const productCount = useMemo(
     () => input.products?.array?.reduce((acc, curr) => acc + curr.quantity, 0) || 0,
     [input.products?.array]
   );
+
   return (
     <div className={styles['summary-aside']}>
       <h3>Twoje zamówienie</h3>

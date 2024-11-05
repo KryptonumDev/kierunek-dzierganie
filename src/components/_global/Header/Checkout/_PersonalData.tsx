@@ -1,20 +1,20 @@
-import Input from '@/components/ui/Input';
-import { useForm } from 'react-hook-form';
-import styles from './Checkout.module.scss';
-import Checkbox from '@/components/ui/Checkbox';
-import { useEffect, useMemo, useState } from 'react';
 import Button from '@/components/ui/Button';
-import type { FormValues, InputState, MappingProps } from './Checkout.types';
+import Checkbox from '@/components/ui/Checkbox';
+import Input from '@/components/ui/Input';
 import Radio from '@/components/ui/Radio';
-import { useCart } from 'react-use-cart';
-import { toast } from 'react-toastify';
-import { formatPrice } from '@/utils/price-formatter';
-import type { MapPoint } from '@/global/types';
 import Select from '@/components/ui/Select';
-import countryList from 'react-select-country-list';
-import Script from 'next/script';
 import { REGEX } from '@/global/constants';
+import type { MapPoint } from '@/global/types';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
+import { formatPrice } from '@/utils/price-formatter';
+import Script from 'next/script';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import countryList from 'react-select-country-list';
+import { toast } from 'react-toastify';
+import { useCart } from 'react-use-cart';
+import styles from './Checkout.module.scss';
+import type { FormValues, InputState, MappingProps } from './Checkout.types';
 
 const gtag: Gtag.Gtag = function () {
   // eslint-disable-next-line prefer-rest-params
@@ -40,10 +40,10 @@ const generateNewInput = (
       input.amount +
       (input.discount
         ? calculateDiscountAmount(
-          input.amount,
-          input.discount,
-          shippingMethods.find((method) => method.name === data.shippingMethod)?.price
-        )
+            input.amount,
+            input.discount,
+            shippingMethods.find((method) => method.name === data.shippingMethod)?.price
+          )
         : 0) -
       (input.virtualMoney ? input.virtualMoney * 100 : 0) +
       (input.needDelivery && !input.freeDelivery ? Number(input.delivery) : 0),
@@ -102,21 +102,13 @@ const generateDefaults = (input: InputState, shippingMethods: { name: string }[]
   };
 };
 
-export default function PersonalData({ goToCart, setInput, input, deliverySettings }: MappingProps) {
-  const shippingMethods = useMemo(() => {
-    return [
-      {
-        name: 'Kurier InPost',
-        price: deliverySettings?.deliveryPrice ?? 2000,
-        map: false,
-      },
-      {
-        name: 'Paczkomat Inpost',
-        price: deliverySettings?.paczkomatPrice ?? 2000,
-        map: true,
-      },
-    ];
-  }, [deliverySettings]);
+export default function PersonalData({
+  goToCart,
+  setInput,
+  input,
+  shippingMethods,
+  setCurrentShippingMethod,
+}: MappingProps) {
   const [selectedMapPoint, setSelectedMapPoint] = useState<MapPoint | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [apaczka, setApaczka] = useState(null);
@@ -148,8 +140,6 @@ export default function PersonalData({ goToCart, setInput, input, deliverySettin
     setValue('shippingCountry', watch('country'));
   }, [shippingSameAsBilling, setValue, watch]);
 
-  const invoiceType = watch('invoiceType');
-
   const initApaczka = () => {
     /* key:  */
     const apaczkaMap = new window.ApaczkaMap({
@@ -159,8 +149,17 @@ export default function PersonalData({ goToCart, setInput, input, deliverySettin
       },
     });
     apaczkaMap.setFilterSupplierAllowed(['INPOST']);
+
     setApaczka(apaczkaMap);
   };
+
+  const invoiceType = watch('invoiceType');
+
+  const shippingMethodd = watch('shippingMethod');
+
+  useEffect(() => {
+    if (shippingMethodd) setCurrentShippingMethod(shippingMethodd);
+  }, [shippingMethodd, setCurrentShippingMethod]);
 
   const openApaczka = () => {
     // @ts-expect-error - don't have types for apaczka instance
@@ -170,6 +169,7 @@ export default function PersonalData({ goToCart, setInput, input, deliverySettin
   const onSubmit = handleSubmit(async (data) => {
     setSubmitting(true);
     const newInput = generateNewInput(data, input, selectedMapPoint, shippingMethods);
+
     setInput(newInput as InputState);
     await fetch('/api/payment/create', {
       method: 'POST',

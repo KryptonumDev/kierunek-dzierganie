@@ -1,10 +1,10 @@
-import type { InputState, Props, MappingProps } from './Checkout.types';
-import styles from './Checkout.module.scss';
-import SummaryAside from './_SummaryAside';
-import PersonalData from './_PersonalData';
-import { useEffect, useState } from 'react';
-import Authorization from './_Authorization';
 import type { Billing, Shipping } from '@/global/types';
+import { useEffect, useState } from 'react';
+import styles from './Checkout.module.scss';
+import type { InputState, MappingProps, Props } from './Checkout.types';
+import Authorization from './_Authorization';
+import PersonalData from './_PersonalData';
+import SummaryAside from './_SummaryAside';
 
 const createInputState = (billing?: Billing, shipping?: Shipping, userEmail?: string) => ({
   firmOrder: false,
@@ -39,7 +39,7 @@ const createInputState = (billing?: Billing, shipping?: Shipping, userEmail?: st
 
 const stepContent = (props: MappingProps) => ({
   1: <Authorization {...props} />,
-  2: <PersonalData {...props} />,
+  2: <PersonalData {...props} />, //
 });
 
 export default function Checkout({
@@ -57,6 +57,9 @@ export default function Checkout({
   setUsedDiscount,
   deliverySettings,
   freeShipping,
+  shippingMethods,
+  currentShippingMethod,
+  setCurrentShippingMethod,
   // virtualWallet,
 }: Props) {
   const [step, setStep] = useState(1);
@@ -83,7 +86,9 @@ export default function Checkout({
       ...prev,
       amount: fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0),
       needDelivery: fetchedItems.some((item) => item.needDelivery),
-      delivery: fetchedItems.some((item) => item.needDelivery) ? Number(deliverySettings?.deliveryPrice) : 0,
+      delivery: fetchedItems.some((item) => item.needDelivery)
+        ? Number(shippingMethods.find((method) => method.name === currentShippingMethod)?.price)
+        : 0,
       freeDelivery:
         freeShipping > 0 &&
         fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0) >= freeShipping,
@@ -113,7 +118,7 @@ export default function Checkout({
             courses:
               item._type === 'course'
                 ? [{ _id: item._id, automatizationId: item.automatizationId }]
-                : item.courses ?? null,
+                : (item.courses ?? null),
             variantId: item.variant?._id,
             type: item._type,
             voucherData: item.voucherData,
@@ -145,7 +150,18 @@ export default function Checkout({
           {NavigationCrossIcon}
         </button>
         <div className={styles['content']}>
-          {stepContent({ goToCart, setStep, input, setInput, deliverySettings })[step as keyof typeof stepContent]}
+          {
+            stepContent({
+              goToCart,
+              setStep,
+              input,
+              setInput,
+              deliverySettings,
+              shippingMethods,
+              currentShippingMethod,
+              setCurrentShippingMethod,
+            })[step as keyof typeof stepContent]
+          }
           <SummaryAside input={input} />
         </div>
       </div>

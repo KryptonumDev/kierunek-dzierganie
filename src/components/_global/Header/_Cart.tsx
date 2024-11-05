@@ -1,20 +1,20 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
-import styles from './Header.module.scss';
-import { useForm } from 'react-hook-form';
-import Img from '@/components/ui/image';
 import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
-import ProductCard from '@/components/ui/ProductCard';
 import Checkbox from '@/components/ui/Checkbox';
-import { formatPrice } from '@/utils/price-formatter';
-import { formatToOnlyDigits } from '@/utils/format-to-only-digits';
-import type { EmptyCart, Grid, Cart, CartForm } from './Header.types';
-import PickQuantity from '@/components/ui/PickQuantity';
-import { toast } from 'react-toastify';
-import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
-import Link from 'next/link';
 import { CrochetingLogo, KnittingLogo } from '@/components/ui/Icons';
+import Img from '@/components/ui/image';
+import Input from '@/components/ui/Input';
+import PickQuantity from '@/components/ui/PickQuantity';
+import ProductCard from '@/components/ui/ProductCard';
+import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
+import { formatToOnlyDigits } from '@/utils/format-to-only-digits';
+import { formatPrice } from '@/utils/price-formatter';
+import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
+import styles from './Header.module.scss';
+import type { Cart, CartForm, EmptyCart, Grid } from './Header.types';
 import Popup from './Popup/Popup';
 
 const gtag: Gtag.Gtag = function () {
@@ -48,6 +48,8 @@ export default function Cart({
   ownedCourses,
   freeShipping,
   deliverySettings,
+  shippingMethods,
+  currentShippingMethod,
 }: Cart) {
   const {
     register,
@@ -61,8 +63,11 @@ export default function Cart({
   const [isPromoCode, setIsPromoCode] = useState(false);
   const [couponVerifying, setCouponVerifying] = useState(false);
   const delivery = useMemo<number | null>(
-    () => (fetchedItems?.some((item) => item.needDelivery) ? Number(deliverySettings?.deliveryPrice) : null),
-    [fetchedItems, deliverySettings]
+    () =>
+      fetchedItems?.some((item) => item.needDelivery)
+        ? Number(shippingMethods.find((method) => method.name === currentShippingMethod)?.price)
+        : null,
+    [fetchedItems, deliverySettings, currentShippingMethod, shippingMethods]
   );
   const totalItemsCount = useMemo(() => {
     return cart?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
