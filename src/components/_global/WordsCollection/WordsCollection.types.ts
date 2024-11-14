@@ -4,7 +4,7 @@ import type { MotionValue } from 'framer-motion';
 export type Props = {
   image?: ImgType;
   heading: string;
-  list: string[];
+  list: { name: string; href?: string }[];
   cta?: CtaType;
   index?: number;
 };

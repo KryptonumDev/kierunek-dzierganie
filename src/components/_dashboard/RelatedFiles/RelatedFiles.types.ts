@@ -1,8 +1,7 @@
-import { Course, CoursesProgress } from '@/global/types';
+import { Course } from '@/global/types';
 
 export type RelatedFilesTypes = {
   course: Course;
-  courses_progress: CoursesProgress;
   left_handed: boolean;
   notes: {
     chapterName: string;
@@ -11,6 +10,4 @@ export type RelatedFilesTypes = {
       notes: string;
     }[];
   }[];
-  full_name: string;
-  authorName: string;
 };

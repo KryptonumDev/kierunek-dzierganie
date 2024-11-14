@@ -1,6 +1,7 @@
 import Button from '@/components/ui/Button';
 import Img from '@/components/ui/image';
 import Markdown from '@/components/ui/markdown';
+import Link from 'next/link';
 import styles from './WordsCollection.module.scss';
 import type { Props } from './WordsCollection.types';
 
@@ -24,7 +25,7 @@ const WordsCollection = ({ heading, list, cta, index, image }: Props) => {
               key={i}
               className={styles.item}
             >
-              {item}
+              {item.href ? <Link href={item.href}>{item.name}</Link> : <span>{item.name}</span>}
             </li>
           ))}
         </ul>{' '}

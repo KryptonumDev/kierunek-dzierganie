@@ -36,12 +36,10 @@ interface QueryProps {
       notes: string;
     }[];
   }[];
-  full_name: string;
-  authorName: string;
 }
 
 export default async function Course({ params: { courseSlug } }: { params: { courseSlug: string } }) {
-  const { course, courses_progress, left_handed, notes, full_name, authorName }: QueryProps = await query(courseSlug);
+  const { course, courses_progress, left_handed, notes }: QueryProps = await query(courseSlug);
 
   console.log(course.files);
 
@@ -59,12 +57,9 @@ export default async function Course({ params: { courseSlug } }: { params: { cou
         />
       )}
       <RelatedFiles
-        courses_progress={courses_progress}
         course={course}
         left_handed={left_handed}
         notes={notes}
-        full_name={full_name}
-        authorName={authorName}
       />
     </div>
   );
@@ -191,8 +186,6 @@ const query = async (slug: string): Promise<QueryProps> => {
     course: data.course,
     left_handed: res.data!.left_handed,
     courses_progress: progress,
-    full_name: res.data!.firstName,
     notes,
-    authorName: `${data.course.author.name || ''} ${data.course.author.surname || ''}`,
   };
 };

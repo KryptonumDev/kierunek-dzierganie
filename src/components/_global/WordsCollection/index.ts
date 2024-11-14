@@ -9,7 +9,10 @@ export const WordsCollection_Query = `
       ${Img_Query}
     },
     heading,
-    list[],
+    list[]{
+      name,
+      href,
+    },
     cta {
       text,
       href
