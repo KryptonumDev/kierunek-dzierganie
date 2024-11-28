@@ -1,9 +1,9 @@
-import PartnerSales from './MaterialsHeading';
-export default PartnerSales;
-export type { PartnerSalesTypes } from './MaterialsHeading.types';
+import MaterialsHeading from './MaterialsHeading';
+export default MaterialsHeading;
+export type { MaterialsHeadingTypes } from './MaterialsHeading.types';
 
-export const PartnerSales_Query = `
-  _type == "PartnerSales" => {
+export const MaterialsHeading_Query = `
+  _type == "MaterialsHeading" => {
 
   },
 `;
