@@ -1077,9 +1077,15 @@
   border-top: none;
   > div:first-of-type {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 24px;
+
+    .emptyText {
+      font-size: calc(16rem / 16);
+      font-weight: 300;
+      color: var(--primary-500, #766965);
+    }
 
     > div {
       display: flex;

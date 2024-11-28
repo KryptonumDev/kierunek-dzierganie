@@ -2,6 +2,8 @@ import Button from '@/components/ui/Button';
 import Img from '@/components/ui/image';
 import Markdown from '@/components/ui/markdown';
 import Link from 'next/link';
+import { Arrow1 } from '../TilesIndicated/_Arrow1';
+import { Arrow2 } from '../TilesIndicated/_Arrow2';
 import styles from './WordsCollection.module.scss';
 import type { Props } from './WordsCollection.types';
 
@@ -17,6 +19,12 @@ const WordsCollection = ({ heading, list, cta, index, image }: Props) => {
     >
       <header>
         <Heading>{heading}</Heading>
+        {!!image && (
+          <div className={styles.arrows}>
+            <Arrow1 className={styles.arrow1} />
+            <Arrow2 className={styles.arrow2} />
+          </div>
+        )}
       </header>
       <div className={styles.container}>
         <ul className={styles.list}>

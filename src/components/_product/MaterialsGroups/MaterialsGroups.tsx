@@ -8,31 +8,36 @@ const MaterialsGroups = ({ listParagraph, heading, materialsGroupsList }: Materi
     <div className={styles['MaterialsGroups']}>
       <Markdown.h2 className={styles.heading}>{heading}</Markdown.h2>
       <ul className={styles.list}>
-        {materialsGroupsList.map(({ title, materialsList }, index) => (
+        {materialsGroupsList.map(({ title, materialsList, additionalInfo }, index) => (
           <li
             className={styles.group}
             key={index}
           >
-            <p className={styles.group_heading}>{title}</p>
+            <strong className={styles.group_heading}>{title}</strong>
             <ul className={styles.group_list}>
-              {materialsList.map(({ name, materialRef }, i) => (
+              {materialsList.map(({ name, materialRef, additionalInfo }, i) => (
                 <li
                   className={styles.item}
+                  data-additional-info={!!additionalInfo}
                   key={i}
                 >
                   <span>{i + 1}</span>
-                  {materialRef ? (
-                    <Link
-                      href={`/produkty-do-${materialRef.basis === 'knitting' ? 'dziergania' : 'szydelkowania'}/${materialRef.slug}`}
-                    >
-                      {name}
-                    </Link>
-                  ) : (
-                    <span>{name}</span>
-                  )}
+                  <div>
+                    {materialRef ? (
+                      <Link
+                        href={`/produkty-do-${materialRef.basis === 'knitting' ? 'dziergania' : 'szydelkowania'}/${materialRef.slug}`}
+                      >
+                        {name}
+                      </Link>
+                    ) : (
+                      <span>{name}</span>
+                    )}
+                    {additionalInfo && <Markdown className={styles.info}>{additionalInfo}</Markdown>}
+                  </div>
                 </li>
               ))}
             </ul>
+            {additionalInfo && <Markdown className={styles.group_additionalInfo}>{additionalInfo}</Markdown>}
           </li>
         ))}
       </ul>

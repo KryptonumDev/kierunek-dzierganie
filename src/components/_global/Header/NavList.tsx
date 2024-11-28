@@ -25,11 +25,11 @@ export default function NavList({
     <div className={styles.open}>
       <div className='max-width'>
         <div>
-          {columns.map(({ name, href, items, showMore }, i) => {
-            return !items?.length ? null : (
-              <nav key={i}>
-                <Link href={href}>{name}</Link>
-                {items.map(({ name, slug, image }, i) => (
+          {columns.map(({ name, href, items, showMore }, i) => (
+            <nav key={i}>
+              <Link href={href}>{name}</Link>
+              {items?.length ? (
+                items?.map(({ name, slug, image }, i) => (
                   <Link
                     className={styles.open_item}
                     key={i}
@@ -41,18 +41,20 @@ export default function NavList({
                     />
                     <span>{name}</span>
                   </Link>
-                ))}
-                {!!showMore && (
-                  <Link
-                    className={styles.showMore}
-                    href={href}
-                  >
-                    {showMore}
-                  </Link>
-                )}
-              </nav>
-            );
-          })}
+                ))
+              ) : (
+                <span className={styles.emptyText}>Oferta pusta</span>
+              )}
+              {!!showMore && (
+                <Link
+                  className={styles.showMore}
+                  href={href}
+                >
+                  {showMore}
+                </Link>
+              )}
+            </nav>
+          ))}
         </div>
         <nav>
           {additionalLinks.map(({ name, href }, i) => (

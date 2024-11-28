@@ -220,10 +220,17 @@ export const MATERIAL_PACKAGE_QUERY = `materialsPackage[] {
               ${Img_Query}
             },
           },
+          materialsHeading->{
+            _type,
+            heading,
+            paragraph
+          },
           materialsGroupsList[] {
             title,
+            additionalInfo,
             materialsList[] {
               name,
+              additionalInfo,
               materialRef->{
                 _id,
                 "slug": slug.current

@@ -1,0 +1,14 @@
+.MaterialsHeading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  .heading {
+    font-size: clamp(calc(24rem / 16), calc(36vw / 7.68), calc(36rem / 16));
+    margin-bottom: 18px;
+  }
+
+  .paragraph {
+  }
+}

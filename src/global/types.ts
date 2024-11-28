@@ -3,6 +3,7 @@ import type { HeroSimpleTypes } from '@/components/_global/HeroSimple';
 import { AdditionalMaterialsTypes } from '@/components/_product/AdditionalMaterials';
 import type { DescriptionTypes } from '@/components/_product/Description/Description';
 import { MaterialsGroupsTypes } from '@/components/_product/MaterialsGroups';
+import { MaterialsHeadingTypes } from '@/components/_product/MaterialsHeading/MaterialsHeading.types';
 import { PartnerSalesTypes } from '@/components/_product/PartnerSales';
 import { RelatedMaterialsTypes } from '@/components/_product/RelatedMaterials';
 import type { ReviewsTypes } from '@/components/_product/Reviews';
@@ -333,6 +334,7 @@ export type MaterialsPackage = (
   | RelatedMaterialsTypes
   | PartnerSalesTypes
   | AdditionalMaterialsTypes
+  | MaterialsHeadingTypes
 )[];
 
 export type CoursePageQuery = {
