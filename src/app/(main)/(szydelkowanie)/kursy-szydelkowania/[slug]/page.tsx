@@ -69,6 +69,21 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
         course={product}
         previewLessons={previewLessons}
       />
+      <Informations tabs={['Opis', 'Potrzebne materiały', 'Spis treści', 'Opinie']}>
+        {description?.length > 0 && <Description data={description} />}
+        {materialsPackage && <RequiredMaterials materialsPackage={materialsPackage} />}
+        {chapters && <TableOfContent chapters={chapters} />}
+        <Reviews
+          user={user}
+          alreadyBought={!!courses_progress?.find((course) => course.course_id === product._id)}
+          reviews={reviews}
+          course={true}
+          product={{
+            id: _id,
+            type: _type,
+          }}
+        />
+      </Informations>
       {relatedBundle && (
         <Package
           product={relatedBundle}
@@ -89,21 +104,7 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
           courses={courses}
         />
       )}
-      <Informations tabs={['Opis', 'Spis treści', 'Opinie', 'Potrzebne materiały']}>
-        {description?.length > 0 && <Description data={description} />}
-        {chapters && <TableOfContent chapters={chapters} />}
-        <Reviews
-          user={user}
-          alreadyBought={!!courses_progress?.find((course) => course.course_id === product._id)}
-          reviews={reviews}
-          course={true}
-          product={{
-            id: _id,
-            type: _type,
-          }}
-        />
-        {materialsPackage && <RequiredMaterials materialsPackage={materialsPackage} />}
-      </Informations>
+
       {printed_manual && alreadyBought && <PrintedManual data={printed_manual} />}
       <RelatedProducts
         relatedCourses={relatedCourses}
