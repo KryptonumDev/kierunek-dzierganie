@@ -16,6 +16,9 @@ const OrderData = ({ order }: OrderDataTypes) => {
   const router = useRouter();
   const [addReview, setAddReview] = useState<string | null>(null);
 
+  console.log(order.billing);
+  console.log(order.bill);
+
   const totalItemsCount = useMemo(
     () => order.products.array?.reduce((acc, item) => acc + item.quantity!, 0) ?? 0,
     [order.products.array]
@@ -303,7 +306,9 @@ const OrderData = ({ order }: OrderDataTypes) => {
         {order.discount && (
           <p>
             <span>Kupon: {order.discount.code}</span>
-            <span>{formatPrice(calculateDiscountAmount(totalItemsPrice, order.discount, order.shippingMethod?.price))}</span>
+            <span>
+              {formatPrice(calculateDiscountAmount(totalItemsPrice, order.discount, order.shippingMethod?.price))}
+            </span>
           </p>
         )}
         {order.shippingMethod && (
@@ -323,7 +328,9 @@ const OrderData = ({ order }: OrderDataTypes) => {
           <span>
             {formatPrice(
               totalItemsPrice +
-                (order.discount ? calculateDiscountAmount(totalItemsPrice, order.discount, order.shippingMethod?.price) : 0) -
+                (order.discount
+                  ? calculateDiscountAmount(totalItemsPrice, order.discount, order.shippingMethod?.price)
+                  : 0) -
                 (order.virtualMoney ? order.virtualMoney * 100 : 0) +
                 (order.shippingMethod ? order.shippingMethod.price : 0),
               0

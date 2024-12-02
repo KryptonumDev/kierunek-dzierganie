@@ -1,16 +1,16 @@
 'use client';
-import { useMemo, useState } from 'react';
-import styles from './LessonHero.module.scss';
-import type { Props } from './LessonHero.types';
-import Link from 'next/link';
-import { updateElement } from '@/utils/update-progress';
-import Vimeo from '@u-wave/react-vimeo';
 import PercentChart from '@/components/ui/PercentChart';
-import { formatBytes } from '@/utils/format-bytes';
 import Switch from '@/components/ui/Switch';
-import { useRouter } from 'next/navigation';
+import { formatBytes } from '@/utils/format-bytes';
 import parseFileName from '@/utils/parse-file-name';
 import { createClient } from '@/utils/supabase-client';
+import { updateElement } from '@/utils/update-progress';
+import Vimeo from '@u-wave/react-vimeo';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import styles from './LessonHero.module.scss';
+import type { Props } from './LessonHero.types';
 
 const LessonHero = ({
   progress,
@@ -83,10 +83,11 @@ const LessonHero = ({
           return;
         }
 
-        if (currentChapter.lessons.length > currentLessonIndex + 1)
+        if (currentChapter.lessons.length > currentLessonIndex + 1) {
           router.push(`/moje-konto/kursy/${course.slug}/${currentChapter.lessons[currentLessonIndex + 1]!.slug}`);
-        else
+        } else {
           router.push(`/moje-konto/kursy/${course.slug}/${course.chapters[currentChapterIndex + 1]!.lessons[0]!.slug}`);
+        }
       })
       .catch(() => {});
   };
@@ -120,6 +121,27 @@ const LessonHero = ({
   const handleTimeUpdate = ({ seconds }: { seconds: number }) => {
     localStorage.setItem(`vimeo-progress-${leftHanded ? lesson.video_alter : lesson.video}`, String(seconds));
   };
+
+  const lessonsWrapperRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to current lesson on mount
+  useEffect(() => {
+    const lessonsDiv = lessonsWrapperRef.current?.querySelector(`.${styles.lessons}`);
+    const currentLessonElement = lessonsDiv?.querySelector('[data-current="true"]');
+
+    if (currentLessonElement && lessonsDiv) {
+      const lessonTop = (currentLessonElement as HTMLElement).offsetTop;
+      const lessonHeight = currentLessonElement.clientHeight;
+      const wrapperHeight = lessonsDiv.clientHeight;
+
+      const scrollPosition = lessonTop - wrapperHeight / 2 + lessonHeight / 2;
+      lessonsDiv.scrollTop = Math.max(0, scrollPosition);
+    }
+  }, []);
+
+  const nextChapterDate = course.chapters[currentChapterIndex + 1]?.dateOfUnlock;
+  const isNextChapterSoon = nextChapterDate && new Date().getTime() < new Date(nextChapterDate).getTime();
+  const isLastChapter = currentChapterIndex === course.chapters.length - 1;
 
   return (
     <section className={styles['LessonHero']}>
@@ -203,7 +225,8 @@ const LessonHero = ({
               </span>
               {isCompleted ? 'Oznacz jako nieukończoną' : 'Oznacz jako ukończoną'}
             </button>
-            {currentChapter.lessons.length > currentLessonIndex + 1 ? (
+            {currentChapter.lessons.length > currentLessonIndex &&
+            currentChapter.lessons.length > currentLessonIndex + 1 ? (
               <Link
                 className={`${styles['next']}`}
                 href={`/moje-konto/kursy/${course.slug}/${currentChapter.lessons[currentLessonIndex + 1]!.slug}`}
@@ -225,15 +248,23 @@ const LessonHero = ({
                       <ChevronLeft />
                     </Link>
                   )}
-                {currentChapterIndex != course.chapters.length - 1 && (
-                  <Link
-                    className={`${styles['next']}`}
-                    href={`/moje-konto/kursy/${course.slug}/${course.chapters[currentChapterIndex + 1]!.lessons[0]!.slug}`}
-                  >
-                    Następny moduł
-                    <ChevronLeft />
-                  </Link>
-                )}
+                {currentChapterIndex !== course.chapters.length - 1 &&
+                  (isNextChapterSoon ? (
+                    <span
+                      style={{ textAlign: 'end' }}
+                      className={`${styles['next']}`}
+                    >
+                      Następny moduł wkrótce
+                    </span>
+                  ) : !isLastChapter ? (
+                    <Link
+                      className={`${styles['next']}`}
+                      href={`/moje-konto/kursy/${course.slug}/${course.chapters[currentChapterIndex + 1]!.lessons[0]!.slug}`}
+                    >
+                      Następny moduł
+                      <ChevronLeft />
+                    </Link>
+                  ) : null)}
               </>
             )}
           </nav>
@@ -248,24 +279,26 @@ const LessonHero = ({
           <p className={styles['chapter']}>
             <span>Moduł {currentChapterIndex + 1}:</span> {currentChapter.chapterName}
           </p>
-          <div className={styles.lessonsWrapper}>
+          <div
+            className={styles.lessonsWrapper}
+            ref={lessonsWrapperRef}
+          >
             <div className={styles.lessons}>
-              {currentChapter.lessons.map((el, i) => {
-                return (
-                  <Link
-                    href={`/moje-konto/kursy/${course.slug}/${el.slug}`}
-                    key={i}
-                    data-current={el.slug === lesson.slug}
-                    data-checked={progress.progress[currentChapter._id]![el._id]?.ended}
-                  >
-                    <p>
-                      {progress.progress[currentChapter._id]![el._id]?.ended && <CheckIcon />}
-                      <small>Lekcja {i + 1}</small>
-                    </p>{' '}
-                    {el.title}
-                  </Link>
-                );
-              })}
+              {currentChapter.lessons.map((el, i) => (
+                <Link
+                  href={`/moje-konto/kursy/${course.slug}/${el.slug}`}
+                  key={i}
+                  data-current={el.slug === lesson.slug}
+                  data-checked={progress.progress[currentChapter._id]![el._id]?.ended}
+                  scroll={false}
+                >
+                  <p>
+                    {progress.progress[currentChapter._id]![el._id]?.ended && <CheckIcon />}
+                    <small>Lekcja {i + 1}</small>
+                  </p>{' '}
+                  {el.title}
+                </Link>
+              ))}
             </div>
           </div>
         </div>

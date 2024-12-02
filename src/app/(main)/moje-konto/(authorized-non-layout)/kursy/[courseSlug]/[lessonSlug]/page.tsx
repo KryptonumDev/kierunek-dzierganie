@@ -234,6 +234,7 @@ const query = async (courseSlug: string, lessonSlug: string) => {
       generateCertificate,
       chapters {
         "_id": _key,
+        dateOfUnlock,
         chapterImage {
           asset -> {
             url,
