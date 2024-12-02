@@ -55,18 +55,6 @@ export async function generateBill(data: any, id: string) {
       })
     : data.products.array;
 
-  // if (data.used_discount?.type === 'VOUCHER') {
-  //   // reset amount to original without voucher discount
-  //   payedAmount =
-  //     data.products.array.reduce(
-  //       (acc: number, product: { price: number; discount: number | null; quantity: number }) =>
-  //         acc + (product.discount ?? product.price) * product.quantity,
-  //       0
-  //     ) +
-  //     (data.shipping_method?.price ?? 0) -
-  //     (data.used_virtual_money ?? 0);
-  // }
-
   const requestContent = {
     Zaplacono: data.amount / 100,
     LiczOd: 'BRT',
