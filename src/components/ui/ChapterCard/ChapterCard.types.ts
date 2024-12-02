@@ -6,6 +6,7 @@ export type Props = {
   description: string;
   courseSlug: string;
   number: number;
+  dateOfUnlock?: string;
   lessons: {
     _id: string;
     name: string;

@@ -1,14 +1,15 @@
 'use client';
+import { formatDateToPolishLocale } from '@/utils/formatDateToPolishLocale';
+import { prettifyDuration } from '@/utils/prettify-duration';
+import Link from 'next/link';
 import { useMemo } from 'react';
 import Button from '../Button';
 import Img from '../image';
+import PercentChart from '../PercentChart';
 import styles from './ChapterCard.module.scss';
 import type { Props } from './ChapterCard.types';
-import PercentChart from '../PercentChart';
-import Link from 'next/link';
-import { prettifyDuration } from '@/utils/prettify-duration';
 
-const ChapterCard = ({ name, image, description, lessons, courseSlug, number, progress }: Props) => {
+const ChapterCard = ({ name, image, description, lessons, courseSlug, number, progress, dateOfUnlock }: Props) => {
   const completionPercentage = useMemo(() => {
     let totalLessons = 0;
     let completedLessons = 0;
@@ -31,13 +32,20 @@ const ChapterCard = ({ name, image, description, lessons, courseSlug, number, pr
 
   const firstUnendedLesson = lessons.find((lesson) => !progress[lesson._id]?.ended) || lessons[0]!;
 
+  const isSoon = !!dateOfUnlock && new Date().getTime() < new Date(dateOfUnlock).getTime();
+
   return (
-    <div className={styles['chapterCard']}>
-      <Link
-        href={`/moje-konto/kursy/${courseSlug}/${firstUnendedLesson.slug}`}
-        tabIndex={-1}
-        aria-label={`lekcja: Moduł ${number}: ${name}`}
-      />
+    <div
+      className={styles['chapterCard']}
+      data-soon={isSoon}
+    >
+      {!isSoon && (
+        <Link
+          href={`/moje-konto/kursy/${courseSlug}/${firstUnendedLesson.slug}`}
+          tabIndex={-1}
+          aria-label={`lekcja: Moduł ${number}: ${name}`}
+        />
+      )}
       <div>
         <div className={styles['image-wrap']}>
           <Img
@@ -54,10 +62,16 @@ const ChapterCard = ({ name, image, description, lessons, courseSlug, number, pr
         <p>{description}</p>
       </div>
       <div className={styles['flex']}>
-        <span>
-          Ukończono <PercentChart p={completionPercentage} />
-        </span>
-        <Button href={`/moje-konto/kursy/${courseSlug}/${firstUnendedLesson.slug}`}>Oglądaj</Button>
+        {!isSoon ? (
+          <>
+            <span>
+              Ukończono <PercentChart p={completionPercentage} />
+            </span>{' '}
+            <Button href={`/moje-konto/kursy/${courseSlug}/${firstUnendedLesson.slug}`}>Oglądaj</Button>
+          </>
+        ) : (
+          <span className={styles['soon']}>Dostępny od {formatDateToPolishLocale(dateOfUnlock!)}</span>
+        )}
       </div>
     </div>
   );

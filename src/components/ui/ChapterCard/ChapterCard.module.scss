@@ -5,20 +5,24 @@
   gap: 36px;
   justify-content: flex-start;
   position: relative;
+  opacity: 0.5;
 
-  a{
+  a {
     z-index: 3;
   }
 
-  >a{
+  > a {
     position: absolute;
     inset: 0;
     display: block;
     z-index: 2;
   }
 
-  &:hover img {
-    transform: scale(1.05);
+  &[data-soon='false'] {
+    opacity: 1;
+    &:hover img {
+      transform: scale(1.05);
+    }
   }
 
   .image-wrap {
@@ -35,7 +39,7 @@
       background: var(--primary-300, #efe8e7);
 
       color: var(--primary-800, #53423c);
-      font-size: clamp(calc(14rem/16), calc(14vw/7.68), calc(18rem/16));
+      font-size: clamp(calc(14rem / 16), calc(14vw / 7.68), calc(18rem / 16));
       font-weight: 300;
       line-height: 150%;
     }
@@ -61,7 +65,7 @@
 
     span {
       color: var(--primary-700, #766965);
-      font-size: clamp(calc(16rem/16), calc(18vw/7.68), calc(18rem/16));
+      font-size: clamp(calc(16rem / 16), calc(18vw / 7.68), calc(18rem / 16));
       font-weight: 300;
       line-height: 150%;
     }
@@ -69,7 +73,7 @@
 
   p {
     color: var(--primary-800, #53423c);
-    font-size: calc(14rem/16);
+    font-size: calc(14rem / 16);
     font-weight: 300;
     line-height: 150%;
     display: -webkit-box;

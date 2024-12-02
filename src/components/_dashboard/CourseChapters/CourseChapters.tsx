@@ -50,6 +50,7 @@ function CourseChapters({ courses_progress, course }: Props) {
             key={index}
             name={chapter.chapterName}
             image={chapter.chapterImage}
+            dateOfUnlock={chapter.dateOfUnlock?.toString()}
             description={chapter.chapterDescription}
             lessons={chapter.lessons}
             courseSlug={course.slug}
