@@ -67,11 +67,11 @@ export async function checkUsedModifications(data: any) {
       // check if error occurred during select of code owner
       if (prevValueResult.error) break error;
 
-      // add 25zł to affiliation discount code owner
+      // add 50zł to affiliation discount code owner
       await supabase
         .from('virtual_wallet')
         .update({
-          amount: prevValueResult.data!.amount + 25,
+          amount: prevValueResult.data!.amount + 50,
         })
         .eq('owner', couponData.data.affiliation_of);
     }

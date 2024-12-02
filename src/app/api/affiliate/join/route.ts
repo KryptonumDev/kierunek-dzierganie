@@ -21,7 +21,7 @@ export async function POST(request: Request) {
       per_user_limit: 1,
       affiliation_of: userId,
       state: 2,
-      amount: 2500,
+      amount: 5000,
     });
 
     const { error: error2 } = await supabase.from('virtual_wallet').insert({
