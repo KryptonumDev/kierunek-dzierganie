@@ -52,7 +52,8 @@ const query = async (id: string): Promise<Order & { refundAmount?: number; state
         shippingMethod:shipping_method, 
         virtualMoney:used_virtual_money, 
         orders_statuses( * ),
-        profiles( billing_data->firstName )
+        profiles( billing_data->firstName ),
+        bill
       `
     )
     .eq('id', id)

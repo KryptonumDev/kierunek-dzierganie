@@ -16,9 +16,6 @@ const OrderData = ({ order }: OrderDataTypes) => {
   const router = useRouter();
   const [addReview, setAddReview] = useState<string | null>(null);
 
-  console.log(order.billing);
-  console.log(order.bill);
-
   const totalItemsCount = useMemo(
     () => order.products.array?.reduce((acc, item) => acc + item.quantity!, 0) ?? 0,
     [order.products.array]
