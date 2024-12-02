@@ -32,10 +32,13 @@ export default function mapNotes(course_progress: CoursesProgress, course: Query
     const lessons = course_progress.progress[sectionId];
     for (const lessonId in lessons) {
       const lesson = lessons[lessonId];
+
       if (lesson?.notes && lesson.notes.length > 10) {
         const chapters = course.chapters;
+
         if (chapters) {
           for (const chapter of chapters) {
+            console.log(chapter);
             for (const chapterLesson of chapter.lessons) {
               if (chapterLesson._id === lessonId) {
                 const note = notes.find((note) => note.chapterName === chapter.chapterName);
@@ -62,5 +65,7 @@ export default function mapNotes(course_progress: CoursesProgress, course: Query
       }
     }
   }
+
+  console.log(notes);
   return notes;
 }

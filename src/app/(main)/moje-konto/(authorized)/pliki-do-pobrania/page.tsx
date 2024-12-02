@@ -124,8 +124,13 @@ const query = async (): Promise<QueryProps> => {
         "slug": slug.current,
         generateCertificate,
         chapters {
+          chapterName,
+          chapterDescription,
           "_id": _key,
           lessons[]->{
+            _id,
+            name,
+            "slug": slug.current,
             files[]{
               asset->{
                 url,
@@ -151,5 +156,11 @@ const query = async (): Promise<QueryProps> => {
       id: res.data!.courses_progress.map((course) => course.course_id),
     },
   });
-  return { data: data, id: res.data!.id, left_handed: res.data!.left_handed, progress: res.data!.courses_progress };
+
+  return {
+    data: data,
+    id: res.data!.id,
+    left_handed: res.data!.left_handed,
+    progress: res.data!.courses_progress,
+  };
 };
