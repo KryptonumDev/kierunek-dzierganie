@@ -1,16 +1,19 @@
 'use client';
+import { courseComplexityEnum, statusesSwitch } from '@/global/constants';
+import { formatDateToPolishLocale } from '@/utils/formatDateToPolishLocale';
+import { formatPrice } from '@/utils/price-formatter';
+import Link from 'next/link';
 import { useMemo } from 'react';
 import Img from '../image';
 import styles from './OrderCard.module.scss';
 import type { OrderCardTypes } from './OrderCard.types';
-import { formatDateToPolishLocale } from '@/utils/formatDateToPolishLocale';
-import { formatPrice } from '@/utils/price-formatter';
-import Link from 'next/link';
-import { courseComplexityEnum, statusesSwitch } from '@/global/constants';
 
 const OrderCard = ({ order, product }: OrderCardTypes) => {
-  const mainImage = useMemo(() => (product?.variants ? product.variants[0]!.gallery : product.gallery!), [product]);
-
+  const mainImage = useMemo(
+    () => (product ? (product?.variants ? product?.variants[0]!.gallery : product.gallery!) : null),
+    [product]
+  );
+  if (!product) return null;
   return (
     <Link
       href={`/moje-konto/zakupy/${order.id}`}
@@ -29,7 +32,7 @@ const OrderCard = ({ order, product }: OrderCardTypes) => {
           </span>
         )}
         <Img
-          data={mainImage}
+          data={mainImage!}
           sizes='320px'
         />
       </div>

@@ -224,6 +224,37 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
                 {formatPrice(totalItemsPrice)}
               </span>
             </p>
+            {data.shipping_method && (
+              <p
+                style={{
+                  display: 'flex',
+                  marginTop: '8px',
+                }}
+              >
+                <span
+                  style={{
+                    color: '#766965',
+                    fontSize: '14px',
+                    fontWeight: '300',
+                    lineHeight: '150%',
+                  }}
+                >
+                  Dostawa
+                </span>
+                <span
+                  style={{
+                    display: 'block',
+                    marginLeft: 'auto',
+                    color: '#332621',
+                    fontSize: '14px',
+                    fontWeight: '300',
+                    lineHeight: '150%',
+                  }}
+                >
+                  {formatPrice(data.shipping_method.price)}
+                </span>
+              </p>
+            )}
             {data.used_discount && (
               <p
                 style={{
@@ -254,37 +285,6 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
                   {formatPrice(
                     calculateDiscountAmount(totalItemsPrice, data.used_discount, data.shipping_method?.price)
                   )}
-                </span>
-              </p>
-            )}
-            {data.shipping_method && (
-              <p
-                style={{
-                  display: 'flex',
-                  marginTop: '8px',
-                }}
-              >
-                <span
-                  style={{
-                    color: '#766965',
-                    fontSize: '14px',
-                    fontWeight: '300',
-                    lineHeight: '150%',
-                  }}
-                >
-                  Dostawa
-                </span>
-                <span
-                  style={{
-                    display: 'block',
-                    marginLeft: 'auto',
-                    color: '#332621',
-                    fontSize: '14px',
-                    fontWeight: '300',
-                    lineHeight: '150%',
-                  }}
-                >
-                  {formatPrice(data.shipping_method.price)}
                 </span>
               </p>
             )}

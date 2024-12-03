@@ -12,48 +12,99 @@ export async function generateBill(data: any, id: string) {
   let fixedDiscountAmount = data.used_discount?.amount ?? 0;
   let counter = 0;
 
-  const isDiscountBiggerOrEqual =
-    (data.used_discount?.type === 'FIXED CART' || data.used_discount?.type === 'VOUCHER') &&
-    fixedDiscountAmount >=
-      data.products.array.reduce(
-        (acc: number, product: { price: number; discount: number | null; quantity: number }) =>
-          acc + (product.discount ?? product.price) * product.quantity,
-        0
-      );
+  const isDiscountBiggerOrEqual = (hasShipping: boolean = false) => {
+    return (
+      (data.used_discount?.type === 'FIXED CART' || data.used_discount?.type === 'VOUCHER') &&
+      fixedDiscountAmount >=
+        data.products.array.reduce(
+          (acc: number, product: { price: number; discount: number | null; quantity: number }) =>
+            acc + (product.discount ?? product.price) * product.quantity,
+          0
+        ) +
+          (hasShipping ? (data.shipping_method?.price ?? 0) : 0)
+    );
+  };
 
-  const productsWithDiscount = !isDiscountBiggerOrEqual
-    ? // @ts-expect-error TODO: implement types
-      data.products.array.map((product) => {
-        let discount = 0;
-        let amount = product.discount ?? product.price;
+  console.log(isDiscountBiggerOrEqual());
+  const productsWithDiscount = !data.shipping_method
+    ? !isDiscountBiggerOrEqual() // @ts-expect-error TODO: implement types
+      ? data.products.array.map((product) => {
+          let discount = 0;
+          let amount = product.discount ?? product.price;
 
-        if (data.used_discount) {
-          if (data.used_discount.type === 'PERCENTAGE') {
-            discount = data.used_discount.amount;
-          } else if (data.used_discount.type === 'FIXED CART' || data.used_discount.type === 'VOUCHER') {
-            if (amount > fixedDiscountAmount) {
-              amount = amount - fixedDiscountAmount;
-              fixedDiscountAmount = 0;
-              amount = amount - counter;
-            } else {
-              fixedDiscountAmount = fixedDiscountAmount - amount;
-              amount = 1;
-              counter = counter + 1;
+          if (data.used_discount) {
+            if (data.used_discount.type === 'PERCENTAGE') {
+              discount = data.used_discount.amount;
+            } else if (data.used_discount.type === 'FIXED CART' || data.used_discount.type === 'VOUCHER') {
+              if (amount > fixedDiscountAmount) {
+                amount = amount - fixedDiscountAmount;
+                fixedDiscountAmount = 0;
+                amount = amount - counter;
+              } else {
+                fixedDiscountAmount = fixedDiscountAmount - amount;
+                amount = 1;
+                counter = counter + 1;
+              }
+              console.log('amount😂');
+              console.log(amount);
+            } else if (data.used_discount.type === 'FIXED PRODUCT') {
+              data.used_discount.discounted_product.id === product.id
+                ? (amount = (product.discount ?? product.price) - data.used_discount.amount / product.quantity)
+                : (discount = 0);
             }
-          } else if (data.used_discount.type === 'FIXED PRODUCT') {
-            data.used_discount.discounted_product.id === product.id
-              ? (amount = (product.discount ?? product.price) - data.used_discount.amount / product.quantity)
-              : (discount = 0);
           }
-        }
 
-        return {
-          ...product,
-          amount: amount,
-          rabat: discount,
-        };
-      })
-    : data.products.array;
+          return {
+            ...product,
+            amount: amount,
+            rabat: discount,
+          };
+        })
+      : data.products.array
+    : !isDiscountBiggerOrEqual(true)
+      ? !isDiscountBiggerOrEqual()
+        ? // @ts-expect-error TODO: implement types
+          data.products.array.map((product) => {
+            let discount = 0;
+            let amount = product.discount ?? product.price;
+
+            if (data.used_discount) {
+              if (data.used_discount.type === 'PERCENTAGE') {
+                discount = data.used_discount.amount;
+              } else if (data.used_discount.type === 'FIXED CART' || data.used_discount.type === 'VOUCHER') {
+                if (amount > fixedDiscountAmount) {
+                  amount = amount - fixedDiscountAmount;
+                  fixedDiscountAmount = 0;
+                  amount = amount - counter;
+                } else {
+                  fixedDiscountAmount = fixedDiscountAmount - amount;
+                  amount = 1;
+                  counter = counter + 1;
+                }
+                console.log('amount😂');
+                console.log(amount);
+              } else if (data.used_discount.type === 'FIXED PRODUCT') {
+                data.used_discount.discounted_product.id === product.id
+                  ? (amount = (product.discount ?? product.price) - data.used_discount.amount / product.quantity)
+                  : (discount = 0);
+              }
+            }
+
+            return {
+              ...product,
+              amount: amount,
+              rabat: discount,
+            };
+          })
+        : // @ts-expect-error TODO: implement types
+          data.products.array.map((product) => {
+            return {
+              ...product,
+              amount: 1,
+              rabat: product.amount - 1,
+            };
+          })
+      : data.products.array;
 
   const requestContent = {
     Zaplacono: data.amount / 100,
@@ -110,16 +161,26 @@ export async function generateBill(data: any, id: string) {
     },
   };
 
-  if (data.shipping_method) {
+  if (data.shipping_method && data.used_discount?.type !== 'DELIVERY') {
     requestContent.Pozycje.push({
       StawkaVat: settingsData!.value.vatDelivery / 100,
       StawkaRyczaltu: settingsData!.value.ryczaltPhysical / 100,
       Ilosc: 1,
-      CenaJednostkowa: data.shipping_method.price / 100,
+      CenaJednostkowa:
+        !isDiscountBiggerOrEqual(true) && isDiscountBiggerOrEqual()
+          ? (data.shipping_method.price -
+              (fixedDiscountAmount -
+                data.products.array.reduce(
+                  (acc: number, product: { price: number; discount: number | null; quantity: number }) =>
+                    acc + (product.discount ?? product.price) * product.quantity,
+                  0
+                )) -
+              data.products.array.reduce((acc: number, product: { quantity: number }) => acc + product.quantity, 0)) /
+            100
+          : data.shipping_method.price / 100,
       NazwaPelna: data.shipping_method.name,
       Jednostka: 'szt',
       TypStawkiVat: 'PRC',
-      Rabat: data.used_discount?.type === 'DELIVERY' ? 100 : 0,
     });
   }
 
