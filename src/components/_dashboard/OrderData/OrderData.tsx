@@ -300,14 +300,6 @@ const OrderData = ({ order }: OrderDataTypes) => {
           </span>
           <span>{formatPrice(totalItemsPrice)}</span>
         </p>
-        {order.discount && (
-          <p>
-            <span>Kupon: {order.discount.code}</span>
-            <span>
-              {formatPrice(calculateDiscountAmount(totalItemsPrice, order.discount, order.shippingMethod?.price))}
-            </span>
-          </p>
-        )}
         {order.shippingMethod && (
           <p>
             <span>Dostawa</span>
@@ -318,6 +310,14 @@ const OrderData = ({ order }: OrderDataTypes) => {
           <p>
             <span>Wykorzystane WZ</span>
             <span>-{formatPrice(order.virtualMoney * 100)}</span>
+          </p>
+        )}
+        {order.discount && (
+          <p>
+            <span>Kupon: {order.discount.code}</span>
+            <span>
+              {formatPrice(calculateDiscountAmount(totalItemsPrice, order.discount, order.shippingMethod?.price))}
+            </span>
           </p>
         )}
         <p>

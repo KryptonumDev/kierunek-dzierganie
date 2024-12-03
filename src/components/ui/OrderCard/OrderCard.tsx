@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { courseComplexityEnum, statusesSwitch } from '@/global/constants';
 
 const OrderCard = ({ order, product }: OrderCardTypes) => {
+  if (!product) return null;
   const mainImage = useMemo(() => (product?.variants ? product.variants[0]!.gallery : product.gallery!), [product]);
 
   return (
