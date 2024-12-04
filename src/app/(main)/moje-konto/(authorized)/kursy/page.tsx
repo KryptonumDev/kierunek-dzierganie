@@ -12,6 +12,7 @@ const page = [{ name: 'Moje kursy', path: currentUrl }];
 
 type QueryProps = {
   lastWatchedCourse: string;
+  lastWatchedList: string[];
   totalCourses: number;
   global: {
     image_knitting: ImgType;
@@ -26,6 +27,7 @@ type QueryProps = {
     progressPercentage: number;
     courseLength: string;
     excerpt: string;
+    progressId: string;
   };
   courses: {
     _id: string;
@@ -36,6 +38,7 @@ type QueryProps = {
     courseLength: string;
     progressPercentage: number;
     excerpt: string;
+    progressId: string;
   }[];
   categories: {
     name: string;
@@ -50,8 +53,10 @@ type QueryProps = {
 };
 
 export default async function Courses({ searchParams }: { searchParams: { [key: string]: string } }) {
-  const { global, courses, lastWatchedCourse, categories, authors, totalCourses }: QueryProps =
+  const { global, courses, lastWatchedCourse, lastWatchedList, categories, authors, totalCourses }: QueryProps =
     await query(searchParams);
+
+  const sort = searchParams.sortowanie ?? null;
 
   return (
     <div>
@@ -66,6 +71,8 @@ export default async function Courses({ searchParams }: { searchParams: { [key: 
           courses={courses}
           categories={categories}
           authors={authors}
+          lastWatchedList={lastWatchedList}
+          sort={sort}
         />
       ) : (
         <EmptyCourses
@@ -93,6 +100,7 @@ const query = async (searchParams: { [key: string]: string }): Promise<QueryProp
       `
         id,
         last_watched_course,
+        last_watched_list,
         courses_progress (
           id,
           course_id,
@@ -181,16 +189,19 @@ const query = async (searchParams: { [key: string]: string }): Promise<QueryProp
 
   return {
     ...data,
+    lastWatchedList: res.data!.last_watched_list,
     lastWatchedCourse: res.data!.last_watched_course,
     courses: data.courses
       .concat(data.lastWatched)
       .filter((el) => el)
       .map((course) => {
         const progress = res.data!.courses_progress.find((el) => el.course_id === course._id)!;
+        const progressId = res.data!.courses_progress.find((el) => el.course_id === course._id)?.id;
 
         if (!progress)
           return {
             ...course,
+            progressId,
             progressPercentage: 0,
           };
 
@@ -212,11 +223,12 @@ const query = async (searchParams: { [key: string]: string }): Promise<QueryProp
           return {
             ...course,
             progressPercentage: 0,
+            progressId,
           };
 
         const completionPercentage = (completedLessons / totalLessons) * 100;
 
-        return { ...course, progressPercentage: completionPercentage };
+        return { ...course, progressPercentage: completionPercentage, progressId };
       }),
   };
 };
