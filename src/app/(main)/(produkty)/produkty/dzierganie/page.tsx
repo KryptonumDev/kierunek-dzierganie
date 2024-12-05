@@ -12,7 +12,7 @@ import type { KnittingProductsPage_QueryTypes } from './page.types';
 
 const breadcrumbs = [
   { name: 'Produkty', path: '/produkty' },
-  { name: 'Dzierganie', path: '/dzierganie' },
+  { name: 'Dzierganie', path: '/produkty/dzierganie' },
 ];
 
 const KnittingPage = async ({ searchParams }: { searchParams: { [key: string]: string } }) => {

@@ -10,6 +10,6 @@ export const getProductBasis = (basis: string, type: string) => {
   } else if (basis === 'instruction' && type === 'product') {
     return '/produkty/instrukcje';
   } else if (basis === 'materials' && type === 'product') {
-    return '/produkty/materialy';
+    return '/produkty/pakiety-materialow';
   }
 };

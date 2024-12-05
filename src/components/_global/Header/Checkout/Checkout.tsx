@@ -1,10 +1,11 @@
-import type { InputState, Props, MappingProps } from './Checkout.types';
-import styles from './Checkout.module.scss';
-import SummaryAside from './_SummaryAside';
-import PersonalData from './_PersonalData';
-import { useEffect, useState } from 'react';
-import Authorization from './_Authorization';
 import type { Billing, Shipping } from '@/global/types';
+import { getProductBasis } from '@/utils/get-product-basis';
+import { useEffect, useState } from 'react';
+import styles from './Checkout.module.scss';
+import type { InputState, MappingProps, Props } from './Checkout.types';
+import Authorization from './_Authorization';
+import PersonalData from './_PersonalData';
+import SummaryAside from './_SummaryAside';
 
 const createInputState = (billing?: Billing, shipping?: Shipping, userEmail?: string) => ({
   firmOrder: false,
@@ -92,21 +93,8 @@ export default function Checkout({
       user_id: userId,
       products: {
         array: fetchedItems.map((item) => {
-          let basis = '';
+          const basis = getProductBasis(item.basis, item._type);
 
-          if (item.basis === 'crocheting') {
-            if (item._type === 'product') basis = '/produkty/szydelkowanie';
-            else basis = '/kursy/szydelkowanie';
-          } else if (item.basis === 'knitting') {
-            if (item._type === 'product') basis = '/produkty/dzierganie';
-            else basis = '/kursy/dzierganie-na-drutach';
-          } else if (item.basis === 'instruction' && item._type === 'product') {
-            basis = '/produkty/instrukcje';
-          } else if (item.basis === 'other' && item._type === 'product') {
-            basis = '/produkty/inne';
-          } else if (item.basis === 'materials' && item._type === 'product') {
-            basis = '/produkty/materialy';
-          }
           return {
             url: 'https://kierunekdzierganie.pl' + basis + '/' + item.slug,
             id: item._id,

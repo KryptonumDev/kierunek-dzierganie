@@ -21,7 +21,7 @@ export default function Products({
     else if (basis === 'knitting') return `/produkty/dzierganie/${slug}`;
     else if (basis === 'instruction') return `/produkty/instrukcje/${slug}`;
     else if (basis === 'other') return `/produkty/inne/${slug}`;
-    else if (basis === 'materials') return `/produkty/materialy/${slug}`;
+    else if (basis === 'materials') return `/produkty/pakiety-materialow/${slug}`;
 
     return '/';
   };

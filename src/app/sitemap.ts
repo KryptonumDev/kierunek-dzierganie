@@ -20,8 +20,11 @@ const staticRoutes = [
   '/zespol',
   '/polityka-prywatnosci',
   '/regulamin',
-  '/produkty-do-dziergania',
-  '/produkty-do-szydelkowania',
+  '/produkty/szydelkowanie',
+  '/produkty/dzierganie',
+  '/produkty/inne',
+  '/produkty/instrukcje',
+  '/produkty/pakiety-materialow',
   '/program-partnerski',
   '/wspolpraca',
 ];
@@ -35,6 +38,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     CrochetingCourses_Collection = [],
     KnittingCourses_Collection = [],
     CrochetingProducts_Collection = [],
+    OtherProducts_Collection = [],
+    InstructionProducts_Collection = [],
+    MaterialsProducts_Collection = [],
     KnittingProducts_Collection = [],
     PartnersPage = [],
   } = await query();
@@ -69,11 +75,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
     })),
     ...CrochetingProducts_Collection.map(({ slug }) => ({
-      url: `${DOMAIN}/produkty-do-szydelkowania/${slug}`,
+      url: `${DOMAIN}/produkty/szydelkowanie/${slug}`,
       lastModified: new Date(),
     })),
     ...KnittingProducts_Collection.map(({ slug }) => ({
-      url: `${DOMAIN}/produkty-do-dziergania/${slug}`,
+      url: `${DOMAIN}/produkty/dzierganie/${slug}`,
+      lastModified: new Date(),
+    })),
+    ...OtherProducts_Collection.map(({ slug }) => ({
+      url: `${DOMAIN}/produkty/inne/${slug}`,
+      lastModified: new Date(),
+    })),
+    ...InstructionProducts_Collection.map(({ slug }) => ({
+      url: `${DOMAIN}/produkty/instrukcje/${slug}`,
+      lastModified: new Date(),
+    })),
+    ...MaterialsProducts_Collection.map(({ slug }) => ({
+      url: `${DOMAIN}/produkty/pakiety-materialow/${slug}`,
       lastModified: new Date(),
     })),
     ...PartnersPage.filter(({ displayPage }) => displayPage).map(() => ({

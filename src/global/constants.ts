@@ -75,7 +75,7 @@ export const productUrls: {
   crocheting: '/produkty/szydelkowanie',
   other: '/produkty/inne',
   instruction: '/produkty/instrukcje',
-  materials: '/produkty/materialy',
+  materials: '/produkty/pakiety-materialow',
 };
 
 /**
