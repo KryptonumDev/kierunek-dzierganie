@@ -6,6 +6,8 @@ import type { RelatedFilesTypes } from './RelatedFiles.types';
 const RelatedFiles = ({ course, left_handed, notes }: RelatedFilesTypes) => {
   const files = left_handed ? course.files_alter : course.files;
 
+  if (!files?.length) return null;
+
   return (
     <section
       id='materialy-do-pobrania'
@@ -14,16 +16,12 @@ const RelatedFiles = ({ course, left_handed, notes }: RelatedFilesTypes) => {
       <h2>Materiały do pobrania</h2>
       <div className={styles.container}>
         <FilesColumn heading='Instrukcje do kursu'>
-          {files?.length ? (
-            files?.map((el, i) => (
-              <FileItem
-                file={el}
-                key={i}
-              />
-            ))
-          ) : (
-            <p className={styles.empty}>Brak instrukcji do pobrania</p>
-          )}
+          {files?.map((el, i) => (
+            <FileItem
+              file={el}
+              key={i}
+            />
+          ))}
         </FilesColumn>
         {!!notes.length && (
           <FilesColumn heading='Twoje Pliki'>
