@@ -64,9 +64,18 @@ export const pageUrls: { knitting: string; crocheting: string } = {
   crocheting: '/kursy-szydelkowania',
 };
 
-export const productUrls: { knitting: string; crocheting: string } = {
-  knitting: '/produkty-do-dziergania',
-  crocheting: '/produkty-do-szydelkowania',
+export const productUrls: {
+  knitting: string;
+  crocheting: string;
+  other: string;
+  instruction: string;
+  materials: string;
+} = {
+  knitting: '/produkty/dzierganie',
+  crocheting: '/produkty/szydelkowanie',
+  other: '/produkty/inne',
+  instruction: '/produkty/instrukcje',
+  materials: '/produkty/materialy',
 };
 
 /**

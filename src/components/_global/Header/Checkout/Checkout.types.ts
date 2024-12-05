@@ -46,7 +46,7 @@ export type InputState = {
       discount: number;
       image: ImgType;
       complexity: Complexity | null;
-      basis: 'crocheting' | 'knitting';
+      basis: 'crocheting' | 'knitting' | 'other' | 'instruction' | 'materials';
       variantId?: string;
       voucherData?: {
         dedication: {

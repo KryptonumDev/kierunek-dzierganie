@@ -33,7 +33,7 @@ export type ImgType = {
 export type ProductCard = {
   _type: 'product' | 'course' | 'bundle' | 'voucher';
   _id: string;
-  basis: 'crocheting' | 'knitting';
+  basis: 'crocheting' | 'knitting' | 'other' | 'instruction' | 'materials';
   slug: string;
   name: string;
   visible: boolean;
@@ -152,7 +152,7 @@ export type ProductPhysical = {
   gallery: Array<ImgType>;
   rating: number;
   reviewsCount: number;
-  basis: 'crocheting' | 'knitting';
+  basis: 'crocheting' | 'knitting' | 'other' | 'instruction' | 'materials';
 };
 
 export type generateMetadataProps = {
@@ -326,7 +326,7 @@ export type CoursePageQueryProps = {
 export type ProductReference = {
   _id: string;
   slug: string;
-  basis: 'knitting' | 'crocheting';
+  basis: 'knitting' | 'crocheting' | 'other' | 'instruction' | 'materials';
 };
 
 export type MaterialsPackage = (

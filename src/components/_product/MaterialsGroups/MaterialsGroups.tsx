@@ -1,4 +1,5 @@
 import Markdown from '@/components/ui/markdown';
+import { getProductBasis } from '@/utils/get-product-basis';
 import Link from 'next/link';
 import styles from './MaterialsGroups.module.scss';
 import type { MaterialsGroupsTypes } from './MaterialsGroups.types';
@@ -24,11 +25,7 @@ const MaterialsGroups = ({ listParagraph, heading, materialsGroupsList }: Materi
                   <span>{i + 1}</span>
                   <div>
                     {materialRef ? (
-                      <Link
-                        href={`/produkty-do-${materialRef.basis === 'knitting' ? 'dziergania' : 'szydelkowania'}/${materialRef.slug}`}
-                      >
-                        {name}
-                      </Link>
+                      <Link href={`${getProductBasis(materialRef.basis, 'product')}/${materialRef.slug}`}>{name}</Link>
                     ) : (
                       <span>{name}</span>
                     )}

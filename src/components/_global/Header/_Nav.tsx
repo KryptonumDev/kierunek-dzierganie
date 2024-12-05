@@ -19,6 +19,8 @@ const Nav = ({
   const [tab, setTab] = useState<number | null>(null);
   const NavRef = useRef<HTMLElement | null>(null);
   const [lastScrollY, setLastScrollY] = useState(0);
+  console.log(courses);
+  console.log(products.knitting.highlighted_products);
 
   useEffect(() => {
     const handleEscapeKey = (e: KeyboardEvent) => {
@@ -100,6 +102,7 @@ const Nav = ({
                 handleClose={() => setTab(null)}
                 ChevronBackIcon={ChevronBackIcon}
                 ChevronDownIcon={ChevronDownIcon}
+                type={'courses'}
                 columns={[
                   {
                     name: 'Nauka dziergania na drutach',
@@ -139,24 +142,17 @@ const Nav = ({
                 handleMenu={() => setShowMenu(false)}
                 ChevronBackIcon={ChevronBackIcon}
                 ChevronDownIcon={ChevronDownIcon}
+                type={'products'}
                 columns={[
                   {
                     name: 'Do dziergania',
                     href: products.knitting.href,
                     items: products.knitting.highlighted_products,
-                    showMore:
-                      products.knitting.highlighted_products?.length < counts.products.knitting
-                        ? 'Pokaż więcej produktów dziergania'
-                        : null,
                   },
                   {
                     name: 'Do szydełkowania',
                     href: products.crocheting.href,
                     items: products.crocheting.highlighted_products,
-                    showMore:
-                      products.crocheting.highlighted_products?.length < counts.products.crocheting
-                        ? 'Pokaż więcej produktów szydełkowania'
-                        : null,
                   },
                 ]}
                 additionalLinks={products.additional_links}

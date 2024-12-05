@@ -144,7 +144,7 @@ const query = async (): Promise<QueryProps> => {
             highlighted_products[]-> {
                 name,
                 slug,
-                "image": gallery[0]{
+                "image": imageKnitting {
                 ${Img_Query}
               },
             },
@@ -154,7 +154,7 @@ const query = async (): Promise<QueryProps> => {
             highlighted_products[]-> {
                 name,
                 slug,
-                "image": gallery[0]{
+                "image": imageCrocheting {
                 ${Img_Query}
               },
             },

@@ -6,8 +6,11 @@ import { formatPrice } from '@/utils/price-formatter';
 import Link from 'next/link';
 import styles from './RelatedMaterials.module.scss';
 import type { RelatedMaterialsTypes } from './RelatedMaterials.types';
+import { getProductBasis } from '@/utils/get-product-basis';
 
 const RelatedMaterials = ({ heading, paragraph, materialRef }: RelatedMaterialsTypes) => {
+  const basis = getProductBasis(materialRef.basis, materialRef._type);
+
   return (
     <div className={styles['RelatedMaterials']}>
       <header>
@@ -18,7 +21,7 @@ const RelatedMaterials = ({ heading, paragraph, materialRef }: RelatedMaterialsT
         {materialRef.countInStock !== 0 && (
           <Link
             className={styles.abs}
-            href={`/produkty-do-${materialRef.basis === 'knitting' ? 'dziergania' : 'szydelkowania'}/${materialRef.slug}`}
+            href={`${basis}/${materialRef.slug}`}
           />
         )}
         <div className={styles.image}>

@@ -15,6 +15,6 @@ export type RelatedMaterialsTypes = {
     name: string;
     _type: string;
     countInStock: number;
-    basis: 'knitting' | 'crocheting';
+    basis: 'knitting' | 'crocheting' | 'other' | 'instruction' | 'materials';
   };
 };

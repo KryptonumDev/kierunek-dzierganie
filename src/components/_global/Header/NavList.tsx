@@ -12,6 +12,7 @@ export default function NavList({
   ChevronBackIcon,
   ChevronDownIcon,
   handleMenu,
+  type,
 }: NavListProps) {
   const [openTab, setOpenTab] = useState<number | null>(null);
 
@@ -33,7 +34,7 @@ export default function NavList({
                   <Link
                     className={styles.open_item}
                     key={i}
-                    href={`${href}/${slug.current}`}
+                    href={href + (type === 'courses' ? `/${slug.current}` : `?rodzaj=${slug.current}`)}
                   >
                     <Img
                       data={image}

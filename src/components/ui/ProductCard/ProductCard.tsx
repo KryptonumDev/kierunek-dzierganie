@@ -1,5 +1,5 @@
 'use client';
-import { courseComplexityEnum, pageUrls } from '@/global/constants';
+import { courseComplexityEnum, productUrls } from '@/global/constants';
 import { ImgType } from '@/global/types';
 import { formatPrice } from '@/utils/price-formatter';
 import Link from 'next/link';
@@ -84,7 +84,7 @@ const ProductCard = ({
       className={`${styles['productCard']} ${horizontal ? styles['horizontal'] : ''} ${tabletHorizontal ? styles['tablet-horizontal'] : ''} ${desktopHorizontal ? styles['desktop-horizontal'] : ''}`}
     >
       <Link
-        href={`${basis ? basis : pageUrls[data.basis]}/${data.slug}`}
+        href={`${basis ? basis : productUrls[data.basis]}/${data.slug}`}
         className={styles['link']}
         onClick={onClick}
         aria-label={mainVariant.image?.asset.altText ? mainVariant.image.asset.altText : `${mainVariant.name}`}
@@ -142,7 +142,7 @@ const ProductCard = ({
           <>
             {mainVariant.type === 'variable' || mainVariant._type === 'voucher' ? (
               <Button
-                href={`${basis ? basis : pageUrls[data.basis]}/${data.slug}`}
+                href={`${basis ? basis : productUrls[data.basis]}/${data.slug}`}
                 onClick={onClick}
               >
                 Wybierz wariant

@@ -200,10 +200,11 @@ export type NavProducts = {
 };
 
 export type NavListProps = {
+  type: 'courses' | 'products';
   columns: {
     name: string;
     href: string;
-    showMore: string | null;
+    showMore?: string | null;
     items: {
       name: string;
       slug: { current: string };
