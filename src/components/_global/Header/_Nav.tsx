@@ -19,8 +19,6 @@ const Nav = ({
   const [tab, setTab] = useState<number | null>(null);
   const NavRef = useRef<HTMLElement | null>(null);
   const [lastScrollY, setLastScrollY] = useState(0);
-  console.log(courses);
-  console.log(products.knitting.highlighted_products);
 
   useEffect(() => {
     const handleEscapeKey = (e: KeyboardEvent) => {
