@@ -1,0 +1,5 @@
+.RequiredMaterials {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(64px, calc(80vw / 7.68), 96px);
+}

@@ -27,17 +27,17 @@ export const redirects = [
 
   {
     source: '/kursy-szydelkowania/materialy-do-kursu-podstaw-szydelkowania',
-    destination: '/produkty-do-szydelkowania',
+    destination: '/produkty/szydelkowanie',
     permanent: true,
   },
   {
     source: '/kursy-szydelkowania/pakiet-materialow-do-kursu-zyrafki',
-    destination: '/produkty-do-szydelkowania',
+    destination: '/produkty/szydelkowanie',
     permanent: true,
   },
   {
     source: '/kursy-dziergania-na-drutach/materialy-do-kursu-twoj-pierwszy-sweter-na-drutach',
-    destination: '/produkty-do-dziergania',
+    destination: '/produkty/dzierganie',
     permanent: true,
   },
   {
@@ -62,17 +62,17 @@ export const redirects = [
   },
   {
     source: '/kursy-szydelkowania/voucher-kurs-szydelkowy-piesek',
-    destination: '/produkty-do-szydelkowania/voucher-upominkowy',
+    destination: '/produkty/szydelkowanie/voucher-upominkowy',
     permanent: true,
   },
   {
     source: '/kursy-szydelkowania/drukowana-instrukcja-do-kursu-nietoperz-karzan',
-    destination: '/produkty-do-szydelkowania',
+    destination: '/produkty/szydelkowanie',
     permanent: true,
   },
   {
     source: '/kursy-szydelkowania/pakiet-materialow-do-krolikow',
-    destination: '/produkty-do-szydelkowania',
+    destination: '/produkty/szydelkowanie',
     permanent: true,
   },
   {
@@ -92,12 +92,12 @@ export const redirects = [
   },
   {
     source: '/kursy-dziergania-na-drutach/zestawy-drutow-wymiennych-ginger-deluxe',
-    destination: '/produkty-do-dziergania',
+    destination: '/produkty/dzierganie',
     permanent: true,
   },
   {
-    source: '/produkty-do-dziergania/agrafki-dziewiarskie-3szt',
-    destination: '/produkty-do-dziergania',
+    source: '/produkty/dzierganie/agrafki-dziewiarskie-3szt',
+    destination: '/produkty/dzierganie',
     permanent: true,
   },
   {
@@ -107,7 +107,7 @@ export const redirects = [
   },
   {
     source: '/kursy-szydelkowania/materialy-do-kursu-swiateczne-ziomki',
-    destination: '/produkty-do-szydelkowania',
+    destination: '/produkty/szydelkowanie',
     permanent: true,
   },
   {
@@ -117,7 +117,7 @@ export const redirects = [
   },
   {
     source: '/kursy-szydelkowania/pakiet-materialow-do-kursu-podkladki',
-    destination: '/produkty-do-szydelkowania',
+    destination: '/produkty/szydelkowanie',
     permanent: true,
   },
   {
@@ -127,12 +127,12 @@ export const redirects = [
   },
   {
     source: '/kursy-dziergania-na-drutach/voucher-kurs-szydelkowy-kotek',
-    destination: '/produkty-do-szydelkowania/voucher-upominkowy',
+    destination: '/produkty/dzierganie/voucher-upominkowy',
     permanent: true,
   },
   {
     source: '/kursy-dziergania-na-drutach/pakiet-materialow-do-warsztatow-druty-ty-tez-to-potrafisz',
-    destination: '/produkty-do-dziergania',
+    destination: '/produkty/dzierganie',
     permanent: true,
   },
   {
@@ -147,7 +147,7 @@ export const redirects = [
   },
   {
     source: '/produkty-do-dziergania/dodatkowy-pakiet-materialow-do-warsztatow-druty-ty-tez-to-potrafisz',
-    destination: '/produkty-do-dziergania',
+    destination: '/produkty/dzierganie',
     permanent: true,
   },
 
@@ -159,7 +159,7 @@ export const redirects = [
 
   {
     source: '/kursy-dziergania-na-drutach/markery-knitpro-mindful-chakra',
-    destination: '/produkty-do-dziergania/markery-knitpro-mindful-chakra',
+    destination: '/produkty/dzierganie/markery-knitpro-mindful-chakra',
     permanent: true,
   },
   {
@@ -169,7 +169,7 @@ export const redirects = [
   },
   {
     source: '/kursy-dziergania-na-drutach/druty-knitpro-basix-beech-8mm',
-    destination: '/produkty-do-dziergania',
+    destination: '/produkty/dzierganie',
     permanent: true,
   },
   {
@@ -209,7 +209,7 @@ export const redirects = [
   },
   {
     source: '/kursy-szydelkowania/voucher-kurs-szydelkowy-koty-dwa',
-    destination: '/produkty-do-szydelkowania/voucher-upominkowy',
+    destination: '/produkty/szydelkowanie/voucher-upominkowy',
     permanent: true,
   },
   {
@@ -230,6 +230,16 @@ export const redirects = [
   {
     source: '/produkty-do-szydelkowania/pakiet-do-kwiatuszkow',
     destination: '/kursy-szydelkowania',
+    permanent: true,
+  },
+  {
+    source: '/produkty-do-dziergania/:path*',
+    destination: '/produkty/dzierganie/:path*',
+    permanent: true,
+  },
+  {
+    source: '/produkty-do-szydelkowania/:path*',
+    destination: '/produkty/szydelkowanie/:path*',
     permanent: true,
   },
 ];

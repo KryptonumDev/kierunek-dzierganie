@@ -1,6 +1,11 @@
 import type { ComponentProps } from '@/components/Components';
 import type { HeroSimpleTypes } from '@/components/_global/HeroSimple';
+import { AdditionalMaterialsTypes } from '@/components/_product/AdditionalMaterials';
 import type { DescriptionTypes } from '@/components/_product/Description/Description';
+import { MaterialsGroupsTypes } from '@/components/_product/MaterialsGroups';
+import { MaterialsHeadingTypes } from '@/components/_product/MaterialsHeading/MaterialsHeading.types';
+import { PartnerSalesTypes } from '@/components/_product/PartnerSales';
+import { RelatedMaterialsTypes } from '@/components/_product/RelatedMaterials';
 import type { ReviewsTypes } from '@/components/_product/Reviews';
 import type { TableOfContentTypes } from '@/components/_product/TableOfContent/TableOfContent.types';
 
@@ -28,7 +33,7 @@ export type ImgType = {
 export type ProductCard = {
   _type: 'product' | 'course' | 'bundle' | 'voucher';
   _id: string;
-  basis: 'crocheting' | 'knitting';
+  basis: 'crocheting' | 'knitting' | 'other' | 'instruction' | 'materials';
   slug: string;
   name: string;
   visible: boolean;
@@ -147,7 +152,7 @@ export type ProductPhysical = {
   gallery: Array<ImgType>;
   rating: number;
   reviewsCount: number;
-  basis: 'crocheting' | 'knitting';
+  basis: 'crocheting' | 'knitting' | 'other' | 'instruction' | 'materials';
 };
 
 export type generateMetadataProps = {
@@ -298,6 +303,7 @@ export type CoursePageQueryProps = {
     previewLessons?: {
       slug: string;
     };
+    materialsPackage: MaterialsPackage;
     previewGroupMailerLite?: string;
     author: {
       name: string;
@@ -307,15 +313,29 @@ export type CoursePageQueryProps = {
       countOfCourse: number;
     };
     relatedBundle:
-    | null
-    | ({
-      courses: ProductCard[];
-    } & ProductCard);
+      | null
+      | ({
+          courses: ProductCard[];
+        } & ProductCard);
   } & TableOfContentTypes &
-  ReviewsTypes;
+    ReviewsTypes;
   card: ProductCard;
   relatedCourses: ProductCard[];
 };
+
+export type ProductReference = {
+  _id: string;
+  slug: string;
+  basis: 'knitting' | 'crocheting' | 'other' | 'instruction' | 'materials';
+};
+
+export type MaterialsPackage = (
+  | MaterialsGroupsTypes
+  | RelatedMaterialsTypes
+  | PartnerSalesTypes
+  | AdditionalMaterialsTypes
+  | MaterialsHeadingTypes
+)[];
 
 export type CoursePageQuery = {
   data: CoursePageQueryProps;
@@ -372,12 +392,16 @@ export type Course = {
   slug: string;
   generateCertificate: boolean;
   type: 'course' | 'program';
+  files?: File[];
+  files_alter?: File[];
   chapters: {
     _id: string;
     chapterDescription: string;
     chapterName: string;
     chapterImage: ImgType;
     dateOfUnlock?: Date;
+    files?: File[];
+    files_alter?: File[];
     lessons: {
       _id: string;
       name: string;
@@ -442,14 +466,14 @@ export type Order = {
   orders_statuses: {
     id: string;
     status_name:
-    | 'AWAITING PAYMENT'
-    | 'PENDING'
-    | 'COMPLETED'
-    | 'REFUNDED'
-    | 'CANCELLED'
-    | 'AWAITING SEND'
-    | 'PARCEL GENERATED'
-    | 'SENDED';
+      | 'AWAITING PAYMENT'
+      | 'PENDING'
+      | 'COMPLETED'
+      | 'REFUNDED'
+      | 'CANCELLED'
+      | 'AWAITING SEND'
+      | 'PARCEL GENERATED'
+      | 'SENDED';
     complete_percent: number;
   };
 };

@@ -7,6 +7,7 @@ export type Props = {
     icon: ImgType;
     title: string;
     description: string;
+    image?: ImgType;
   }[];
   index?: number;
 };

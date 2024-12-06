@@ -7,7 +7,7 @@ export type ProductsListingTypes = {
   basis: string;
   courses: boolean;
   productsTotalCount: number;
-  categories: {
+  categories?: {
     name: string;
     slug: string;
     _id: string;
@@ -25,7 +25,7 @@ export type ProductsListingTypes = {
 export type FiltersTypes = {
   basis: string;
   courses: boolean;
-  categories: {
+  categories?: {
     name: string;
     slug: string;
     _id: string;

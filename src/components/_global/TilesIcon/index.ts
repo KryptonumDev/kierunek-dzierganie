@@ -11,6 +11,9 @@ export const TilesIcon_Query = `
       icon {
         ${Img_Query}
       },
+      image {
+        ${Img_Query}
+      },
       title,
       description,
     },

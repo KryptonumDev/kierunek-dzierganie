@@ -1,47 +1,48 @@
+import Benefits, { Benefits_Query, type BenefitsProps } from '@/components/_global/Benefits';
+import Bonuses, { Bonuses_Query, type BonusesProps } from '@/components/_global/Bonuses';
+import Community, { Community_Query, type CommunityProps } from '@/components/_global/Community';
+import ContactForm, { ContactForm_Query, type ContactFormProps } from '@/components/_global/ContactForm';
+import CourseModules, { CourseModules_Query, type CourseModulesProps } from '@/components/_global/CourseModules';
+import CtaSection, { CtaSection_Query, type CtaSectionProps } from '@/components/_global/CtaSection';
+import CustomerCaseStudy, {
+  CustomerCaseStudy_Query,
+  type CustomerCaseStudyProps,
+} from '@/components/_global/CustomerCaseStudy';
+import Divider, { Divider_Query } from '@/components/_global/Divider';
+import Faq, { Faq_Query, type FaqTypes } from '@/components/_global/Faq';
 import HeroBackgroundImg, {
   HeroBackgroundImg_Query,
   type HeroBackgroundImgProps,
 } from '@/components/_global/HeroBackgroundImg';
 import HeroColumn, { HeroColumn_Query, type HeroColumnProps } from '@/components/_global/HeroColumn';
+import HeroSimple, { HeroSimpleTypes, HeroSimple_Query } from '@/components/_global/HeroSimple';
+import ImageShowcase, { ImageShowcase_Query, type ImageShowcaseProps } from '@/components/_global/ImageShowcase';
+import Introduction, { Introduction_Query, type IntroductionProps } from '@/components/_global/Introduction';
+import Newsletter, { Newsletter_Query, type NewsletterProps } from '@/components/_global/Newsletter';
 import Opinions, { Opinions_Query, type OpinionsProps } from '@/components/_global/Opinions';
-import TileList, { TileList_Query, type TileListProps } from '@/components/_global/TileList';
-import CtaSection, { CtaSection_Query, type CtaSectionProps } from '@/components/_global/CtaSection';
+import Partners, { Partners_Query, type PartnersProps } from '@/components/_global/Partners';
+import Reviews, { Reviews_Query, type ReviewsProps } from '@/components/_global/Reviews';
 import SimpleCtaSection, {
   SimpleCtaSection_Query,
   type SimpleCtaSectionProps,
 } from '@/components/_global/SimpleCtaSection';
-import Benefits, { Benefits_Query, type BenefitsProps } from '@/components/_global/Benefits';
-import CourseModules, { CourseModules_Query, type CourseModulesProps } from '@/components/_global/CourseModules';
-import ImageShowcase, { ImageShowcase_Query, type ImageShowcaseProps } from '@/components/_global/ImageShowcase';
-import Bonuses, { Bonuses_Query, type BonusesProps } from '@/components/_global/Bonuses';
-import TilesGrid, { TilesGrid_Query, type TilesGridProps } from '@/components/_global/TilesGrid';
-import TilesSticky, { TilesSticky_Query, type TilesStickyProps } from '@/components/_global/TilesSticky';
-import TilesFeatures, { TilesFeatures_Query, type TilesFeaturesProps } from '@/components/_global/TilesFeatures';
-import Community, { Community_Query, type CommunityProps } from '@/components/_global/Community';
-import Reviews, { Reviews_Query, type ReviewsProps } from '@/components/_global/Reviews';
-import Introduction, { Introduction_Query, type IntroductionProps } from '@/components/_global/Introduction';
-import ContactForm, { ContactForm_Query, type ContactFormProps } from '@/components/_global/ContactForm';
-import TabSection, { TabSection_Query, type TabSectionProps } from '@/components/_global/TabSection';
-import TilesIndicated, { TilesIndicated_Query, type TilesIndicatedProps } from '@/components/_global/TilesIndicated';
-import TilesIcon, { TilesIcon_Query, type TilesIconProps } from '@/components/_global/TilesIcon';
-import Divider, { Divider_Query } from '@/components/_global/Divider';
 import StepList, { StepList_Query, type StepListProps } from '@/components/_global/StepList';
-import Newsletter, { Newsletter_Query, type NewsletterProps } from '@/components/_global/Newsletter';
-import CustomerCaseStudy, {
-  CustomerCaseStudy_Query,
-  type CustomerCaseStudyProps,
-} from '@/components/_global/CustomerCaseStudy';
+import TabSection, { TabSection_Query, type TabSectionProps } from '@/components/_global/TabSection';
+import TileList, { TileList_Query, type TileListProps } from '@/components/_global/TileList';
+import TilesFeatures, { TilesFeatures_Query, type TilesFeaturesProps } from '@/components/_global/TilesFeatures';
+import TilesGrid, { TilesGrid_Query, type TilesGridProps } from '@/components/_global/TilesGrid';
+import TilesIcon, { TilesIcon_Query, type TilesIconProps } from '@/components/_global/TilesIcon';
+import TilesIndicated, { TilesIndicated_Query, type TilesIndicatedProps } from '@/components/_global/TilesIndicated';
+import TilesSticky, { TilesSticky_Query, type TilesStickyProps } from '@/components/_global/TilesSticky';
 import WordsCollection, {
   WordsCollection_Query,
   type WordsCollectionProps,
 } from '@/components/_global/WordsCollection';
-import Partners, { Partners_Query, type PartnersProps } from '@/components/_global/Partners';
-import Faq, { Faq_Query, type FaqTypes } from '@/components/_global/Faq';
-import HeroSimple, { HeroSimple_Query, HeroSimpleTypes } from '@/components/_global/HeroSimple';
-import LatestBlogEntries, { LatestBlogEntries_Query, type LatestBlogEntriesTypes } from './_global/LatestBlogEntries';
-import CompaniesShowcase, { CompaniesShowcase_Query, type CompaniesShowcaseTypes } from './_global/CompaniesShowcase';
 import TeamShowcase, { TeamShowcaseTypes, TeamShowcase_Query } from './_about/TeamShowcase';
+import CompaniesShowcase, { CompaniesShowcase_Query, type CompaniesShowcaseTypes } from './_global/CompaniesShowcase';
+import LatestBlogEntries, { LatestBlogEntries_Query, type LatestBlogEntriesTypes } from './_global/LatestBlogEntries';
 import LogoSection, { LogoSectionTypes, LogoSection_Query } from './_global/LogoSection';
+import TilesGallery, { TilesGallery_Query, type TilesGalleryProps } from './_global/TilesGallery';
 
 type ComponentMap = {
   HeroBackgroundImg: HeroBackgroundImgProps;
@@ -59,6 +60,7 @@ type ComponentMap = {
   TilesGrid: TilesGridProps;
   TilesSticky: TilesStickyProps;
   TilesFeatures: TilesFeaturesProps;
+  TilesGallery: TilesGalleryProps;
   Community: CommunityProps;
   Reviews: ReviewsProps;
   Introduction: IntroductionProps;
@@ -106,6 +108,7 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
       Bonuses: <Bonuses {...(item as BonusesProps)} />,
       TileList: <TileList {...(item as TileListProps)} />,
       TilesGrid: <TilesGrid {...(item as TilesGridProps)} />,
+      TilesGallery: <TilesGallery {...(item as TilesGalleryProps)} />,
       TilesSticky: <TilesSticky {...(item as TilesStickyProps)} />,
       TilesFeatures: <TilesFeatures {...(item as TilesFeaturesProps)} />,
       Community: <Community {...(item as CommunityProps)} />,
@@ -183,6 +186,7 @@ export const Components_Query = /* groq */ `
     ${TilesGrid_Query}
     ${TilesSticky_Query}
     ${TilesFeatures_Query}
+    ${TilesGallery_Query}
     ${Community_Query}
     ${Reviews_Query}
     ${Introduction_Query(false)}

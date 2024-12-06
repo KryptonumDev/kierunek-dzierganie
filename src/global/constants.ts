@@ -64,9 +64,18 @@ export const pageUrls: { knitting: string; crocheting: string } = {
   crocheting: '/kursy-szydelkowania',
 };
 
-export const productUrls: { knitting: string; crocheting: string } = {
-  knitting: '/produkty-do-dziergania',
-  crocheting: '/produkty-do-szydelkowania',
+export const productUrls: {
+  knitting: string;
+  crocheting: string;
+  other: string;
+  instruction: string;
+  materials: string;
+} = {
+  knitting: '/produkty/dzierganie',
+  crocheting: '/produkty/szydelkowanie',
+  other: '/produkty/inne',
+  instruction: '/produkty/instrukcje',
+  materials: '/produkty/pakiety-materialow',
 };
 
 /**
@@ -193,3 +202,49 @@ export const PRODUCT_CARD_QUERY = `
     automatizationId,
   },
 `;
+
+export const MATERIAL_PACKAGE_QUERY = `materialsPackage[] {
+          _type,
+          heading,
+          listParagraph,
+          paragraph,
+          imageList[]{
+            ${Img_Query}
+          },
+          salesList,
+          additionalMaterialsList[]->{
+            ${PRODUCT_CARD_QUERY}
+          },
+          materialRef->{
+            _id,
+            "slug": slug.current,
+            basis,
+            rating,
+            reviewsCount,
+            name,
+            price,
+            discount,
+            countInStock,
+            _type,
+           "image": gallery[0] {
+              ${Img_Query}
+            },
+          },
+          materialsHeading->{
+            _type,
+            heading,
+            paragraph
+          },
+          materialsGroupsList[] {
+            title,
+            additionalInfo,
+            materialsList[] {
+              name,
+              additionalInfo,
+              materialRef->{
+                _id,
+                "slug": slug.current
+              }
+            }
+          },
+        },`;

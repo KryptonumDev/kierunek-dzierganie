@@ -1,13 +1,13 @@
 'use client';
 
 import { formatBytes } from '@/utils/format-bytes';
+import { PDFDownloadLink, pdf } from '@react-pdf/renderer';
+import { useEffect, useState } from 'react';
 import Certificate from './Certificate';
 import styles from './CertificateSection.module.scss';
 import type { CertificateSectionTypes } from './CertificateSection.types';
-import { useEffect, useState } from 'react';
-import { PDFDownloadLink, pdf } from '@react-pdf/renderer';
 const CertificateSection = ({ course, full_name, authorName }: CertificateSectionTypes) => {
-  if (full_name == null) full_name = 'Tutaj będzie twoje imię i nazwisko jak dodasz go w ustawieniach';
+  if (full_name == null) full_name = 'Tutaj będzie twoje imię i nazwisko jak dodasz je w ustawieniach';
 
   const [pdfSize, setPdfSize] = useState(0);
 

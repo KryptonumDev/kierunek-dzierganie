@@ -1,19 +1,48 @@
 import CourseChapters from '@/components/_dashboard/CourseChapters';
 import ProgramChapters from '@/components/_dashboard/ProgramChapters';
+import RelatedFiles from '@/components/_dashboard/RelatedFiles';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
-import type { CoursesProgress, Course } from '@/global/types';
+import type { Course, CoursesProgress, File } from '@/global/types';
 import { checkCourseProgress } from '@/utils/check-course-progress';
+import type { QueryProps as MapNotesQueryProps } from '@/utils/map-note';
+import mapNotes from '@/utils/map-note';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createClient } from '@/utils/supabase-server';
 import { notFound } from 'next/navigation';
 
 interface QueryProps {
-  course: Course;
+  course: Course & {
+    files: File[];
+    files_alter: File[];
+    author: {
+      name: string;
+      surname: string;
+    };
+    chapters: {
+      chapterName: string;
+      lessons: {
+        name: string;
+        _id: string;
+        title: string;
+      }[];
+    }[];
+  };
   courses_progress: CoursesProgress;
+  left_handed: boolean;
+  notes: {
+    chapterName: string;
+    lessons: {
+      name: string;
+      notes: string;
+    }[];
+  }[];
 }
 
 export default async function Course({ params: { courseSlug } }: { params: { courseSlug: string } }) {
-  const { course, courses_progress }: QueryProps = await query(courseSlug);
+  const { course, courses_progress, left_handed, notes }: QueryProps = await query(courseSlug);
+
+  console.log(notes);
+
   return (
     <div>
       {course.type === 'course' ? (
@@ -27,6 +56,11 @@ export default async function Course({ params: { courseSlug } }: { params: { cou
           course={course}
         />
       )}
+      <RelatedFiles
+        course={course}
+        left_handed={left_handed}
+        notes={notes}
+      />
     </div>
   );
 }
@@ -47,6 +81,8 @@ const query = async (slug: string): Promise<QueryProps> => {
     .select(
       `
         id, 
+        left_handed,
+        billing_data->firstName,
         courses_progress (
           id,
           course_id,
@@ -56,6 +92,7 @@ const query = async (slug: string): Promise<QueryProps> => {
       `
     )
     .eq('id', user!.id)
+    .returns<{ id: string; firstName: string; left_handed: boolean; courses_progress: CoursesProgress[] }[]>()
     .single();
 
   const data: QueryProps = await sanityFetch({
@@ -65,6 +102,26 @@ const query = async (slug: string): Promise<QueryProps> => {
         _id,
         name,
         type,
+        author -> {
+          name,
+          surname
+        },
+        files[]{
+          asset->{
+            url,
+            size,
+            originalFilename,
+            _id
+          }
+          },
+        files_alter[]{
+          asset->{
+            url,
+            size,
+            originalFilename,
+            _id
+            }
+          },
         "slug": slug.current,
         chapters {
           dateOfUnlock,
@@ -87,6 +144,7 @@ const query = async (slug: string): Promise<QueryProps> => {
           lessons[]->{
             _id,
             name,
+            title,
             video,
             lengthInMinutes,
             "slug": slug.current
@@ -115,6 +173,13 @@ const query = async (slug: string): Promise<QueryProps> => {
 
   if (!res.data!.courses_progress.some((el) => el.course_id === data.course._id)) return notFound();
 
+  const course_progress = res.data!.courses_progress.find((el) => el.course_id === data.course._id)!;
+
+  console.log(data.course);
+  console.log(course_progress);
+
+  const notes = mapNotes(course_progress, data.course as unknown as MapNotesQueryProps['course']);
+
   const progress = await checkCourseProgress(
     data.course,
     res.data!.courses_progress.find((el) => el.course_id === data.course._id)!
@@ -122,6 +187,8 @@ const query = async (slug: string): Promise<QueryProps> => {
 
   return {
     course: data.course,
+    left_handed: res.data!.left_handed,
     courses_progress: progress,
+    notes,
   };
 };

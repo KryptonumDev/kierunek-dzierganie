@@ -1,49 +1,81 @@
 .Community {
-  &[data-highlighted='true'] {
-    background-color: var(--primary-200);
-    padding: clamp(24px, calc(36vw / 7.68), 36px) clamp(16px, calc(32vw / 7.68), 32px);
-    border-radius: 6px;
-    @media (max-width: 699px) {
-      margin: 0 calc(var(--pageMargin) * -1);
-      padding-left: var(--pageMargin);
-      padding-right: var(--pageMargin);
+  position: relative;
+
+  &[data-image='true'] {
+    padding: 24px 0 140px;
+
+    &:last-of-type {
+      margin-bottom: calc(-1 * var(--space-gap));
     }
+
     header {
-      max-width: calc(584rem / 16);
+      padding: clamp(12px, calc(24vw / 7.68), 24px);
+      border-radius: 6px;
+      background: var(--primary-200, #faf4f0);
     }
   }
+
+  .backgroundImage {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 100vw;
+    max-width: none;
+    transform: translateX(-50%);
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+  }
   header {
-    max-width: calc(794rem / 16);
+    max-width: calc(841rem / 16);
     margin: 0 auto;
     text-align: center;
+    width: 100%;
+
     h2 {
-      margin-bottom: clamp(16px, calc(28vw / 7.68), 36px);
+      margin-bottom: clamp(12px, calc(16vw / 7.68), 16px);
+
+      &:has(strong) {
+        margin-bottom: clamp(16px, calc(28vw / 7.68), 36px);
+      }
+
+      &:not(:has(strong)) {
+        font-size: clamp(24px, calc(36vw / 7.68), 36px);
+        line-height: 1.16;
+      }
     }
   }
   .cta {
-    margin: clamp(28px, calc(36vw / 7.68), 36px) auto 0;
+    margin: clamp(24px, calc(28vw / 7.68), 28px) auto 0;
   }
   .socials {
-    margin-top: clamp(28px, calc(36vw / 7.68), 36px);
+    margin-top: clamp(24px, calc(28vw / 7.68), 28px);
     list-style-type: none;
     display: inline-flex;
     align-items: center;
-    gap: 40px;
+    gap: 12px;
     a {
-      display: block;
       color: var(--primary-600);
       transition: color 0.3s var(--easing);
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
       &:hover {
         color: var(--primary-800);
       }
       svg {
-        width: clamp(32px, calc(40vw / 7.68), 40px);
-        height: clamp(32px, calc(40vw / 7.68), 40px);
-        @media (min-width: 900px) {
-          width: 24px;
-          height: 24px;
-        }
+        width: 24px;
+        height: 24px;
       }
     }
+  }
+
+  @media (min-width: 1560px) {
+    padding-top: 48px;
+  }
+
+  @media (max-width: 899px) {
+    padding-bottom: clamp(196px, calc(236vw / 7.68), 236px);
   }
 }
