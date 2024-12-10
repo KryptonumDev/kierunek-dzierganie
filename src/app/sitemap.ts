@@ -1,5 +1,5 @@
-import sanityFetch from '@/utils/sanity.fetch';
 import { DOMAIN } from '@/global/constants';
+import sanityFetch from '@/utils/sanity.fetch';
 import type { MetadataRoute } from 'next';
 
 type FetchTypes = {
@@ -127,6 +127,15 @@ const query = async (): Promise<FetchTypes> => {
           'slug': slug.current
         },
         'KnittingProducts_Collection': *[(_type=='product'|| _type=='voucher') && basis =='knitting' && visible == true][] {
+          'slug': slug.current
+        },
+        'OtherProducts_Collection': *[(_type=='product'|| _type=='voucher') && basis =='other' && visible == true][] {
+          'slug': slug.current
+        },
+        'InstructionProducts_Collection': *[(_type=='product'|| _type=='voucher') && basis =='instruction' && visible == true][] {
+          'slug': slug.current
+        },
+        'MaterialsProducts_Collection': *[(_type=='product'|| _type=='voucher') && basis =='materials' && visible == true][] {
           'slug': slug.current
         },
         'PartnersPage': *[_id=="Partners_Page"][] {
