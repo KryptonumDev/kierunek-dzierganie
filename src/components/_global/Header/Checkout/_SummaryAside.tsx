@@ -12,6 +12,8 @@ export default function SummaryAside({ input }: AsideProps) {
     [input.products?.array]
   );
 
+  console.log(input);
+
   return (
     <div className={styles['summary-aside']}>
       <h3>Twoje zamówienie</h3>

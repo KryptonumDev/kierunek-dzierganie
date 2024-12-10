@@ -126,7 +126,7 @@ export async function generateBill(data: any, id: string) {
         if (product.type === 'product') {
           return {
             StawkaVat: product.vat / 100,
-            StawkaRyczaltu: product.ryczalt / 100,
+            StawkaRyczaltu: product.ryczalt ? product.ryczalt / 100 : null,
             Ilosc: product.quantity,
             CenaJednostkowa: product.amount / 100,
             NazwaPelna: product.name,
@@ -138,7 +138,7 @@ export async function generateBill(data: any, id: string) {
 
         return {
           StawkaVat: product.vat / 100,
-          StawkaRyczaltu: product.ryczalt / 100,
+          StawkaRyczaltu: product.ryczalt ? product.ryczalt / 100 : null,
           Ilosc: 1,
           CenaJednostkowa: product.amount / 100,
           NazwaPelna: product.name,
@@ -159,6 +159,7 @@ export async function generateBill(data: any, id: string) {
       Email: data.billing.email,
       OsobaFizyczna: data.billing.invoiceType !== 'Firma',
     },
+    Uwagi: data.used_discount?.type === 'DELIVERY' ? 'Darmowa wysyłka.' : '',
   };
 
   if (data.shipping_method && data.used_discount?.type !== 'DELIVERY') {
