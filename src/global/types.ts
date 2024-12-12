@@ -1,4 +1,9 @@
 import type { ComponentProps } from '@/components/Components';
+import { CtaHeadingTypes } from '@/components/_courseDiscount/CtaHeading';
+import { DiscountCtaTypes } from '@/components/_courseDiscount/DiscountCta';
+import { DiscountHeroTypes } from '@/components/_courseDiscount/DiscountHero';
+import { ImageHeadingTypes } from '@/components/_courseDiscount/ImageHeading';
+import { TimerBoxTypes } from '@/components/_courseDiscount/TimerBox';
 import type { HeroSimpleTypes } from '@/components/_global/HeroSimple';
 import { AdditionalMaterialsTypes } from '@/components/_product/AdditionalMaterials';
 import type { DescriptionTypes } from '@/components/_product/Description/Description';
@@ -167,6 +172,22 @@ export type PageQueryProps = {
   name?: string;
   slug?: string;
   content: ComponentProps[];
+} & generateMetadataProps;
+
+export type ThankYouPageQueryProps = {
+  name?: string;
+  slug?: string;
+  content: ComponentProps[];
+  hasDiscount?: boolean;
+  discountCourse?: {
+    discount: number;
+    course: {
+      slug: string;
+      name: string;
+    };
+    discountTime: number;
+  };
+  discountComponents: (DiscountHeroTypes | TimerBoxTypes | ImageHeadingTypes | CtaHeadingTypes | DiscountCtaTypes)[];
 } & generateMetadataProps;
 
 export type BlogPageQueryProps = {
@@ -345,6 +366,9 @@ export type CoursePageQuery = {
 
 export type generateStaticParamsProps = {
   slug: string;
+  dedicatedThankYouPage?: {
+    slug: string;
+  };
 };
 
 export type generateLessonStaticParamsProps = {

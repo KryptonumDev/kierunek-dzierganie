@@ -1,3 +1,4 @@
+import { groq } from 'next-sanity';
 import { Img_Query } from '@/components/ui/image';
 
 /**

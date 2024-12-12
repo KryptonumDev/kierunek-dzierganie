@@ -11,6 +11,7 @@ export default function Listing({
   bestSeller,
   bestSellerBadge,
 }: ListingProps) {
+  console.log(products);
   return (
     <div className={styles['products']}>
       {bestSeller && (
