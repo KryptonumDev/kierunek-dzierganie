@@ -1,3 +1,47 @@
 .CtaHeading {
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 794px;
+  position: relative;
+  margin: 0 auto;
+  padding: clamp(96px, calc(124vw / 7.68), 124px) 0;
+  .heading {
+    font-size: clamp(calc(24rem / 16), calc(36vw / 7.68), calc(36rem / 16));
+    line-height: 1.2;
+    font-weight: 300;
+    margin-bottom: clamp(12px, calc(28vw / 7.68), 28px);
+  }
+
+  .paragraph {
+    font-weight: 300;
+    line-height: 1.5;
+    font-weight: 300;
+
+    strong {
+      background: linear-gradient(rgba(255, 255, 255, 0) 50%, var(--primary-300) 50%);
+    }
+    > p:not(:last-child) {
+      margin-bottom: clamp(6px, calc(8vw / 7.68), 8px);
+    }
+    margin-bottom: clamp(20px, calc(48vw / 7.68), 48px);
+  }
+
+  .additionalText {
+    margin-top: 8px;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  > svg {
+    position: absolute;
+    bottom: -5%;
+    left: -13%;
+
+    @media (max-width: 1023px) {
+      display: none;
+    }
+  }
 }
