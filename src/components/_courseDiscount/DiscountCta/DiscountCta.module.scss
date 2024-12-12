@@ -1,3 +1,69 @@
 .DiscountCta {
-  
+  display: flex;
+  align-items: flex-start;
+
+  position: relative;
+  gap: clamp(30px, calc(32vw / 7.68), 32px);
+  img {
+    max-width: clamp(320px, calc(320vw / 7.68), 484px);
+    width: 100%;
+    align-items: stretch;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+
+  .header {
+    font-weight: 300;
+
+    .heading {
+      font-size: clamp(calc(24rem / 16), calc(36vw / 7.68), calc(36rem / 16));
+      line-height: 1.2;
+      margin-bottom: clamp(12px, calc(28vw / 7.68), 28px);
+    }
+
+    .paragraph {
+      margin-bottom: clamp(12px, calc(28vw / 7.68), 28px);
+      line-height: 1.5;
+
+      > p:not(:last-child) {
+        margin-bottom: 8px;
+      }
+    }
+
+    .additionalParagraph {
+      margin-bottom: clamp(20px, calc(36vw / 7.68), 36px);
+      font-size: calc(14rem / 16);
+      line-height: 1.5;
+    }
+
+    .additionalText {
+      margin-top: 8px;
+      font-size: calc(14rem / 16);
+      line-height: 1.5;
+    }
+  }
+
+  & > svg {
+    position: absolute;
+    bottom: -5%;
+    right: 0;
+  }
+
+  @media (max-width: 1023px) {
+    flex-direction: column;
+    max-width: 608px;
+    margin: 0 auto;
+
+    img {
+      max-width: 484px;
+    }
+
+    .header {
+      max-width: 584px;
+    }
+
+    & > svg {
+      display: none;
+    }
+  }
 }
