@@ -146,11 +146,13 @@ const Nav = ({
                     name: 'Do dziergania',
                     href: products.knitting.href,
                     items: products.knitting.highlighted_products,
+                    showMore: 'Pokaż więcej produktów do dziergania',
                   },
                   {
                     name: 'Do szydełkowania',
                     href: products.crocheting.href,
                     items: products.crocheting.highlighted_products,
+                    showMore: 'Pokaż więcej produktów do szydełkowania',
                   },
                 ]}
                 additionalLinks={products.additional_links}

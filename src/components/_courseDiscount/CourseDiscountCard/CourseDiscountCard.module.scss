@@ -1,0 +1,95 @@
+.courseDiscountCard {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(20px, calc(24vw / 7.68), 24px);
+  margin: 0 -12px;
+  width: calc(100% + 24px);
+  .link {
+    position: absolute;
+    inset: 0;
+  }
+
+  & > div:last-of-type {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    > div:first-child {
+      margin-bottom: auto;
+    }
+  }
+
+  img {
+    max-height: 213px;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+
+  .rating {
+    display: flex;
+    gap: 4px;
+    justify-content: flex-start;
+    margin-bottom: clamp(2px, calc(2vw / 7.68), 8px);
+
+    span {
+      font-size: calc(14rem / 16);
+      color: var(--primary-800, #53423c);
+
+      b {
+        font-weight: 300;
+        font-size: calc(32rem / 16);
+        font-family: var(--font-city-streetwear);
+      }
+    }
+  }
+
+  .price {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+
+    span {
+      color: var(--primary-800, #53423c);
+      font-size: calc(18rem / 16);
+      font-weight: 300;
+      line-height: 150%;
+
+      &.discount {
+        color: var(--primary-600, #9a827a);
+        font-size: calc(14rem / 16);
+        line-height: 150%;
+        text-decoration: line-through;
+      }
+    }
+  }
+
+  h3 {
+    font-size: clamp(calc(18rem / 16), calc(24vw / 7.68), calc(24rem / 16));
+    margin-bottom: 8px;
+  }
+
+  @media (max-width: 899px) {
+    grid-template-columns: 1fr;
+    max-width: 292px;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    .rating {
+      justify-content: center;
+    }
+
+    .price {
+      justify-content: center;
+    }
+
+    & > div:last-of-type {
+      align-items: center;
+      & > div:first-child {
+        margin-bottom: clamp(8px, calc(12vw / 7.68), 12px);
+      }
+    }
+  }
+}

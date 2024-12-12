@@ -3,8 +3,8 @@ export default TimerBox;
 export type { TimerBoxTypes } from './TimerBox.types';
 
 export const TimerBox_Query = `
-  timerBox {
-  heading,
-  paragraph,
-}
+  _type == 'timerBox' => {
+    heading,
+    paragraph,
+  }
 `;

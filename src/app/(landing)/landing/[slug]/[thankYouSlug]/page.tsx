@@ -6,15 +6,17 @@ import { ImageHeading_Query } from '@/components/_courseDiscount/ImageHeading';
 import SectionPicker from '@/components/_courseDiscount/SectionPicker';
 import { TimerBox_Query } from '@/components/_courseDiscount/TimerBox';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
+import { Img_Query } from '@/components/ui/image';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
 import type { ThankYouPageQueryProps } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
 import { notFound } from 'next/navigation';
 
 const LandingPage = async ({ params: { slug, thankYouSlug } }: { params: { slug: string; thankYouSlug: string } }) => {
-  const { name, hasDiscount, content, discountComponents }: ThankYouPageQueryProps = await query(thankYouSlug);
+  const { name, hasDiscount, content, discountCourse, discountComponents }: ThankYouPageQueryProps =
+    await query(thankYouSlug);
 
-  console.log(discountComponents);
+  console.log(discountCourse);
 
   return (
     <>
@@ -27,7 +29,16 @@ const LandingPage = async ({ params: { slug, thankYouSlug } }: { params: { slug:
         ]}
         visible={false}
       />
-      {hasDiscount ? <SectionPicker /> : <Components data={content} />}
+      {hasDiscount ? (
+        discountCourse ? (
+          <SectionPicker
+            data={discountComponents}
+            discountCourse={discountCourse}
+          />
+        ) : null
+      ) : (
+        <Components data={content} />
+      )}
     </>
   );
 };
@@ -51,19 +62,29 @@ const query = async (slug: string): Promise<ThankYouPageQueryProps> => {
         hasDiscount,
         ${Components_Query}
         discountCourse{
-          discount -> {
-            basis,
+          course -> {
             name,
             'slug': slug.current,
-          }
+            _type,
+            _id,
+            basis,
+            reviewsCount,
+            rating,
+            price,
+            'image': gallery[0]{
+              ${Img_Query}
+            },
+          },
+          discount,
+          discountTime,
         },
         discountComponents[] { 
-          heading, 
-          paragraph,
-          image,
-          ctaText,
-          additionalText,
-          additionalParagraph,
+          _type,
+          ${DiscountHero_Query},
+          ${DiscountCta_Query},
+          ${CtaHeading_Query},
+          ${ImageHeading_Query},
+          ${TimerBox_Query},
           },
         
 

@@ -1,5 +1,6 @@
 import styles from './DiscountHero.module.scss';
+import type { DiscountHeroTypes } from './DiscountHero.types';
 
-export default function DiscountHero() {
-  return <h1>hej</h1>;
+export default function DiscountHero({}: DiscountHeroTypes) {
+  return <div className={styles.discountHero}></div>;
 }

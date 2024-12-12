@@ -3,9 +3,9 @@ export default ImageHeading;
 export type { ImageHeadingTypes } from './ImageHeading.types';
 
 export const ImageHeading_Query = `
-  imageHeading {
-  image,
-  heading,
-  paragraph,
-}
+  _type == 'imageHeading' => {
+    image,
+    heading,
+    paragraph,
+  }
 `;

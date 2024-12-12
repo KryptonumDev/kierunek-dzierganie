@@ -179,16 +179,34 @@ export type ThankYouPageQueryProps = {
   slug?: string;
   content: ComponentProps[];
   hasDiscount?: boolean;
-  discountCourse?: {
-    discount: number;
-    course: {
-      slug: string;
-      name: string;
-    };
-    discountTime: number;
-  };
-  discountComponents: (DiscountHeroTypes | TimerBoxTypes | ImageHeadingTypes | CtaHeadingTypes | DiscountCtaTypes)[];
+  discountCourse?: DiscountCourseType;
+  discountComponents: discountComponentsType;
 } & generateMetadataProps;
+
+export type DiscountCourseType = {
+  course: DiscountCourseRefType;
+  discount: number;
+  discountTime: number;
+};
+
+export type DiscountCourseRefType = {
+  basis: string;
+  name: string;
+  slug: string;
+  _id: string;
+  rating: number;
+  reviewsCount: number;
+  price: number;
+  image: ImgType;
+};
+
+export type discountComponentsType = (
+  | DiscountHeroTypes
+  | TimerBoxTypes
+  | ImageHeadingTypes
+  | CtaHeadingTypes
+  | DiscountCtaTypes
+)[];
 
 export type BlogPageQueryProps = {
   HeroSimple: HeroSimpleTypes;
