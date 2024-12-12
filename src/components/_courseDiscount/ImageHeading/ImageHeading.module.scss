@@ -1,3 +1,69 @@
 .ImageHeading {
-  
+  background-color: var(--primary-200, #faf4f0);
+  display: flex;
+  align-items: center;
+  gap: clamp(32px, calc(48vw / 7.68), 48px);
+  margin: 0 calc(-1 * var(--pageMargin));
+  width: calc(100% + 2 * var(--pageMargin));
+  justify-content: space-between;
+  position: relative;
+
+  .header {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 24px 0 42px;
+    padding-left: clamp(48px, calc(48vw / 7.68), 80px);
+    max-width: calc(584px + clamp(48px, calc(48vw / 7.68), 80px));
+    > svg {
+      margin-bottom: 12px;
+      width: clamp(62px, calc(114vw / 7.68), 114px);
+    }
+    .heading {
+      font-weight: 300;
+      margin-bottom: clamp(12px, calc(28vw / 7.68), 28px);
+      font-size: clamp(calc(24rem / 16), calc(36vw / 7.68), calc(36rem / 16));
+      line-height: 116%;
+    }
+
+    .paragraph {
+      line-height: 1.5;
+      font-weight: 300;
+      > p:not(:last-child) {
+        margin-bottom: 8px;
+      }
+    }
+  }
+
+  img {
+    max-width: 484px;
+    width: 100%;
+    align-self: stretch;
+  }
+
+  > svg {
+    position: absolute;
+    bottom: -7%;
+    right: 560px;
+  }
+
+  @media (max-width: 1023px) {
+    flex-direction: column;
+    padding: clamp(32px, calc(48vw / 7.68), 48px) var(--pageMargin) 0;
+    .header {
+      padding-left: 0;
+      max-width: 608px;
+    }
+
+    img {
+      max-width: 608px;
+
+      align-self: center;
+      width: 100%;
+    }
+
+    > svg {
+      display: none;
+    }
+  }
 }

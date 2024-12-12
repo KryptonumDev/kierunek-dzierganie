@@ -1,7 +1,7 @@
 import styles from './CtaHeading.module.scss';
 import type { CtaHeadingTypes } from './CtaHeading.types';
 
-const CtaHeading = ({}: CtaHeadingTypes) => {
+const CtaHeading = ({ heading, paragraph, cta, additionalText }: CtaHeadingTypes) => {
   return <section className={styles['CtaHeading']}></section>;
 };
 
