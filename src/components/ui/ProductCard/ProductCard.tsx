@@ -1,5 +1,5 @@
 'use client';
-import { courseComplexityEnum, productUrls } from '@/global/constants';
+import { courseComplexityEnum, pageUrls, productUrls } from '@/global/constants';
 import { ImgType } from '@/global/types';
 import { formatPrice } from '@/utils/price-formatter';
 import Link from 'next/link';
@@ -27,6 +27,7 @@ const ProductCard = ({
   onClick,
   owned,
 }: Props) => {
+  console.log(data);
   const { addItem } = useCart();
   const [buttonText, setButtonText] = useState(inCart ? 'Już w koszyku' : 'Dodaj do koszyka');
   const mainVariant = useMemo(() => {
@@ -84,7 +85,7 @@ const ProductCard = ({
       className={`${styles['productCard']} ${horizontal ? styles['horizontal'] : ''} ${tabletHorizontal ? styles['tablet-horizontal'] : ''} ${desktopHorizontal ? styles['desktop-horizontal'] : ''}`}
     >
       <Link
-        href={`${basis ? basis : productUrls[data.basis]}/${data.slug}`}
+        href={`${basis ? basis : data._type === 'product' ? productUrls[data.basis] : pageUrls[data.basis as 'knitting' | 'crocheting']}/${data.slug}`}
         className={styles['link']}
         onClick={onClick}
         aria-label={mainVariant.image?.asset.altText ? mainVariant.image.asset.altText : `${mainVariant.name}`}
