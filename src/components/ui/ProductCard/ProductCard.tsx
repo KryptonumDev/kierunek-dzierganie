@@ -27,7 +27,6 @@ const ProductCard = ({
   onClick,
   owned,
 }: Props) => {
-  console.log(data);
   const { addItem } = useCart();
   const [buttonText, setButtonText] = useState(inCart ? 'Już w koszyku' : 'Dodaj do koszyka');
   const mainVariant = useMemo(() => {
