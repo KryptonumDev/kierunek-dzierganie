@@ -103,7 +103,7 @@ export default function NavList({
                             className={styles.open_item}
                             onClick={handleLinkClick}
                             key={i}
-                            href={`${href}/${slug.current}`}
+                            href={href + (type === 'courses' ? `/${slug.current}` : `?rodzaj=${slug.current}`)}
                           >
                             <Img
                               data={image}
