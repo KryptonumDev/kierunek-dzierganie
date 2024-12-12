@@ -9,4 +9,6 @@ export type DiscountCtaTypes = {
   ctaText: string;
   additionalText?: string;
   index: number;
+  showDiscount: boolean;
+  discountPrice: number;
 };

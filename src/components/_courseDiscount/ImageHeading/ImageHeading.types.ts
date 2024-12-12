@@ -7,3 +7,7 @@ export type ImageHeadingTypes = {
   paragraph: string;
   index: number;
 };
+
+export type TimerTypes = {
+  initialMinutes: number;
+};

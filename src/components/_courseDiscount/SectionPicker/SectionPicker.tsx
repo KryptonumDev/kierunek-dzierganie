@@ -24,7 +24,9 @@ const SectionPicker = ({ data, discountCourse }: SectionPickerTypes) => {
           timerBox: <TimerBox {...({ ...item, index, discountCourse } as TimerBoxTypes)} />,
           imageHeading: <ImageHeading {...({ ...item, index } as ImageHeadingTypes)} />,
           ctaHeading: <CtaHeading {...({ ...item, index } as CtaHeadingTypes)} />,
-          discountCta: <DiscountCta {...({ ...item, index } as DiscountCtaTypes)} />,
+          discountCta: (
+            <DiscountCta {...({ ...item, index, discountPrice: discountCourse.discount } as DiscountCtaTypes)} />
+          ),
         };
         const DynamicComponent = componentMap[DiscountCourseType];
 

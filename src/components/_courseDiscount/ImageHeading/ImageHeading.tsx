@@ -2,6 +2,7 @@ import Img from '@/components/ui/image';
 import Markdown from '@/components/ui/markdown';
 import styles from './ImageHeading.module.scss';
 import type { ImageHeadingTypes } from './ImageHeading.types';
+import Timer from './_Timer';
 
 const ImageHeading = ({ image, heading, paragraph, index }: ImageHeadingTypes) => {
   const HeadingComponent = index === 0 ? Markdown.h1 : Markdown.h2;
@@ -12,10 +13,13 @@ const ImageHeading = ({ image, heading, paragraph, index }: ImageHeadingTypes) =
         <HeadingComponent className={styles.heading}>{heading}</HeadingComponent>
         <Markdown className={styles.paragraph}>{paragraph}</Markdown>
       </header>
-      <Img
-        data={image}
-        sizes=''
-      />
+      <div className={styles.image}>
+        <Timer initialMinutes={15} />
+        <Img
+          data={image}
+          sizes=''
+        />
+      </div>
       <LeafIcon />
     </section>
   );

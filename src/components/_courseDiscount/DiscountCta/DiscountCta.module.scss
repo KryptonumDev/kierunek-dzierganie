@@ -1,15 +1,42 @@
 .DiscountCta {
   display: flex;
   align-items: flex-start;
-
   position: relative;
   gap: clamp(30px, calc(32vw / 7.68), 32px);
-  img {
-    max-width: clamp(320px, calc(320vw / 7.68), 484px);
+
+  .image {
+    position: relative;
     width: 100%;
-    align-items: stretch;
-    border-radius: 6px;
-    flex-shrink: 0;
+    img {
+      max-width: clamp(320px, calc(320vw / 7.68), 484px);
+      width: 100%;
+      align-items: stretch;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+    .discount {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      width: 128px;
+      aspect-ratio: 1/1;
+      border-radius: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--success-200, #d0dad2);
+      font-weight: 300;
+      line-height: 1.5;
+      flex-direction: column;
+      color: var(--success-900, #18251b);
+
+      font-size: clamp(calc(14rem / 16), calc(18vw / 7.68), calc(18rem / 16));
+
+      strong {
+        font-size: clamp(calc(16rem / 16), calc(24vw / 7.68), calc(24rem / 16));
+        font-weight: 300;
+      }
+    }
   }
 
   .header {
@@ -53,9 +80,10 @@
     flex-direction: column;
     max-width: 608px;
     margin: 0 auto;
-
-    img {
-      max-width: 484px;
+    .image {
+      img {
+        max-width: 484px;
+      }
     }
 
     .header {

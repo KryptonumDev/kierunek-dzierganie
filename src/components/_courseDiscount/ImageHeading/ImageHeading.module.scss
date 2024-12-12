@@ -34,11 +34,65 @@
       }
     }
   }
+  .image {
+    position: relative;
+    img {
+      max-width: 484px;
+      width: 100%;
+      align-self: stretch;
+    }
+  }
 
-  img {
-    max-width: 484px;
-    width: 100%;
-    align-self: stretch;
+  .timer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 16px 12px;
+    gap: 8px;
+    font-size: calc(14rem / 16);
+    font-weight: 300;
+    line-height: 1.5;
+    border-radius: 0px 0px 0px 6px;
+    border: 1px solid var(--primary-300, #efe8e7);
+    background-color: var(--primary-100, #fdfbf8);
+
+    span {
+      display: inline-block;
+      padding: 6px;
+      border-radius: 2px;
+      border: 0.5px solid var(--primary-400, #e5d8d4);
+      background: var(--primary-200, #faf4f0);
+      margin-right: 2px;
+
+      &:last-child {
+        margin-left: 6px;
+      }
+    }
+
+    &::before {
+      content: 'Promocja dobiegła końca';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(calc(16rem / 16), calc(18vw / 7.68), calc(18rem / 16));
+      font-weight: 300;
+      text-align: center;
+      color: var(--primary-800, #53423c);
+      background-color: var(--primary-100, #fdfbf8);
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+      font-size: calc(14rem / 16);
+    }
+
+    &[data-end='true'] {
+      &::before {
+        opacity: 1;
+      }
+    }
   }
 
   > svg {
@@ -54,12 +108,12 @@
       padding-left: 0;
       max-width: 608px;
     }
-
-    img {
-      max-width: 608px;
-
-      align-self: center;
-      width: 100%;
+    .image {
+      img {
+        max-width: 608px;
+        align-self: center;
+        width: 100%;
+      }
     }
 
     > svg {

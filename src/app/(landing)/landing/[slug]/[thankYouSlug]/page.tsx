@@ -16,8 +16,6 @@ const LandingPage = async ({ params: { slug, thankYouSlug } }: { params: { slug:
   const { name, hasDiscount, content, discountCourse, discountComponents }: ThankYouPageQueryProps =
     await query(thankYouSlug);
 
-  console.log(discountCourse);
-
   return (
     <>
       <Breadcrumbs

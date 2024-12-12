@@ -13,5 +13,6 @@ export const DiscountCta_Query = `
     additionalParagraph,
     ctaText,
     additionalText,
+    showDiscount,
   }
 `;

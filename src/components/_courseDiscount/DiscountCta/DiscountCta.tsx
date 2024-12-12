@@ -12,14 +12,26 @@ const DiscountCta = ({
   ctaText,
   additionalText,
   index,
+  showDiscount,
+  discountPrice,
 }: DiscountCtaTypes) => {
   const HeadingComponent = index === 0 ? Markdown.h1 : Markdown.h2;
   return (
     <section className={styles['DiscountCta']}>
-      <Img
-        data={image}
-        sizes=''
-      />
+      <div className={styles.image}>
+        {showDiscount && (
+          <div className={styles.discount}>
+            <span>Kup już</span>
+            <span>
+              za <strong>{discountPrice}zł*</strong>
+            </span>
+          </div>
+        )}
+        <Img
+          data={image}
+          sizes=''
+        />
+      </div>
       <header className={styles.header}>
         <HeadingComponent className={styles.heading}>{heading}</HeadingComponent>
         <Markdown className={styles.paragraph}>{paragraph}</Markdown>
