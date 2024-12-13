@@ -84,7 +84,7 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
           }}
         />
       </Informations>
-      {relatedBundle && (
+      {relatedBundle && relatedBundle.visible && (
         <Package
           product={relatedBundle}
           heading={'Jeden pakiet – niezliczona ilość wiedzy'}
