@@ -4,8 +4,8 @@ import { useCountdown } from '@/utils/countdown';
 import { TimerProps } from '../TimerBox/TimerBox.types';
 import styles from './ImageHeading.module.scss';
 
-const Timer = ({ initialMinutes }: TimerProps) => {
-  const { minutes, seconds } = useCountdown(initialMinutes);
+const Timer = ({ expirationDate }: TimerProps) => {
+  const { minutes, seconds } = useCountdown(expirationDate);
 
   return (
     <div
@@ -14,8 +14,8 @@ const Timer = ({ initialMinutes }: TimerProps) => {
     >
       Promocja kończy się za
       <div>
-        <span>{minutes}</span> minut
-        <span>{seconds}</span> sekund
+        <span>{minutes || '00'}</span> minut
+        <span>{seconds || '00'}</span> sekund
       </div>
     </div>
   );

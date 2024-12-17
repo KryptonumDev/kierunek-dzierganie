@@ -4,7 +4,7 @@ import styles from './ImageHeading.module.scss';
 import type { ImageHeadingTypes } from './ImageHeading.types';
 import Timer from './_Timer';
 
-const ImageHeading = ({ image, heading, paragraph, index }: ImageHeadingTypes) => {
+const ImageHeading = ({ image, heading, paragraph, index, expirationDate }: ImageHeadingTypes) => {
   const HeadingComponent = index === 0 ? Markdown.h1 : Markdown.h2;
   return (
     <section className={styles['ImageHeading']}>
@@ -14,7 +14,7 @@ const ImageHeading = ({ image, heading, paragraph, index }: ImageHeadingTypes) =
         <Markdown className={styles.paragraph}>{paragraph}</Markdown>
       </header>
       <div className={styles.image}>
-        <Timer initialMinutes={15} />
+        <Timer expirationDate={expirationDate} />
         <Img
           data={image}
           sizes=''

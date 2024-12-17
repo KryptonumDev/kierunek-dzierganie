@@ -3,17 +3,20 @@
 import Button from '@/components/ui/Button';
 import { Hearth } from '@/components/ui/Icons';
 import Img from '@/components/ui/image';
+import { pageUrls } from '@/global/constants';
+import { formatPrice } from '@/utils/price-formatter';
 import Link from 'next/link';
 import styles from './CourseDiscountCard.module.scss';
 import { CourseDiscountCardTypes } from './CourseDiscountCard.types';
-import { formatPrice } from '@/utils/price-formatter';
 
 const CourseDiscountCard = ({ data, discountPrice }: CourseDiscountCardTypes) => {
   const { name, slug, image, basis, rating, reviewsCount, price } = data;
+
+  const coureHref = `${pageUrls[basis as 'knitting' | 'crocheting']}/${slug}`;
   return (
     <div className={styles['courseDiscountCard']}>
       <Link
-        href={'/'}
+        href={coureHref}
         className={styles['link']}
         aria-label={image?.asset?.altText}
       />
@@ -45,7 +48,7 @@ const CourseDiscountCard = ({ data, discountPrice }: CourseDiscountCardTypes) =>
             <span dangerouslySetInnerHTML={{ __html: formatPrice(discountPrice) }} />
           </p>
         </div>
-        <Button>Dodaj do koszyka</Button>
+        <Button href={coureHref}>Kup teraz</Button>
       </div>
     </div>
   );

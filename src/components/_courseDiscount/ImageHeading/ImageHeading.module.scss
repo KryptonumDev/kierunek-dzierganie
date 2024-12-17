@@ -70,11 +70,12 @@
         margin-left: 6px;
       }
     }
-
     &::before {
-      content: 'Promocja dobiegła końca';
       position: absolute;
       inset: 0;
+      background-color: var(--primary-100, #fdfbf8);
+      content: 'Promocja dobiegła końca';
+      transition: opacity 0.3s ease-in-out;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -82,15 +83,14 @@
       font-weight: 300;
       text-align: center;
       color: var(--primary-800, #53423c);
-      background-color: var(--primary-100, #fdfbf8);
       opacity: 0;
-      transition: opacity 0.3s ease-in-out;
+      visibility: hidden;
       font-size: calc(14rem / 16);
     }
-
     &[data-end='true'] {
       &::before {
         opacity: 1;
+        visibility: visible;
       }
     }
   }

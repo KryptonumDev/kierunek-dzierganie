@@ -4,19 +4,22 @@ import CourseDiscountCard from '../CourseDiscountCard';
 import styles from './TimerBox.module.scss';
 import type { TimerBoxTypes } from './TimerBox.types';
 import Timer from './_Timer';
+import DiscountCode from './_DiscountCode';
 
-const TimerBox = ({ discountCourse, heading, paragraph, index }: TimerBoxTypes) => {
+const TimerBox = ({ discountCourse, heading, paragraph, index, discountCode, expirationDate }: TimerBoxTypes) => {
   const HeadingComponent = index === 0 ? Markdown.h1 : Markdown.h2;
+
   return (
     <section className={styles['TimerBox']}>
       <div className={styles.container}>
-        <Timer initialMinutes={15} />
+        <Timer expirationDate={expirationDate} />
         <div className={styles.content}>
           <HeadingComponent className={styles.heading}>{heading}</HeadingComponent>
           <Markdown className={styles.paragraph}>{paragraph}</Markdown>
+          <DiscountCode discountCode={discountCode} expirationDate={expirationDate} />
           <CourseDiscountCard
             data={discountCourse.course}
-            discountPrice={2400}
+            discountPrice={discountCourse.course.price - discountCourse.discount}
           />
         </div>
         <FlowerLeft1 />

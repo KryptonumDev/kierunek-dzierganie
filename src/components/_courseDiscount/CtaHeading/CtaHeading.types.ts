@@ -1,3 +1,5 @@
+import { DiscountCourseRefType } from '@/global/types';
+
 export type CtaHeadingTypes = {
   _type: 'ctaHeading';
   heading: string;
@@ -5,4 +7,5 @@ export type CtaHeadingTypes = {
   ctaText: string;
   additionalText?: string;
   index: number;
+  course: DiscountCourseRefType;
 };

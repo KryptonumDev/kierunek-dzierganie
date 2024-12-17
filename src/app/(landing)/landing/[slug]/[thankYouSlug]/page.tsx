@@ -9,12 +9,36 @@ import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import { Img_Query } from '@/components/ui/image';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
 import type { ThankYouPageQueryProps } from '@/global/types';
+import { decodeEmail } from '@/utils/email-cipher';
 import sanityFetch from '@/utils/sanity.fetch';
+import { createClient } from '@/utils/supabase-admin';
 import { notFound } from 'next/navigation';
 
-const LandingPage = async ({ params: { slug, thankYouSlug } }: { params: { slug: string; thankYouSlug: string } }) => {
+const LandingPage = async ({
+  params: { slug, thankYouSlug },
+  searchParams: { subscriber, group },
+}: {
+  params: { slug: string; thankYouSlug: string };
+  searchParams: { subscriber: string; group: string };
+}) => {
   const { name, hasDiscount, content, discountCourse, discountComponents }: ThankYouPageQueryProps =
     await query(thankYouSlug);
+
+  const decodedEmail = decodeEmail(subscriber);
+
+  const subscriberFetch = await fetch(`https://api.mailerlite.com/api/v2/groups/${group}/subscribers`, {
+    method: 'GET',
+    headers: {
+      'X-MailerLite-ApiKey': process.env.MAILERLITE_API_KEY!,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const subscriberData = await subscriberFetch.json();
+
+  const isSubscriber = subscriberData.find((subscriber: { email: string }) => subscriber.email === decodedEmail);
+
+  const { data } = await getDiscount(decodedEmail, group);
 
   return (
     <>
@@ -32,6 +56,8 @@ const LandingPage = async ({ params: { slug, thankYouSlug } }: { params: { slug:
           <SectionPicker
             data={discountComponents}
             discountCourse={discountCourse}
+            discountCode={data?.code}
+            expirationDate={data?.expiration_date}
           />
         ) : null
       ) : (
@@ -93,4 +119,19 @@ const query = async (slug: string): Promise<ThankYouPageQueryProps> => {
   });
   !data && notFound();
   return data as ThankYouPageQueryProps;
+};
+
+const getDiscount = async (subscriber: string, group: string) => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('coupons')
+    .select('*')
+    .containedBy('course_discount_data', {
+      email: subscriber,
+      group_id: group,
+    })
+    .single();
+
+  return { data, error };
 };

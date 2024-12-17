@@ -384,9 +384,7 @@ export type CoursePageQuery = {
 
 export type generateStaticParamsProps = {
   slug: string;
-  dedicatedThankYouPage?: {
-    slug: string;
-  };
+  dedicatedThankYouPage: string;
 };
 
 export type generateLessonStaticParamsProps = {

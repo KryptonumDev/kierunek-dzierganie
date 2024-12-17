@@ -46,13 +46,15 @@ const query = async (slug: string): Promise<PageQueryProps> => {
   return data as PageQueryProps;
 };
 
-export async function generateStaticParams(): Promise<generateStaticParamsProps[]> {
+export async function generateStaticParams(): Promise<{ slug: string }[]> {
   const data: generateStaticParamsProps[] = await sanityFetch({
     query: /* groq */ `
       *[_type == "landingPage"] {
         'slug': slug.current,
-        dedicatedThankYouPage -> {
-          'slug': slug.current
+        "dedicatedThankYouPage": content[] {
+          newsletter{
+            'slug': slug.current
+          }
         }
       }
     `,
@@ -63,9 +65,9 @@ export async function generateStaticParams(): Promise<generateStaticParamsProps[
   }));
 
   const thankYouPages = data
-    .filter(({ dedicatedThankYouPage }) => dedicatedThankYouPage)
+    .filter(({ dedicatedThankYouPage }) => !!dedicatedThankYouPage)
     .map(({ slug, dedicatedThankYouPage }) => ({
-      slug: `${slug}/${dedicatedThankYouPage?.slug}`,
+      slug: `${slug}/${dedicatedThankYouPage}`,
     }));
 
   return [...landingPages, ...thankYouPages];

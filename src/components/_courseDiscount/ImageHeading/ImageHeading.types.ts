@@ -6,6 +6,7 @@ export type ImageHeadingTypes = {
   heading: string;
   paragraph: string;
   index: number;
+  expirationDate?: string;
 };
 
 export type TimerTypes = {

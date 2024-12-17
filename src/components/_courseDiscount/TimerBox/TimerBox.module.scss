@@ -11,6 +11,36 @@
     position: relative;
     margin: 0 auto;
 
+    .discountCode {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      margin-bottom: clamp(24px, calc(36vw / 7.68), 48px);
+      transition: opacity 0.3s ease-in-out;
+      position: relative;
+
+      span {
+        display: inline-block;
+        padding: 12px 16px;
+        border-radius: 6px;
+        border: 1px solid var(--primary-400, #e5d8d4);
+        background-color: var(--primary-200, #faf4f0);
+        font-size: clamp(calc(16rem / 16), calc(18vw / 7.68), calc(18rem / 16));
+      }
+
+      &[data-expired='true'] {
+        opacity: 0.3;
+
+        > button,
+        > span {
+          cursor: default;
+          user-select: none;
+          pointer-events: none;
+        }
+      }
+    }
+
     .timer {
       padding: 16px 12px;
       display: flex;
@@ -24,6 +54,7 @@
       flex-wrap: wrap;
       gap: 12px 4px;
       position: relative;
+      min-height: 74px;
 
       div {
         span {
@@ -41,9 +72,11 @@
       }
 
       &::before {
-        content: 'Promocja dobiegła końca';
         position: absolute;
         inset: 0;
+        background-color: var(--primary-200, #faf4f0);
+        transition: opacity 0.3s ease-in-out;
+        content: 'Promocja dobiegła końca';
         display: flex;
         align-items: center;
         justify-content: center;
@@ -51,14 +84,14 @@
         font-weight: 300;
         text-align: center;
         color: var(--primary-800, #53423c);
-        background-color: var(--primary-200, #faf4f0);
         opacity: 0;
-        transition: opacity 0.3s ease-in-out;
+        visibility: hidden;
       }
 
       &[data-end='true'] {
         &::before {
           opacity: 1;
+          visibility: visible;
         }
       }
     }

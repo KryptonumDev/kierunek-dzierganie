@@ -1,4 +1,4 @@
-import { ImgType } from '@/global/types';
+import { DiscountCourseRefType, ImgType } from '@/global/types';
 
 export type DiscountCtaTypes = {
   _type: 'discountCta';
@@ -11,4 +11,5 @@ export type DiscountCtaTypes = {
   index: number;
   showDiscount: boolean;
   discountPrice: number;
+  course: DiscountCourseRefType;
 };

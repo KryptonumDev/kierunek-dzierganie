@@ -6,8 +6,10 @@ export type TimerBoxTypes = {
   paragraph: string;
   discountCourse: DiscountCourseType;
   index: number;
+  discountCode?: string;
+  expirationDate?: string;
 };
 
 export type TimerProps = {
-  initialMinutes: number;
+  expirationDate?: string;
 };

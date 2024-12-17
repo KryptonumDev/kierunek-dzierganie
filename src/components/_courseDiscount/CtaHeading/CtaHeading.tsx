@@ -1,16 +1,17 @@
 import Button from '@/components/ui/Button';
 import Markdown from '@/components/ui/markdown';
+import { pageUrls } from '@/global/constants';
 import styles from './CtaHeading.module.scss';
 import type { CtaHeadingTypes } from './CtaHeading.types';
 
-const CtaHeading = ({ heading, paragraph, ctaText, additionalText, index }: CtaHeadingTypes) => {
+const CtaHeading = ({ heading, paragraph, ctaText, additionalText, index, course }: CtaHeadingTypes) => {
   const HeadingComponent = index === 0 ? Markdown.h1 : Markdown.h2;
 
   return (
     <section className={styles['CtaHeading']}>
       <HeadingComponent className={styles.heading}>{heading}</HeadingComponent>
       <Markdown className={styles.paragraph}>{paragraph}</Markdown>
-      <Button href={'/'}>{ctaText}</Button>
+      <Button href={`${pageUrls[course.basis as 'knitting' | 'crocheting']}/${course.slug}`}>{ctaText}</Button>
       {!!additionalText && <Markdown className={styles.additionalText}>{additionalText}</Markdown>}
       <FlowerIcon />
     </section>

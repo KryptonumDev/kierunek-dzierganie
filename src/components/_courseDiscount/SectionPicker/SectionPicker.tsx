@@ -14,18 +14,27 @@ type DiscountCourseMap = {
   discountCta: DiscountCtaTypes;
 };
 
-const SectionPicker = ({ data, discountCourse }: SectionPickerTypes) => {
+const SectionPicker = ({ data, discountCourse, discountCode, expirationDate }: SectionPickerTypes) => {
   return (
     <>
       {data?.map((item, index) => {
         const DiscountCourseType = item._type as keyof DiscountCourseMap;
         const componentMap: Record<string, React.ReactNode> = {
           discountHero: <DiscountHero {...({ ...item, index } as DiscountHeroTypes)} />,
-          timerBox: <TimerBox {...({ ...item, index, discountCourse } as TimerBoxTypes)} />,
-          imageHeading: <ImageHeading {...({ ...item, index } as ImageHeadingTypes)} />,
-          ctaHeading: <CtaHeading {...({ ...item, index } as CtaHeadingTypes)} />,
+          timerBox: (
+            <TimerBox {...({ ...item, index, discountCourse, discountCode, expirationDate } as TimerBoxTypes)} />
+          ),
+          imageHeading: <ImageHeading {...({ ...item, index, expirationDate } as ImageHeadingTypes)} />,
+          ctaHeading: <CtaHeading {...({ ...item, index, course: discountCourse.course } as CtaHeadingTypes)} />,
           discountCta: (
-            <DiscountCta {...({ ...item, index, discountPrice: discountCourse.discount } as DiscountCtaTypes)} />
+            <DiscountCta
+              {...({
+                ...item,
+                index,
+                discountPrice: discountCourse.course.price - discountCourse.discount,
+                course: discountCourse.course,
+              } as DiscountCtaTypes)}
+            />
           ),
         };
         const DynamicComponent = componentMap[DiscountCourseType];

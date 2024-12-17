@@ -3,35 +3,51 @@
 import { useEffect, useState } from 'react';
 
 interface CountdownResult {
-  minutes: string;
-  seconds: string;
+  minutes: string | null;
+  seconds: string | null;
 }
 
-export const useCountdown = (initialMinutes: number): CountdownResult => {
-  const [timeLeft, setTimeLeft] = useState<number>(initialMinutes * 60);
+export const useCountdown = (expirationDate?: string): CountdownResult => {
+  const expirationTime = new Date(expirationDate || new Date()).getTime();
+  const timeLeftSeconds = Math.floor((expirationTime - new Date().getTime()) / 1000) * 1000;
+  const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
   useEffect(() => {
-    // Don't start if no initial minutes provided
-    if (!initialMinutes) return;
-
+    if (!timeLeftSeconds || timeLeftSeconds < 0) return;
+    setTimeLeft(timeLeftSeconds);
     const intervalId = setInterval(() => {
       setTimeLeft((prevTime) => {
-        if (prevTime <= 0) {
+        if (!prevTime || prevTime <= 0) {
           clearInterval(intervalId);
           return 0;
         }
-        return prevTime - 1;
+        return prevTime - 1000;
       });
     }, 1000);
 
-    // Cleanup interval on component unmount
     return () => clearInterval(intervalId);
-  }, [initialMinutes]);
+  }, [timeLeftSeconds]);
+
+  if (timeLeftSeconds < 0) {
+    return {
+      minutes: '00',
+      seconds: '00',
+    };
+  }
+
+  if (timeLeft === null) {
+    return {
+      minutes: null,
+      seconds: null,
+    };
+  }
+
+  const totalSeconds = Math.floor(timeLeft / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
 
   return {
-    minutes: Math.floor(timeLeft / 60)
-      .toString()
-      .padStart(2, '0'),
-    seconds: (timeLeft % 60).toString().padStart(2, '0'),
+    minutes: minutes.toString().padStart(2, '0'),
+    seconds: seconds.toString().padStart(2, '0'),
   };
 };

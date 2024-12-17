@@ -50,7 +50,6 @@ const query = async (customQuery: string, tag: string[], dynamicSlug?: string): 
     tags: tag,
     ...(dynamicSlug && { params: { slug: dynamicSlug } }),
   });
-  console.log(seo);
   !seo && notFound();
   return { ...seo };
 };

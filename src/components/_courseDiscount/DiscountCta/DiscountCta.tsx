@@ -3,6 +3,7 @@ import Img from '@/components/ui/image';
 import Markdown from '@/components/ui/markdown';
 import styles from './DiscountCta.module.scss';
 import type { DiscountCtaTypes } from './DiscountCta.types';
+import { pageUrls } from '@/global/constants';
 
 const DiscountCta = ({
   image,
@@ -14,6 +15,7 @@ const DiscountCta = ({
   index,
   showDiscount,
   discountPrice,
+  course,
 }: DiscountCtaTypes) => {
   const HeadingComponent = index === 0 ? Markdown.h1 : Markdown.h2;
   return (
@@ -23,7 +25,7 @@ const DiscountCta = ({
           <div className={styles.discount}>
             <span>Kup już</span>
             <span>
-              za <strong>{discountPrice}zł*</strong>
+              za <strong>{discountPrice / 100}zł*</strong>
             </span>
           </div>
         )}
@@ -36,7 +38,7 @@ const DiscountCta = ({
         <HeadingComponent className={styles.heading}>{heading}</HeadingComponent>
         <Markdown className={styles.paragraph}>{paragraph}</Markdown>
         {!!additionalParagraph && <Markdown className={styles.additionalParagraph}>{additionalParagraph}</Markdown>}
-        <Button href={'/'}>{ctaText}</Button>
+        <Button href={`${pageUrls[course.basis as 'knitting' | 'crocheting']}/${course.slug}`}>{ctaText}</Button>
         {!!additionalText && <Markdown className={styles.additionalText}>{additionalText}</Markdown>}
       </header>
       <LeafIcon />
