@@ -1,0 +1,102 @@
+.PartnerSales {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  .list {
+    display: flex;
+    align-items: stretch;
+    gap: clamp(12px, calc(20vw / 7.68), 20px);
+    width: 100%;
+    justify-content: center;
+    max-width: clamp(420px, calc(420vw / 7.68), 532px);
+
+    li {
+      border-radius: 4px;
+      overflow: hidden;
+      flex: 1;
+      max-width: 400px;
+
+      img {
+        height: 100%;
+        object-fit: cover;
+        aspect-ratio: 16 / 10;
+      }
+    }
+  }
+  header {
+    max-width: 587px;
+    width: 100%;
+    h2 {
+      margin-bottom: clamp(12px, calc(20vw / 7.68), 20px);
+      font-size: clamp(calc(18rem / 16), calc(28vw / 7.68), calc(28rem / 16));
+    }
+
+    .paragraph {
+      margin-bottom: clamp(12px, calc(20vw / 7.68), 20px);
+    }
+
+    .brands {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      .item {
+        line-height: 1.6;
+        display: flex;
+        align-items: stretch;
+        gap: 12px;
+        .percentage {
+          padding: 4px 16px 6px;
+          display: grid;
+          place-items: center;
+          border-radius: 4px;
+          background-color: var(--success-200, #d0dad2);
+        }
+
+        a {
+          position: relative;
+          z-index: 3;
+          display: flex;
+          align-items: center;
+
+          &::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            right: -8px;
+            border-radius: 4px;
+            bottom: 0;
+            top: 0;
+            background-color: var(--primary-200, #faf4f0);
+            opacity: 0;
+            transition: opacity 0.3s var(--easing);
+            z-index: -1;
+          }
+
+          &::after {
+            position: absolute;
+            min-height: 44px;
+            top: 50%;
+            transform: translateY(-50%);
+            bottom: 0;
+            left: 0;
+            right: 0;
+            content: '';
+            opacity: 0;
+          }
+
+          &:hover {
+            &::before {
+              opacity: 1;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 1023px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

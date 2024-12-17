@@ -1,11 +1,12 @@
-import sanityFetch from '@/utils/sanity.fetch';
-import Markdown from '@/components/ui/markdown';
 import Button from '@/components/ui/Button';
+import { Facebook, Instagram, Youtube } from '@/components/ui/Icons';
+import Img from '@/components/ui/image';
+import Markdown from '@/components/ui/markdown';
+import sanityFetch from '@/utils/sanity.fetch';
 import styles from './Community.module.scss';
 import type { Props, QueryProps } from './Community.types';
-import { Facebook, Instagram, Youtube } from '@/components/ui/Icons';
 
-const Community = async ({ isHighlighted = false, heading, paragraph, cta }: Props) => {
+const Community = async ({ backgroundImage, heading, paragraph, cta }: Props) => {
   const { facebook, instagram, youtube }: QueryProps = await query();
   const socials = [
     {
@@ -28,7 +29,7 @@ const Community = async ({ isHighlighted = false, heading, paragraph, cta }: Pro
   return (
     <section
       className={styles['Community']}
-      data-highlighted={isHighlighted}
+      data-image={!!backgroundImage}
     >
       <header>
         <Markdown.h2>{heading}</Markdown.h2>
@@ -54,6 +55,13 @@ const Community = async ({ isHighlighted = false, heading, paragraph, cta }: Pro
           ))}
         </ul>
       </header>
+      {backgroundImage && (
+        <Img
+          data={backgroundImage}
+          className={styles.backgroundImage}
+          sizes=''
+        />
+      )}
     </section>
   );
 };

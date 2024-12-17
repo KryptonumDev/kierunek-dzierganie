@@ -1,5 +1,5 @@
-import sanityFetch from '@/utils/sanity.fetch';
 import { DOMAIN } from '@/global/constants';
+import sanityFetch from '@/utils/sanity.fetch';
 import type { MetadataRoute } from 'next';
 
 type FetchTypes = {
@@ -20,8 +20,11 @@ const staticRoutes = [
   '/zespol',
   '/polityka-prywatnosci',
   '/regulamin',
-  '/produkty-do-dziergania',
-  '/produkty-do-szydelkowania',
+  '/produkty/szydelkowanie',
+  '/produkty/dzierganie',
+  '/produkty/inne',
+  '/produkty/instrukcje',
+  '/produkty/pakiety-materialow',
   '/program-partnerski',
   '/wspolpraca',
 ];
@@ -35,6 +38,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     CrochetingCourses_Collection = [],
     KnittingCourses_Collection = [],
     CrochetingProducts_Collection = [],
+    OtherProducts_Collection = [],
+    InstructionProducts_Collection = [],
+    MaterialsProducts_Collection = [],
     KnittingProducts_Collection = [],
     PartnersPage = [],
   } = await query();
@@ -69,11 +75,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
     })),
     ...CrochetingProducts_Collection.map(({ slug }) => ({
-      url: `${DOMAIN}/produkty-do-szydelkowania/${slug}`,
+      url: `${DOMAIN}/produkty/szydelkowanie/${slug}`,
       lastModified: new Date(),
     })),
     ...KnittingProducts_Collection.map(({ slug }) => ({
-      url: `${DOMAIN}/produkty-do-dziergania/${slug}`,
+      url: `${DOMAIN}/produkty/dzierganie/${slug}`,
+      lastModified: new Date(),
+    })),
+    ...OtherProducts_Collection.map(({ slug }) => ({
+      url: `${DOMAIN}/produkty/inne/${slug}`,
+      lastModified: new Date(),
+    })),
+    ...InstructionProducts_Collection.map(({ slug }) => ({
+      url: `${DOMAIN}/produkty/instrukcje/${slug}`,
+      lastModified: new Date(),
+    })),
+    ...MaterialsProducts_Collection.map(({ slug }) => ({
+      url: `${DOMAIN}/produkty/pakiety-materialow/${slug}`,
       lastModified: new Date(),
     })),
     ...PartnersPage.filter(({ displayPage }) => displayPage).map(() => ({
@@ -109,6 +127,15 @@ const query = async (): Promise<FetchTypes> => {
           'slug': slug.current
         },
         'KnittingProducts_Collection': *[(_type=='product'|| _type=='voucher') && basis =='knitting' && visible == true][] {
+          'slug': slug.current
+        },
+        'OtherProducts_Collection': *[(_type=='product'|| _type=='voucher') && basis =='other' && visible == true][] {
+          'slug': slug.current
+        },
+        'InstructionProducts_Collection': *[(_type=='product'|| _type=='voucher') && basis =='instruction' && visible == true][] {
+          'slug': slug.current
+        },
+        'MaterialsProducts_Collection': *[(_type=='product'|| _type=='voucher') && basis =='materials' && visible == true][] {
           'slug': slug.current
         },
         'PartnersPage': *[_id=="Partners_Page"][] {

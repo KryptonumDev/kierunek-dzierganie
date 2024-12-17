@@ -1,15 +1,15 @@
 'use client';
+import { courseComplexityEnum, pageUrls } from '@/global/constants';
+import { ImgType } from '@/global/types';
+import { formatPrice } from '@/utils/price-formatter';
+import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
+import { useCart } from 'react-use-cart';
+import Button from '../Button';
+import { Hearth } from '../Icons';
+import Img from '../image';
 import styles from './FeaturedProductCard.module.scss';
 import type { Props } from './FeaturedProductCard.types';
-import { ImgType } from '@/global/types';
-import Img from '../image';
-import { formatPrice } from '@/utils/price-formatter';
-import Button from '../Button';
-import { useCart } from 'react-use-cart';
-import { courseComplexityEnum, pageUrls } from '@/global/constants';
-import Link from 'next/link';
-import { Hearth } from '../Icons';
 
 const gtag: Gtag.Gtag = function () {
   // eslint-disable-next-line prefer-rest-params
@@ -68,7 +68,7 @@ const FeaturedProductCard = ({ excerpt, data, inCart = false, basis, badge, owne
   return (
     <div className={`${styles['featuredProductCard']}`}>
       <Link
-        href={`${basis ? basis : pageUrls[data.basis]}/${data.slug}`}
+        href={`${basis ? basis : pageUrls[data.basis as 'knitting' | 'crocheting']}/${data.slug}`}
         className={styles['link']}
         aria-label={`${mainVariant.name}`}
       />
@@ -123,7 +123,9 @@ const FeaturedProductCard = ({ excerpt, data, inCart = false, basis, badge, owne
             {mainVariant.discount ? <span dangerouslySetInnerHTML={{ __html: mainVariant.discount }} /> : null}
           </p>
           {mainVariant.type === 'variable' ? (
-            <Button href={`${basis ? basis : pageUrls[data.basis]}/${data.slug}`}>Wybierz wariant</Button>
+            <Button href={`${basis ? basis : pageUrls[data.basis as 'knitting' | 'crocheting']}/${data.slug}`}>
+              Wybierz wariant
+            </Button>
           ) : (
             <>
               {owned ? (

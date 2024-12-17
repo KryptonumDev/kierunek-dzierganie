@@ -77,7 +77,7 @@ export async function POST(request: Request) {
           ...product,
           voucherBase64: blob,
           vat: 0,
-          ryczalt: 0,
+          ryczalt: 3,
         };
       } else {
         return {

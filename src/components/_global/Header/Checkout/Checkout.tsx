@@ -1,4 +1,5 @@
 import type { Billing, Shipping } from '@/global/types';
+import { getProductBasis } from '@/utils/get-product-basis';
 import { useEffect, useState } from 'react';
 import styles from './Checkout.module.scss';
 import type { InputState, MappingProps, Props } from './Checkout.types';
@@ -97,15 +98,8 @@ export default function Checkout({
       user_id: userId,
       products: {
         array: fetchedItems.map((item) => {
-          let basis = '';
+          const basis = getProductBasis(item.basis, item._type);
 
-          if (item.basis === 'crocheting') {
-            if (item._type === 'product') basis = '/produkty-do-szydelkowania';
-            else basis = '/kursy-szydelkowania';
-          } else if (item.basis === 'knitting') {
-            if (item._type === 'product') basis = '/produkty-do-dziergania';
-            else basis = '/kursy-dziergania-na-drutach';
-          }
           return {
             url: 'https://kierunekdzierganie.pl' + basis + '/' + item.slug,
             id: item._id,

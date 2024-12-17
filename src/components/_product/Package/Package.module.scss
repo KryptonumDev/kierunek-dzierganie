@@ -13,10 +13,10 @@
   .list {
     display: grid;
     grid-template-columns: 380px 1fr;
-    gap: 136px;
+    gap: 64px 136px;
     position: relative;
 
-    >svg{
+    > svg {
       position: absolute;
       top: -86px;
       left: 286px;
@@ -26,12 +26,45 @@
       height: fit-content;
     }
 
-    .cards{
+    .cards {
       display: grid;
       gap: 24px;
 
-      >p{
+      > p {
         margin-bottom: 8px;
+      }
+    }
+  }
+
+  @media (max-width: 1023px) {
+    header {
+      max-width: 608px;
+    }
+    .list {
+      grid-template-columns: 1fr;
+      justify-items: center;
+
+      > div {
+        max-width: 608px;
+        width: 100%;
+      }
+
+      > div:first-of-type {
+        max-width: 560px;
+      }
+
+      > svg {
+        display: none;
+      }
+    }
+  }
+
+  @media (max-width: 459px) {
+    .list {
+      > div:last-of-type {
+        > div {
+          grid-template-columns: 1fr;
+        }
       }
     }
   }

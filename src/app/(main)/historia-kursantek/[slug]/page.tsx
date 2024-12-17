@@ -1,10 +1,10 @@
-import { notFound } from 'next/navigation';
-import sanityFetch from '@/utils/sanity.fetch';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
-import { QueryMetadata } from '@/global/Seo/query-metadata';
-import Introduction, { Introduction_Query } from '@/components/_global/Introduction';
 import ImageShowcase, { ImageShowcase_Query } from '@/components/_global/ImageShowcase';
+import Introduction, { Introduction_Query } from '@/components/_global/Introduction';
+import { QueryMetadata } from '@/global/Seo/query-metadata';
 import type { generateStaticParamsProps } from '@/global/types';
+import sanityFetch from '@/utils/sanity.fetch';
+import { notFound } from 'next/navigation';
 import type { StudentPageQueryTypes, StudentPageTypes } from './page.types';
 
 export default async function StudentPage({ params: { slug } }: StudentPageTypes) {
@@ -12,9 +12,7 @@ export default async function StudentPage({ params: { slug } }: StudentPageTypes
 
   return (
     <>
-      <Breadcrumbs data={[
-        { name: `Historia ${name}`, path: `/historia-kursantek/${slug}` },
-      ]} />
+      <Breadcrumbs data={[{ name: `Historia ${name}`, path: `/historia-kursantek/${slug}` }]} />
       <Introduction {...content.Introduction} />
       {content.ImageShowcase && <ImageShowcase {...content.ImageShowcase} />}
     </>
@@ -39,7 +37,6 @@ async function query(slug: string): Promise<StudentPageQueryTypes> {
   if (!data) notFound();
   if (data.userId) {
     // Query to fetch user finished courses.
-    console.log(data.userId);
   }
   return data;
 }

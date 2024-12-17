@@ -1,10 +1,10 @@
+import { courseComplexityEnum } from '@/global/constants';
+import Link from 'next/link';
+import Button from '../Button';
+import Img from '../image';
+import PercentChart from '../PercentChart';
 import styles from './FeaturedCourseCard.module.scss';
 import type { Props } from './FeaturedCourseCard.types';
-import Img from '../image';
-import Button from '../Button';
-import { courseComplexityEnum } from '@/global/constants';
-import PercentChart from '../PercentChart';
-import Link from 'next/link';
 
 const FeaturedCourseCard = ({ name, slug, image, complexity, progressPercentage, excerpt }: Props) => {
   return (

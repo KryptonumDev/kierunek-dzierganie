@@ -90,6 +90,8 @@ export default function Filters({ basis, categories, courses, authors }: Filters
     router.push(basis, { scroll: false });
   };
 
+  if (!categories) return <div className={styles['filters-empty']} />;
+
   return (
     <div
       id='listing'

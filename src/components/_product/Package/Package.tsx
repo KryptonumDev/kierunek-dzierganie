@@ -1,9 +1,10 @@
 import Markdown from '@/components/ui/markdown';
+import ProductCard from '@/components/ui/ProductCard';
 import styles from './Package.module.scss';
 import type { PackageTypes } from './Package.types';
-import ProductCard from '@/components/ui/ProductCard';
 
 const Package = ({ product, heading, paragraph, courses }: PackageTypes) => {
+  console.log(courses);
   return (
     <section className={`${styles['Package']} sec-wo-margin`}>
       <header>
@@ -15,13 +16,15 @@ const Package = ({ product, heading, paragraph, courses }: PackageTypes) => {
         <ProductCard data={product} />
         <div className={styles['cards']}>
           <p>Pakiet zawiera</p>
-          {courses.map((course) => (
-            <ProductCard
-              horizontal={true}
-              key={course._id}
-              data={course}
-            />
-          ))}
+          {courses.map((course) => {
+            return !course ? null : (
+              <ProductCard
+                horizontal={true}
+                key={course._id}
+                data={course}
+              />
+            );
+          })}
         </div>
       </div>
     </section>

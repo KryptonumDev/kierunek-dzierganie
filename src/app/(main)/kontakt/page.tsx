@@ -1,10 +1,10 @@
-import sanityFetch from '@/utils/sanity.fetch';
-import type { PageQueryProps } from '@/global/types';
 import Components, { Components_Query } from '@/components/Components';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
+import type { PageQueryProps } from '@/global/types';
+import sanityFetch from '@/utils/sanity.fetch';
 
-const page = { name: 'Kontkat', path: '/kontakt' };
+const page = { name: 'Kontakt', path: '/kontakt' };
 
 const ContactPage = async () => {
   const { content }: PageQueryProps = await query();

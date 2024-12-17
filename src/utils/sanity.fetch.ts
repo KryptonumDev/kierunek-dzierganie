@@ -11,20 +11,17 @@ if (isPreviewDeployment && !token) {
   throw new Error('The `SANITY_API_TOKEN` environment variable is required.');
 }
 
-console.log(isPreviewDeployment);
-console.log(isProductionDeployment);
-
 const client = createClient({
   projectId,
   dataset,
   apiVersion,
   useCdn: false,
-  perspective: isPreviewDeployment ? 'previewDrafts' : 'published',
+  // perspective: isPreviewDeployment ? 'previewDrafts' : 'published'
   token,
 });
 
 /**
- * Performs a Sanity query in GROQ for fetching data.
+ * Performs a Sanity query in GROQ for fetching data
  * @param {string} query - The GROQ query.
  * @param {string[]} [tags] - Recommended. The tags for Next Caching.
  * @param {QueryParams} [params={}] - Optional. Used to query dynamic pages, like blog posts.

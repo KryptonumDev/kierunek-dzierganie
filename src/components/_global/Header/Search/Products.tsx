@@ -16,6 +16,16 @@ export default function Products({
   passedRef: React.RefObject<HTMLInputElement>;
   setIsSearching: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const href = (basis: string, slug: string) => {
+    if (basis === 'crocheting') return `/produkty/szydelkowanie/${slug}`;
+    else if (basis === 'knitting') return `/produkty/dzierganie/${slug}`;
+    else if (basis === 'instruction') return `/produkty/instrukcje/${slug}`;
+    else if (basis === 'other') return `/produkty/inne/${slug}`;
+    else if (basis === 'materials') return `/produkty/pakiety-materialow/${slug}`;
+
+    return '/';
+  };
+
   return (
     <div className={styles.physicalProducts}>
       <header>
@@ -32,7 +42,7 @@ export default function Products({
             <Link
               className={styles.item}
               key={index}
-              href={`${basis === 'crocheting' ? '/produkty-do-szydelkowania' : '/produkty-do-dziergania'}/${slug}`}
+              href={href(basis, slug)}
               onClick={() => handleItemClick(passedRef, setIsSearching)}
             >
               <Img
@@ -54,7 +64,7 @@ export default function Products({
             <Link
               className={styles.item}
               key={index}
-              href={`${basis === 'crocheting' ? '/produkty-do-szydelkowania' : '/produkty-do-dziergania'}/${slug}`}
+              href={href(basis, slug)}
               onClick={() => handleItemClick(passedRef, setIsSearching)}
             >
               {variants?.gallery ? (

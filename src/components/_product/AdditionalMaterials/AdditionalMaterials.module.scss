@@ -1,0 +1,30 @@
+.AdditionalMaterials {
+  header {
+    margin-bottom: clamp(20px, calc(28vw / 7.68), 28px);
+    h2 {
+      font-size: clamp(calc(24rem / 16), calc(36vw / 7.68), calc(36rem / 16));
+    }
+  }
+
+  ul {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    list-style: none;
+    gap: clamp(20px, calc(28vw / 7.68), 28px);
+    li {
+      min-width: 260px;
+    }
+
+    @media (max-width: 979px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 699px) {
+      li {
+        max-width: 460px;
+        width: 100%;
+        margin: 0 auto;
+      }
+    }
+  }
+}

@@ -6,13 +6,19 @@ const PrintedManual = ({ data }: PrintedManualTypes) => {
   let basis = '';
 
   if (data.basis === 'crocheting') {
-    if (data._type === 'product') basis = '/produkty-do-szydelkowania';
+    if (data._type === 'product') basis = '/produkty/szydelkowanie';
     else basis = '/kursy-szydelkowania';
   } else if (data.basis === 'knitting') {
-    if (data._type === 'product') basis = '/produkty-do-dziergania';
+    if (data._type === 'product') basis = '/produkty/dzierganie';
     else basis = '/kursy-dziergania-na-drutach';
+  } else if (data.basis === 'instruction' && data._type === 'product') {
+    basis = '/produkty/instrukcje';
+  } else if (data.basis === 'other' && data._type === 'product') {
+    basis = '/produkty/inne';
+  } else if (data.basis === 'materials' && data._type === 'product') {
+    basis = '/produkty/materialy';
   }
-  
+
   return (
     <section className={styles['PrintedManual']}>
       <div>
