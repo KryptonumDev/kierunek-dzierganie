@@ -1,6 +1,5 @@
-import styles from './DiscountHero.module.scss';
-import type { DiscountHeroTypes } from './DiscountHero.types';
+import { DiscountHeroTypes } from './DiscountHero.types';
 
-export default function DiscountHero({}: DiscountHeroTypes) {
-  return <div className={styles.discountHero}></div>;
+export default function DiscountHero({ index }: DiscountHeroTypes) {
+  return index > 10 ? '1' : null;
 }
