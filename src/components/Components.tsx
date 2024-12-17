@@ -44,7 +44,7 @@ import LatestBlogEntries, { LatestBlogEntries_Query, type LatestBlogEntriesTypes
 import LogoSection, { LogoSectionTypes, LogoSection_Query } from './_global/LogoSection';
 import TilesGallery, { TilesGallery_Query, type TilesGalleryProps } from './_global/TilesGallery';
 
-type ComponentMap = {
+export type ComponentMap = {
   HeroBackgroundImg: HeroBackgroundImgProps;
   HeroColumn: HeroColumnProps;
   HeroSimple: HeroSimpleTypes;
@@ -81,84 +81,88 @@ type ComponentMap = {
 
 export type ComponentProps = ComponentMap[keyof ComponentMap] & { _type: string };
 
+export const getComponentMap = (item: ComponentProps, index: number) => {
+  return {
+    HeroBackgroundImg: (
+      <HeroBackgroundImg
+        {...(item as HeroBackgroundImgProps)}
+        aboveTheFold={Boolean(index === 0)}
+      />
+    ),
+    HeroColumn: (
+      <HeroColumn
+        {...(item as HeroColumnProps)}
+        index={index}
+      />
+    ),
+    HeroSimple: <HeroSimple {...(item as HeroSimpleTypes)} />,
+    Benefits: <Benefits {...(item as BenefitsProps)} />,
+    Faq: <Faq {...(item as FaqTypes)} />,
+    Opinions: <Opinions {...(item as OpinionsProps)} />,
+    CtaSection: <CtaSection {...(item as CtaSectionProps)} />,
+    SimpleCtaSection: <SimpleCtaSection {...(item as SimpleCtaSectionProps)} />,
+    CourseModules: <CourseModules {...(item as CourseModulesProps)} />,
+    ImageShowcase: <ImageShowcase {...(item as ImageShowcaseProps)} />,
+    Bonuses: <Bonuses {...(item as BonusesProps)} />,
+    TileList: <TileList {...(item as TileListProps)} />,
+    TilesGrid: <TilesGrid {...(item as TilesGridProps)} />,
+    TilesGallery: <TilesGallery {...(item as TilesGalleryProps)} />,
+    TilesSticky: <TilesSticky {...(item as TilesStickyProps)} />,
+    TilesFeatures: <TilesFeatures {...(item as TilesFeaturesProps)} />,
+    Community: <Community {...(item as CommunityProps)} />,
+    Reviews: <Reviews {...(item as ReviewsProps)} />,
+    Introduction: <Introduction {...(item as IntroductionProps)} />,
+    ContactForm: (
+      <ContactForm
+        {...(item as ContactFormProps)}
+        aboveTheFold={index === 0}
+      />
+    ),
+    TabSection: <TabSection {...(item as TabSectionProps)} />,
+    TilesIndicated: <TilesIndicated {...(item as TilesIndicatedProps)} />,
+    TilesIcon: (
+      <TilesIcon
+        {...(item as TilesIconProps)}
+        index={index}
+      />
+    ),
+    Divider: <Divider />,
+    StepList: <StepList {...(item as StepListProps)} />,
+    Newsletter: (
+      <Newsletter
+        {...(item as NewsletterProps)}
+        index={index}
+      />
+    ),
+    CustomerCaseStudy: (
+      <CustomerCaseStudy
+        {...(item as CustomerCaseStudyProps)}
+        index={index}
+      />
+    ),
+    WordsCollection: (
+      <WordsCollection
+        {...(item as WordsCollectionProps)}
+        index={index}
+      />
+    ),
+    Partners: (
+      <Partners
+        {...(item as PartnersProps)}
+        index={index}
+      />
+    ),
+    LatestBlogEntries: <LatestBlogEntries {...(item as LatestBlogEntriesTypes)} />,
+    CompaniesShowcase: <CompaniesShowcase {...(item as CompaniesShowcaseTypes)} />,
+    TeamShowcase: <TeamShowcase {...(item as TeamShowcaseTypes)} />,
+    LogoSection: <LogoSection {...(item as LogoSectionTypes)} />,
+  };
+};
+
 const Components = ({ data }: { data: ComponentProps[] }) => {
   return data?.map((item, index) => {
     const componentType = item._type as keyof ComponentMap;
-    const componentMap: Record<string, React.ReactNode> = {
-      HeroBackgroundImg: (
-        <HeroBackgroundImg
-          {...(item as HeroBackgroundImgProps)}
-          aboveTheFold={Boolean(index === 0)}
-        />
-      ),
-      HeroColumn: (
-        <HeroColumn
-          {...(item as HeroColumnProps)}
-          index={index}
-        />
-      ),
-      HeroSimple: <HeroSimple {...(item as HeroSimpleTypes)} />,
-      Benefits: <Benefits {...(item as BenefitsProps)} />,
-      Faq: <Faq {...(item as FaqTypes)} />,
-      Opinions: <Opinions {...(item as OpinionsProps)} />,
-      CtaSection: <CtaSection {...(item as CtaSectionProps)} />,
-      SimpleCtaSection: <SimpleCtaSection {...(item as SimpleCtaSectionProps)} />,
-      CourseModules: <CourseModules {...(item as CourseModulesProps)} />,
-      ImageShowcase: <ImageShowcase {...(item as ImageShowcaseProps)} />,
-      Bonuses: <Bonuses {...(item as BonusesProps)} />,
-      TileList: <TileList {...(item as TileListProps)} />,
-      TilesGrid: <TilesGrid {...(item as TilesGridProps)} />,
-      TilesGallery: <TilesGallery {...(item as TilesGalleryProps)} />,
-      TilesSticky: <TilesSticky {...(item as TilesStickyProps)} />,
-      TilesFeatures: <TilesFeatures {...(item as TilesFeaturesProps)} />,
-      Community: <Community {...(item as CommunityProps)} />,
-      Reviews: <Reviews {...(item as ReviewsProps)} />,
-      Introduction: <Introduction {...(item as IntroductionProps)} />,
-      ContactForm: (
-        <ContactForm
-          {...(item as ContactFormProps)}
-          aboveTheFold={index === 0}
-        />
-      ),
-      TabSection: <TabSection {...(item as TabSectionProps)} />,
-      TilesIndicated: <TilesIndicated {...(item as TilesIndicatedProps)} />,
-      TilesIcon: (
-        <TilesIcon
-          {...(item as TilesIconProps)}
-          index={index}
-        />
-      ),
-      Divider: <Divider />,
-      StepList: <StepList {...(item as StepListProps)} />,
-      Newsletter: (
-        <Newsletter
-          {...(item as NewsletterProps)}
-          index={index}
-        />
-      ),
-      CustomerCaseStudy: (
-        <CustomerCaseStudy
-          {...(item as CustomerCaseStudyProps)}
-          index={index}
-        />
-      ),
-      WordsCollection: (
-        <WordsCollection
-          {...(item as WordsCollectionProps)}
-          index={index}
-        />
-      ),
-      Partners: (
-        <Partners
-          {...(item as PartnersProps)}
-          index={index}
-        />
-      ),
-      LatestBlogEntries: <LatestBlogEntries {...(item as LatestBlogEntriesTypes)} />,
-      CompaniesShowcase: <CompaniesShowcase {...(item as CompaniesShowcaseTypes)} />,
-      TeamShowcase: <TeamShowcase {...(item as TeamShowcaseTypes)} />,
-      LogoSection: <LogoSection {...(item as LogoSectionTypes)} />,
-    };
+    const componentMap: Record<string, React.ReactNode> = getComponentMap(item, index);
     const DynamicComponent = componentMap[componentType];
     if (!DynamicComponent) {
       return null;
@@ -169,9 +173,7 @@ const Components = ({ data }: { data: ComponentProps[] }) => {
 
 export default Components;
 
-export const Components_Query = /* groq */ `
-  content[] {
-    _type,
+export const ComponentsLits = `
     ${HeroBackgroundImg_Query}
     ${HeroColumn_Query}
     ${HeroSimple_Query(false)}
@@ -205,5 +207,11 @@ export const Components_Query = /* groq */ `
     ${CompaniesShowcase_Query}
     ${TeamShowcase_Query}
     ${LogoSection_Query(false)}
+`;
+
+export const Components_Query = /* groq */ `
+  content[] {
+    _type,
+    ${ComponentsLits}
   },
 `;

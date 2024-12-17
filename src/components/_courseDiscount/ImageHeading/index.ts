@@ -10,5 +10,5 @@ export const ImageHeading_Query = `
     },
     heading,
     paragraph,
-  }
+  },
 `;

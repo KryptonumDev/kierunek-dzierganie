@@ -8,5 +8,5 @@ export const CtaHeading_Query = `
     paragraph,
     ctaText,
     additionalText,
-  }
+  },
 `;

@@ -14,5 +14,5 @@ export const DiscountCta_Query = `
     ctaText,
     additionalText,
     showDiscount,
-  }
+  },  
 `;

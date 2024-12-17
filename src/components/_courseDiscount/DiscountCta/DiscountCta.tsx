@@ -1,9 +1,9 @@
 import Button from '@/components/ui/Button';
 import Img from '@/components/ui/image';
 import Markdown from '@/components/ui/markdown';
+import { pageUrls } from '@/global/constants';
 import styles from './DiscountCta.module.scss';
 import type { DiscountCtaTypes } from './DiscountCta.types';
-import { pageUrls } from '@/global/constants';
 
 const DiscountCta = ({
   image,
@@ -31,7 +31,7 @@ const DiscountCta = ({
         )}
         <Img
           data={image}
-          sizes=''
+          sizes='(max-width: 539px) 90vw, 484px'
         />
       </div>
       <header className={styles.header}>

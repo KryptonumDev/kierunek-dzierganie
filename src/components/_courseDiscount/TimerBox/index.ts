@@ -6,5 +6,5 @@ export const TimerBox_Query = `
   _type == 'timerBox' => {
     heading,
     paragraph,
-  }
+  },
 `;

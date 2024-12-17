@@ -6,6 +6,4 @@ export type DiscountHeroTypes = {
   heading: string;
   paragraph: string;
   index: number;
-  ctaText: string;
-  additionalText?: string;
 };

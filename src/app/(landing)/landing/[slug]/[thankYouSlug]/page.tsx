@@ -1,4 +1,4 @@
-import Components, { Components_Query } from '@/components/Components';
+import Components, { Components_Query, ComponentsLits } from '@/components/Components';
 import { CtaHeading_Query } from '@/components/_courseDiscount/CtaHeading';
 import { DiscountCta_Query } from '@/components/_courseDiscount/DiscountCta';
 import { DiscountHero_Query } from '@/components/_courseDiscount/DiscountHero';
@@ -93,14 +93,13 @@ const query = async (slug: string): Promise<ThankYouPageQueryProps> => {
         },
         discountComponents[] { 
           _type,
-          ${DiscountHero_Query},
-          ${DiscountCta_Query},
-          ${CtaHeading_Query},
-          ${ImageHeading_Query},
-          ${TimerBox_Query},
-          },
-        
-
+          ${DiscountHero_Query}
+          ${DiscountCta_Query}
+          ${CtaHeading_Query}
+          ${ImageHeading_Query}
+          ${TimerBox_Query}
+          ${ComponentsLits}
+        },
       }
     `,
     params: { slug },

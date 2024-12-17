@@ -1,3 +1,4 @@
+import { ComponentMap, getComponentMap } from '@/components/Components';
 import { Fragment } from 'react';
 import CtaHeading, { CtaHeadingTypes } from '../CtaHeading';
 import DiscountCta, { DiscountCtaTypes } from '../DiscountCta';
@@ -6,7 +7,7 @@ import ImageHeading, { ImageHeadingTypes } from '../ImageHeading';
 import TimerBox, { TimerBoxTypes } from '../TimerBox';
 import type { SectionPickerTypes } from './SectionPicker.types';
 
-type DiscountCourseMap = {
+type DiscountCourseMap = ComponentMap & {
   discountHero: DiscountHeroTypes;
   timerBox: TimerBoxTypes;
   imageHeading: ImageHeadingTypes;
@@ -14,12 +15,15 @@ type DiscountCourseMap = {
   discountCta: DiscountCtaTypes;
 };
 
+export type DiscountCourseComponentProps = DiscountCourseMap[keyof DiscountCourseMap] & { _type: string };
+
 const SectionPicker = ({ data, discountCourse, discountCode, expirationDate }: SectionPickerTypes) => {
   return (
     <>
       {data?.map((item, index) => {
         const DiscountCourseType = item._type as keyof DiscountCourseMap;
         const componentMap: Record<string, React.ReactNode> = {
+          ...getComponentMap(item, index),
           discountHero: <DiscountHero {...({ ...item, index } as DiscountHeroTypes)} />,
           timerBox: (
             <TimerBox {...({ ...item, index, discountCourse, discountCode, expirationDate } as TimerBoxTypes)} />

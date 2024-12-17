@@ -37,9 +37,14 @@
   .image {
     position: relative;
     img {
-      max-width: 484px;
-      width: 100%;
-      align-self: stretch;
+      width: 484px;
+      height: auto;
+      object-fit: cover;
+
+      @media (max-width: 1023px) {
+        width: 100%;
+        max-width: 608px;
+      }
     }
   }
 

@@ -17,7 +17,7 @@ const ImageHeading = ({ image, heading, paragraph, index, expirationDate }: Imag
         <Timer expirationDate={expirationDate} />
         <Img
           data={image}
-          sizes=''
+          sizes='(max-width: 768px) 80vw, (max-width: 1023px) 608px, 484px'
         />
       </div>
       <LeafIcon />
