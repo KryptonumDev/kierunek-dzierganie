@@ -3,8 +3,8 @@ import Markdown from '@/components/ui/markdown';
 import CourseDiscountCard from '../CourseDiscountCard';
 import styles from './TimerBox.module.scss';
 import type { TimerBoxTypes } from './TimerBox.types';
-import Timer from './_Timer';
 import DiscountCode from './_DiscountCode';
+import Timer from './_Timer';
 
 const TimerBox = ({ discountCourse, heading, paragraph, index, discountCode, expirationDate }: TimerBoxTypes) => {
   const HeadingComponent = index === 0 ? Markdown.h1 : Markdown.h2;
@@ -16,10 +16,13 @@ const TimerBox = ({ discountCourse, heading, paragraph, index, discountCode, exp
         <div className={styles.content}>
           <HeadingComponent className={styles.heading}>{heading}</HeadingComponent>
           <Markdown className={styles.paragraph}>{paragraph}</Markdown>
-          <DiscountCode discountCode={discountCode} expirationDate={expirationDate} />
+          <DiscountCode
+            discountCode={discountCode}
+            expirationDate={expirationDate}
+          />
           <CourseDiscountCard
             data={discountCourse.course}
-            discountPrice={discountCourse.course.price - discountCourse.discount}
+            discountPrice={(discountCourse.course.discount || discountCourse.course.price) - discountCourse.discount}
           />
         </div>
         <FlowerLeft1 />

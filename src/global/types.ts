@@ -197,6 +197,7 @@ export type DiscountCourseRefType = {
   rating: number;
   reviewsCount: number;
   price: number;
+  discount?: number;
   image: ImgType;
 };
 

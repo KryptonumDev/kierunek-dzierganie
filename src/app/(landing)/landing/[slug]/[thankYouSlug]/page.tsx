@@ -24,21 +24,9 @@ const LandingPage = async ({
   const { name, hasDiscount, content, discountCourse, discountComponents }: ThankYouPageQueryProps =
     await query(thankYouSlug);
 
-  const decodedEmail = decodeEmail(subscriber);
+  if ((!subscriber || !group) && hasDiscount) return notFound();
 
-  const subscriberFetch = await fetch(`https://api.mailerlite.com/api/v2/groups/${group}/subscribers`, {
-    method: 'GET',
-    headers: {
-      'X-MailerLite-ApiKey': process.env.MAILERLITE_API_KEY!,
-      'Content-Type': 'application/json',
-    },
-  });
-
-  const subscriberData = await subscriberFetch.json();
-
-  const isSubscriber = subscriberData.find((subscriber: { email: string }) => subscriber.email === decodedEmail);
-
-  const { data } = await getDiscount(decodedEmail, group);
+  const { data } = !hasDiscount ? { data: null } : await getDiscount(decodeEmail(subscriber), group);
 
   return (
     <>
@@ -74,7 +62,7 @@ export async function generateMetadata({
 }: {
   params: { slug: string; thankYouSlug: string };
 }) {
-  return await QueryMetadata('thankYouPage', `/landing/${paramsSlug}/${paramsThankYouSlug}`, paramsThankYouSlug);
+  return await QueryMetadata('thankYouPage', `/landing/${paramsSlug}/${paramsThankYouSlug}`, paramsThankYouSlug, false);
 }
 
 const query = async (slug: string): Promise<ThankYouPageQueryProps> => {
@@ -94,6 +82,7 @@ const query = async (slug: string): Promise<ThankYouPageQueryProps> => {
             basis,
             reviewsCount,
             rating,
+            discount,
             price,
             'image': gallery[0]{
               ${Img_Query}

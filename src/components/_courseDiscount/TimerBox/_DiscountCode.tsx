@@ -5,11 +5,10 @@ import styles from './TimerBox.module.scss';
 
 const DiscountCode = ({ discountCode, expirationDate }: { discountCode?: string; expirationDate?: string }) => {
   const hasExpired = !!expirationDate && new Date(expirationDate).getTime() < new Date().getTime();
+
+  if (!discountCode || hasExpired) return null;
   return (
-    <div
-      className={styles.discountCode}
-      data-expired={hasExpired}
-    >
+    <div className={styles.discountCode}>
       <span>{discountCode}</span>
       <button
         disabled={hasExpired}

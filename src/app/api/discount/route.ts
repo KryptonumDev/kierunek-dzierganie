@@ -8,12 +8,16 @@ type RequestProps = {
   name: string;
   duration: number;
   amount: number;
+  course: {
+    id: string;
+    name: string;
+  };
 };
 
 export async function POST(request: Request) {
   try {
     const req = await request.json();
-    const { email, name, groupID, duration, amount }: RequestProps = req;
+    const { email, name, groupID, duration, amount, course }: RequestProps = req;
     const time = new Date().toISOString();
 
     if (!REGEX.email.test(email) || !REGEX.string.test(name)) {
@@ -53,7 +57,7 @@ export async function POST(request: Request) {
         return Response.json({ success: false }, { status: 422 });
       }
 
-      await createDiscount(email, groupID, duration, amount);
+      await createDiscount(email, groupID, duration, amount, course);
     }
 
     return Response.json({ success: true }, { status: 200 });
@@ -63,7 +67,13 @@ export async function POST(request: Request) {
   }
 }
 
-const createDiscount = async (email: string, groupID: string, duration: number, amount: number) => {
+const createDiscount = async (
+  email: string,
+  groupID: string,
+  duration: number,
+  amount: number,
+  course: { id: string; name: string }
+) => {
   const supabase = createClient();
 
   const { error } = await supabase
@@ -75,7 +85,12 @@ const createDiscount = async (email: string, groupID: string, duration: number, 
         group_id: groupID,
       },
       type: 3,
+      use_limit: 1,
       code: generateRandomCode(),
+      discounted_product: {
+        id: course.id,
+        name: course.name,
+      },
       state: 2,
       amount,
       expiration_date: new Date(new Date().getTime() + duration * 60000),

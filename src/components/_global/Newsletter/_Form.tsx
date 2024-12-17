@@ -54,6 +54,10 @@ const Form = ({
             groupID: groupId,
             duration: dedicatedThankYouPage.discountCourse?.discountTime,
             amount: dedicatedThankYouPage.discountCourse?.discount,
+            course: {
+              id: dedicatedThankYouPage.discountCourse?.course._id,
+              name: dedicatedThankYouPage.discountCourse?.course.name,
+            },
           }),
         });
         const responseData = await response.json();

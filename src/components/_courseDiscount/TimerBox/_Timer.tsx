@@ -10,7 +10,7 @@ const Timer = ({ expirationDate }: TimerProps) => {
   return (
     <div
       className={styles.timer}
-      data-end={minutes === '00' && seconds === '00'}
+      data-end={(minutes === '00' && seconds === '00') || !expirationDate}
     >
       Promocja kończy się za{' '}
       <div>

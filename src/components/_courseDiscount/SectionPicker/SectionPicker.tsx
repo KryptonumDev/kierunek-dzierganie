@@ -31,7 +31,8 @@ const SectionPicker = ({ data, discountCourse, discountCode, expirationDate }: S
               {...({
                 ...item,
                 index,
-                discountPrice: discountCourse.course.price - discountCourse.discount,
+                discountPrice:
+                  (discountCourse.course.discount || discountCourse.course.price) - discountCourse.discount,
                 course: discountCourse.course,
               } as DiscountCtaTypes)}
             />
