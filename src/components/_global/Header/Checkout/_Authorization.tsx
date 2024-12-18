@@ -1,17 +1,17 @@
 'use client';
-import styles from './Checkout.module.scss';
-import type { InputState, MappingProps } from './Checkout.types';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
-import Checkbox from '@/components/ui/Checkbox';
 import Button from '@/components/ui/Button';
-import { REGEX } from '@/global/constants';
-import PasswordInput from '@/components/ui/PasswordInput';
-import { useState } from 'react';
+import Checkbox from '@/components/ui/Checkbox';
 import Input from '@/components/ui/Input';
+import PasswordInput from '@/components/ui/PasswordInput';
+import { REGEX } from '@/global/constants';
 import { createClient } from '@/utils/supabase-client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
+import styles from './Checkout.module.scss';
+import type { InputState, MappingProps } from './Checkout.types';
 // import OAuthMethods from "@/components/organisms/oAuth-methods";
 
 type FormValues = {
@@ -35,6 +35,13 @@ export default function Authorization({ setStep, goToCart, setInput }: MappingPr
 
   const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
     if (isRegister) {
+      const { data: user } = await supabase.from('profiles').select('id').eq('email', data.email).single();
+
+      if (user) {
+        toast('Użytkownik z tym adresem e-mail już istnieje.');
+        return;
+      }
+
       await supabase.auth
         .signUp({
           email: data.email,
