@@ -31,11 +31,11 @@ export async function POST(request: Request) {
 
     if (error) throw new Error(error.message);
     await checkUsedModifications(data);
-    await sendEmails(data);
     await updateItemsQuantity(data);
     console.log('payment/complete:data');
     console.log(data);
     await generateBill(data, id);
+    await sendEmails(data);
 
     await GAConversionPurchase({
       user_id: data.user_id,
