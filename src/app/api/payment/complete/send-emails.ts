@@ -1,5 +1,5 @@
-import Order from 'src/emails/Order';
 import { Resend } from 'resend';
+import Order from 'src/emails/Order';
 
 const resend = new Resend(process.env.RESEND_API_TOKEN);
 
@@ -53,7 +53,7 @@ export async function sendEmails(data: any) {
     subject: 'Nowe zamówienie!',
     reply_to: data.billing.email,
     text: '',
-    attachments: needToSendVoucher ? null : attachments,
+    attachments: [],
     react: Order({ data: data, type: 'NEW_ORDER' }),
   });
 }
