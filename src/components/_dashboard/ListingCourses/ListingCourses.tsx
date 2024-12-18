@@ -20,12 +20,12 @@ const ListingCourses = ({
 
   const filteredCourses = courses
     .filter(
-      (el) => el._id !== lastWatchedCourse && (sort !== 'ostatnio-przerabiane' || !lastWatchedList.includes(el._id))
+      (el) => el._id !== lastWatchedCourse && (sort !== 'ostatnio-przerabiane' || !lastWatchedList?.includes(el._id))
     )
     .sort((a, b) => Number(b.progressId) - Number(a.progressId));
 
   const lastWatchedCourses =
-    sort === 'ostatnio-przerabiane'
+    sort === 'ostatnio-przerabiane' && lastWatchedList
       ? courses
           .filter((el) => lastWatchedList.includes(el._id))
           .sort((a, b) => lastWatchedList.indexOf(a._id) - lastWatchedList.indexOf(b._id))
