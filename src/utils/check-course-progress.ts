@@ -3,9 +3,14 @@ import type { Course, CoursesProgress } from '@/global/types';
 import { createClient } from './supabase-admin';
 
 export async function checkCourseProgress(course: Course, progress: CoursesProgress) {
-  if(!course.chapters) return progress;
+  if (!course.chapters) return progress;
 
   const supabase = createClient();
+
+  const res = await supabase.from('profiles').select('last_watched_list').eq('id', progress.owner_id).single();
+
+  const lastWatchedList = res.data?.last_watched_list ?? [];
+
   // check if there is new lessons/chapters or some lessons/chapters were removed and update progress
   const newProgress = {
     ...progress,
@@ -33,7 +38,7 @@ export async function checkCourseProgress(course: Course, progress: CoursesProgr
   // check if newProgress different from progress change it in supabase
   let different = false;
   for (const key in newProgress.progress) {
-    if(!progress.progress?.[key]){
+    if (!progress.progress?.[key]) {
       different = true;
       break;
     }
@@ -55,6 +60,11 @@ export async function checkCourseProgress(course: Course, progress: CoursesProgr
   }
 
   await supabase.from('profiles').update({ last_watched_course: course._id }).eq('id', progress.owner_id);
+
+  await supabase
+    .from('profiles')
+    .update({ last_watched_list: [course._id, ...lastWatchedList.filter((el: string) => el !== course._id)] })
+    .eq('id', progress.owner_id);
 
   return newProgress;
 }
