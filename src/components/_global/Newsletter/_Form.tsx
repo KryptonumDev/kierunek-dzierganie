@@ -37,8 +37,6 @@ const Form = ({
     formState: { errors },
   } = useForm({ mode: 'onTouched' });
 
-  console.log(dedicatedThankYouPage?.discountCourse);
-
   const onSubmit = async (data: FieldValues) => {
     setStatus({ sending: true });
     data.groupID = groupId || mailerLiteGroup.newsletter;
