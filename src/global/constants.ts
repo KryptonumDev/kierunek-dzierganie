@@ -243,7 +243,8 @@ export const MATERIAL_PACKAGE_QUERY = `materialsPackage[] {
               additionalInfo,
               materialRef->{
                 _id,
-                "slug": slug.current
+                "slug": slug.current,
+                basis,
               }
             }
           },
