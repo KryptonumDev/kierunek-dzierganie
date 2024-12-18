@@ -1,15 +1,15 @@
 'use client';
-import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
-import { toast } from 'react-toastify';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import type { FormValues, FormProps } from './authorization.types';
+import Checkbox from '@/components/ui/Checkbox';
 import Input from '@/components/ui/PasswordInput';
 import { REGEX } from '@/global/constants';
-import Checkbox from '@/components/ui/Checkbox';
-import { useState } from 'react';
 import { createClient } from '@/utils/supabase-client';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
+import type { FormProps, FormValues } from './authorization.types';
 
 const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
   const supabase = createClient();
@@ -28,6 +28,14 @@ const AuthorizationForm = ({ isRegister, setRegister }: FormProps) => {
   const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
     setIsSubmitting(true);
     if (isRegister) {
+      const { data: user } = await supabase.from('profiles').select('id').eq('email', data.email).single();
+
+      if (user) {
+        toast('Użytkownik z tym adresem e-mail już istnieje.');
+        setIsSubmitting(false);
+        return;
+      }
+
       await supabase.auth
         .signUp({
           email: data.email,
