@@ -216,19 +216,7 @@ export const MATERIAL_PACKAGE_QUERY = `materialsPackage[] {
             ${PRODUCT_CARD_QUERY}
           },
           materialRef->{
-            _id,
-            "slug": slug.current,
-            basis,
-            rating,
-            reviewsCount,
-            name,
-            price,
-            discount,
-            countInStock,
-            _type,
-           "image": gallery[0] {
-              ${Img_Query}
-            },
+           ${PRODUCT_CARD_QUERY}
           },
           materialsHeading->{
             _type,

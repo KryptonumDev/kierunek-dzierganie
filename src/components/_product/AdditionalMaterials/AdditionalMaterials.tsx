@@ -18,6 +18,7 @@ const AdditionalMaterials = ({ heading, additionalMaterialsList }: AdditionalMat
               data={product}
               basis={getProductBasis(product.basis, product._type)}
               owned={false}
+              tabletHorizontal
             />
           </li>
         ))}
