@@ -12,19 +12,19 @@
     list-style: none;
     gap: clamp(20px, calc(28vw / 7.68), 28px);
     li {
-      min-width: 260px;
+      @media (min-width: 600px) {
+        a {
+          margin: 36px 0 0 0 !important;
+        }
+      }
     }
 
     @media (max-width: 979px) {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @media (max-width: 699px) {
-      li {
-        max-width: 460px;
-        width: 100%;
-        margin: 0 auto;
-      }
+    @media (max-width: 899px) {
+      grid-template-columns: 1fr;
     }
   }
 }
