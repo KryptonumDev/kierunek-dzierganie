@@ -98,7 +98,11 @@ export default function Cart({
 
   useEffect(() => {
     fetchedItems?.forEach((el) => {
-      if ((!el.visible || el.basis === 'instruction') && el.related?._id && el._type === 'product') {
+      if (
+        (!el.visible || ['instruction', 'materials'].includes(el.basis)) &&
+        el.related?._id &&
+        el._type === 'product'
+      ) {
         // check is related in cart or in ownedCourses, if no, delete from cart
         if (!fetchedItems?.some((item) => item._id === el.related!._id) && !ownedCourses?.includes(el.related._id)) {
           removeItem(el._id + (el.variant?._id ? `variant:${el.variant?._id}` : ''));
