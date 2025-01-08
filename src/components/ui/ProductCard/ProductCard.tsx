@@ -87,7 +87,7 @@ const ProductCard = ({
         href={`${basis ? basis : data._type === 'product' ? productUrls[data.basis] : pageUrls[data.basis as 'knitting' | 'crocheting']}/${data.slug}`}
         className={styles['link']}
         onClick={onClick}
-        aria-label={mainVariant.image?.asset.altText ? mainVariant.image.asset.altText : `${mainVariant.name}`}
+        aria-label={mainVariant.image?.asset?.altText ? mainVariant.image.asset.altText : `${mainVariant.name}`}
       />
 
       {mainVariant.image && (

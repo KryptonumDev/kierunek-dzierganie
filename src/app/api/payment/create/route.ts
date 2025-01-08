@@ -7,6 +7,7 @@ import { NextResponse } from 'next/server';
 import { checkUsedModifications } from '../complete/check-used-modifications';
 import { sendEmails } from '../complete/send-emails';
 import { updateItemsQuantity } from '../complete/update-items-quantity';
+import { generateRandomCode } from '@/utils/generate-random-code';
 // import { pdf } from '@react-pdf/renderer';
 
 export const dynamic = 'force-dynamic';
@@ -156,13 +157,4 @@ export async function POST(request: Request) {
     console.log(error);
     return NextResponse.json({ error }, { status: 500 });
   }
-}
-
-function generateRandomCode() {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let code = '';
-  for (let i = 0; i < 12; i++) {
-    code += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
-  return code;
 }

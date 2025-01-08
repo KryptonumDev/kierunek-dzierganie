@@ -1,4 +1,9 @@
 import type { ComponentProps } from '@/components/Components';
+import { CtaHeadingTypes } from '@/components/_courseDiscount/CtaHeading';
+import { DiscountCtaTypes } from '@/components/_courseDiscount/DiscountCta';
+import { DiscountHeroTypes } from '@/components/_courseDiscount/DiscountHero';
+import { ImageHeadingTypes } from '@/components/_courseDiscount/ImageHeading';
+import { TimerBoxTypes } from '@/components/_courseDiscount/TimerBox';
 import type { HeroSimpleTypes } from '@/components/_global/HeroSimple';
 import { AdditionalMaterialsTypes } from '@/components/_product/AdditionalMaterials';
 import type { DescriptionTypes } from '@/components/_product/Description/Description';
@@ -168,6 +173,41 @@ export type PageQueryProps = {
   slug?: string;
   content: ComponentProps[];
 } & generateMetadataProps;
+
+export type ThankYouPageQueryProps = {
+  name?: string;
+  slug?: string;
+  content: ComponentProps[];
+  hasDiscount?: boolean;
+  discountCourse?: DiscountCourseType;
+  discountComponents: discountComponentsType;
+} & generateMetadataProps;
+
+export type DiscountCourseType = {
+  course: DiscountCourseRefType;
+  discount: number;
+  discountTime: number;
+};
+
+export type DiscountCourseRefType = {
+  basis: string;
+  name: string;
+  slug: string;
+  _id: string;
+  rating: number;
+  reviewsCount: number;
+  price: number;
+  discount?: number;
+  image: ImgType;
+};
+
+export type discountComponentsType = (
+  | DiscountHeroTypes
+  | TimerBoxTypes
+  | ImageHeadingTypes
+  | CtaHeadingTypes
+  | DiscountCtaTypes
+)[];
 
 export type BlogPageQueryProps = {
   HeroSimple: HeroSimpleTypes;

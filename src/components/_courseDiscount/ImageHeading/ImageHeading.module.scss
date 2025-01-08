@@ -1,0 +1,128 @@
+.ImageHeading {
+  background-color: var(--primary-200, #faf4f0);
+  display: flex;
+  align-items: center;
+  gap: clamp(32px, calc(48vw / 7.68), 48px);
+  margin: 0 calc(-1 * var(--pageMargin));
+  width: calc(100% + 2 * var(--pageMargin));
+  justify-content: space-between;
+  position: relative;
+
+  .header {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 24px 0 42px;
+    padding-left: clamp(48px, calc(48vw / 7.68), 80px);
+    max-width: calc(584px + clamp(48px, calc(48vw / 7.68), 80px));
+    > svg {
+      margin-bottom: 12px;
+      width: clamp(62px, calc(114vw / 7.68), 114px);
+    }
+    .heading {
+      font-weight: 300;
+      margin-bottom: clamp(12px, calc(28vw / 7.68), 28px);
+      font-size: clamp(calc(24rem / 16), calc(36vw / 7.68), calc(36rem / 16));
+      line-height: 116%;
+    }
+
+    .paragraph {
+      line-height: 1.5;
+      font-weight: 300;
+      > p:not(:last-child) {
+        margin-bottom: 8px;
+      }
+    }
+  }
+  .image {
+    position: relative;
+    img {
+      width: 484px;
+      height: auto;
+      object-fit: cover;
+
+      @media (max-width: 1023px) {
+        width: 100%;
+        max-width: 608px;
+      }
+    }
+  }
+
+  .timer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 16px 12px;
+    gap: 8px;
+    font-size: calc(14rem / 16);
+    font-weight: 300;
+    line-height: 1.5;
+    border-radius: 0px 0px 0px 6px;
+    border: 1px solid var(--primary-300, #efe8e7);
+    background-color: var(--primary-100, #fdfbf8);
+
+    span {
+      display: inline-block;
+      padding: 6px;
+      border-radius: 2px;
+      border: 0.5px solid var(--primary-400, #e5d8d4);
+      background: var(--primary-200, #faf4f0);
+      margin-right: 2px;
+
+      &:last-child {
+        margin-left: 6px;
+      }
+    }
+    &::before {
+      position: absolute;
+      inset: 0;
+      background-color: var(--primary-100, #fdfbf8);
+      content: 'Promocja dobiegła końca';
+      transition: opacity 0.3s ease-in-out;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(calc(16rem / 16), calc(18vw / 7.68), calc(18rem / 16));
+      font-weight: 300;
+      text-align: center;
+      color: var(--primary-800, #53423c);
+      opacity: 0;
+      visibility: hidden;
+      font-size: calc(14rem / 16);
+    }
+    &[data-end='true'] {
+      &::before {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+  }
+
+  > svg {
+    position: absolute;
+    bottom: -7%;
+    right: 560px;
+  }
+
+  @media (max-width: 1023px) {
+    flex-direction: column;
+    padding: clamp(32px, calc(48vw / 7.68), 48px) var(--pageMargin) 0;
+    .header {
+      padding-left: 0;
+      max-width: 608px;
+    }
+    .image {
+      img {
+        max-width: 608px;
+        align-self: center;
+        width: 100%;
+      }
+    }
+
+    > svg {
+      display: none;
+    }
+  }
+}

@@ -1,19 +1,19 @@
 'use client';
-import { useState } from 'react';
-import Link from 'next/link';
-import { useForm, type FieldValues } from 'react-hook-form';
-import Input from '@/components/ui/Input';
-import Checkbox from '@/components/ui/Checkbox';
 import Button from '@/components/ui/Button';
-import styles from './ContactForm.module.scss';
-import { REGEX } from '@/global/constants';
-import State from './_State';
-import Loading from './_Loading';
-import { formatPhoneNumber } from '@/utils/format-phone-number';
-import type { StatusProps } from './ContactForm.types';
+import Checkbox from '@/components/ui/Checkbox';
+import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
+import { REGEX } from '@/global/constants';
+import { formatPhoneNumber } from '@/utils/format-phone-number';
+import Link from 'next/link';
+import { useState } from 'react';
+import { useForm, type FieldValues } from 'react-hook-form';
+import Loading from './_Loading';
+import State from './_State';
+import styles from './ContactForm.module.scss';
+import type { StatusProps } from './ContactForm.types';
 
-const Form = ({ aboveTheFold, emails }: { aboveTheFold: boolean; emails: {label: string; value: string}[] }) => {
+const Form = ({ aboveTheFold, emails }: { aboveTheFold: boolean; emails: { label: string; value: string }[] }) => {
   const [status, setStatus] = useState<StatusProps>({ sending: false });
   const {
     register,

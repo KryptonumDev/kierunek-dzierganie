@@ -1,17 +1,35 @@
 'use client';
-import { useState } from 'react';
-import { type FieldValues, useForm } from 'react-hook-form';
-import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import Checkbox from '@/components/ui/Checkbox';
-import styles from './Newsletter.module.scss';
+import Input from '@/components/ui/Input';
 import { mailerLiteGroup, REGEX } from '@/global/constants';
-import State from './_State';
+import { DiscountCourseType } from '@/global/types';
+import { encodeEmail } from '@/utils/email-cipher';
+import { usePathname, useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { type FieldValues, useForm } from 'react-hook-form';
 import Loading from './_Loading';
+import State from './_State';
+import styles from './Newsletter.module.scss';
 import type { StatusProps } from './Newsletter.types';
 
-const Form = ({ Heading, groupId }: { Heading: React.ReactNode, groupId?: string }) => {
+const Form = ({
+  Heading,
+  groupId,
+  dedicatedThankYouPage,
+}: {
+  Heading: React.ReactNode;
+  groupId?: string;
+  dedicatedThankYouPage?: {
+    name?: string;
+    slug?: string;
+    hasDiscount?: boolean;
+    discountCourse?: DiscountCourseType;
+  };
+}) => {
   const [status, setStatus] = useState<StatusProps>({ sending: false });
+  const router = useRouter();
+  const pathname = usePathname();
   const {
     register,
     handleSubmit,
@@ -22,24 +40,60 @@ const Form = ({ Heading, groupId }: { Heading: React.ReactNode, groupId?: string
   const onSubmit = async (data: FieldValues) => {
     setStatus({ sending: true });
     data.groupID = groupId || mailerLiteGroup.newsletter;
-    try {
-      const response = await fetch('/api/mailerlite', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      const responseData = await response.json();
-      if (response.ok && responseData.success) {
-        setStatus((prevStatus) => ({ ...prevStatus, success: true }));
-        reset();
-        if (typeof fbq !== 'undefined') {
-          fbq('track', 'CompleteRegistration');
+    data.dedicatedThankYouPage = dedicatedThankYouPage;
+
+    if (dedicatedThankYouPage?.hasDiscount) {
+      try {
+        const response = await fetch('/api/discount', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: data.email,
+            groupID: groupId,
+            duration: dedicatedThankYouPage.discountCourse?.discountTime,
+            amount: dedicatedThankYouPage.discountCourse?.discount,
+            course: {
+              id: dedicatedThankYouPage.discountCourse?.course._id,
+              name: dedicatedThankYouPage.discountCourse?.course.name,
+            },
+          }),
+        });
+        const responseData = await response.json();
+        if (response.ok && responseData.success) {
+          router.push(
+            `${pathname}/${dedicatedThankYouPage.slug}?subscriber=${encodeEmail(data.email)}&group=${groupId}`
+          );
+          return;
         }
-      } else {
+      } catch {
         setStatus((prevStatus) => ({ ...prevStatus, success: false }));
       }
-    } catch {
-      setStatus((prevStatus) => ({ ...prevStatus, success: false }));
+    } else {
+      try {
+        const response = await fetch('/api/mailerlite', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+
+        const responseData = await response.json();
+
+        if (response.ok && responseData.success) {
+          if (typeof fbq !== 'undefined') {
+            fbq('track', 'CompleteRegistration');
+          }
+          if (dedicatedThankYouPage) {
+            router.push(`${pathname}/${dedicatedThankYouPage.slug}`);
+            return;
+          }
+          setStatus((prevStatus) => ({ ...prevStatus, success: true }));
+          reset();
+        } else {
+          setStatus((prevStatus) => ({ ...prevStatus, success: false }));
+        }
+      } catch {
+        setStatus((prevStatus) => ({ ...prevStatus, success: false }));
+      }
     }
   };
 
@@ -72,8 +126,7 @@ const Form = ({ Heading, groupId }: { Heading: React.ReactNode, groupId?: string
       <Checkbox
         label={
           <>
-            Wyrażam zgodę na przetwarzanie moich danych osobowych zgodnie z
-            {' '}
+            Wyrażam zgodę na przetwarzanie moich danych osobowych zgodnie z{' '}
             <a
               className='link'
               href='/polityka-prywatnosci'
@@ -82,7 +135,7 @@ const Form = ({ Heading, groupId }: { Heading: React.ReactNode, groupId?: string
             >
               polityką prywatności
             </a>
-            .{' '} Wiem, że w każdej chwili mogę wypisać się z newslettera i cofnąć tę zgodę.
+            . Wiem, że w każdej chwili mogę wypisać się z newslettera i cofnąć tę zgodę.
           </>
         }
         register={register('legal', {

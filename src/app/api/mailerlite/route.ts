@@ -32,6 +32,7 @@ export async function POST(request: Request) {
     if (api.status !== 200) {
       return Response.json({ success: false }, { status: 422 });
     }
+
     return Response.json({ success: true });
   } catch {
     return Response.json({ success: false }, { status: 422 });

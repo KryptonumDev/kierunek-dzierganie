@@ -17,7 +17,12 @@ type QueryType = {
  * @param {string} [dynamicSlug] - Optional. Used to query dynamic pages, like blog posts.
  * @returns {Promise<Metadata>} Returns a promise of the SEO object.
  */
-export const QueryMetadata = async (name: string | string[], path: string, dynamicSlug?: string): Promise<Metadata> => {
+export const QueryMetadata = async (
+  name: string | string[],
+  path: string,
+  dynamicSlug?: string,
+  visibleProp = true
+): Promise<Metadata & { visibleProp?: boolean }> => {
   if (typeof name === 'string') {
     name = [name];
   }
@@ -33,7 +38,7 @@ export const QueryMetadata = async (name: string | string[], path: string, dynam
     description,
     path: path,
     img,
-    visible: visible === false ? false : true,
+    visible: visible === false || visibleProp === false ? false : true,
   });
 };
 
@@ -50,7 +55,6 @@ const query = async (customQuery: string, tag: string[], dynamicSlug?: string): 
     tags: tag,
     ...(dynamicSlug && { params: { slug: dynamicSlug } }),
   });
-  console.log(seo);
   !seo && notFound();
   return { ...seo };
 };

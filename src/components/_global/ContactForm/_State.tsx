@@ -19,7 +19,10 @@ const State = ({
 }) => {
   return (
     success !== undefined && (
-      <div className={styles['State']} data-success={success}>
+      <div
+        className={styles['State']}
+        data-success={success}
+      >
         <h3>
           {getIcon(success)} <span>{getHeading(success)}</span>
         </h3>
