@@ -11,8 +11,10 @@ const CtaHeading = ({ heading, paragraph, ctaText, additionalText, index, course
     <section className={styles['CtaHeading']}>
       <HeadingComponent className={styles.heading}>{heading}</HeadingComponent>
       <Markdown className={styles.paragraph}>{paragraph}</Markdown>
-      <Button href={`${pageUrls[course.basis as 'knitting' | 'crocheting']}/${course.slug}`}>{ctaText}</Button>
-      {!!additionalText && <Markdown className={styles.additionalText}>{additionalText}</Markdown>}
+      {!!ctaText && (
+        <Button href={`${pageUrls[course.basis as 'knitting' | 'crocheting']}/${course.slug}`}>{ctaText}</Button>
+      )}
+      {!!ctaText && !!additionalText && <Markdown className={styles.additionalText}>{additionalText}</Markdown>}
       <FlowerIcon />
     </section>
   );

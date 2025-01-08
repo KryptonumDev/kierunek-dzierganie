@@ -7,6 +7,7 @@
   margin-left: -50vw;
   margin-right: -50vw;
   margin-top: calc(-1 * clamp(36px, 6.7708333333vw, 64px));
+  min-height: clamp(400px, calc(600vw / 7.68), 800px);
 
   overflow: clip;
 
