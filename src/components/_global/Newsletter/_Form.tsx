@@ -60,6 +60,9 @@ const Form = ({
         });
         const responseData = await response.json();
         if (response.ok && responseData.success) {
+          if (typeof fbq !== 'undefined') {
+            fbq('track', 'CompleteRegistration');
+          }
           router.push(
             `${pathname}/${dedicatedThankYouPage.slug}?subscriber=${encodeEmail(data.email)}&group=${groupId}`
           );
