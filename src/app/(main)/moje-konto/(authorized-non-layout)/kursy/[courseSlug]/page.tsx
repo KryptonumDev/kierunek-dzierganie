@@ -41,8 +41,6 @@ interface QueryProps {
 export default async function Course({ params: { courseSlug } }: { params: { courseSlug: string } }) {
   const { course, courses_progress, left_handed, notes }: QueryProps = await query(courseSlug);
 
-  console.log(notes);
-
   return (
     <div>
       {course.type === 'course' ? (
@@ -171,12 +169,9 @@ const query = async (slug: string): Promise<QueryProps> => {
     },
   });
 
-  if (!res.data!.courses_progress.some((el) => el.course_id === data.course._id)) return notFound();
+  if (!res?.data || !res.data!.courses_progress.some((el) => el.course_id === data.course._id)) return notFound();
 
   const course_progress = res.data!.courses_progress.find((el) => el.course_id === data.course._id)!;
-
-  console.log(data.course);
-  console.log(course_progress);
 
   const notes = mapNotes(course_progress, data.course as unknown as MapNotesQueryProps['course']);
 

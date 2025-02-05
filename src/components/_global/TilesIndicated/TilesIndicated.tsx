@@ -36,7 +36,12 @@ const TilesIndicated = ({ heading, list }: Props) => {
             )}
             <Markdown.h3>{title}</Markdown.h3>
             <Markdown className={styles.paragraph}>{paragraph}</Markdown>
-            <Button data={cta} />
+            {cta && (
+              <Button
+                data={cta}
+                className={styles.cta}
+              />
+            )}
           </div>
         ))}
       </div>

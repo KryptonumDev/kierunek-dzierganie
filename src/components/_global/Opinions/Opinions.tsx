@@ -21,8 +21,13 @@ const Opinions = ({ heading, list, paragraph, cta, cta_Annotation }: Props) => {
       </ul>
       <div className={styles.copy}>
         <Markdown className={styles.paragraph}>{paragraph}</Markdown>
-        <Button data={cta} className={styles.cta} />
-        <Markdown className={styles.ctaAnnotation}>{cta_Annotation}</Markdown>
+        {cta && (
+          <Button
+            data={cta}
+            className={styles.cta}
+          />
+        )}
+        {cta_Annotation && <Markdown className={styles.ctaAnnotation}>{cta_Annotation}</Markdown>}
       </div>
       <Decoration
         aria-hidden='true'

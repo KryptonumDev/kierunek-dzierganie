@@ -29,10 +29,12 @@ const TeamShowcase = ({ heading, paragraph, cta, list }: TeamShowcaseTypes) => {
           </div>
         ))}
       </div>
-      <Button
-        data={cta}
-        className={styles.button}
-      />
+      {cta && (
+        <Button
+          data={cta}
+          className={styles.button}
+        />
+      )}
     </section>
   );
 };

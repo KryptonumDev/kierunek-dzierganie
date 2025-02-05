@@ -11,7 +11,7 @@ const CompaniesShowcase = ({ heading, paragraph, cta, list }: CompaniesShowcaseT
       <header>
         <Markdown.h2>{heading}</Markdown.h2>
         <Markdown>{paragraph}</Markdown>
-        <Button data={cta} />
+        {cta && <Button data={cta} />}
       </header>
       <div className={styles.list}>
         {list.map(({ img, description, title, href }, i) => {

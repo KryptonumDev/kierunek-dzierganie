@@ -1,6 +1,6 @@
-import Markdown from '@/components/ui/markdown';
 import Button from '@/components/ui/Button';
 import Img from '@/components/ui/image';
+import Markdown from '@/components/ui/markdown';
 import GridImageShowcase from './_Grid';
 import ParallaxImageShowcase from './_Parallax';
 import styles from './ImageShowcase.module.scss';
@@ -10,7 +10,7 @@ const ImageShowcase = ({ isGrid, heading, paragraph, cta, cta_Annotation, images
   const data = {
     heading: <Markdown.h2>{heading}</Markdown.h2>,
     paragraph: <Markdown className={styles.paragraph}>{paragraph}</Markdown>,
-    cta: (
+    cta: cta && (
       <Button
         data={cta}
         className={styles.cta}
@@ -24,8 +24,9 @@ const ImageShowcase = ({ isGrid, heading, paragraph, cta, cta_Annotation, images
         key={i}
         data={image}
         sizes={
-          isGrid ? '(max-width: 749px) 50vw, (max-width: 989px) 33.3vw, 282px' :
-            i === 0
+          isGrid
+            ? '(max-width: 749px) 50vw, (max-width: 989px) 33.3vw, 282px'
+            : i === 0
               ? '(max-width: 768px) 28vw, 280px'
               : i === 1
                 ? '(max-width: 768px) 12vw, 174px'

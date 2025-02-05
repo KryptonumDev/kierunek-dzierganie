@@ -10,7 +10,7 @@ const TilesGallery = ({ heading, paragraph, cta, list }: Props) => {
       <header>
         <Markdown.h2>{heading}</Markdown.h2>
         <Markdown>{paragraph}</Markdown>
-        <Button data={cta} />
+        {cta && <Button data={cta} />}
       </header>
       <ul>
         {list.map(({ heading, paragraph, img }, i) => (

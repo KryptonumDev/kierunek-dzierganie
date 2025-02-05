@@ -81,7 +81,7 @@ export async function generateBill(data: any, id: string) {
                   amount = 1;
                   counter = counter + 1;
                 }
-                console.log('amount😂');
+                console.log('amount');
                 console.log(amount);
               } else if (data.used_discount.type === 'FIXED PRODUCT') {
                 data.used_discount.discounted_product.id === product.id

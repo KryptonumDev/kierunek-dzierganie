@@ -38,10 +38,12 @@ const TilesGrid = ({ heading, paragraph, list }: Props) => {
                 sizes='(max-width: 899px) 50vw, 400px'
               />
             </Link>
-            <Button
-              data={cta}
-              className={styles.cta}
-            />
+            {cta && (
+              <Button
+                data={cta}
+                className={styles.cta}
+              />
+            )}
           </div>
         ))}
       </div>
