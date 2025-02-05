@@ -123,6 +123,8 @@ export default function Checkout({
     }));
   }, [fetchedItems, input.amount, setInput, usedDiscount, usedVirtualMoney, userId, setUsedDiscount, deliverySettings]);
 
+  console.log(input.products?.array);
+
   useEffect(() => {
     addEventListener('keydown', (e) => {
       if (e.key === 'Escape') setShowCheckout();

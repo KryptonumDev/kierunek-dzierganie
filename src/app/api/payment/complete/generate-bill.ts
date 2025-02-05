@@ -12,6 +12,17 @@ export async function generateBill(data: any, id: string) {
   let fixedDiscountAmount = data.used_discount?.amount ?? 0;
   let counter = 0;
 
+  // TEMP: If the discount is a voucher, don't generate a bill
+  if (data.used_discount?.type === 'VOUCHER') return;
+
+  // TEMP: If the bought items is only a voucher, don't generate a bill
+  if (
+    data.products.array.every(
+      (product: { _type: string; type: string }) => product._type === 'voucher' || product.type === 'voucher'
+    )
+  )
+    return;
+
   const isDiscountBiggerOrEqual = (hasShipping: boolean = false) => {
     return (
       (data.used_discount?.type === 'FIXED CART' || data.used_discount?.type === 'VOUCHER') &&
