@@ -10,8 +10,6 @@ import type { Props } from './WordsCollection.types';
 const WordsCollection = ({ heading, list, cta, index, image }: Props) => {
   const Heading = index === 0 ? Markdown.h1 : Markdown.h2;
 
-  console.log(image);
-
   return (
     <section
       className={styles['WordsCollection']}

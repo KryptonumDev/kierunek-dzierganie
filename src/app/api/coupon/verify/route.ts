@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { NextResponse } from 'next/server';
 
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_KEY!, {
   auth: {
@@ -11,7 +11,7 @@ const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
-  const { code, userId, cart } = await request.json();
+  const { code, userId, cart, isSubmit } = await request.json();
   try {
     const { data, error } = await supabase
       .from('coupons')
@@ -34,8 +34,18 @@ export async function POST(request: Request) {
       .eq('code', code)
       .single();
 
+    if (isSubmit) {
+      if (data?.affiliation_of && cart.find((item: { _type: string }) => item._type !== 'course')) {
+        return NextResponse.json({ error: 'Afiliacyjny kod rabatowy jest dostępny tylko dla kursów' }, { status: 500 });
+      } else return NextResponse.json(data);
+    }
+
     if (error?.code === 'PGRST116' || data?.state === 1) {
       return NextResponse.json({ error: 'Kod rabatowy nie istnieje' }, { status: 500 });
+    }
+
+    if (data?.affiliation_of && cart.find((item: { _type: string }) => item._type !== 'course')) {
+      return NextResponse.json({ error: 'Afiliacyjny kod rabatowy jest dostępny tylko dla kursów' }, { status: 500 });
     }
 
     if (data?.affiliation_of === userId) {

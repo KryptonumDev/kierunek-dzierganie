@@ -112,20 +112,47 @@ export default function Cart({
     });
   }, [fetchedItems, ownedCourses]);
 
-  console.log(fetchedItems);
+  const cartItems = cart?.map((item) => {
+    return {
+      ...item,
+      _type: fetchedItems?.find((fetchedItem) => fetchedItem._id === item.id)?._type,
+    };
+  });
 
-  const onSubmit = () => {
-    goToCheckout();
+  const onSubmit = async () => {
+    const isVerfied = await fetch('/api/coupon/verify', {
+      cache: 'no-cache',
+      method: 'POST',
+      body: JSON.stringify({
+        code: discountCode,
+        userId,
+        cart: cartItems,
+        isSubmit: true,
+      }),
+    });
+
+    if (isVerfied.ok || !discountCode) {
+      goToCheckout();
+    } else {
+      const data = await isVerfied.json();
+      toast(data.error);
+    }
   };
 
   const verifyCoupon = async () => {
     setCouponVerifying(true);
+
     await fetch('/api/coupon/verify', {
       cache: 'no-cache',
       method: 'POST',
-      body: JSON.stringify({ code: discountCode, userId, cart }),
+      body: JSON.stringify({
+        code: discountCode,
+        userId,
+        cart: cartItems,
+      }),
     })
       .then((res) => res.json())
+
       .then((data) => {
         if (data.error) {
           toast(data.error);
