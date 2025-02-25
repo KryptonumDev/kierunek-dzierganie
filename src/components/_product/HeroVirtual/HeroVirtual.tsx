@@ -34,11 +34,13 @@ const HeroVirtual = ({ alreadyBought, course, previewLessons }: HeroVirtualTypes
         fbq('track', 'ViewContent', {
           content_ids: [product_id],
           content_name: product_name,
-          contents: [{
-            id: product_id,
-            item_price: product_price,
-            quantity: 1,
-          }],
+          contents: [
+            {
+              id: product_id,
+              item_price: product_price,
+              quantity: 1,
+            },
+          ],
           content_type: 'product',
           value: product_price,
           currency: 'PLN',
@@ -67,11 +69,11 @@ const HeroVirtual = ({ alreadyBought, course, previewLessons }: HeroVirtualTypes
     <section className={styles['HeroVirtual']}>
       <Gallery images={images} />
       <div className={styles['info']}>
-        {course.rating !== undefined && course.reviewsCount > 0 ? (
+        {course.rating !== undefined && course.reviews?.length > 0 ? (
           <p className={styles['rating']}>
             <Hearth />{' '}
             <span>
-              <b>{course.rating}</b>/5 ({course.reviewsCount})
+              <b>{course.rating}</b>/5 ({course.reviews?.length})
             </span>
           </p>
         ) : (
