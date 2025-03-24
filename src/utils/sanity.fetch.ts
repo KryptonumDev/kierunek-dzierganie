@@ -56,9 +56,10 @@ export default async function sanityFetch<QueryResponse>({
 }
 
 export async function sanityPatchQuantityInVariant(id: string, key: string, quantity: number) {
+  const countInStock = await client.fetch<number>(`*[_id == "${id}"][0].variants[_key == "${key}"][0].countInStock`);
   return await client
     .patch(id)
-    .dec({ [`variants[_key == "${key}"].countInStock`]: quantity })
+    .dec({ [`variants[_key == "${key}"].countInStock`]: quantity > countInStock ? countInStock : quantity })
     .commit();
 }
 

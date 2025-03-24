@@ -1,14 +1,14 @@
 'use client';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import styles from './HeroPhysical.module.scss';
-import type { AttributesTypes, Props, SelectedAttributesTypes } from './HeroPhysical.types';
-import Select, { SingleValue } from 'react-select';
-import { ImgType } from '@/global/types';
 import AddToCart from '@/components/ui/AddToCart';
-import { formatPrice } from '@/utils/price-formatter';
 import Gallery from '@/components/ui/Gallery';
 import { Hearth, PayPo } from '@/components/ui/Icons';
+import { ImgType } from '@/global/types';
+import { formatPrice } from '@/utils/price-formatter';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import Select, { SingleValue } from 'react-select';
 import ColorPicker from './ColorPicker';
+import styles from './HeroPhysical.module.scss';
+import type { AttributesTypes, Props, SelectedAttributesTypes } from './HeroPhysical.types';
 
 const gtag: Gtag.Gtag = function () {
   // eslint-disable-next-line prefer-rest-params
@@ -94,11 +94,13 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
           fbq('track', 'ViewContent', {
             content_ids: [product_id],
             content_name: product_name,
-            contents: [{
-              id: product_id,
-              item_price: product_price,
-              quantity: 1,
-            }],
+            contents: [
+              {
+                id: product_id,
+                item_price: product_price,
+                quantity: 1,
+              },
+            ],
             content_type: 'product',
             value: product_price,
             currency: 'PLN',
@@ -232,7 +234,7 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
                 </svg>
               </button>
             </div>
-            <p>Dostępne: {chosenVariant!.countInStock}&nbsp;sztuk</p>
+            <p>Dostępne: {chosenVariant!.countInStock > 0 ? chosenVariant!.countInStock : '0'}&nbsp;sztuk</p>
           </div>
           <div className={styles['price']}>
             <p>
@@ -252,7 +254,7 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
           <AddToCart
             id={id}
             variant={variants ? chosenVariant?._id : undefined}
-            disabled={!count || chosenVariant!.countInStock === 0}
+            disabled={!count || chosenVariant!.countInStock <= 0}
             quantity={count}
             data={{
               price: chosenVariant!.price,
