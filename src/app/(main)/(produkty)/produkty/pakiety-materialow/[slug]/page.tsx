@@ -60,7 +60,6 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
         ]}
         visible={true}
       />
-      (
       <HeroPhysical
         name={name}
         id={_id}
@@ -79,7 +78,6 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
           reviewsCount: reviews.length,
         }}
       />
-      )
       <Informations tabs={['Opis', 'Parametry', 'Opinie']}>
         {description?.length > 0 && <Description data={description} />}
         {parameters?.length > 0 && <Parameters parameters={parameters} />}

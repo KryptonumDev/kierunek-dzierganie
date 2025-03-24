@@ -60,7 +60,6 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
         ]}
         visible={true}
       />
-
       <HeroPhysical
         name={name}
         id={_id}
