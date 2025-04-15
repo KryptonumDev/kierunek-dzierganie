@@ -1,4 +1,5 @@
 import type { CoursesProgress, Chapter, File, Course } from '@/global/types';
+import type { VideoProvider } from '@/components/ui/VideoPlayer/VideoPlayer.types';
 
 export type Props = {
   course: Course;
@@ -11,6 +12,7 @@ export type Props = {
     lengthInMinutes: number;
     files: File[];
     files_alter: File[];
+    videoProvider?: VideoProvider;
   };
   left_handed: boolean;
   progress: CoursesProgress;

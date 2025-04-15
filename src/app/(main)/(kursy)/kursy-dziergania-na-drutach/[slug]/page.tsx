@@ -158,6 +158,11 @@ const query = async (slug: string): Promise<CoursePageQuery> => {
         price,
         discount,
         featuredVideo,
+        "videoProvider": select(
+          videoProvider == "youtube" => "youtube",
+          videoProvider == "bunnyNet" => "bunnyNet",
+          "vimeo"
+        ),
         countInStock,
         gallery[]{
           ${Img_Query}

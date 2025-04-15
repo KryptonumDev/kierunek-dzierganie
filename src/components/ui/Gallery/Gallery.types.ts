@@ -1,8 +1,10 @@
 import type { ImgType } from '@/global/types';
+import type { VideoProvider } from '../VideoPlayer/VideoPlayer.types';
 
 export type GalleryTypes = {
-  images: {
+  images: Array<{
     data: ImgType | string;
-    type: 'image' | 'video';
-  }[];
+    type: 'video' | 'image';
+    videoProvider?: VideoProvider;
+  }>;
 };

@@ -7,6 +7,7 @@ import RelatedMaterials from '@/components/_global/RelatedMaterials';
 import Seo from '@/global/Seo';
 import { PRODUCT_CARD_QUERY } from '@/global/constants';
 import type { Chapter, Course, CoursesProgress, File, ImgType } from '@/global/types';
+import type { VideoProvider } from '@/components/ui/VideoPlayer/VideoPlayer.types';
 import { checkCourseProgress } from '@/utils/check-course-progress';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createClient } from '@/utils/supabase-server';
@@ -23,6 +24,7 @@ type QueryProps = {
     video: string;
     video_alter: string;
     lengthInMinutes: number;
+    videoProvider?: VideoProvider;
     files: File[];
     description: string;
     flex: {
@@ -185,6 +187,11 @@ const query = async (courseSlug: string, lessonSlug: string) => {
       video,
       video_alter,
       lengthInMinutes,
+      "videoProvider": select(
+        videoProvider == "youtube" => "youtube",
+        videoProvider == "bunnyNet" => "bunnyNet",
+        "vimeo"
+      ),
       files[]{
         asset->{
           url,
@@ -256,7 +263,12 @@ const query = async (courseSlug: string, lessonSlug: string) => {
           name,
           video,
           lengthInMinutes,
-          "slug": slug.current
+          "slug": slug.current,
+          "videoProvider": select(
+            videoProvider == "youtube" => "youtube",
+            videoProvider == "bunnyNet" => "bunnyNet",
+            "vimeo"
+          )
         }
       }[],
       image {

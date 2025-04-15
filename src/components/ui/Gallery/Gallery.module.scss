@@ -66,3 +66,29 @@
     }
   }
 }
+
+.videoThumbnail {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 80px;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.playIconWrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}

@@ -9,6 +9,7 @@ import AddToCart from '@/components/ui/AddToCart';
 import { Hearth, PayPo } from '@/components/ui/Icons';
 import Img from '@/components/ui/image';
 import Button from '@/components/ui/Button';
+import type { VideoProvider } from '@/components/ui/VideoPlayer/VideoPlayer.types';
 
 const gtag: Gtag.Gtag = function () {
   // eslint-disable-next-line prefer-rest-params
@@ -17,9 +18,15 @@ const gtag: Gtag.Gtag = function () {
 
 const HeroVirtual = ({ alreadyBought, course, previewLessons }: HeroVirtualTypes) => {
   const images = useMemo(() => {
-    const images: Array<{ data: ImgType | string; type: 'video' | 'image' }> = [];
+    const images: Array<{ data: ImgType | string; type: 'video' | 'image'; videoProvider?: VideoProvider }> = [];
     // add video as first element if exists
-    if (course?.featuredVideo) images.push({ type: 'video', data: course?.featuredVideo });
+    if (course?.featuredVideo) {
+      images.push({
+        type: 'video',
+        data: course.featuredVideo,
+        videoProvider: course.videoProvider || 'vimeo',
+      });
+    }
     course?.gallery!.forEach((el) => images.push({ type: 'image', data: el }));
     return images;
   }, [course]);

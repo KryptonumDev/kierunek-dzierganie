@@ -30,6 +30,7 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
         description,
         reviews,
         rating,
+        videoProvider,
       },
     },
     user,
@@ -73,6 +74,7 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
           discount,
           countInStock: countInStock!,
           featuredVideo,
+          videoProvider,
           gallery: gallery!,
           rating,
           reviewsCount: reviews.length,
@@ -135,6 +137,11 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
           type,
           price,
           discount,
+          "videoProvider": select(
+              videoProvider == "youtube" => "youtube",
+              videoProvider == "bunnyNet" => "bunnyNet",
+              "vimeo"
+            ),
           featuredVideo,
           countInStock,
           gallery[]{
@@ -152,6 +159,11 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
             discount,
             countInStock,
             featuredVideo,
+            "videoProvider": select(
+              videoProvider == "youtube" => "youtube",
+              videoProvider == "bunnyNet" => "bunnyNet",
+              "vimeo"
+            ),
             gallery[]{
               ${Img_Query}
             },

@@ -9,6 +9,7 @@ import Select, { SingleValue } from 'react-select';
 import ColorPicker from './ColorPicker';
 import styles from './HeroPhysical.module.scss';
 import type { AttributesTypes, Props, SelectedAttributesTypes } from './HeroPhysical.types';
+import type { VideoProvider } from '@/components/ui/VideoPlayer/VideoPlayer.types';
 
 const gtag: Gtag.Gtag = function () {
   // eslint-disable-next-line prefer-rest-params
@@ -47,15 +48,21 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
   const [chosenAttributes, setChosenAttributes] = useState(() => {
     const obj = {} as SelectedAttributesTypes;
     attributes.forEach((el) => {
-      obj[el.name] = el.value[0];
+      obj[el.name] = el.value[0] || '';
     });
     return obj;
   });
 
   const images = useMemo(() => {
-    const images: Array<{ data: ImgType | string; type: 'video' | 'image' }> = [];
+    const images: Array<{ data: ImgType | string; type: 'video' | 'image'; videoProvider?: VideoProvider }> = [];
     // add video as first element if exists
-    if (chosenVariant?.featuredVideo) images.push({ type: 'video', data: chosenVariant?.featuredVideo });
+    if (chosenVariant?.featuredVideo) {
+      images.push({
+        type: 'video',
+        data: chosenVariant.featuredVideo,
+        videoProvider: chosenVariant.videoProvider || 'vimeo',
+      });
+    }
     chosenVariant?.gallery!.forEach((el) => images.push({ type: 'image', data: el }));
     return images;
   }, [chosenVariant]);
@@ -63,10 +70,10 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
   const selectVariant = useCallback(
     (v: SingleValue<{ value: string | undefined; label: string | undefined }>, name: string) => {
       const filteredAttributes = { ...chosenAttributes };
-      filteredAttributes[name] = v?.value;
+      filteredAttributes[name] = v?.value || '';
 
       // find variant with all the same attributes
-      const filteredVariant = variants.find((el) => {
+      const filteredVariant = variants?.find((el) => {
         let all = true;
         el.attributes!.every((attr) => {
           if (filteredAttributes[attr.name.toLocaleLowerCase()] !== attr.value) all = false;

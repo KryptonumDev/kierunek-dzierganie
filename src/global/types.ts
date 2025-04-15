@@ -13,6 +13,7 @@ import { PartnerSalesTypes } from '@/components/_product/PartnerSales';
 import { RelatedMaterialsTypes } from '@/components/_product/RelatedMaterials';
 import type { ReviewsTypes } from '@/components/_product/Reviews';
 import type { TableOfContentTypes } from '@/components/_product/TableOfContent/TableOfContent.types';
+import type { VideoProvider } from '@/components/ui/VideoPlayer/VideoPlayer.types';
 
 export type Complexity = 'dla-poczatkujacych' | 'dla-srednio-zaawansowanych' | 'dla-zaawansowanych';
 
@@ -303,6 +304,7 @@ export type ProductPageQueryProps = {
     variants: Array<ProductVariant>;
     gallery?: Array<ImgType>;
     featuredVideo?: string;
+    videoProvider?: VideoProvider;
     price?: number;
     discount?: number;
     countInStock?: number;
@@ -332,6 +334,7 @@ export type CoursePageQueryProps = {
     type: string;
     gallery?: Array<ImgType>;
     featuredVideo?: string;
+    videoProvider?: VideoProvider;
     price?: number;
     discount?: number;
     countInStock?: number;
@@ -448,6 +451,7 @@ export type Course = {
       video: string;
       lengthInMinutes: number;
       slug: string;
+      videoProvider?: VideoProvider;
     }[];
   }[];
 };
