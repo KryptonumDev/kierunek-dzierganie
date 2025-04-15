@@ -90,6 +90,11 @@ const query = async (slug: string, lesson: string): Promise<PreviewLessonTypes> 
       title,
       "slug": slug.current,
       video,
+      "videoProvider": select(
+        videoProvider == "youtube" => "youtube",
+        videoProvider == "bunnyNet" => "bunnyNet",
+        "vimeo"
+      ),
     },
     "course": *[_type == "course" && slug.current == $courseSlug][0]{
       _id,

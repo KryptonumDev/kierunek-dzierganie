@@ -2,7 +2,6 @@
 import styles from './PreviewLesson.module.scss';
 import type { FieldValues, Props } from './PreviewLesson.types';
 import Link from 'next/link';
-import Vimeo from '@u-wave/react-vimeo';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Checkbox from '@/components/ui/Checkbox';
@@ -11,6 +10,7 @@ import { REGEX } from '@/global/constants';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { setCookie } from '@/utils/set-cookie';
+import VideoPlayer from '@/components/ui/VideoPlayer/VideoPlayer';
 
 const LessonHero = ({ lesson, course, alreadySubscribed }: Props) => {
   const [status, setStatus] = useState({ sending: false });
@@ -50,8 +50,8 @@ const LessonHero = ({ lesson, course, alreadySubscribed }: Props) => {
     }
   };
 
-  const handleTimeUpdate = ({ seconds }: { seconds: number }) => {
-    localStorage.setItem(`vimeo-progress-${lesson.video}`, String(seconds));
+  const handleTimeUpdate = (seconds: number) => {
+    localStorage.setItem(`video-progress-${lesson.video}-${lesson.videoProvider || 'vimeo'}`, String(seconds));
   };
 
   return (
@@ -130,12 +130,13 @@ const LessonHero = ({ lesson, course, alreadySubscribed }: Props) => {
                 </Button>
               </form>
             )}
-            <Vimeo
-              speed={true}
+            <VideoPlayer
               video={lesson.video}
-              loop={false}
-              className={styles['vimeo']}
-              start={Number(localStorage?.getItem(`vimeo-progress-${lesson.video}`) ?? 0)}
+              speed={true}
+              provider={lesson.videoProvider}
+              start={Number(
+                localStorage?.getItem(`video-progress-${lesson.video}-${lesson.videoProvider || 'vimeo'}`) ?? 0
+              )}
               onTimeUpdate={handleTimeUpdate}
             />
           </div>
