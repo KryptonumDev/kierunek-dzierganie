@@ -1,11 +1,11 @@
 'use client';
 import PercentChart from '@/components/ui/PercentChart';
 import Switch from '@/components/ui/Switch';
+import VideoPlayer from '@/components/ui/VideoPlayer/VideoPlayer';
 import { formatBytes } from '@/utils/format-bytes';
 import parseFileName from '@/utils/parse-file-name';
 import { createClient } from '@/utils/supabase-client';
 import { updateElement } from '@/utils/update-progress';
-import Vimeo from '@u-wave/react-vimeo';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -118,8 +118,11 @@ const LessonHero = ({
     return leftHanded ? lesson.files_alter : lesson.files;
   }, [leftHanded, lesson.files, lesson.files_alter]);
 
-  const handleTimeUpdate = ({ seconds }: { seconds: number }) => {
-    localStorage.setItem(`vimeo-progress-${leftHanded ? lesson.video_alter : lesson.video}`, String(seconds));
+  const handleTimeUpdate = (seconds: number) => {
+    localStorage.setItem(
+      `video-progress-${leftHanded ? lesson.video_alter : lesson.video}-${lesson.videoProvider || 'vimeo'}`,
+      String(seconds)
+    );
   };
 
   const lessonsWrapperRef = useRef<HTMLDivElement>(null);
@@ -155,37 +158,27 @@ const LessonHero = ({
         </Link>
         <div className={styles['content']}>
           <div className={styles.video}>
-            {leftHanded ? (
-              <Vimeo
-                speed={true}
-                video={lesson.video_alter}
-                loop={false}
-                onEnd={() => updateProgress('auto', true)}
-                className={styles['vimeo']}
-                autoplay={autoplay}
-                start={
-                  typeof window === 'undefined'
-                    ? 0
-                    : Number(localStorage?.getItem(`vimeo-progress-${lesson.video_alter}`) ?? 0)
-                }
-                onTimeUpdate={handleTimeUpdate}
-              />
-            ) : (
-              <Vimeo
-                speed={true}
-                video={lesson.video}
-                loop={false}
-                onEnd={() => updateProgress('auto', true)}
-                className={styles['vimeo']}
-                autoplay={autoplay}
-                start={
-                  typeof window === 'undefined'
-                    ? 0
-                    : Number(localStorage?.getItem(`vimeo-progress-${lesson.video}`) ?? 0)
-                }
-                onTimeUpdate={handleTimeUpdate}
-              />
-            )}
+            <VideoPlayer
+              video={lesson.video}
+              video_alter={lesson.video_alter}
+              autoplay={autoplay}
+              speed={true}
+              onEnd={() => updateProgress('auto', true)}
+              onTimeUpdate={handleTimeUpdate}
+              start={
+                typeof window === 'undefined'
+                  ? 0
+                  : Number(
+                      localStorage?.getItem(
+                        `video-progress-${leftHanded ? lesson.video_alter : lesson.video}-${
+                          lesson.videoProvider || 'vimeo'
+                        }`
+                      ) ?? 0
+                    )
+              }
+              leftHanded={leftHanded}
+              provider={lesson.videoProvider}
+            />
           </div>
           <nav className={styles.nav}>
             {currentLessonIndex === 0 ? (

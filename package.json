@@ -17,6 +17,7 @@
     "@react-pdf/renderer": "^3.4.4",
     "@supabase/ssr": "^0.5.1",
     "@supabase/supabase-js": "^2.45.4",
+    "@types/react-youtube": "^7.10.0",
     "@u-wave/react-vimeo": "^0.9.10",
     "crypto-js": "^4.2.0",
     "embla-carousel-react": "^8.0.4",
@@ -33,6 +34,7 @@
     "react-select-country-list": "^2.2.3",
     "react-toastify": "^10.0.5",
     "react-use-cart": "^1.13.0",
+    "react-youtube": "^10.1.0",
     "resend": "^3.2.0",
     "sass": "^1.76.0"
   },
