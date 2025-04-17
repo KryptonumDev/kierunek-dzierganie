@@ -17,9 +17,13 @@ const VideoPlayer = ({
   loop = false,
   provider = 'vimeo',
   leftHanded = false,
+  libraryId,
+  libraryApiKey,
 }: VideoPlayerProps) => {
   const playerRef = useRef<HTMLDivElement>(null);
   const videoId = leftHanded && video_alter ? video_alter : video;
+  const effectiveLibraryId = libraryId || process.env.NEXT_PUBLIC_BUNNY_LIBRARY_ID;
+  const effectiveApiKey = libraryApiKey || process.env.NEXT_PUBLIC_BUNNY_API_KEY;
 
   useEffect(() => {
     // Initialize BunnyPlayer if needed
@@ -36,7 +40,7 @@ const VideoPlayer = ({
           autoplay,
           loop,
           startTime: start,
-          apiKey: process.env.NEXT_PUBLIC_BUNNY_API_KEY,
+          apiKey: effectiveApiKey,
         });
 
         player.on('timeupdate', () => {
@@ -52,7 +56,7 @@ const VideoPlayer = ({
         document.head.removeChild(script);
       };
     }
-  }, [provider, videoId, autoplay, loop, start, onTimeUpdate, onEnd]);
+  }, [provider, videoId, autoplay, loop, start, onTimeUpdate, onEnd, effectiveApiKey]);
 
   if (provider === 'youtube') {
     return (
@@ -85,7 +89,7 @@ const VideoPlayer = ({
     return (
       <div className={styles['video-container']}>
         <iframe
-          src={`https://iframe.mediadelivery.net/embed/${process.env.NEXT_PUBLIC_BUNNY_LIBRARY_ID}/${videoId}?autoplay=${autoplay}&loop=${loop}&muted=false&preload=true&responsive=true`}
+          src={`https://iframe.mediadelivery.net/embed/${effectiveLibraryId}/${videoId}?autoplay=${autoplay}&loop=${loop}&muted=false&preload=true&responsive=true`}
           loading='lazy'
           className={styles.player}
           allow='accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;'

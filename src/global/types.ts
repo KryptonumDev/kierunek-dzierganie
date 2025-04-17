@@ -155,6 +155,9 @@ export type ProductPhysical = {
   discount?: number;
   countInStock: number;
   featuredVideo?: string;
+  videoProvider?: VideoProvider;
+  libraryId?: string;
+  libraryApiKey?: string;
   gallery: Array<ImgType>;
   rating: number;
   reviewsCount: number;
@@ -437,6 +440,8 @@ export type Course = {
   type: 'course' | 'program';
   files?: File[];
   files_alter?: File[];
+  libraryId?: string;
+  libraryApiKey?: string;
   chapters: {
     _id: string;
     chapterDescription: string;

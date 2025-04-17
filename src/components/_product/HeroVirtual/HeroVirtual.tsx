@@ -18,13 +18,21 @@ const gtag: Gtag.Gtag = function () {
 
 const HeroVirtual = ({ alreadyBought, course, previewLessons }: HeroVirtualTypes) => {
   const images = useMemo(() => {
-    const images: Array<{ data: ImgType | string; type: 'video' | 'image'; videoProvider?: VideoProvider }> = [];
+    const images: Array<{
+      data: ImgType | string;
+      type: 'video' | 'image';
+      videoProvider?: VideoProvider;
+      libraryId?: string;
+      libraryApiKey?: string;
+    }> = [];
     // add video as first element if exists
     if (course?.featuredVideo) {
       images.push({
         type: 'video',
         data: course.featuredVideo,
         videoProvider: course.videoProvider || 'vimeo',
+        libraryId: course.libraryId,
+        libraryApiKey: course.libraryApiKey,
       });
     }
     course?.gallery!.forEach((el) => images.push({ type: 'image', data: el }));

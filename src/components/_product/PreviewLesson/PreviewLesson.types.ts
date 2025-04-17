@@ -6,6 +6,8 @@ export type Props = {
     slug: string;
     name: string;
     _id: string;
+    libraryId?: string;
+    libraryApiKey?: string;
     previewGroupMailerLite?: string;
     previewLessons: {
       slug: string;

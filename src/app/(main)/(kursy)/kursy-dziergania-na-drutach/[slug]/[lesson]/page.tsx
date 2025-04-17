@@ -100,6 +100,8 @@ const query = async (slug: string, lesson: string): Promise<PreviewLessonTypes> 
       _id,
       name,
       "slug": slug.current,
+      libraryId,
+      libraryApiKey,
       previewGroupMailerLite,
       previewLessons[] -> {
         "slug": slug.current,

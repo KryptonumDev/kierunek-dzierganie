@@ -2,12 +2,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import styles from './HeroVoucher.module.scss';
 import type { Props } from './HeroVoucher.types';
-import { ImgType } from '@/global/types';
+import type { ImgType } from '@/global/types';
 import AddToCart from '@/components/ui/AddToCart';
 import { formatPrice } from '@/utils/price-formatter';
 import Gallery from '@/components/ui/Gallery';
 import { Hearth, PayPo } from '@/components/ui/Icons';
 import Radio from '@/components/ui/Radio';
+import type { VideoProvider } from '@/components/ui/VideoPlayer/VideoPlayer.types';
 
 const gtag: Gtag.Gtag = function () {
   // eslint-disable-next-line prefer-rest-params
@@ -49,9 +50,23 @@ const HeroVoucher = ({ data }: Props) => {
   }, [voucherData, dedicationOpen]);
 
   const images = useMemo(() => {
-    const images: Array<{ data: ImgType | string; type: 'video' | 'image' }> = [];
+    const images: Array<{
+      data: ImgType | string;
+      type: 'video' | 'image';
+      videoProvider?: VideoProvider;
+      libraryId?: string;
+      libraryApiKey?: string;
+    }> = [];
     // add video as first element if exists
-    if (data?.featuredVideo) images.push({ type: 'video', data: data?.featuredVideo });
+    if (data?.featuredVideo) {
+      images.push({
+        type: 'video',
+        data: data.featuredVideo,
+        videoProvider: data.videoProvider || 'vimeo',
+        libraryId: data.libraryId,
+        libraryApiKey: data.libraryApiKey,
+      });
+    }
     data?.gallery!.forEach((el) => images.push({ type: 'image', data: el }));
     return images;
   }, [data]);
@@ -66,11 +81,13 @@ const HeroVoucher = ({ data }: Props) => {
         fbq('track', 'ViewContent', {
           content_ids: [product_id],
           content_name: product_name,
-          contents: [{
-            id: product_id,
-            item_price: product_price,
-            quantity: 1,
-          }],
+          contents: [
+            {
+              id: product_id,
+              item_price: product_price,
+              quantity: 1,
+            },
+          ],
           content_type: 'product',
           value: product_price,
           currency: 'PLN',
