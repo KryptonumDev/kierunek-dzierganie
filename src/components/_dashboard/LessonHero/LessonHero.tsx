@@ -178,6 +178,8 @@ const LessonHero = ({
               }
               leftHanded={leftHanded}
               provider={lesson.videoProvider}
+              libraryId={lesson.libraryId}
+              libraryApiKey={lesson.libraryApiKey}
             />
           </div>
           <nav className={styles.nav}>

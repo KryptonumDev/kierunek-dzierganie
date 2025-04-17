@@ -4,6 +4,8 @@ import type { VideoProvider } from '@/components/ui/VideoPlayer/VideoPlayer.type
 export type HeroVirtualTypes = {
   course: CoursePageQueryProps['product'] & {
     videoProvider?: VideoProvider;
+    libraryId?: string;
+    libraryApiKey?: string;
   };
   alreadyBought: boolean;
   previewLessons?: {

@@ -134,6 +134,8 @@ const LessonHero = ({ lesson, course, alreadySubscribed }: Props) => {
               video={lesson.video}
               speed={true}
               provider={lesson.videoProvider}
+              libraryId={course.libraryId}
+              libraryApiKey={course.libraryApiKey}
               start={Number(
                 localStorage?.getItem(`video-progress-${lesson.video}-${lesson.videoProvider || 'vimeo'}`) ?? 0
               )}

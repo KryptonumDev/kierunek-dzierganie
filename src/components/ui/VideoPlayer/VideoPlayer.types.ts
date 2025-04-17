@@ -11,6 +11,8 @@ export interface VideoPlayerProps {
   loop?: boolean;
   provider?: VideoProvider;
   leftHanded?: boolean;
+  libraryId?: string;
+  libraryApiKey?: string;
 }
 
 export interface YouTubePlayerProps extends VideoPlayerProps {
@@ -23,4 +25,6 @@ export interface VimeoPlayerProps extends VideoPlayerProps {
 
 export interface BunnyNetPlayerProps extends VideoPlayerProps {
   provider: 'bunnyNet';
+  libraryId: string;
+  libraryApiKey: string;
 }

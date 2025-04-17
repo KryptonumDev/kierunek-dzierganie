@@ -54,13 +54,21 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
   });
 
   const images = useMemo(() => {
-    const images: Array<{ data: ImgType | string; type: 'video' | 'image'; videoProvider?: VideoProvider }> = [];
+    const images: Array<{
+      data: ImgType | string;
+      type: 'video' | 'image';
+      videoProvider?: VideoProvider;
+      libraryId?: string;
+      libraryApiKey?: string;
+    }> = [];
     // add video as first element if exists
     if (chosenVariant?.featuredVideo) {
       images.push({
         type: 'video',
         data: chosenVariant.featuredVideo,
         videoProvider: chosenVariant.videoProvider || 'vimeo',
+        libraryId: chosenVariant.libraryId,
+        libraryApiKey: chosenVariant.libraryApiKey,
       });
     }
     chosenVariant?.gallery!.forEach((el) => images.push({ type: 'image', data: el }));

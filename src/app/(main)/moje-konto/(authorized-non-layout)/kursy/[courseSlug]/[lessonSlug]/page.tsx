@@ -25,6 +25,8 @@ type QueryProps = {
     video_alter: string;
     lengthInMinutes: number;
     videoProvider?: VideoProvider;
+    libraryId?: string;
+    libraryApiKey?: string;
     files: File[];
     description: string;
     flex: {
@@ -109,7 +111,11 @@ export default async function Course({
         left_handed={left_handed}
         auto_play={auto_play}
         course={course}
-        lesson={lesson}
+        lesson={{
+          ...lesson,
+          libraryId: course.libraryId || lesson.libraryId,
+          libraryApiKey: course.libraryApiKey || lesson.libraryApiKey,
+        }}
         currentChapter={currentChapterInfo.currentChapter as Chapter}
         currentChapterIndex={currentChapterInfo.currentChapterIndex}
         currentLessonIndex={currentChapterInfo.currentLessonIndex}
@@ -192,6 +198,8 @@ const query = async (courseSlug: string, lessonSlug: string) => {
         videoProvider == "bunnyNet" => "bunnyNet",
         "vimeo"
       ),
+      libraryId,
+      libraryApiKey,
       files[]{
         asset->{
           url,
@@ -239,6 +247,8 @@ const query = async (courseSlug: string, lessonSlug: string) => {
       type,
       "slug": slug.current,
       generateCertificate,
+      libraryId,
+      libraryApiKey,
       chapters {
         "_id": _key,
         dateOfUnlock,

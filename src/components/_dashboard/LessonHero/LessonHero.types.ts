@@ -13,6 +13,8 @@ export type Props = {
     files: File[];
     files_alter: File[];
     videoProvider?: VideoProvider;
+    libraryId?: string;
+    libraryApiKey?: string;
   };
   left_handed: boolean;
   progress: CoursesProgress;

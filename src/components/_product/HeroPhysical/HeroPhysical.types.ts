@@ -9,6 +9,8 @@ export type ProductVariant = {
   countInStock: number;
   featuredVideo?: string;
   videoProvider?: VideoProvider;
+  libraryId?: string;
+  libraryApiKey?: string;
   gallery: ImgType[];
   attributes?: {
     type: string;
@@ -26,6 +28,8 @@ export type ProductPhysical = {
   countInStock: number;
   featuredVideo?: string;
   videoProvider?: VideoProvider;
+  libraryId?: string;
+  libraryApiKey?: string;
   gallery: ImgType[];
   rating?: number;
   reviewsCount: number;
