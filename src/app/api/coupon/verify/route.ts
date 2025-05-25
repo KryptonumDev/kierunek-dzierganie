@@ -120,6 +120,11 @@ export async function POST(request: Request) {
 
     if (error) NextResponse.json({ error: error.message }, { status: 500 });
 
+    // Override amount for affiliate coupons to always be 50 PLN
+    if (data?.affiliation_of) {
+      data.amount = 5000; // Always 50 PLN for affiliate codes
+    }
+
     return NextResponse.json(data);
   } catch (error) {
     console.log(error);
