@@ -4,15 +4,8 @@ import { Document, Font, Page, Path, StyleSheet, Svg, Text, View } from '@react-
 import { type NotesSectionTypes } from './NotesSection.types';
 
 export default function Notes({ notes, courseName }: NotesSectionTypes) {
-  Font.register({
-    family: 'Lato',
-    src: '/fonts/Lato-Light.ttf',
-  });
-  Font.register({
-    family: 'Calligraffitti',
-    format: 'truetype',
-    fonts: [{ src: '/fonts/Calligraffitti-Regular.ttf' }],
-  });
+  Font.register({ family: 'Lato', src: '/fonts/Lato-Light.ttf' });
+  Font.register({ family: 'Calligraffitti', fonts: [{ src: '/fonts/Calligraffitti-Regular.ttf' }] });
 
   const styles = StyleSheet.create({
     page: {

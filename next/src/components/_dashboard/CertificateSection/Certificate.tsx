@@ -11,16 +11,9 @@ export default function Certificate({
   full_name: string;
   authorName: string;
 }) {
-  Font.register({
-    family: 'Calligraffitti',
-    format: 'truetype',
-    fonts: [{ src: '/fonts/Calligraffitti-Regular.ttf' }],
-  });
+  Font.register({ family: 'Calligraffitti', fonts: [{ src: '/fonts/Calligraffitti-Regular.ttf' }] });
 
-  Font.register({
-    family: 'Lato',
-    fonts: [{ src: '/fonts/Lato-Light.ttf' }],
-  });
+  Font.register({ family: 'Lato', fonts: [{ src: '/fonts/Lato-Light.ttf' }] });
 
   const styles = StyleSheet.create({
     page: {
@@ -38,9 +31,7 @@ export default function Certificate({
     fullName: { padding: '6px', border: '1px solid #EFE8E7', fontSize: '30px', fontFamily: 'Calligraffitti' },
     quote: { color: '#53423c', textAlign: 'center', width: '80%', alignSelf: 'center', position: 'relative' },
     calligraffitti: { fontFamily: 'Calligraffitti' },
-    document: {
-      position: 'relative',
-    },
+    document: { position: 'relative' },
   });
 
   return (
