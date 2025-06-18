@@ -23,22 +23,12 @@ export default {
       validation: Rule => Rule.required(),
       group: 'configuration',
     },
-    {
-      name: 'name',
-      type: 'string',
-      title: 'Nazwa kursu',
-      validation: Rule => Rule.required(),
-      group: 'configuration',
-    },
+    { name: 'name', type: 'string', title: 'Nazwa kursu', validation: Rule => Rule.required(), group: 'configuration' },
     {
       name: 'slug',
       type: 'slug',
-      options: {
-        source: 'name',
-      },
-      components: {
-        input: CourseSlug,
-      },
+      options: { source: 'name' },
+      components: { input: CourseSlug },
       title: 'Slug',
       validation: Rule => Rule.required(),
       group: 'configuration',
@@ -49,14 +39,8 @@ export default {
       title: 'Rodzaj kursu',
       options: {
         list: [
-          {
-            title: 'Szydełkowanie',
-            value: 'crocheting',
-          },
-          {
-            title: 'Dzierganie na drutach',
-            value: 'knitting',
-          },
+          { title: 'Szydełkowanie', value: 'crocheting' },
+          { title: 'Dzierganie na drutach', value: 'knitting' },
         ],
       },
       validation: Rule => Rule.required(),
@@ -68,14 +52,8 @@ export default {
       title: 'Typ kursu',
       options: {
         list: [
-          {
-            title: 'Kurs',
-            value: 'course',
-          },
-          {
-            title: 'Program',
-            value: 'program',
-          },
+          { title: 'Kurs', value: 'course' },
+          { title: 'Program', value: 'program' },
         ],
       },
       initialValue: 'course',
@@ -86,20 +64,11 @@ export default {
       name: 'category',
       type: 'reference',
       title: 'Kategoria',
-      to: [
-        {
-          type: 'courseCategory',
-        },
-      ],
+      to: [{ type: 'courseCategory' }],
       validation: Rule => Rule.required(),
       group: 'configuration',
     },
-    {
-      title: 'Długość kursu',
-      name: 'courseLength',
-      type: 'string',
-      group: 'configuration',
-    },
+    { title: 'Długość kursu', name: 'courseLength', type: 'string', group: 'configuration' },
     {
       name: 'materials_link',
       title: 'Dodatkowe materiały',
@@ -108,25 +77,24 @@ export default {
       group: 'configuration',
     },
     {
+      name: 'related_products',
+      title: 'Produkty powiązane',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'product' }] }],
+      group: 'configuration',
+    },
+    {
       name: 'files',
       type: 'array',
       title: 'Pliki do pobrania',
-      of: [
-        {
-          type: 'file',
-        },
-      ],
+      of: [{ type: 'file' }],
       hidden: ({ document }) => document.type === 'program',
     },
     {
       name: 'files_alter',
       type: 'array',
       title: 'Pliki do pobrania dla leworęcznych',
-      of: [
-        {
-          type: 'file',
-        },
-      ],
+      of: [{ type: 'file' }],
       hidden: ({ document }) => document.type === 'program',
     },
     {
@@ -191,12 +159,7 @@ export default {
       validation: Rule => Rule.min(0),
       group: 'prices',
     },
-    {
-      name: 'excerpt',
-      type: 'markdown',
-      title: 'Krótki opis na karcie wyróżnionego produktu',
-      group: 'description',
-    },
+    { name: 'excerpt', type: 'markdown', title: 'Krótki opis na karcie wyróżnionego produktu', group: 'description' },
     {
       name: 'gallery',
       type: 'array',
@@ -204,17 +167,7 @@ export default {
       of: [{ type: 'image', validation: Rule => Rule.required() }],
       group: 'description',
     },
-    {
-      name: 'chapters',
-      type: 'array',
-      title: 'Rozdziały',
-      of: [
-        {
-          type: 'ChapterList',
-        },
-      ],
-      group: 'description',
-    },
+    { name: 'chapters', type: 'array', title: 'Rozdziały', of: [{ type: 'ChapterList' }], group: 'description' },
     {
       name: 'description',
       type: 'array',
@@ -249,13 +202,7 @@ export default {
       name: 'previewLessons',
       type: 'array',
       title: 'Podgląd kursu',
-      of: [
-        {
-          type: 'reference',
-          to: [{ type: 'lesson' }],
-          validation: Rule => Rule.required(),
-        },
-      ],
+      of: [{ type: 'reference', to: [{ type: 'lesson' }], validation: Rule => Rule.required() }],
       group: 'preview',
     },
     {
@@ -304,14 +251,9 @@ export default {
             },
           ],
           preview: {
-            select: {
-              heading: 'heading',
-            },
+            select: { heading: 'heading' },
             prepare({ heading }) {
-              return {
-                title: 'Nagłówek',
-                subtitle: removeMarkdown(heading),
-              };
+              return { title: 'Nagłówek', subtitle: removeMarkdown(heading) };
             },
           },
         },
@@ -363,20 +305,12 @@ export default {
                                 }),
                               },
                             },
-                            {
-                              name: 'additionalInfo',
-                              title: 'Dodatkowa informacja (opcjonalna)',
-                              type: 'markdown',
-                            },
+                            { name: 'additionalInfo', title: 'Dodatkowa informacja (opcjonalna)', type: 'markdown' },
                           ],
                         },
                       ],
                     },
-                    {
-                      name: 'additionalInfo',
-                      title: 'Dodatkowa informacja (opcjonalna)',
-                      type: 'markdown',
-                    },
+                    { name: 'additionalInfo', title: 'Dodatkowa informacja (opcjonalna)', type: 'markdown' },
                   ],
                 },
               ],
@@ -390,14 +324,9 @@ export default {
             },
           ],
           preview: {
-            select: {
-              heading: 'heading',
-            },
+            select: { heading: 'heading' },
             prepare({ heading }) {
-              return {
-                title: 'Grupy Materiałów',
-                subtitle: removeMarkdown(heading),
-              };
+              return { title: 'Grupy Materiałów', subtitle: removeMarkdown(heading) };
             },
           },
         },
@@ -436,14 +365,9 @@ export default {
             },
           ],
           preview: {
-            select: {
-              title: 'heading',
-            },
+            select: { title: 'heading' },
             prepare({ title }) {
-              return {
-                title: 'Dedykowany pakiet',
-                subtitle: removeMarkdown(title),
-              };
+              return { title: 'Dedykowany pakiet', subtitle: removeMarkdown(title) };
             },
           },
         },
@@ -483,11 +407,7 @@ export default {
                   type: 'object',
                   fields: [
                     { name: 'shopName', title: 'Nazwa sklepu', type: 'string', validation: Rule => Rule.required() },
-                    {
-                      name: 'shopLink',
-                      title: 'Link do sklepu (opcjonalny)',
-                      type: 'url',
-                    },
+                    { name: 'shopLink', title: 'Link do sklepu (opcjonalny)', type: 'url' },
                     {
                       name: 'salePercentage',
                       title: 'Procent rabatu',
@@ -500,11 +420,7 @@ export default {
             },
           ],
           preview: {
-            select: {
-              title: 'heading',
-              subtitle: 'paragraph',
-              imageList: 'imageList',
-            },
+            select: { title: 'heading', subtitle: 'paragraph', imageList: 'imageList' },
             prepare({ title, subtitle, imageList }) {
               return {
                 title: removeMarkdown(title) || 'Rabaty partnerskie',
@@ -546,55 +462,25 @@ export default {
             },
           ],
           preview: {
-            select: {
-              title: 'heading',
-            },
+            select: { title: 'heading' },
             prepare({ title }) {
-              return {
-                title: 'Dodatkowe materiały',
-                subtitle: removeMarkdown(title),
-              };
+              return { title: 'Dodatkowe materiały', subtitle: removeMarkdown(title) };
             },
           },
         },
       ],
     },
-    {
-      name: 'seo',
-      type: 'seo',
-      title: 'SEO',
-      group: 'seo',
-    },
+    { name: 'seo', type: 'seo', title: 'SEO', group: 'seo' },
   ],
   groups: [
-    {
-      name: 'configuration',
-      title: 'Konfiguracja',
-    },
-    {
-      name: 'prices',
-      title: 'Ceny',
-    },
-    {
-      name: 'description',
-      title: 'Treści',
-    },
-    {
-      name: 'preview',
-      title: 'Podgląd kursu',
-    },
-    {
-      name: 'seo',
-      title: 'SEO',
-    },
+    { name: 'configuration', title: 'Konfiguracja' },
+    { name: 'prices', title: 'Ceny' },
+    { name: 'description', title: 'Treści' },
+    { name: 'preview', title: 'Podgląd kursu' },
+    { name: 'seo', title: 'SEO' },
   ],
   preview: {
-    select: {
-      name: 'name',
-      gallery: 'gallery',
-      price: 'price',
-      discount: 'discount',
-    },
+    select: { name: 'name', gallery: 'gallery', price: 'price', discount: 'discount' },
     prepare({ name, gallery, price, discount }) {
       return {
         title: name,
