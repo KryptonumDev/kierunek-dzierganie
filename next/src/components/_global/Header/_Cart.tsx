@@ -98,7 +98,6 @@ export default function Cart({
 
   useEffect(() => {
     fetchedItems?.forEach((el) => {
-      console.log(el);
       if (
         (!el.visible || ['instruction', 'materials'].includes(el.basis)) &&
         el.related?._id &&
@@ -106,7 +105,6 @@ export default function Cart({
       ) {
         // check is related in cart or in ownedCourses, if no, delete from cart
         if (!fetchedItems?.some((item) => item._id === el.related!._id) && !ownedCourses?.includes(el.related._id)) {
-          console.log(el.related);
           removeItem(el._id + (el.variant?._id ? `variant:${el.variant?._id}` : ''));
           toast(`${el.name} został usunięty z koszyka, ponieważ nie posiadasz ${el.related.name}`);
         }
