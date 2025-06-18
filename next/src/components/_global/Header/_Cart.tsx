@@ -88,7 +88,7 @@ export default function Cart({
 
   useEffect(() => {
     if (usedDiscount?.type === 'FIXED PRODUCT') {
-      const product = cart?.find((item) => item.id === usedDiscount.discounted_product.id);
+      const product = cart?.find((item) => item.product === usedDiscount.discounted_product.id);
       if (!product) {
         setUsedDiscount(null);
         toast('Produkt, do którego przypisany jest kupon, został usunięty z koszyka');
@@ -113,22 +113,14 @@ export default function Cart({
   }, [fetchedItems, ownedCourses]);
 
   const cartItems = cart?.map((item) => {
-    return {
-      ...item,
-      _type: fetchedItems?.find((fetchedItem) => fetchedItem._id === item.id)?._type,
-    };
+    return { ...item, _type: fetchedItems?.find((fetchedItem) => fetchedItem._id === item.id)?._type };
   });
 
   const onSubmit = async () => {
     const isVerfied = await fetch('/api/coupon/verify', {
       cache: 'no-cache',
       method: 'POST',
-      body: JSON.stringify({
-        code: discountCode,
-        userId,
-        cart: cartItems,
-        isSubmit: true,
-      }),
+      body: JSON.stringify({ code: discountCode, userId, cart: cartItems, isSubmit: true }),
     });
 
     if (isVerfied.ok || !discountCode) {
@@ -145,11 +137,7 @@ export default function Cart({
     await fetch('/api/coupon/verify', {
       cache: 'no-cache',
       method: 'POST',
-      body: JSON.stringify({
-        code: discountCode,
-        userId,
-        cart: cartItems,
-      }),
+      body: JSON.stringify({ code: discountCode, userId, cart: cartItems }),
     })
       .then((res) => res.json())
 
