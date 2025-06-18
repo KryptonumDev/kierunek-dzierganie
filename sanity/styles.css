@@ -1,0 +1,8 @@
+div[data-testid='detail-preview__header'] {
+  span {
+    text-wrap: wrap;
+  }
+}
+div[data-testid='detail-preview'] {
+  height: auto;
+}

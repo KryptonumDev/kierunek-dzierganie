@@ -1,0 +1,37 @@
+{
+  "name": "kierunek-dzierganie_sanity",
+  "private": true,
+  "version": "1.0.0",
+  "main": "package.json",
+  "license": "UNLICENSED",
+  "scripts": {
+    "dev": "sanity dev",
+    "start": "sanity start",
+    "build": "sanity build",
+    "deploy": "sanity deploy",
+    "deploy-graphql": "sanity graphql deploy"
+  },
+  "keywords": [
+    "sanity"
+  ],
+  "dependencies": {
+    "@sanity/color-input": "^3.1.1",
+    "@sanity/vision": "^3.36.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-is": "^18.2.0",
+    "sanity": "^3.36.4",
+    "sanity-plugin-markdown": "^4.1.1",
+    "sanity-plugin-media": "^2.2.5",
+    "styled-components": "^6.1.8"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.24.4",
+    "@babel/preset-react": "^7.24.1",
+    "@sanity/eslint-config-studio": "^4.0.0",
+    "@types/styled-components": "^5.1.34",
+    "eslint": "^9.0.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.4"
+  }
+}
