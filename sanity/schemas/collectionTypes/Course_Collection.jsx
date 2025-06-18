@@ -450,12 +450,6 @@ export default {
                 {
                   type: 'reference',
                   to: [{ type: 'product' }],
-                  options: {
-                    filter: ({ document }) => ({
-                      filter: 'basis == $basis && visible == true',
-                      params: { basis: document.basis },
-                    }),
-                  },
                 },
               ],
               validation: Rule => Rule.max(3).required(),
