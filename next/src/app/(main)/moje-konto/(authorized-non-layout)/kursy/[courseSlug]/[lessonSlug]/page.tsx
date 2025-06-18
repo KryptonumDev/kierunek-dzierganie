@@ -29,11 +29,7 @@ type QueryProps = {
     libraryApiKey?: string;
     files: File[];
     description: string;
-    flex: {
-      title: string;
-      description: string;
-      img: ImgType;
-    }[];
+    flex: { title: string; description: string; img: ImgType }[];
     files_alter: File[];
   };
   courses_progress: SupabaseData['courses_progress'][0];
@@ -42,12 +38,7 @@ type QueryProps = {
   id: string;
 };
 
-type SupabaseData = {
-  id: string;
-  left_handed: boolean;
-  auto_play: boolean;
-  courses_progress: CoursesProgress[];
-};
+type SupabaseData = { id: string; left_handed: boolean; auto_play: boolean; courses_progress: CoursesProgress[] };
 
 export default async function Course({
   params: { lessonSlug, courseSlug },
@@ -113,8 +104,8 @@ export default async function Course({
         course={course}
         lesson={{
           ...lesson,
-          libraryId: course.libraryId || lesson.libraryId,
-          libraryApiKey: course.libraryApiKey || lesson.libraryApiKey,
+          libraryId: lesson.libraryId || course.libraryId,
+          libraryApiKey: lesson.libraryApiKey || course.libraryApiKey,
         }}
         currentChapter={currentChapterInfo.currentChapter as Chapter}
         currentChapterIndex={currentChapterInfo.currentChapterIndex}
@@ -145,9 +136,7 @@ export async function generateMetadata({
         title,
       }
     }`,
-    params: {
-      slug: lessonSlug,
-    },
+    params: { slug: lessonSlug },
   });
 
   return Seo({
@@ -297,10 +286,7 @@ const query = async (courseSlug: string, lessonSlug: string) => {
     }
     }`,
     tags: ['lesson', 'course'],
-    params: {
-      lessonSlug: lessonSlug,
-      courseSlug: courseSlug,
-    },
+    params: { lessonSlug: lessonSlug, courseSlug: courseSlug },
   });
 
   if (!res.data?.courses_progress?.some((el) => el.course_id === data?.course._id)) return notFound();
