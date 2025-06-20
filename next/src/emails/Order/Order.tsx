@@ -28,6 +28,7 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
   const totalItemsCount = data.products.array?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
   const totalItemsPrice =
     data.products.array?.reduce((acc, item) => acc + (item.discount ?? item.price!) * item.quantity!, 0) ?? 0;
+  const hasCourses = data.products.array?.some((item) => item.type === 'course') ?? false;
   return (
     <div style={{ width: '620px', margin: '0 auto' }}>
       <div style={{ borderRadius: '6px 6px 0px 0px', backgroundColor: '#fdfbf8', padding: '36px 42px 48px 42px' }}>
@@ -274,31 +275,33 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
               </span>
             </p>
           </div>
-          <div
-            style={{
-              marginTop: '48px',
-              padding: '20px',
-              backgroundColor: '#f8f6f3',
-              borderRadius: '6px',
-              borderLeft: '4px solid #d4a574',
-            }}
-          >
-            <p style={{ color: '#332621', fontSize: '14px', fontWeight: '300', lineHeight: '150%', margin: '0' }}>
-              Informuję, że zamówienie zostało przyjęte do realizacji. Przypominam, że na etapie składania zamówienia
-              potwierdziłeś, że chcesz otrzymać e-produkt/usługę przed upływem 14 dniowego terminu na odstąpienie od
-              Umowy oraz że jesteś świadomy tego, że po otrzymaniu tracisz prawo do odstąpienia od umowy. Szczegółowe
-              informacje dot. zasad współpracy znajdują się w{' '}
-              <a
-                href='https://kierunekdzierganie.pl/regulamin'
-                style={{ color: '#d4a574', textDecoration: 'underline' }}
-                target='_blank'
-                rel='noopener noreferrer'
-              >
-                Regulaminie
-              </a>
-              .
-            </p>
-          </div>
+          {hasCourses && (
+            <div
+              style={{
+                marginTop: '48px',
+                padding: '20px',
+                backgroundColor: '#f8f6f3',
+                borderRadius: '6px',
+                borderLeft: '4px solid #d4a574',
+              }}
+            >
+              <p style={{ color: '#332621', fontSize: '14px', fontWeight: '300', lineHeight: '150%', margin: '0' }}>
+                Informuję, że zamówienie zostało przyjęte do realizacji. Przypominam, że na etapie składania zamówienia
+                potwierdziłeś, że chcesz otrzymać e-produkt/usługę przed upływem 14 dniowego terminu na odstąpienie od
+                Umowy oraz że jesteś świadomy tego, że po otrzymaniu tracisz prawo do odstąpienia od umowy. Szczegółowe
+                informacje dot. zasad współpracy znajdują się w{' '}
+                <a
+                  href='https://kierunekdzierganie.pl/regulamin'
+                  style={{ color: '#d4a574', textDecoration: 'underline' }}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                >
+                  Regulaminie
+                </a>
+                .
+              </p>
+            </div>
+          )}
           <div>
             <h2
               style={{
