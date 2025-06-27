@@ -121,9 +121,17 @@ export const useCartItems = () => {
             return item.id === productId;
           })!;
 
+          // Apply the same quantity validation logic as in initial processing
+          const validatedQuantity =
+            el._type === 'course' || el._type === 'bundle' || el._type === 'voucher'
+              ? 1
+              : el.variant
+                ? Math.min(itemInRawCart.quantity!, el.variant.countInStock)
+                : Math.min(itemInRawCart.quantity!, el.countInStock!);
+
           return {
             ...el,
-            quantity: itemInRawCart.quantity!,
+            quantity: validatedQuantity,
           };
         });
 
@@ -144,5 +152,14 @@ export const useCartItems = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rawCart]);
 
-  return { cart: rawCart, fetchedItems, updateItemQuantity, updateItem, removeItem, loading, totalItems, totalUniqueItems };
+  return {
+    cart: rawCart,
+    fetchedItems,
+    updateItemQuantity,
+    updateItem,
+    removeItem,
+    loading,
+    totalItems,
+    totalUniqueItems,
+  };
 };
