@@ -1,4 +1,3 @@
-import './load-environment'; // Load environment configuration
 import { createBrowserClient } from '@supabase/ssr';
 
 export function createClient() {

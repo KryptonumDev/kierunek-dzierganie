@@ -1,4 +1,3 @@
-import '@/utils/load-environment'; // Load environment configuration
 import { P24, Currency, Country, Language, Encoding } from '@ingameltd/node-przelewy24';
 import { NextResponse } from 'next/server';
 

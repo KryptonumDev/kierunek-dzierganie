@@ -1,4 +1,3 @@
-import '@/utils/load-environment'; // Load environment configuration
 import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';

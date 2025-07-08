@@ -1,4 +1,3 @@
-import '@/utils/load-environment'; // Load environment configuration
 import type { InputState } from '@/components/_global/Header/Checkout/Checkout.types';
 import { dedicatedVoucher, voucher } from '@/utils/create-voucher';
 import { formatPrice } from '@/utils/price-formatter';

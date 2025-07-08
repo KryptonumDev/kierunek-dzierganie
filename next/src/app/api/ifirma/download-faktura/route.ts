@@ -5,19 +5,19 @@ export async function POST(request: Request) {
   const { bill, type } = await request.json();
 
   // Environment-aware invoice download
-  if (process.env.APP_ENV === 'development') {
+  if (process.env.SANDBOX === 'true') {
     console.log('📄 iFirma Download: DEVELOPMENT (Mocked PDF)');
     console.log(`📄 Mock download request for bill: ${bill}, type: ${type}`);
 
     // Create a simple mock PDF response
     const mockPdfContent = `Mock Invoice PDF
     
-Bill ID: ${bill}
-Type: ${type || 'original'}
-Generated: ${new Date().toISOString()}
+      Bill ID: ${bill}
+      Type: ${type || 'original'}
+      Generated: ${new Date().toISOString()}
 
-This is a development mock of the invoice PDF.
-In production, this would be the real iFirma invoice.`;
+      This is a development mock of the invoice PDF.
+      In production, this would be the real iFirma invoice.`;
 
     const mockPdf = new Blob([mockPdfContent], { type: 'application/pdf' });
     const headers = new Headers();

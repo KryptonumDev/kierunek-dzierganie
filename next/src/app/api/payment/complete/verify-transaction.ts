@@ -1,4 +1,3 @@
-import '@/utils/load-environment'; // Load environment configuration
 import { P24 } from '@ingameltd/node-przelewy24';
 
 export async function verifyTransaction(amount: number, currency: string, orderId: number, sessionId: string) {

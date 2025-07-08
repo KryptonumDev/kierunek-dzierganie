@@ -196,8 +196,8 @@ export async function generateBill(data: any, id: string) {
     });
   }
 
-  // Environment-aware invoice generation
-  if (process.env.APP_ENV === 'development') {
+  // Invoice Mocking
+  if (process.env.SANDBOX === 'true') {
     console.log('📄 iFirma Mode: DEVELOPMENT (Mocked)');
     console.log('📄 Mock invoice request:', JSON.stringify(requestContent, null, 2));
 
@@ -215,7 +215,6 @@ export async function generateBill(data: any, id: string) {
     console.log('📄 Mock bill ID generated:', mockBillId);
     return { success: true, billId: mockBillId };
   }
-
   // Production: Real iFirma API calls
   console.log('📄 iFirma Mode: PRODUCTION (Real)');
   const currentMonth = await setAccountingMonthToTimestamp(data.created_at);
