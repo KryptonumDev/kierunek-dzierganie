@@ -1,3 +1,4 @@
+import './load-environment'; // Load environment configuration
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 

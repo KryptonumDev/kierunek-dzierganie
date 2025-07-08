@@ -1,3 +1,4 @@
+import './load-environment'; // Load environment configuration
 import { createClient as createAdminClient } from '@supabase/supabase-js';
 
 export function createClient() {

@@ -1,3 +1,4 @@
+import './load-environment'; // Load environment configuration
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
@@ -54,7 +55,9 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  const {data: {user}} = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   return { response, user };
 }
