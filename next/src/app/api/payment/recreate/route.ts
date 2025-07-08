@@ -1,3 +1,4 @@
+import '@/utils/load-environment'; // Load environment configuration
 import { P24, Currency, Country, Language, Encoding } from '@ingameltd/node-przelewy24';
 import { NextResponse } from 'next/server';
 
@@ -35,6 +36,11 @@ export async function POST(request: Request) {
         sandbox: process.env.SANDBOX === 'true',
       }
     );
+
+    // Log P24 environment (server-side only)
+    if (typeof window === 'undefined') {
+      console.log(`💳 P24 Recreate Mode: ${process.env.SANDBOX === 'true' ? 'SANDBOX (Test)' : 'PRODUCTION (Real)'}`);
+    }
 
     const session = String(id + 'X' + Math.floor(Math.random() * 10000));
 

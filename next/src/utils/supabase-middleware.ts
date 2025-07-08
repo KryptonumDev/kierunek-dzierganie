@@ -1,4 +1,4 @@
-import './load-environment'; // Load environment configuration
+// Note: Middleware runs in Edge Runtime, so we use standard env vars (no load-environment import)
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 

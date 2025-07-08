@@ -1,3 +1,4 @@
+import '@/utils/load-environment'; // Load environment configuration
 import type { InputState } from '@/components/_global/Header/Checkout/Checkout.types';
 import { dedicatedVoucher, voucher } from '@/utils/create-voucher';
 import { formatPrice } from '@/utils/price-formatter';
@@ -35,6 +36,11 @@ export async function POST(request: Request) {
         sandbox: process.env.SANDBOX === 'true',
       }
     );
+
+    // Log P24 environment (server-side only)
+    if (typeof window === 'undefined') {
+      console.log(`💳 P24 Mode: ${process.env.SANDBOX === 'true' ? 'SANDBOX (Test)' : 'PRODUCTION (Real)'}`);
+    }
     const { data: settingsData } = await supabase.from('settings').select('value').eq('name', 'ifirma').single();
 
     const products = input.products?.array.map(async (product) => {
