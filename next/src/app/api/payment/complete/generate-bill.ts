@@ -196,6 +196,28 @@ export async function generateBill(data: any, id: string) {
     });
   }
 
+  // Environment-aware invoice generation
+  if (process.env.APP_ENV === 'development') {
+    console.log('📄 iFirma Mode: DEVELOPMENT (Mocked)');
+    console.log('📄 Mock invoice request:', JSON.stringify(requestContent, null, 2));
+
+    // Generate a realistic mock bill ID
+    const mockBillId = `DEV-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
+    await supabase
+      .from('orders')
+      .update({
+        bill: mockBillId,
+        status: data.need_delivery ? 2 : 3,
+      })
+      .eq('id', id);
+
+    console.log('📄 Mock bill ID generated:', mockBillId);
+    return { success: true, billId: mockBillId };
+  }
+
+  // Production: Real iFirma API calls
+  console.log('📄 iFirma Mode: PRODUCTION (Real)');
   const currentMonth = await setAccountingMonthToTimestamp(data.created_at);
   console.log(currentMonth);
   const billId = await createBill(requestContent as never);

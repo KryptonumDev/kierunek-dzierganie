@@ -4,6 +4,30 @@ import { NextResponse } from 'next/server';
 export async function POST(request: Request) {
   const { bill, type } = await request.json();
 
+  // Environment-aware invoice download
+  if (process.env.APP_ENV === 'development') {
+    console.log('📄 iFirma Download: DEVELOPMENT (Mocked PDF)');
+    console.log(`📄 Mock download request for bill: ${bill}, type: ${type}`);
+
+    // Create a simple mock PDF response
+    const mockPdfContent = `Mock Invoice PDF
+    
+Bill ID: ${bill}
+Type: ${type || 'original'}
+Generated: ${new Date().toISOString()}
+
+This is a development mock of the invoice PDF.
+In production, this would be the real iFirma invoice.`;
+
+    const mockPdf = new Blob([mockPdfContent], { type: 'application/pdf' });
+    const headers = new Headers();
+    headers.set('Content-Type', 'application/pdf');
+
+    return new NextResponse(mockPdf, { status: 200, statusText: 'OK', headers });
+  }
+
+  // Production: Real iFirma API call
+  console.log('📄 iFirma Download: PRODUCTION (Real)');
   const url = `https://www.ifirma.pl/iapi/fakturakraj/${bill}.pdf`;
   const user = 'martyna_prochowska@o2.pl';
   const keyType = 'faktura';

@@ -36,9 +36,23 @@ export const testEnvironment = () => {
   console.log(`  CRC: ${process.env.P24_CRC ? 'Present' : 'Missing'}`);
   console.log(`  Sandbox Mode: ${process.env.SANDBOX}`);
 
+  // Test iFirma configuration
+  console.log('\n📄 iFirma Configuration:');
+  const currentEnv = getCurrentEnvironment();
+  if (currentEnv === 'development') {
+    console.log('  Mode: DEVELOPMENT (Mocked)');
+    console.log('  ✅ Invoice generation will be mocked');
+    console.log('  ✅ PDF downloads will return mock content');
+    console.log('  ✅ No real iFirma API calls will be made');
+  } else {
+    console.log('  Mode: PRODUCTION (Real)');
+    console.log(`  API Key: ${process.env.IFIRMA_API_KEY ? 'Present' : 'Missing'}`);
+    console.log(`  Abonent Key: ${process.env.IFIRMA_ABONENT_KEY ? 'Present' : 'Missing'}`);
+    console.log('  ⚠️  Real iFirma API calls will be made');
+  }
+
   // Test environment switching logic
   console.log('\n🔄 Environment Switching Test:');
-  const currentEnv = getCurrentEnvironment();
   const expectedSandbox = currentEnv === 'development' ? 'true' : 'false';
   const actualSandbox = process.env.SANDBOX;
 
@@ -55,6 +69,9 @@ export const testEnvironment = () => {
     process.env.SANDBOX === 'true' ? 'https://sandbox.przelewy24.pl/api/v1/' : 'https://secure.przelewy24.pl/api/v1/';
   console.log(`  P24 API URL: ${p24ApiUrl}`);
 
+  const ifirmaMode = currentEnv === 'development' ? 'Mocked (no API calls)' : 'https://www.ifirma.pl/iapi/';
+  console.log(`  iFirma API: ${ifirmaMode}`);
+
   // Summary
   console.log('\n📋 Test Summary:');
   if (validation.isValid && validation.warnings.length === 0) {
@@ -67,6 +84,10 @@ export const testEnvironment = () => {
   console.log('   1. Change APP_ENV in .env.local');
   console.log('   2. Restart your development server');
   console.log('   3. Run this test again to verify');
+
+  console.log('\n🔧 Service Behavior per Environment:');
+  console.log('   Development: Mock invoices + P24 sandbox + Dev database');
+  console.log('   Production: Real invoices + P24 live + Prod database');
 
   return validation;
 };
