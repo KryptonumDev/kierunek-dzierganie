@@ -52,7 +52,7 @@ async function getRedirectUrl(orderId: string | null): Promise<string> {
 
     // Guest orders redirect to thank you page, user orders to dashboard
     if (order?.is_guest_order) {
-      return 'https://kierunekdzierganie.pl/dziekujemy-za-zamowienie';
+      return 'https://kierunek-dzierganie-git-physical-no-account-kryptonum.vercel.app/dziekujemy-za-zamowienie';
     } else {
       return `https://kierunekdzierganie.pl/moje-konto/zakupy/${orderId}`;
     }

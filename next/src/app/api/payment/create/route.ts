@@ -162,7 +162,7 @@ export async function POST(request: Request) {
 
       // Redirect based on order type
       const redirectUrl = isGuestOrder(input)
-        ? 'https://kierunekdzierganie.pl/dziekujemy-za-zamowienie'
+        ? 'https://kierunek-dzierganie-git-physical-no-account-kryptonum.vercel.app/dziekujemy-za-zamowienie'
         : `https://kierunekdzierganie.pl/moje-konto/zakupy/${data.id}`;
 
       return NextResponse.json({ link: redirectUrl });
