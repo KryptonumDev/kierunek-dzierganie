@@ -219,7 +219,33 @@ const createGuestOrder = async (orderData: GuestOrderData) => {
 
 ---
 
-## 5. Implementation Phases
+## 5. Guest Thank You Page (1 hour)
+
+### 5.1 Basic Guest Confirmation Page
+
+**File**: `next/src/app/(main)/dziękujemy-za-zamowienie/page.tsx`
+
+**Purpose:**
+
+- Simple thank you page for guest orders
+- Redirect destination after successful guest checkout
+- No order details needed - just confirmation message
+
+**Changes:**
+
+- Create basic thank you page with order confirmation message
+- Add "Create Account" CTA for future convenience
+- Display contact information for support
+- Simple, static page with Polish messaging
+
+**Redirect Logic:**
+
+- Guest orders: Redirect to `/dziękujemy-za-zamowienie`
+- User orders: Keep existing redirect to `/moje-konto/zakupy/${id}`
+
+---
+
+## 6. Implementation Phases
 
 ### Phase 1: Database & Core Backend (Day 1)
 

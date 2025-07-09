@@ -8,6 +8,7 @@ import { checkUsedModifications } from '../complete/check-used-modifications';
 import { sendEmails } from '../complete/send-emails';
 import { updateItemsQuantity } from '../complete/update-items-quantity';
 import { generateRandomCode } from '@/utils/generate-random-code';
+import { generateGuestOrderToken, isGuestOrder } from '@/utils/generate-guest-order-token';
 // import { pdf } from '@react-pdf/renderer';
 
 export const dynamic = 'force-dynamic';
@@ -19,11 +20,13 @@ export async function POST(request: Request) {
   console.log('payment/create:input');
   console.log(input);
 
-  // update user default data for next orders
-  await supabase
-    .from('profiles')
-    .update({ billing_data: input.billing, shipping_data: input.shipping })
-    .eq('id', input.user_id);
+  // update user default data for next orders (skip for guest orders)
+  if (input.user_id && !input.isGuestCheckout) {
+    await supabase
+      .from('profiles')
+      .update({ billing_data: input.billing, shipping_data: input.shipping })
+      .eq('id', input.user_id);
+  }
 
   try {
     const p24 = new P24(
@@ -96,29 +99,54 @@ export async function POST(request: Request) {
       }
     });
 
-    const { data, error } = await supabase
-      .from('orders')
-      .insert({
-        user_id: input.user_id,
-        products: {
-          array: await Promise.all(products!),
-        },
-        status: input.totalAmount <= 0 ? (input.needDelivery ? 2 : 3) : 1,
-        billing: input.billing,
-        shipping: input.needDelivery && !input.shippingMethod?.data ? input.shipping : null,
-        amount: input.totalAmount < 0 ? 0 : input.totalAmount,
-        shipping_method: input.needDelivery ? input.shippingMethod : null,
-        used_discount: input.discount || null,
-        used_virtual_money: input.virtualMoney,
-        paid_at: null,
-        payment_id: null,
-        payment_method: 'Przelewy24',
-        need_delivery: input.needDelivery,
-        client_notes: input.client_notes,
-        free_delivery: input.freeDelivery,
-      })
-      .select('*')
-      .single();
+    // Create order data with guest support
+    const orderData = isGuestOrder(input)
+      ? {
+          user_id: null,
+          guest_email: input.billing.email,
+          guest_order_token: generateGuestOrderToken(),
+          is_guest_order: true,
+          products: {
+            array: await Promise.all(products!),
+          },
+          status: input.totalAmount <= 0 ? (input.needDelivery ? 2 : 3) : 1,
+          billing: input.billing,
+          shipping: input.needDelivery && !input.shippingMethod?.data ? input.shipping : null,
+          amount: input.totalAmount < 0 ? 0 : input.totalAmount,
+          shipping_method: input.needDelivery ? input.shippingMethod : null,
+          used_discount: input.discount || null,
+          used_virtual_money: null, // Guests cannot use virtual money
+          paid_at: null,
+          payment_id: null,
+          payment_method: 'Przelewy24',
+          need_delivery: input.needDelivery,
+          client_notes: input.client_notes,
+          free_delivery: input.freeDelivery,
+        }
+      : {
+          user_id: input.user_id,
+          guest_email: null,
+          guest_order_token: null,
+          is_guest_order: false,
+          products: {
+            array: await Promise.all(products!),
+          },
+          status: input.totalAmount <= 0 ? (input.needDelivery ? 2 : 3) : 1,
+          billing: input.billing,
+          shipping: input.needDelivery && !input.shippingMethod?.data ? input.shipping : null,
+          amount: input.totalAmount < 0 ? 0 : input.totalAmount,
+          shipping_method: input.needDelivery ? input.shippingMethod : null,
+          used_discount: input.discount || null,
+          used_virtual_money: input.virtualMoney,
+          paid_at: null,
+          payment_id: null,
+          payment_method: 'Przelewy24',
+          need_delivery: input.needDelivery,
+          client_notes: input.client_notes,
+          free_delivery: input.freeDelivery,
+        };
+
+    const { data, error } = await supabase.from('orders').insert(orderData).select('*').single();
 
     console.log('payment/create:data');
     console.log(data);
@@ -132,7 +160,12 @@ export async function POST(request: Request) {
       await updateItemsQuantity(data);
       await sendEmails(data);
 
-      return NextResponse.json({ link: `https://kierunekdzierganie.pl/moje-konto/zakupy/${data.id}` });
+      // Redirect based on order type
+      const redirectUrl = isGuestOrder(input)
+        ? 'https://kierunekdzierganie.pl/'
+        : `https://kierunekdzierganie.pl/moje-konto/zakupy/${data.id}`;
+
+      return NextResponse.json({ link: redirectUrl });
     } else {
       const session = String(data.id + 'X' + Math.floor(Math.random() * 10000));
 

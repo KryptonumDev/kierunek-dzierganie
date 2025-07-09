@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@/utils/supabase-admin';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,17 +22,43 @@ export async function GET(request: Request) {
     });
 
     const responseData = await response.json();
+
+    // Determine redirect URL based on order type
+    const redirectUrl = await getRedirectUrl(id);
+
     // Cannot read properties of undefined (reading 'status')
     if (responseData.data.status == 1 || responseData.data.status == 2) {
       // TODO: payment success status
-      return NextResponse.redirect(`https://kierunekdzierganie.pl/moje-konto/zakupy/${id}`);
+      return NextResponse.redirect(redirectUrl);
     }
 
     // TODO: payment await status
-    return NextResponse.redirect(`https://kierunekdzierganie.pl/moje-konto/zakupy/${id}`);
+    return NextResponse.redirect(redirectUrl);
   } catch (error) {
     console.log(error);
-    // TODO: payment error status
-    return NextResponse.redirect(`https://kierunekdzierganie.pl/moje-konto/zakupy/${id}`);
+    // TODO: payment error status - fallback to homepage for safety
+    return NextResponse.redirect('https://kierunekdzierganie.pl/');
+  }
+}
+
+async function getRedirectUrl(orderId: string | null): Promise<string> {
+  if (!orderId) {
+    return 'https://kierunekdzierganie.pl/';
+  }
+
+  try {
+    const supabase = createClient();
+    const { data: order } = await supabase.from('orders').select('is_guest_order').eq('id', orderId).single();
+
+    // Guest orders redirect to homepage, user orders to dashboard
+    if (order?.is_guest_order) {
+      return 'https://kierunekdzierganie.pl/';
+    } else {
+      return `https://kierunekdzierganie.pl/moje-konto/zakupy/${orderId}`;
+    }
+  } catch (error) {
+    console.error('Error fetching order data:', error);
+    // Fallback to homepage for safety
+    return 'https://kierunekdzierganie.pl/';
   }
 }

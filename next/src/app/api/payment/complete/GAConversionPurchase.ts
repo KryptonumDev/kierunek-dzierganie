@@ -2,7 +2,7 @@ import { cookies } from 'next/headers';
 
 function generateGACompatibleId(): string {
   const timestamp = Math.floor(Date.now() / 1000);
-  const random = Math.floor(Math.random() * 0x7FFFFFFF);
+  const random = Math.floor(Math.random() * 0x7fffffff);
   return `${timestamp}.${random}`;
 }
 
@@ -21,8 +21,13 @@ function getSessionId() {
   return null;
 }
 
-export const GAConversionPurchase = async ({ user_id, transaction_id, value, items }: {
-  user_id: string;
+export const GAConversionPurchase = async ({
+  user_id,
+  transaction_id,
+  value,
+  items,
+}: {
+  user_id: string | null;
   transaction_id: string;
   value: number;
   items: {
@@ -35,27 +40,30 @@ export const GAConversionPurchase = async ({ user_id, transaction_id, value, ite
   const client_id = getClientId();
   const session_id = getSessionId();
 
+  // Create payload with conditional user_id (omit if null for guest orders)
   const payload = {
-    user_id: user_id,
+    ...(user_id && { user_id: user_id }), // Only include user_id if it exists
     client_id: client_id,
     timestamp_micros: Date.now() * 1000000,
     non_personalized_ads: false,
-    events: [{
-      name: 'purchase',
-      params: {
-        engagement_time_msec: 1,
-        ...(session_id && { session_id: session_id }),
-        transaction_id: transaction_id,
-        value: value,
-        currency: 'PLN',
-        items: items.map(item => ({
-          item_id: item.item_id,
-          item_name: item.item_name,
-          quantity: item.quantity,
-          price: item.price
-        }))
-      }
-    }]
+    events: [
+      {
+        name: 'purchase',
+        params: {
+          engagement_time_msec: 1,
+          ...(session_id && { session_id: session_id }),
+          transaction_id: transaction_id,
+          value: value,
+          currency: 'PLN',
+          items: items.map((item) => ({
+            item_id: item.item_id,
+            item_name: item.item_name,
+            quantity: item.quantity,
+            price: item.price,
+          })),
+        },
+      },
+    ],
   };
 
   console.log(JSON.stringify(payload));
@@ -63,11 +71,14 @@ export const GAConversionPurchase = async ({ user_id, transaction_id, value, ite
   const measurementId = 'G-F5CD13WL6R';
   const apiSecret = process.env.GA4_MEASUREMENT_PROTOCOL_API;
   try {
-    const response = await fetch(`https://www.google-analytics.com/mp/collect?measurement_id=${measurementId}&api_secret=${apiSecret}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
+    const response = await fetch(
+      `https://www.google-analytics.com/mp/collect?measurement_id=${measurementId}&api_secret=${apiSecret}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      }
+    );
     if (!response.ok) {
       console.error(`Error sending purchase event: ${response.statusText}`);
     } else {

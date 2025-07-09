@@ -14,8 +14,8 @@ export async function updateItemsQuantity(data: any) {
       id: string;
       courses: null | { _id: string; automatizationId?: string; previewGroupMailerLite?: string }[];
     }) => {
-      // create courses_progress record for each course
-      if (product.courses) {
+      // create courses_progress record for each course (skip for guest orders)
+      if (product.courses && data.user_id) {
         console.log('Produkt z kursem:', product);
         const newCourses = product.courses.map(async (el) => {
           const { data: existingProgress } = await supabase
@@ -56,6 +56,8 @@ export async function updateItemsQuantity(data: any) {
         console.log('Promises', filteredPromiseContent);
         const res = await supabase.from('courses_progress').insert(filteredPromiseContent);
         console.log('Add progress', res);
+      } else if (product.courses && !data.user_id) {
+        console.log('Skipping course progress creation for guest order');
       }
 
       // TODO: maybe move this to create step??

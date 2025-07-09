@@ -37,8 +37,9 @@ export async function POST(request: Request) {
     await generateBill(data, id);
     await sendEmails(data);
 
+    // Analytics tracking (supports both user and guest orders)
     await GAConversionPurchase({
-      user_id: data.user_id,
+      user_id: data.user_id || null, // Handle guest orders with null user_id
       value: amount / 100,
       transaction_id: orderId,
       items: data.products.array.map(
@@ -63,7 +64,7 @@ export async function POST(request: Request) {
       ),
     });
     await MetaConversionPurchase({
-      user_id: data.user_id,
+      user_id: data.user_id || null, // Handle guest orders with null user_id
       value: amount / 100,
       transaction_id: orderId,
       items: data.products.array.map(

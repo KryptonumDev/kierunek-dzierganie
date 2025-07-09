@@ -45,7 +45,7 @@ export async function checkUsedModifications(data: any) {
     const newRecord = await supabase.from('coupons_uses').insert({
       used_at: data.created_at,
       used_coupon: data.used_discount.id,
-      used_by: data.user_id,
+      used_by: data.user_id || null, // Allow null for guest orders
       voucher_used_amount: usedAmount,
     });
 
@@ -77,8 +77,8 @@ export async function checkUsedModifications(data: any) {
     }
   }
 
-  // check if virtual money was used
-  error: if (data && data.used_virtual_money) {
+  // check if virtual money was used (skip for guest orders)
+  error: if (data && data.used_virtual_money && data.user_id) {
     // get current amount of user virtual money
     const prevValueResult = await supabase.from('virtual_wallet').select('amount').eq('owner', data.user_id).single();
 
@@ -92,5 +92,7 @@ export async function checkUsedModifications(data: any) {
         amount: prevValueResult.data!.amount - data.used_virtual_money,
       })
       .eq('owner', data.user_id);
+  } else if (data && data.used_virtual_money && !data.user_id) {
+    console.log('Skipping virtual money operations for guest order');
   }
 }

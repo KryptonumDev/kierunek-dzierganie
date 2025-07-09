@@ -231,31 +231,115 @@ Both guest and logged-in user flows generate **identical data structures** with 
 
 ---
 
+## ✅ Step 3: Backend Changes - COMPLETED
+
+### 3.1 Payment Creation API Updates ✅
+
+**Date**: [Current Session]  
+**File**: `next/src/app/api/payment/create/route.ts`
+
+**Changes Made**:
+
+1. **Skip User Profile Updates for Guest Orders** ✅
+   - Added conditional check: `if (input.user_id && !input.isGuestCheckout)`
+   - Guest orders no longer update user profile billing/shipping data
+
+2. **Modified Order Creation Logic** ✅
+   - Added imports: `generateGuestOrderToken, isGuestOrder` from utilities
+   - Created conditional order data structure:
+     - **Guest orders**: `user_id: null`, `guest_email`, `guest_order_token`, `is_guest_order: true`, `used_virtual_money: null`
+     - **User orders**: Existing structure with additional guest fields set to `null/false`
+
+3. **Updated Free Order Redirect Logic** ✅
+   - **Guest orders**: Redirect to homepage `/`
+   - **User orders**: Keep existing dashboard redirect `/moje-konto/zakupy/${id}`
+
+### 3.2 Payment Completion API Updates ✅
+
+**Date**: [Current Session]  
+**Files Modified**: Multiple completion flow files
+
+**Changes Made**:
+
+1. **Analytics Tracking Updates** ✅
+   - **GA4** (`GAConversionPurchase.ts`): Modified to accept `user_id: string | null`, conditionally include user_id in payload
+   - **Meta** (`MetaConversionPurchase.ts`): Modified to accept `user_id: string | null`, conditionally include external_id
+   - **Route** (`/api/payment/complete/route.ts`): Updated calls to pass `data.user_id || null`
+
+2. **Items Quantity Function Updates** ✅
+   - **File**: `update-items-quantity.ts`
+   - **Change**: Added condition `&& data.user_id` to course progress creation
+   - **Result**: Skips course progress creation entirely for guest orders
+   - **Logging**: Added console log for skipped guest operations
+
+3. **Virtual Money/Discount Operations Updates** ✅
+   - **File**: `check-used-modifications.ts`
+   - **Changes**:
+     - Modified coupon usage tracking: `used_by: data.user_id || null` (allows null for guest orders)
+     - Added condition to virtual money operations: `&& data.user_id`
+     - **Result**: Skips virtual money operations entirely for guest orders
+     - **Logging**: Added console log for skipped guest operations
+
+### 3.3 Payment Verification Updates ✅
+
+**Date**: [Current Session]  
+**File**: `next/src/app/api/payment/verify/route.ts`
+
+**Changes Made**:
+
+1. **Dynamic Redirect Logic** ✅
+   - Added Supabase integration to fetch order data
+   - Created `getRedirectUrl()` helper function:
+     - Queries order by ID to check `is_guest_order` field
+     - **Guest orders** (`is_guest_order: true`): Redirect to homepage `/`
+     - **User orders** (`is_guest_order: false/null`): Redirect to dashboard `/moje-konto/zakupy/${id}`
+     - **Error cases**: Safe fallback to homepage
+
+2. **Enhanced Error Handling** ✅
+   - Graceful database query failure handling
+   - Safe fallback redirects prevent broken user experience
+   - Proper error logging
+
+### 3.4 Backend Compatibility Analysis ✅
+
+**Date**: [Current Session]  
+**Files Analyzed**: Additional payment completion files
+
+**Analysis Results**:
+
+- ✅ **generate-bill.ts**: Compatible (uses order-embedded billing data)
+- ✅ **update-order.ts**: Compatible (simple utility, no user dependencies)
+- ✅ **verify-transaction.ts**: Compatible (only P24 transaction verification)
+- ✅ **send-emails.ts**: Compatible (uses order billing data, existing email template handles guest orders)
+- ✅ **mailer-lite.ts**: Compatible (only used for course operations, already skipped for guests)
+
+**Key Findings**:
+
+- All payment completion files use order-embedded data rather than user profile data
+- Guest orders contain all necessary billing/shipping information within order record
+- Virtual money handling works correctly with `null` values
+- Email template conditionally renders user-specific sections
+
+---
+
 ## 🔄 Next Steps (Pending)
 
-### Step 2: Backend Changes
+### Step 4: Guest Thank You Page
 
-- [ ] Update payment API (`/api/payment/create/route.ts`)
-- [ ] Add guest order token generation function
-- [ ] Modify order creation logic for guest orders
-- [ ] Update order completion flow
-- [ ] Skip user-dependent operations for guests
+- [ ] Create basic guest confirmation page (`/dziękujemy-za-zamowienie/page.tsx`)
+- [ ] Simple Polish page with order confirmation message
+- [ ] Add "Create Account" CTA for future convenience
 
-### Step 3: Frontend Changes
+### Step 5: Email System Enhancements (Optional)
 
-- [ ] Update Authorization component
-- [ ] Add guest checkout option
-- [ ] Implement cart validation logic
-- [ ] Create guest checkout flow
+- [ ] Consider guest-specific email messaging improvements
+- [ ] Add account creation CTA in guest order emails
 
-### Step 4: Email System Updates
-
-- [ ] Modify email templates for guest orders
-- [ ] Add basic order confirmation for guests
-
-### Step 5: Testing & Validation
+### Step 6: Testing & Validation
 
 - [ ] End-to-end testing with development database
+- [ ] Test complete guest checkout flow
+- [ ] Verify redirects work correctly for both guest and user orders
 - [ ] Admin panel testing (local connection to dev database)
 - [ ] Final validation before production deployment
 
@@ -274,6 +358,13 @@ Both guest and logged-in user flows generate **identical data structures** with 
 - Admin panel compatibility testing required
 - Full feature testing before production deployment
 - Development database serves as testing ground
+
+**Current Status**: Backend integration for guest checkout is **FULLY COMPLETE** ✅
+
+- Payment creation with guest order support ✅
+- Payment completion with guest-aware analytics & operations ✅
+- Payment verification with dynamic redirects ✅
+- All supporting files confirmed compatible ✅
 
 ### 2.5 Cart Component Validation Messages ✅
 
