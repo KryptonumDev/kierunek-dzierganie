@@ -4,10 +4,16 @@ import Checkbox from '@/components/ui/Checkbox';
 import Input from '@/components/ui/Input';
 import PasswordInput from '@/components/ui/PasswordInput';
 import { REGEX } from '@/global/constants';
+import type { ProductCard } from '@/global/types';
 import { createClient } from '@/utils/supabase-client';
+import {
+  validateGuestCart,
+  getGuestCheckoutBlockedMessage,
+  type CartValidationResult,
+} from '@/utils/validate-guest-cart';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import styles from './Checkout.module.scss';
@@ -20,10 +26,42 @@ type FormValues = {
   accept: boolean;
 };
 
-export default function Authorization({ setStep, goToCart, setInput }: MappingProps) {
+export default function Authorization({
+  setStep,
+  goToCart,
+  setInput,
+  fetchedItems,
+}: MappingProps & { fetchedItems: ProductCard[] | null }) {
   const [isRegister, setRegister] = useState(true);
   const supabase = createClient();
   const router = useRouter();
+
+  // Validate cart for guest checkout eligibility
+  const cartValidation = useMemo((): CartValidationResult => {
+    if (!fetchedItems) return validateGuestCart([]);
+    return validateGuestCart(fetchedItems);
+  }, [fetchedItems]);
+
+  const handleGuestCheckout = () => {
+    if (!cartValidation.canCheckoutAsGuest) {
+      toast.error(getGuestCheckoutBlockedMessage(cartValidation));
+      return;
+    }
+
+    // Set guest checkout flag in input state
+    setInput((prev: InputState) => ({
+      ...prev,
+      isGuestCheckout: true,
+      user_id: undefined, // Ensure no user_id for guest checkout
+      billing: {
+        ...prev.billing,
+        email: '', // Reset email for guest to enter
+      },
+    }));
+
+    // Skip to step 2 (Personal Data)
+    setStep(2);
+  };
 
   const {
     register,
@@ -234,6 +272,21 @@ export default function Authorization({ setStep, goToCart, setInput }: MappingPr
           />
         )}
         <Button>{isRegister ? 'Zarejestruj się' : 'Zaloguj się'}</Button>
+
+        {/* Guest Checkout Option - Always show */}
+        <div className={styles['guest-checkout']}>
+          <div className={styles['divider']}>
+            <span>lub</span>
+          </div>
+          <Button
+            type='button'
+            onClick={handleGuestCheckout}
+          >
+            Kontynuuj jako gość
+          </Button>
+          <p className={styles['guest-info']}>Zakup bez tworzenia konta. Dotyczy tylko produktów fizycznych.</p>
+        </div>
+
         {isRegister ? (
           <p>
             Masz już konto?{' '}

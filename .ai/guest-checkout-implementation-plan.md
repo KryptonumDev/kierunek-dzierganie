@@ -1,4 +1,4 @@
-# Guest Checkout Implementation Plan for Physical Products
+# Guest Checkout Implementation Plan for Physical Products - MVP
 
 ## Project Overview
 
@@ -6,50 +6,45 @@
 
 **Scope**: Guest checkout will be limited to physical products only. Courses, bundles, and digital products will continue to require user authentication.
 
+**🚨 CRITICAL CONSTRAINT**: The "Continue as Guest" option should **ONLY** be shown when the cart contains **EXCLUSIVELY** physical products. If the cart contains any courses, bundles, or digital products, guests must be required to create an account or login.
+
+**🇵🇱 LANGUAGE REQUIREMENT**: All user-facing text, messages, buttons, and labels must be written in Polish. This includes error messages, validation text, button labels, and any communication with the user during the guest checkout process.
+
+**MVP Focus**: Minimal viable product - guests can checkout, receive order confirmation email, and complete purchase.
+
 ---
 
-## 0. Pre-Implementation: Setup Permanent Development Environment
+## Database Environment Setup
 
-This is the most critical first step and a long-term investment in development infrastructure. A complete, isolated development environment must be established to protect production data and services. This environment will be reusable for all future development work, not just guest checkout implementation.
+### Supabase Database Configuration
 
-**Strategic Goals:**
+The project uses two Supabase databases:
 
-- Create a permanent, reusable development environment
-- Enable safe development and testing of all future features
-- Maintain production-level functionality in sandbox mode
-- Support multiple developers working simultaneously
-- Provide consistent development experience across all projects
+1. **Production Database**: `Dashboard` (baujxpfhgvzpwyqhylxt)
+   - Main database with live data
+   - Region: eu-central-1
+   - PostgreSQL version: 15.1.1.19
+   - Created: 2024-02-21
 
-### 0.1 Development Database (Supabase Development Project)
+2. **Development Database**: `kierunek-dzierganie-dev` (fplgqekfscacjbhiwmzd)
+   - Development/testing database
+   - Region: eu-central-1
+   - PostgreSQL version: 17.4.1.049
+   - Created: 2025-07-08
 
-- **Reason**: To prevent any risk to live production data while developing and testing schema changes, new features, and database migrations.
-- **Action**: Create a dedicated Supabase development project that mirrors production structure but with test data.
-- **Reusability**: This database will serve all future feature development, A/B testing, and experimentation.
-- **Setup**:
-  - Create new Supabase project: `kierunek-dzierganie-dev`
-  - Import production schema structure
-  - Populate with realistic test data
-  - Configure automatic schema sync from production (when needed)
+### Development Workflow
 
-### 0.2 Payment Gateway (Przelewy24 Development Account)
+**⚠️ Important**: All database changes must be tested on the **development database** first before applying to production.
 
-- **Reason**: To simulate the entire payment lifecycle (success, failure, chargebacks) without processing real money for any future payment-related features.
-- **Action**: Obtain dedicated development/sandbox API keys and maintain them long-term.
-- **Reusability**: Support testing of new payment features, subscription models, refund processes, etc.
-- **Setup**:
-  - Dedicated P24 sandbox account for the project
-  - Test card/bank details documentation
-  - Webhook endpoint configuration for development
+**🚨 CRITICAL**: There is an admin panel in another codebase that connects to the production database. Any breaking changes to the production database could crash the live admin panel. Therefore:
 
-### 0.3 Invoicing Service (iFirma Development Environment)
+1. **Phase 1**: Test all migrations on `kierunek-dzierganie-dev`
+2. **Phase 2**: Validate functionality with development database
+3. **Phase 3**: Test admin panel locally connected to development database
+4. **Phase 4**: Complete entire feature development and testing (100%)
+5. **Phase 5**: Only then apply tested migrations to `Dashboard` production database
 
-- **Reason**: To avoid generating real, legally-binding invoices during development of any order/billing related features.
-- **Action**: Configure dedicated test account or sandbox environment with iFirma.
-- **Reusability**: Support development of new billing features, subscription invoicing, tax calculations, etc.
-- **Setup**:
-  - Separate iFirma test account with dedicated API keys
-  - Test invoice templates and configurations
-  - Isolated accounting environment
+**Admin Panel Testing**: The admin panel will be tested locally against the development database to ensure compatibility before any production database changes.
 
 ---
 
@@ -91,9 +86,16 @@ CREATE INDEX idx_guest_email ON orders(guest_email);
 - If `is_guest_order = true`, then `guest_email` and `guest_order_token` must be present
 - If `is_guest_order = false`, then `user_id` must be present
 
+### 1.3 Testing Strategy
+
+1. **First**: Apply migration to `kierunek-dzierganie-dev`
+2. **Test**: Verify all constraints and indexes work correctly
+3. **Validate**: Test with sample guest and user orders
+4. **Production**: Apply to `Dashboard` database only after thorough testing
+
 ---
 
-## 2. Frontend Changes (6-8 hours)
+## 2. Frontend Changes (4-6 hours)
 
 ### 2.1 Authorization Component Updates
 
@@ -126,23 +128,7 @@ CREATE INDEX idx_guest_email ON orders(guest_email);
 - Add guest email collection as mandatory field
 - Display guest checkout limitations clearly
 
-### 2.3 Guest Order Lookup Page
-
-**New Page**: `/guest-order-lookup`
-
-**Features:**
-
-- Order lookup by email and order number
-- Display order status and details
-- Download invoices/receipts
-- No login required
-
-**Components:**
-
-- `GuestOrderLookup.tsx`
-- `GuestOrderDetails.tsx`
-
-### 2.4 Cart Validation Logic
+### 2.3 Cart Validation Logic
 
 **Implementation:**
 
@@ -165,16 +151,15 @@ const validateGuestCart = (cartItems: CartItem[]) => {
 };
 ```
 
-### 2.5 UI/UX Updates
+### 2.4 UI/UX Updates
 
 - Add clear messaging about guest checkout limitations
-- Display "Create account to save this order" option post-purchase
 - Update error messages for mixed carts
 - Add guest checkout flow indicators
 
 ---
 
-## 3. Backend Changes (5-7 hours)
+## 3. Backend Changes (3-4 hours)
 
 ### 3.1 Payment API Updates
 
@@ -199,24 +184,7 @@ const createGuestOrder = async (orderData: GuestOrderData) => {
 };
 ```
 
-### 3.2 Guest Order Lookup API
-
-**New Endpoint**: `/api/orders/guest-lookup`
-
-**Method**: POST
-**Parameters:**
-
-- `email`: Guest email address
-- `orderNumber`: Order ID or token
-
-**Response:**
-
-- Order details (sanitized)
-- Order status
-- Tracking information
-- Download links
-
-### 3.3 Order Completion Flow Updates
+### 3.2 Order Completion Flow Updates
 
 **Files to Update:**
 
@@ -229,21 +197,12 @@ const createGuestOrder = async (orderData: GuestOrderData) => {
 
 - Skip virtual wallet operations for guests
 - Skip user profile updates for guests
-- Modified email templates with guest order tracking info
 - Ensure affiliate tracking still works for guest orders
-
-### 3.4 Security Measures
-
-**Guest Order Token Security:**
-
-- Use cryptographically secure random tokens
-- Implement rate limiting for guest order lookups
-- Add email verification for sensitive operations
-- Time-limited access tokens (optional)
+- Modified email templates with basic guest order info
 
 ---
 
-## 4. Email System Updates (2-3 hours)
+## 4. Email System Updates (1-2 hours)
 
 ### 4.1 Email Template Modifications
 
@@ -251,299 +210,80 @@ const createGuestOrder = async (orderData: GuestOrderData) => {
 
 **Changes:**
 
-- Add guest order tracking information
-- Include order lookup instructions
+- Add guest order tracking information (order number only)
+- Include basic order details
 - Add "Create Account" CTA for future convenience
-- Display order token/number prominently
+- Display order number prominently
 
-### 4.2 New Email Templates
-
-**Templates Needed:**
-
-- Guest order confirmation
-- Guest order status updates
-- Guest order lookup instructions
-
-### 4.3 Email Content Updates
-
-**Additional Information for Guests:**
-
-- How to track order status
-- Order lookup page URL
-- Account creation benefits
-- Contact information for support
+**Note**: Use existing email template, just modify for guest orders
 
 ---
 
-## 5. Security & Privacy Considerations (2-3 hours)
-
-### 5.1 Data Protection
-
-- Implement data retention policies for guest orders
-- Ensure GDPR compliance for guest data
-- Secure guest order token generation
-- Rate limiting for guest order lookups
-
-### 5.2 Access Control
-
-- Guests can only access their own orders
-- Implement secure order lookup verification
-- Prevent enumeration attacks on order tokens
-- Add CAPTCHA for multiple failed lookup attempts
-
-### 5.3 Privacy Features
-
-- Option to delete guest order data
-- Clear privacy policy for guest checkout
-- Minimal data collection for guests
-- Secure handling of guest email addresses
-
----
-
-## 6. Implementation Phases
-
-### Phase 0: Permanent Development Environment Setup (Day 0)
-
-**Strategic Implementation - One-time setup with long-term benefits**
-
-1.  **Environment Infrastructure Setup**:
-    - Set up all required development environments as detailed in Section 0
-    - Create comprehensive documentation for future use
-    - Establish credential management and security protocols
-2.  **Configuration Management**:
-    - Create `.env.development` template with all required variables
-    - Update development setup to point to all sandbox services
-    - Create environment switching documentation
-    - Set up automated environment health checks
-3.  **Developer Onboarding**:
-    - Create setup guide for new developers
-    - Document testing procedures and best practices
-    - Establish data refresh and sync procedures
-4.  **Branch Management**:
-    - ✅ Branch `physical-no-account` already created
-    - Configure branch protection rules for development environment
-    - Set up CI/CD pipeline for development environment testing
-
-**Note**: This phase represents a significant investment in development infrastructure that will pay dividends for all future feature development, not just guest checkout.
+## 5. Implementation Phases
 
 ### Phase 1: Database & Core Backend (Day 1)
 
-1.  Database schema updates
-2.  Core order creation logic for guests
-3.  Basic guest order lookup API
+1. **Development Database Setup**:
+   - Test migration on `kierunek-dzierganie-dev`
+   - Validate constraints and indexes
+   - Test with sample data
+
+2. **Core Backend Logic**:
+   - Update payment API for guest orders
+   - Implement guest order token generation
+   - Test order creation flow
 
 ### Phase 2: Frontend Integration (Day 2)
 
 1. Authorization component updates
 2. Cart validation logic
 3. Guest checkout flow implementation
-4. Guest order lookup page
 
-### Phase 3: Testing & Refinement (Day 3)
+### Phase 3: Testing & Production Deploy (Day 3)
 
-1. End-to-end testing of guest checkout
-2. Security testing
-3. Email template updates
-4. Error handling and edge cases
-5. Performance optimization
+1. End-to-end testing with development database
+2. Email template updates
+3. Apply migration to production database
+4. Final production testing
 
 ---
 
-## 7. Development Environment Management & Reusability
+## 6. Technical Dependencies
 
-### 7.1 Environment Configuration Files
-
-**Structure for Multiple Environments**:
-
-```
-next/
-├── .env.example              # Template with all required variables
-├── .env.local               # Local development (gitignored)
-├── .env.development         # Shared development environment
-├── .env.staging             # Staging environment (if needed)
-└── .env.production          # Production environment
-```
-
-**Environment Variables Management**:
-
-- Use descriptive naming conventions
-- Document all variables in `.env.example`
-- Implement environment validation on startup
-- Create environment health check endpoints
-
-### 7.2 Development Data Management
-
-**Database Management**:
-
-- Regular production schema imports to development
-- Anonymized test data generation scripts
-- Database seeding for common test scenarios
-- Migration testing procedures
-
-**Test Data Categories**:
-
-- User accounts (guest and registered)
-- Product catalog (physical, digital, bundles)
-- Orders (various states and types)
-- Payment scenarios (success, failure, pending)
-- Shipping configurations
-- Discount and coupon scenarios
-
-### 7.3 Testing Infrastructure
-
-**Automated Testing Support**:
-
-- Integration tests using development environment
-- End-to-end testing with sandbox services
-- Performance testing with realistic data loads
-- Security testing with isolated environments
-
-**Feature Development Workflow**:
-
-1. Create feature branch from `main`
-2. Use development environment for implementation
-3. Test with sandbox services
-4. Peer review with development environment demos
-5. Merge to `main` after testing
-
-### 7.4 Environment Maintenance Procedures
-
-**Regular Maintenance Tasks**:
-
-- Monthly credential rotation
-- Quarterly service health checks
-- Semi-annual data refresh from production
-- Annual security audit of development services
-
-**Documentation Maintenance**:
-
-- Keep setup guides updated
-- Document new service integrations
-- Maintain troubleshooting guides
-- Update onboarding procedures
-
-### 7.5 Future Feature Development Guidelines
-
-**Using the Development Environment**:
-
-- Always start new features in development environment
-- Test all external service integrations thoroughly
-- Validate email templates and communications
-- Verify payment flows end-to-end
-- Test shipping calculations and logistics
-- Validate marketing automation workflows
-
-**Best Practices for Reusability**:
-
-- Document any new service integrations
-- Add new environment variables to templates
-- Update health check procedures
-- Maintain test data scenarios for new features
-- Share learnings and gotchas with the team
-
----
-
-## 8. Future Enhancements
-
-### 8.1 Account Migration
-
-- Allow guests to claim orders when creating accounts
-- Merge guest order history with new accounts
-- Preserve order tracking and downloads
-
-### 8.2 Enhanced Guest Features
-
-- Guest order history (session-based)
-- Save shipping addresses (browser storage)
-- Guest order notifications (SMS/WhatsApp)
-
-### 8.3 Business Logic Extensions
-
-- Guest loyalty program participation
-- Limited virtual wallet for guests
-- Guest-specific promotions
-
----
-
-## 9. Success Metrics
-
-### 9.1 Conversion Metrics
-
-- Increase in physical product conversion rates
-- Reduction in cart abandonment
-- Guest vs. registered user conversion comparison
-
-### 9.2 User Experience Metrics
-
-- Time to complete checkout (guest vs. registered)
-- Error rates during checkout
-- Customer support tickets related to guest orders
-
-### 9.3 Business Metrics
-
-- Revenue impact from guest checkouts
-- New account creation rates post-guest purchase
-- Customer retention rates
-
----
-
-## 10. Risk Mitigation
-
-### 10.1 Technical Risks
-
-- **Risk**: Database performance with nullable user_id
-- **Mitigation**: Proper indexing and query optimization
-
-- **Risk**: Security vulnerabilities in guest order lookup
-- **Mitigation**: Thorough security testing and rate limiting
-
-### 10.2 Business Risks
-
-- **Risk**: Reduced account creation rates
-- **Mitigation**: Strong post-purchase account creation incentives
-
-- **Risk**: Increased support overhead for guest orders
-- **Mitigation**: Clear self-service options and documentation
-
----
-
-## 11. Technical Dependencies
-
-### 11.1 External Services
+### 6.1 External Services
 
 - Payment processor compatibility with guest orders
 - Email service provider configurations
-- Analytics tracking for guest users
 - Shipping service integrations
 
-### 11.2 Internal Dependencies
+### 6.2 Internal Dependencies
 
-- User authentication system modifications
 - Cart and checkout system updates
 - Order management system changes
-- Customer support tool updates
 
 ---
 
+## Features NOT in MVP (Future Enhancements)
+
+### Removed from MVP:
+
+1. **Guest Order Lookup Page** - Not essential for completing purchase
+2. **New Email Templates** - Existing template can be modified
+3. **Enhanced Email Content** - Basic order confirmation is sufficient
+4. **Advanced Security Features** - Basic token generation is sufficient
+5. **GDPR Compliance Features** - Can be added later
+6. **Account Migration** - Not needed for MVP
+7. **Enhanced Guest Features** - Not needed for MVP
+8. **Guest Order Status Tracking** - Since logged-in users have this, guests don't need it for MVP
+
 ## Conclusion
 
-This implementation plan provides a comprehensive roadmap for adding guest checkout functionality to physical products. The phased approach ensures systematic development and testing while maintaining system stability and security.
+This MVP focuses on the absolute minimum needed to enable guest checkout for physical products. The goal is to allow guests to complete a purchase and receive a basic order confirmation email.
 
-**Next Steps:**
-
-1. Review and approve this implementation plan
-2. Set up development environment on `physical-no-account` branch
-3. Begin Phase 1 implementation
-4. Regular progress reviews and adjustments as needed
-
-**Total Estimated Effort**:
-
-- **Phase 0 (Development Environment)**: 8-12 hours (one-time investment)
-- **Guest Checkout Implementation**: 16-24 hours over 2-3 development days
-- **Total**: 24-36 hours with significant long-term benefits
+**Total Estimated Effort**: 8-12 hours over 1-2 development days
 
 ---
 
 _Last Updated: [Current Date]_
 _Branch: physical-no-account_
-_Status: Implementation Plan - Ready for Development_
+_Status: MVP Implementation Plan - Ready for Development_

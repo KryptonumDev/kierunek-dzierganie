@@ -34,6 +34,7 @@ export type InputState = {
   freeDelivery: boolean;
   firmOrder: boolean;
   shippingSameAsBilling: boolean;
+  isGuestCheckout?: boolean; // New field for guest checkout flag
   shipping: Shipping;
   shippingMethod?: {
     data: string | MapPoint | null;

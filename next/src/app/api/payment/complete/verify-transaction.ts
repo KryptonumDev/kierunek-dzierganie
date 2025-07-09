@@ -11,11 +11,6 @@ export async function verifyTransaction(amount: number, currency: string, orderI
     }
   );
 
-  // Log P24 environment (server-side only)
-  if (typeof window === 'undefined') {
-    console.log(`💳 P24 Verification Mode: ${process.env.SANDBOX === 'true' ? 'SANDBOX (Test)' : 'PRODUCTION (Real)'}`);
-  }
-
   // verify transaction in P24 service
   await p24.verifyTransaction({
     amount,

@@ -8,11 +8,6 @@ export async function GET(request: Request) {
   const id = searchParams.get('id');
 
   try {
-    // Log P24 environment (server-side only)
-    if (typeof window === 'undefined') {
-      console.log(`💳 P24 Verify Mode: ${process.env.SANDBOX === 'true' ? 'SANDBOX (Test)' : 'PRODUCTION (Real)'}`);
-    }
-
     const transactionHeaders = new Headers();
     transactionHeaders.append('Content-Type', 'application/json');
     transactionHeaders.append(
@@ -20,13 +15,7 @@ export async function GET(request: Request) {
       `Basic ${btoa(`${Number(process.env.P24_POS_ID)}:${process.env.P24_REST_API_KEY}`)}`
     );
 
-    // Use environment-aware API URL
-    const apiUrl =
-      process.env.SANDBOX === 'true'
-        ? `https://sandbox.przelewy24.pl/api/v1/transaction/by/sessionId/${session}`
-        : `https://secure.przelewy24.pl/api/v1/transaction/by/sessionId/${session}`;
-
-    const response = await fetch(apiUrl, {
+    const response = await fetch(`https://secure.przelewy24.pl/api/v1/transaction/by/sessionId/${session}`, {
       method: 'GET',
       headers: transactionHeaders,
     });

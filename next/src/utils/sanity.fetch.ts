@@ -16,7 +16,7 @@ const client = createClient({
   dataset,
   apiVersion,
   useCdn: false,
-  perspective: isPreviewDeployment ? 'previewDrafts' : 'published',
+  perspective: isPreviewDeployment ? 'drafts' : 'published',
   token,
 });
 

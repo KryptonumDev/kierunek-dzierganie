@@ -1,6 +1,7 @@
 .checkout {
   max-width: 976px;
-  padding: clamp(32px, calc(48vw / 7.68), 48px) clamp(16px, calc(32vw / 7.68), 48px) clamp(32px, calc(48vw / 7.68), 48px) clamp(16px, calc(80vw / 7.68), 96px);
+  padding: clamp(32px, calc(48vw / 7.68), 48px) clamp(16px, calc(32vw / 7.68), 48px)
+    clamp(32px, calc(48vw / 7.68), 48px) clamp(16px, calc(80vw / 7.68), 96px);
   @media (max-width: 640px) {
     padding-left: 16px;
     padding-right: 16px;
@@ -45,9 +46,8 @@
   }
 
   .main {
-
-    .map{
-      label{
+    .map {
+      label {
         margin-bottom: 12px;
       }
     }
@@ -83,7 +83,7 @@
 
     legend {
       color: var(--primary-700, #766965);
-      font-size: calc(24rem/16);
+      font-size: calc(24rem / 16);
       font-weight: 300;
       line-height: 130%;
       display: block;
@@ -123,7 +123,7 @@
 
     .payment-inform {
       text-align: right;
-      font-size: calc(14rem/16);
+      font-size: calc(14rem / 16);
       font-weight: 300;
       line-height: 150%;
       margin-bottom: 48px;
@@ -164,6 +164,56 @@
   > p {
     text-align: center;
   }
+
+  .guest-checkout {
+    margin-top: 32px;
+    margin-bottom: 32px;
+    text-align: center;
+
+    .divider {
+      position: relative;
+      margin: 24px 0;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background-color: var(--primary-400, #e5d8d4);
+        z-index: 1;
+      }
+
+      span {
+        position: relative;
+        z-index: 2;
+        background-color: var(--primary-200);
+        padding: 0 16px;
+        color: var(--primary-600, #9a827a);
+        font-size: calc(14rem / 16);
+        font-weight: 300;
+      }
+    }
+
+    > button {
+      margin: 0 auto 16px auto;
+      max-width: 280px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .guest-info {
+      color: var(--primary-600, #9a827a);
+      font-size: calc(14rem / 16);
+      font-weight: 300;
+      line-height: 150%;
+      margin: 0 0 24px 0;
+      max-width: 320px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
 }
 
 .summary-aside {
@@ -201,7 +251,7 @@
 
     color: var(--primary-800, #53423c);
 
-    font-size: calc(14rem/16);
+    font-size: calc(14rem / 16);
     font-weight: 300;
     line-height: 150%;
 
@@ -228,7 +278,7 @@
       }
 
       .badge {
-        font-size: calc(14rem/16);
+        font-size: calc(14rem / 16);
         position: absolute;
         display: block;
         top: 0;
@@ -248,7 +298,7 @@
 
     .title {
       color: var(--primary-800, #53423c);
-      font-size: calc(18rem/16);
+      font-size: calc(18rem / 16);
       font-weight: 300;
       line-height: 150%;
       margin-bottom: 16px;
@@ -256,7 +306,7 @@
 
     .price {
       color: var(--primary-800, #53423c);
-      font-size: calc(14rem/16);
+      font-size: calc(14rem / 16);
       font-weight: 300;
       line-height: 150%;
 
@@ -265,6 +315,28 @@
         color: var(--primary-600, #9a827a);
         padding-right: 4px;
       }
+    }
+  }
+}
+
+// Guest checkout specific styles for PersonalData
+.guest-notice {
+  background-color: var(--primary-300, #f5efeb);
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-left: 4px solid var(--primary-600, #9a827a);
+
+  p {
+    margin: 0;
+    color: var(--primary-800, #53423c);
+    font-size: calc(14rem / 16);
+    font-weight: 300;
+    line-height: 150%;
+
+    strong {
+      font-weight: 400;
+      color: var(--primary-800, #53423c);
     }
   }
 }

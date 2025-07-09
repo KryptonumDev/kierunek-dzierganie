@@ -109,6 +109,8 @@ export default function PersonalData({
   shippingMethods,
   setCurrentShippingMethod,
 }: MappingProps) {
+  // Check if this is a guest checkout
+  const isGuestCheckout = input.isGuestCheckout || false;
   const [selectedMapPoint, setSelectedMapPoint] = useState<MapPoint | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [apaczka, setApaczka] = useState(null);
@@ -330,6 +332,16 @@ export default function PersonalData({
         {/*  */}
         {/*  */}
         <legend>Dane do faktury</legend>
+
+        {/* Guest checkout notice */}
+        {isGuestCheckout && (
+          <div className={styles['guest-notice']}>
+            <p>
+              <strong>Zakup jako gość</strong> - Twoje dane będą wykorzystane tylko do realizacji tego zamówienia.
+            </p>
+          </div>
+        )}
+
         <fieldset>
           {invoiceType === 'Firma' ? (
             <>

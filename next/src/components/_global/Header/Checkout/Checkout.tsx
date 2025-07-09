@@ -1,4 +1,4 @@
-import type { Billing, Shipping } from '@/global/types';
+import type { Billing, Shipping, ProductCard } from '@/global/types';
 import { getProductBasis } from '@/utils/get-product-basis';
 import { useEffect, useState } from 'react';
 import styles from './Checkout.module.scss';
@@ -38,8 +38,13 @@ const createInputState = (billing?: Billing, shipping?: Shipping, userEmail?: st
   },
 });
 
-const stepContent = (props: MappingProps) => ({
-  1: <Authorization {...props} />,
+const stepContent = (props: MappingProps, fetchedItems: ProductCard[] | null) => ({
+  1: (
+    <Authorization
+      {...props}
+      fetchedItems={fetchedItems}
+    />
+  ),
   2: <PersonalData {...props} />, //
 });
 
@@ -147,16 +152,19 @@ export default function Checkout({
         </button>
         <div className={styles['content']}>
           {
-            stepContent({
-              goToCart,
-              setStep,
-              input,
-              setInput,
-              deliverySettings,
-              shippingMethods,
-              currentShippingMethod,
-              setCurrentShippingMethod,
-            })[step as keyof typeof stepContent]
+            stepContent(
+              {
+                goToCart,
+                setStep,
+                input,
+                setInput,
+                deliverySettings,
+                shippingMethods,
+                currentShippingMethod,
+                setCurrentShippingMethod,
+              },
+              fetchedItems
+            )[step as keyof typeof stepContent]
           }
           <SummaryAside input={input} />
         </div>
