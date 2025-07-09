@@ -1,6 +1,8 @@
 import type { Billing, Shipping, ProductCard } from '@/global/types';
 import { getProductBasis } from '@/utils/get-product-basis';
+import { validateGuestCart } from '@/utils/validate-guest-cart';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import styles from './Checkout.module.scss';
 import type { InputState, MappingProps, Props } from './Checkout.types';
 import Authorization from './_Authorization';
@@ -88,45 +90,76 @@ export default function Checkout({
       return;
     }
 
-    setInput((prev) => ({
-      ...prev,
-      amount: fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0),
-      needDelivery: fetchedItems.some((item) => item.needDelivery),
-      delivery: fetchedItems.some((item) => item.needDelivery)
-        ? Number(shippingMethods.find((method) => method.name === currentShippingMethod)?.price)
-        : 0,
-      freeDelivery:
-        freeShipping > 0 &&
-        fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0) >= freeShipping,
-      discount: usedDiscount?.affiliatedBy === userId ? null : usedDiscount,
-      virtualMoney: usedVirtualMoney,
-      user_id: userId,
-      products: {
-        array: fetchedItems.map((item) => {
-          const basis = getProductBasis(item.basis, item._type);
+    // Validate cart for guest checkout eligibility
+    const cartValidation = validateGuestCart(fetchedItems);
 
-          return {
-            url: 'https://kierunekdzierganie.pl' + basis + '/' + item.slug,
-            id: item._id,
-            name: item.name + (item.variant?.name ? ` - ${item.variant.name}` : ''),
-            price: item.price!,
-            discount: item.discount!,
-            quantity: item.quantity!,
-            image: item.variants?.[0]?.gallery ? item.variants[0].gallery : item.gallery!,
-            complexity: item.complexity || null,
-            courses:
-              item._type === 'course'
-                ? [{ _id: item._id, automatizationId: item.automatizationId }]
-                : (item.courses ?? null),
-            variantId: item.variant?._id,
-            type: item._type,
-            voucherData: item.voucherData,
-            basis: item.basis,
-          };
-        }),
-      },
-    }));
-  }, [fetchedItems, input.amount, setInput, usedDiscount, usedVirtualMoney, userId, setUsedDiscount, deliverySettings]);
+    setInput((prev) => {
+      // Reset guest checkout state if cart becomes ineligible
+      const shouldResetGuestCheckout = prev.isGuestCheckout && !cartValidation.canCheckoutAsGuest;
+
+      // Show notification when guest checkout is reset
+      if (shouldResetGuestCheckout) {
+        toast.error('Dodano produkty cyfrowe - wymagane jest założenie konta lub zalogowanie się');
+      }
+
+      return {
+        ...prev,
+        // Reset guest checkout flag if cart is no longer eligible
+        isGuestCheckout: shouldResetGuestCheckout ? undefined : prev.isGuestCheckout,
+        amount: fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0),
+        needDelivery: fetchedItems.some((item) => item.needDelivery),
+        delivery: fetchedItems.some((item) => item.needDelivery)
+          ? Number(shippingMethods.find((method) => method.name === currentShippingMethod)?.price)
+          : 0,
+        freeDelivery:
+          freeShipping > 0 &&
+          fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0) >= freeShipping,
+        discount: usedDiscount?.affiliatedBy === userId ? null : usedDiscount,
+        virtualMoney: usedVirtualMoney,
+        user_id: userId,
+        products: {
+          array: fetchedItems.map((item) => {
+            const basis = getProductBasis(item.basis, item._type);
+
+            return {
+              url: 'https://kierunekdzierganie.pl' + basis + '/' + item.slug,
+              id: item._id,
+              name: item.name + (item.variant?.name ? ` - ${item.variant.name}` : ''),
+              price: item.price!,
+              discount: item.discount!,
+              quantity: item.quantity!,
+              image: item.variants?.[0]?.gallery ? item.variants[0].gallery : item.gallery!,
+              complexity: item.complexity || null,
+              courses:
+                item._type === 'course'
+                  ? [{ _id: item._id, automatizationId: item.automatizationId }]
+                  : (item.courses ?? null),
+              variantId: item.variant?._id,
+              type: item._type,
+              voucherData: item.voucherData,
+              basis: item.basis,
+            };
+          }),
+        },
+      };
+    });
+
+    // Reset to step 1 if guest checkout was disabled due to cart changes
+    if (input.isGuestCheckout && !cartValidation.canCheckoutAsGuest && step === 2) {
+      setStep(1);
+    }
+  }, [
+    fetchedItems,
+    input.amount,
+    input.isGuestCheckout,
+    step,
+    setInput,
+    usedDiscount,
+    usedVirtualMoney,
+    userId,
+    setUsedDiscount,
+    deliverySettings,
+  ]);
 
   console.log(input.products?.array);
 
