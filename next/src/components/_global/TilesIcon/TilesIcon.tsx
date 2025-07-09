@@ -19,15 +19,18 @@ const TilesIcon = ({ heading, paragraph, list, index }: Props) => {
             key={i}
             className={styles.item}
             data-image={!!image}
+            data-has-icon={!!icon}
           >
-            <div className={styles.icon}>
-              <Img
-                data={icon}
-                sizes='32px'
-                width={32}
-                height={32}
-              />
-            </div>
+            {icon && (
+              <div className={styles.icon}>
+                <Img
+                  data={icon}
+                  sizes='32px'
+                  width={32}
+                  height={32}
+                />
+              </div>
+            )}
             <TitleComponent>{title}</TitleComponent>
             <Markdown className={styles.content}>{description}</Markdown>
             {image && (

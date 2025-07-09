@@ -50,9 +50,9 @@ async function getRedirectUrl(orderId: string | null): Promise<string> {
     const supabase = createClient();
     const { data: order } = await supabase.from('orders').select('is_guest_order').eq('id', orderId).single();
 
-    // Guest orders redirect to homepage, user orders to dashboard
+    // Guest orders redirect to thank you page, user orders to dashboard
     if (order?.is_guest_order) {
-      return 'https://kierunekdzierganie.pl/';
+      return 'https://kierunekdzierganie.pl/dziekujemy-za-zamowienie';
     } else {
       return `https://kierunekdzierganie.pl/moje-konto/zakupy/${orderId}`;
     }

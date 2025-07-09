@@ -36,6 +36,7 @@ const WebPreview = ({ document }) => {
     PrivacyPolicy_Page: '/polityka-prywatnosci',
     Statute_Page: '/regulamin',
     StanVouchera_Page: '/stanvouchera',
+    GuestThankYou_Page: '/dziekujemy-za-zamowienie',
     Blog_Page: '/blog',
   };
 

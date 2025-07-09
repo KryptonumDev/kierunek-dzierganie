@@ -34,6 +34,7 @@ import MaterialsPackages_Page from './singleTypes/MaterialsPackages_Page';
 import OtherProducts_Page from './singleTypes/OtherProducts_Page';
 import OurBrands_Page from './singleTypes/OurBrands_Page';
 import StanVouchera_Page from './singleTypes/StanVoucher_Page';
+import GuestThankYou_Page from './singleTypes/GuestThankYou_Page';
 import Team_Page from './singleTypes/Team_Page';
 
 export const singleTypes = [
@@ -60,6 +61,7 @@ export const singleTypes = [
   Blog_Page,
   Cart,
   StanVouchera_Page,
+  GuestThankYou_Page,
 ];
 
 // Collection Types
