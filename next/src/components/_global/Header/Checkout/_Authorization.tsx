@@ -273,19 +273,21 @@ export default function Authorization({
         )}
         <Button>{isRegister ? 'Zarejestruj się' : 'Zaloguj się'}</Button>
 
-        {/* Guest Checkout Option - Always show */}
-        <div className={styles['guest-checkout']}>
-          <div className={styles['divider']}>
-            <span>lub</span>
+        {/* Guest Checkout Option - Only show for physical-only carts */}
+        {cartValidation.canCheckoutAsGuest && (
+          <div className={styles['guest-checkout']}>
+            <div className={styles['divider']}>
+              <span>lub</span>
+            </div>
+            <Button
+              type='button'
+              onClick={handleGuestCheckout}
+            >
+              Kontynuuj jako gość
+            </Button>
+            <p className={styles['guest-info']}>Zakup bez tworzenia konta. Dotyczy tylko produktów fizycznych.</p>
           </div>
-          <Button
-            type='button'
-            onClick={handleGuestCheckout}
-          >
-            Kontynuuj jako gość
-          </Button>
-          <p className={styles['guest-info']}>Zakup bez tworzenia konta. Dotyczy tylko produktów fizycznych.</p>
-        </div>
+        )}
 
         {isRegister ? (
           <p>
