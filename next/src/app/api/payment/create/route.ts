@@ -162,7 +162,7 @@ export async function POST(request: Request) {
 
       // Redirect based on order type
       const redirectUrl = isGuestOrder(input)
-        ? 'https://kierunek-dzierganie-git-physical-no-account-kryptonum.vercel.app/dziekujemy-za-zamowienie'
+        ? 'https://kierunekdzierganie.pl/dziekujemy-za-zamowienie'
         : `https://kierunekdzierganie.pl/moje-konto/zakupy/${data.id}`;
 
       return NextResponse.json({ link: redirectUrl });
@@ -177,8 +177,8 @@ export async function POST(request: Request) {
         email: input.billing.email,
         country: Country.Poland,
         language: Language.PL,
-        urlReturn: `https://kierunek-dzierganie-git-physical-no-account-kryptonum.vercel.app//api/payment/verify/?session=${session}&id=${data.id}`,
-        urlStatus: `https://kierunek-dzierganie-git-physical-no-account-kryptonum.vercel.app//api/payment/complete/?session=${session}&id=${data.id}`,
+        urlReturn: `https://kierunekdzierganie.pl//api/payment/verify/?session=${session}&id=${data.id}`,
+        urlStatus: `https://kierunekdzierganie.pl//api/payment/complete/?session=${session}&id=${data.id}`,
         timeLimit: 60,
         encoding: Encoding.UTF8,
         city: input.billing.city,
