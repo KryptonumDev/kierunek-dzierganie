@@ -103,19 +103,19 @@ export default function Checkout({
           toast.error('Dodano produkty cyfrowe - wymagane jest założenie konta lub zalogowanie się');
         }
 
+        const newAmount = fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0);
+
         return {
           ...prev,
+          user_id: prev.user_id || userId,
           // Reset guest checkout flag if cart is no longer eligible
           isGuestCheckout: shouldResetGuestCheckout ? undefined : prev.isGuestCheckout,
-          amount: fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0),
+          amount: newAmount,
           needDelivery: fetchedItems.some((item) => item.needDelivery),
           delivery: fetchedItems.some((item) => item.needDelivery)
             ? Number(shippingMethods.find((method) => method.name === currentShippingMethod)?.price)
             : 0,
-          freeDelivery:
-            freeShipping > 0 &&
-            fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0) >=
-              freeShipping,
+          freeDelivery: freeShipping > 0 && newAmount >= freeShipping,
           discount: usedDiscount?.affiliatedBy === userId ? null : usedDiscount,
           virtualMoney: usedVirtualMoney,
           products: {
