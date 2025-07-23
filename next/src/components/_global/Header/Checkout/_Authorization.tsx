@@ -73,13 +73,6 @@ export default function Authorization({
 
   const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
     if (isRegister) {
-      const { data: user } = await supabase.from('profiles').select('id').eq('email', data.email).single();
-
-      if (user) {
-        toast('Użytkownik z tym adresem e-mail już istnieje.');
-        return;
-      }
-
       await supabase.auth
         .signUp({
           email: data.email,
@@ -138,7 +131,6 @@ export default function Authorization({
             setStep(2);
             return;
           }
-          setStep(2);
         })
         .catch((error) => {
           toast(error.message);
