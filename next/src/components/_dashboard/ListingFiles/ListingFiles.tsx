@@ -39,6 +39,7 @@ const ListingFiles = ({ courses, left_handed, progress }: ListingFilesTypes) => 
       // get all files from lessons
       course.chapters?.forEach((chapter) => {
         chapter?.lessons?.forEach((lesson) => {
+          if (!lesson) return;
           if (lesson.files) obj.files.push(...lesson.files);
           if (lesson.files_alter) obj.filesAlt.push(...lesson.files_alter);
         });
