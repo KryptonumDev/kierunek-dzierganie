@@ -182,7 +182,8 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
     params: { slug },
     tags: ['product', 'course', 'productReviewCollection'],
   });
-  !data && notFound();
+  // If product is not found for the given slug within this category, render 404
+  if (!data?.product) notFound();
 
   return { data: data, user: res.data?.firstName as string };
 };
