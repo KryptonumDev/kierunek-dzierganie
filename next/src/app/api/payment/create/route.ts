@@ -45,7 +45,9 @@ export async function POST(request: Request) {
     }
     const { data: settingsData } = await supabase.from('settings').select('value').eq('name', 'ifirma').single();
 
-    const products = input.products?.array.map(async (product) => {
+    // Ensure we always have an array to map over
+    const productItems = input.products?.array ?? [];
+    const products = productItems.map(async (product) => {
       if (product.type === 'voucher') {
         // create instance in supabase
         const { data, error } = await supabase
@@ -107,7 +109,7 @@ export async function POST(request: Request) {
           guest_order_token: generateGuestOrderToken(),
           is_guest_order: true,
           products: {
-            array: await Promise.all(products!),
+            array: await Promise.all(products),
           },
           status: input.totalAmount <= 0 ? (input.needDelivery ? 2 : 3) : 1,
           billing: input.billing,
@@ -129,7 +131,7 @@ export async function POST(request: Request) {
           guest_order_token: null,
           is_guest_order: false,
           products: {
-            array: await Promise.all(products!),
+            array: await Promise.all(products),
           },
           status: input.totalAmount <= 0 ? (input.needDelivery ? 2 : 3) : 1,
           billing: input.billing,

@@ -10,7 +10,7 @@ import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 import { formatToOnlyDigits } from '@/utils/format-to-only-digits';
 import { formatPrice } from '@/utils/price-formatter';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import styles from './Header.module.scss';
@@ -47,7 +47,6 @@ export default function Cart({
   userId,
   ownedCourses,
   freeShipping,
-  deliverySettings,
   shippingMethods,
   currentShippingMethod,
 }: Cart) {
@@ -67,7 +66,7 @@ export default function Cart({
       fetchedItems?.some((item) => item.needDelivery)
         ? Number(shippingMethods.find((method) => method.name === currentShippingMethod)?.price)
         : null,
-    [fetchedItems, deliverySettings, currentShippingMethod, shippingMethods]
+    [fetchedItems, currentShippingMethod, shippingMethods]
   );
   const totalItemsCount = useMemo(() => {
     return cart?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
@@ -78,6 +77,16 @@ export default function Cart({
   }, [fetchedItems]);
 
   const discountCode = watch('discount');
+
+  // Track processed removals to avoid duplicate toasts/removals across quick re-renders/StrictMode
+  const processedRemovalsRef = useRef<Set<string>>(new Set());
+
+  // Clear processed set when cart is cleared to allow future toasts if user re-adds
+  useEffect(() => {
+    if (!cart || cart.length === 0) {
+      processedRemovalsRef.current.clear();
+    }
+  }, [cart]);
 
   useEffect(() => {
     addEventListener('keydown', (e) => {
@@ -105,12 +114,48 @@ export default function Cart({
       ) {
         // check is related in cart or in ownedCourses, if no, delete from cart
         if (!fetchedItems?.some((item) => item._id === el.related!._id) && !ownedCourses?.includes(el.related._id)) {
-          removeItem(el._id + (el.variant?._id ? `variant:${el.variant?._id}` : ''));
-          toast(`${el.name} został usunięty z koszyka, ponieważ nie posiadasz ${el.related.name}`);
+          const cartId = el.variant ? el._id + `variant:${el.variant._id}` : el._id;
+          if (!processedRemovalsRef.current.has(cartId)) {
+            processedRemovalsRef.current.add(cartId);
+            removeItem(cartId);
+            toast(`${el.name} został usunięty z koszyka, ponieważ nie posiadasz ${el.related.name}`);
+          }
         }
       }
     });
-  }, [fetchedItems, ownedCourses]);
+  }, [fetchedItems, ownedCourses, removeItem]);
+
+  // Remove from cart: bundles that include any already-owned course and individual courses already owned
+  useEffect(() => {
+    if (!fetchedItems || !ownedCourses?.length) return;
+
+    fetchedItems.forEach((el) => {
+      // Guard against variant id formatting
+      const cartId = el.variant ? el._id + `variant:${el.variant._id}` : el._id;
+
+      if (el._type === 'bundle') {
+        const bundleCourseIds = el.courses?.map((c) => c._id) ?? [];
+        const hasConflict = bundleCourseIds.some((id) => ownedCourses.includes(id));
+        if (hasConflict) {
+          if (!processedRemovalsRef.current.has(cartId)) {
+            processedRemovalsRef.current.add(cartId);
+            removeItem(cartId);
+            toast(`Pakiet "${el.name}" został usunięty z koszyka, ponieważ posiadasz już kurs z tego pakietu.`);
+          }
+        }
+      }
+
+      if (el._type === 'course') {
+        if (ownedCourses.includes(el._id)) {
+          if (!processedRemovalsRef.current.has(cartId)) {
+            processedRemovalsRef.current.add(cartId);
+            removeItem(cartId);
+            toast(`${el.name} został usunięty z koszyka, ponieważ już posiadasz ten kurs.`);
+          }
+        }
+      }
+    });
+  }, [fetchedItems, ownedCourses, removeItem]);
 
   const cartItems = cart?.map((item) => {
     return { ...item, _type: fetchedItems?.find((fetchedItem) => fetchedItem._id === item.id)?._type };

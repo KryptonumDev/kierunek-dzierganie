@@ -13,12 +13,12 @@
     margin-bottom: 4px;
 
     span {
-      font-size: calc(14rem/16);
+      font-size: calc(14rem / 16);
       color: var(--primary-800, #53423c);
 
       b {
         font-weight: 300;
-        font-size: calc(32rem/16);
+        font-size: calc(32rem / 16);
         font-family: var(--font-city-streetwear);
       }
     }
@@ -101,7 +101,7 @@
   }
 
   h3 {
-    font-size: clamp(calc(18rem/16), calc(24vw/7.68), calc(24rem/16));
+    font-size: clamp(calc(18rem / 16), calc(24vw / 7.68), calc(24rem / 16));
   }
 
   .link {
@@ -117,7 +117,7 @@
     margin-bottom: 24px;
 
     .badge {
-      font-size: calc(14rem/16);
+      font-size: calc(14rem / 16);
       position: absolute;
       display: block;
       top: 0;
@@ -169,13 +169,13 @@
 
     span {
       color: var(--primary-800, #53423c);
-      font-size: calc(18rem/16);
+      font-size: calc(18rem / 16);
       font-weight: 300;
       line-height: 150%;
 
       &.discount {
         color: var(--primary-600, #9a827a);
-        font-size: calc(14rem/16);
+        font-size: calc(14rem / 16);
         line-height: 150%;
         text-decoration: line-through;
       }
