@@ -105,55 +105,65 @@ export default function Cart({
     }
   }, [cart, usedDiscount, setUsedDiscount]);
 
+  // Unified cart validation: remove invalid items (related dependency missing, owned courses, conflicting bundles)
   useEffect(() => {
-    fetchedItems?.forEach((el) => {
+    if (!fetchedItems) return;
+
+    const plannedRemovals: Array<{ id: string; message: string }> = [];
+
+    fetchedItems.forEach((el) => {
+      const cartId = el.variant ? el._id + `variant:${el.variant._id}` : el._id;
+
+      // 1) Products that require owning/having related course (instruction/materials or invisible)
       if (
         (!el.visible || ['instruction', 'materials'].includes(el.basis)) &&
         el.related?._id &&
         el._type === 'product'
       ) {
-        // check is related in cart or in ownedCourses, if no, delete from cart
-        if (!fetchedItems?.some((item) => item._id === el.related!._id) && !ownedCourses?.includes(el.related._id)) {
-          const cartId = el.variant ? el._id + `variant:${el.variant._id}` : el._id;
+        const relatedInCart = fetchedItems.some((item) => item._id === el.related!._id);
+        const relatedOwned = ownedCourses?.includes(el.related._id) ?? false;
+        if (!relatedInCart && !relatedOwned) {
           if (!processedRemovalsRef.current.has(cartId)) {
-            processedRemovalsRef.current.add(cartId);
-            removeItem(cartId);
-            toast(`${el.name} został usunięty z koszyka, ponieważ nie posiadasz ${el.related.name}`);
+            plannedRemovals.push({
+              id: cartId,
+              message: `${el.name} został usunięty z koszyka, ponieważ nie posiadasz ${el.related.name}`,
+            });
+          }
+        }
+      }
+
+      // 2) Already-owned individual courses
+      if (el._type === 'course') {
+        if (ownedCourses?.includes(el._id)) {
+          if (!processedRemovalsRef.current.has(cartId)) {
+            plannedRemovals.push({
+              id: cartId,
+              message: `${el.name} został usunięty z koszyka, ponieważ już posiadasz ten kurs.`,
+            });
+          }
+        }
+      }
+
+      // 3) Bundles containing any already-owned course
+      if (el._type === 'bundle') {
+        const bundleCourseIds = el.courses?.map((c) => c._id) ?? [];
+        const hasConflict = bundleCourseIds.some((id) => ownedCourses?.includes(id));
+        if (hasConflict) {
+          if (!processedRemovalsRef.current.has(cartId)) {
+            plannedRemovals.push({
+              id: cartId,
+              message: `Pakiet "${el.name}" został usunięty z koszyka, ponieważ posiadasz już kurs z tego pakietu.`,
+            });
           }
         }
       }
     });
-  }, [fetchedItems, ownedCourses, removeItem]);
 
-  // Remove from cart: bundles that include any already-owned course and individual courses already owned
-  useEffect(() => {
-    if (!fetchedItems || !ownedCourses?.length) return;
-
-    fetchedItems.forEach((el) => {
-      // Guard against variant id formatting
-      const cartId = el.variant ? el._id + `variant:${el.variant._id}` : el._id;
-
-      if (el._type === 'bundle') {
-        const bundleCourseIds = el.courses?.map((c) => c._id) ?? [];
-        const hasConflict = bundleCourseIds.some((id) => ownedCourses.includes(id));
-        if (hasConflict) {
-          if (!processedRemovalsRef.current.has(cartId)) {
-            processedRemovalsRef.current.add(cartId);
-            removeItem(cartId);
-            toast(`Pakiet "${el.name}" został usunięty z koszyka, ponieważ posiadasz już kurs z tego pakietu.`);
-          }
-        }
-      }
-
-      if (el._type === 'course') {
-        if (ownedCourses.includes(el._id)) {
-          if (!processedRemovalsRef.current.has(cartId)) {
-            processedRemovalsRef.current.add(cartId);
-            removeItem(cartId);
-            toast(`${el.name} został usunięty z koszyka, ponieważ już posiadasz ten kurs.`);
-          }
-        }
-      }
+    // Execute removals with deduped toasts
+    plannedRemovals.forEach(({ id, message }) => {
+      processedRemovalsRef.current.add(id);
+      removeItem(id);
+      toast(message, { toastId: `rm-${id}` });
     });
   }, [fetchedItems, ownedCourses, removeItem]);
 
