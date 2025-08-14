@@ -201,6 +201,7 @@ export const PRODUCT_CARD_QUERY = `
     _id,
     automatizationId,
   },
+  automatizationId,
 `;
 
 export const MATERIAL_PACKAGE_QUERY = `materialsPackage[] {

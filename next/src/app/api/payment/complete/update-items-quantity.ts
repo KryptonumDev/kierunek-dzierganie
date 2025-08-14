@@ -12,6 +12,7 @@ export async function updateItemsQuantity(data: any) {
       type: string;
       variantId: string;
       id: string;
+      automatizationId?: string;
       courses: null | { _id: string; automatizationId?: string; previewGroupMailerLite?: string }[];
     }) => {
       // create courses_progress record for each course (skip for guest orders)
@@ -69,6 +70,22 @@ export async function updateItemsQuantity(data: any) {
         } catch (error) {
           console.error('Error while updating variant quantity', error);
         }
+
+        // Add to MailerLite group if variant product has automatizationId
+        if (product.automatizationId) {
+          try {
+            const addToGroupData = {
+              email: data.billing?.email,
+              name: data.billing?.firstName,
+              group: product.automatizationId,
+            };
+            console.log('Add variant product buyer to MailerLite group:', addToGroupData);
+            const res = await addToGroup(addToGroupData.email, addToGroupData.name, addToGroupData.group);
+            console.log('MailerLite response for variant product:', res);
+          } catch (error) {
+            console.error('Error while adding variant product buyer to MailerLite group:', error);
+          }
+        }
       } else if (product.type === 'product') {
         // decrease quantity of each physical product
         try {
@@ -76,6 +93,22 @@ export async function updateItemsQuantity(data: any) {
           console.log('Update product quantity', res);
         } catch (error) {
           console.error('Error while updating product quantity', error);
+        }
+
+        // Add to MailerLite group if physical product has automatizationId
+        if (product.automatizationId) {
+          try {
+            const addToGroupData = {
+              email: data.billing?.email,
+              name: data.billing?.firstName,
+              group: product.automatizationId,
+            };
+            console.log('Add physical product buyer to MailerLite group:', addToGroupData);
+            const res = await addToGroup(addToGroupData.email, addToGroupData.name, addToGroupData.group);
+            console.log('MailerLite response for physical product:', res);
+          } catch (error) {
+            console.error('Error while adding physical product buyer to MailerLite group:', error);
+          }
         }
       }
     }
