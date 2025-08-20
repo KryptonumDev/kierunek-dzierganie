@@ -139,6 +139,7 @@ export default function Checkout({
                 type: item._type,
                 voucherData: item.voucherData,
                 basis: item.basis,
+                automatizationId: item.automatizationId, // Add automatizationId for all product types
               };
             }),
           },

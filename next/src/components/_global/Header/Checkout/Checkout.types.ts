@@ -65,6 +65,7 @@ export type InputState = {
         amount: number;
         type: 'PHYSICAL' | 'DIGITAL';
       };
+      automatizationId?: string | null;
     }[];
   };
   client_notes: string;

@@ -47,6 +47,18 @@ export async function POST(request: Request) {
 
     // Ensure we always have an array to map over
     const productItems = input.products?.array ?? [];
+
+    // Guard: Prevent creating orders with empty product arrays
+    if (productItems.length === 0) {
+      console.error('🚫 Payment creation blocked: Empty products array', {
+        user_id: input.user_id,
+        guest_email: input.billing?.email,
+        amount: input.totalAmount,
+        timestamp: new Date().toISOString(),
+      });
+      return NextResponse.json({ error: 'Cannot create order with empty products array' }, { status: 400 });
+    }
+
     const products = productItems.map(async (product) => {
       if (product.type === 'voucher') {
         // create instance in supabase

@@ -7,6 +7,17 @@ const resend = new Resend(process.env.RESEND_API_TOKEN);
 export async function sendEmails(data: any) {
   console.log(data.products.array);
 
+  // Safety guard: Should not happen due to earlier guards, but just in case
+  if (!data.products?.array || data.products.array.length === 0) {
+    console.error('🚫 Email sending skipped: Empty products array', {
+      order_id: data.id,
+      user_id: data.user_id,
+      guest_email: data.guest_email,
+      timestamp: new Date().toISOString(),
+    });
+    return;
+  }
+
   let needToSendVoucher = false;
 
   let attachments = data.products.array

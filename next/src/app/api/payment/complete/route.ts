@@ -30,6 +30,22 @@ export async function POST(request: Request) {
     );
 
     if (error) throw new Error(error.message);
+
+    // Guard: Prevent processing orders with empty product arrays
+    if (!data.products?.array || data.products.array.length === 0) {
+      console.error('🚫 Payment completion blocked: Empty products array', {
+        order_id: id,
+        user_id: data.user_id,
+        guest_email: data.guest_email,
+        amount: data.amount,
+        timestamp: new Date().toISOString(),
+      });
+      return NextResponse.json(
+        { error: 'Cannot process payment for order with empty products array' },
+        { status: 400 }
+      );
+    }
+
     await checkUsedModifications(data);
     await updateItemsQuantity(data);
     console.log('payment/complete:data');

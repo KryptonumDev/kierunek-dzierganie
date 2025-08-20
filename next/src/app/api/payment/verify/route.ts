@@ -29,6 +29,8 @@ export async function GET(request: Request) {
     // Cannot read properties of undefined (reading 'status')
     if (responseData.data.status == 1 || responseData.data.status == 2) {
       // TODO: payment success status
+      // Note: Cart clearing is handled on the thank you page for guest orders
+      // For user orders, the cart should be cleared client-side after redirect
       return NextResponse.redirect(redirectUrl);
     }
 
