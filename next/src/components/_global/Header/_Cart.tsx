@@ -114,12 +114,8 @@ export default function Cart({
     fetchedItems.forEach((el) => {
       const cartId = el.variant ? el._id + `variant:${el.variant._id}` : el._id;
 
-      // 1) Products that require owning/having related course (instruction/materials or invisible)
-      if (
-        (!el.visible || ['instruction', 'materials'].includes(el.basis)) &&
-        el.related?._id &&
-        el._type === 'product'
-      ) {
+      // 1) Products that require owning/having related course (any product with a related course)
+      if (el.related?._id && el._type === 'product') {
         const relatedInCart = fetchedItems.some((item) => item._id === el.related!._id);
         const relatedOwned = ownedCourses?.includes(el.related._id) ?? false;
         if (!relatedInCart && !relatedOwned) {

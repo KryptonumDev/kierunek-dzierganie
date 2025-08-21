@@ -89,6 +89,7 @@ export const getGuestCheckoutBlockedMessage = (validation: CartValidationResult)
             return 'pakiety';
           case 'voucher':
             return 'vouchery';
+
           default:
             return type;
         }
