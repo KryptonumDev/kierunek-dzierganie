@@ -28,7 +28,8 @@ export async function POST(request: Request) {
           coupon_type
         ),
         voucher_amount_left,
-        discounted_product
+        discounted_product,
+        discounted_products
         `
       )
       .eq('code', code)
@@ -104,11 +105,25 @@ export async function POST(request: Request) {
 
     // @ts-expect-error wrong types from supabase
     if (data?.coupons_types?.coupon_type === 'FIXED PRODUCT') {
-      const inCart = cart.find((item: { product: string }) => item.product === data?.discounted_product.id);
+      const eligibleIds =
+        Array.isArray(data?.discounted_products) && data.discounted_products.length > 0
+          ? data.discounted_products.map((p: { id: string }) => p.id)
+          : data?.discounted_product?.id
+            ? [data.discounted_product.id]
+            : [];
 
-      if (!inCart) {
+      // If no eligibleIds, coupon does not apply to any product
+      const eligibleCount =
+        eligibleIds.length > 0
+          ? cart.filter((item: { product: string }) => eligibleIds.includes(item.product)).length
+          : 0;
+
+      if (eligibleCount === 0) {
         return NextResponse.json({ error: 'Kod rabatowy nie dotyczy żadnego produktu w koszyku' }, { status: 500 });
       }
+
+      // Attach eligibleCount (augment response type locally)
+      (data as unknown as { eligibleCount?: number }).eligibleCount = eligibleCount;
     }
 
     // @ts-expect-error wrong types from supabase

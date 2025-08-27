@@ -59,9 +59,18 @@ export async function generateBill(data: any, id: string) {
               console.log('amount😂');
               console.log(amount);
             } else if (data.used_discount.type === 'FIXED PRODUCT') {
-              data.used_discount.discounted_product.id === product.id
-                ? (amount = (product.discount ?? product.price) - data.used_discount.amount / product.quantity)
-                : (discount = 0);
+              const eligibleIds =
+                Array.isArray(data.used_discount.discounted_products) &&
+                data.used_discount.discounted_products.length > 0
+                  ? data.used_discount.discounted_products.map((p: { id: string }) => p.id)
+                  : data.used_discount.discounted_product?.id
+                    ? [data.used_discount.discounted_product.id]
+                    : [];
+              if (eligibleIds.includes(product.id)) {
+                amount = (product.discount ?? product.price) - data.used_discount.amount / product.quantity;
+              } else {
+                discount = 0;
+              }
             }
           }
 
@@ -95,9 +104,18 @@ export async function generateBill(data: any, id: string) {
                 console.log('amount');
                 console.log(amount);
               } else if (data.used_discount.type === 'FIXED PRODUCT') {
-                data.used_discount.discounted_product.id === product.id
-                  ? (amount = (product.discount ?? product.price) - data.used_discount.amount / product.quantity)
-                  : (discount = 0);
+                const eligibleIds =
+                  Array.isArray(data.used_discount.discounted_products) &&
+                  data.used_discount.discounted_products.length > 0
+                    ? data.used_discount.discounted_products.map((p: { id: string }) => p.id)
+                    : data.used_discount.discounted_product?.id
+                      ? [data.used_discount.discounted_product.id]
+                      : [];
+                if (eligibleIds.includes(product.id)) {
+                  amount = (product.discount ?? product.price) - data.used_discount.amount / product.quantity;
+                } else {
+                  discount = 0;
+                }
               }
             }
 

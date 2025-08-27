@@ -10,7 +10,13 @@ export function calculateDiscountAmount(price: number, discount: Discount, deliv
   }
 
   if (discount.type === 'FIXED PRODUCT') {
-    return discount.amount > price ? -price : -discount.amount;
+    // Apply per eligible line item if available; clamp to cart price
+    const eligibleCount =
+      typeof (discount as unknown as { eligibleCount?: number }).eligibleCount === 'number'
+        ? (discount as unknown as { eligibleCount?: number }).eligibleCount!
+        : 1;
+    const total = discount.amount * Math.max(0, eligibleCount);
+    return total > price ? -price : -total;
   }
 
   if (discount.type === 'DELIVERY' && delivery) {

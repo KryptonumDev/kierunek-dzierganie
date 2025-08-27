@@ -568,6 +568,11 @@ export type Discount = {
     id: string;
     name: string;
   };
+  // Optional new array-based field during transition; server may include it
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  discounted_products?: Array<{ id: string; name: string }> | any;
+  // Number of eligible line items in cart/order for FIXED PRODUCT coupons
+  eligibleCount?: number;
   affiliatedBy: string | null;
 };
 

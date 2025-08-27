@@ -97,7 +97,14 @@ export default function Cart({
 
   useEffect(() => {
     if (usedDiscount?.type === 'FIXED PRODUCT') {
-      const product = cart?.find((item) => item.product === usedDiscount.discounted_product.id);
+      const eligibleIds =
+        Array.isArray((usedDiscount as any).discounted_products) && (usedDiscount as any).discounted_products.length > 0
+          ? (usedDiscount as any).discounted_products.map((p: { id: string }) => p.id)
+          : usedDiscount.discounted_product?.id
+            ? [usedDiscount.discounted_product.id]
+            : [];
+
+      const product = eligibleIds.length === 0 ? cart?.[0] : cart?.find((item) => eligibleIds.includes(item.product));
       if (!product) {
         setUsedDiscount(null);
         toast('Produkt, do którego przypisany jest kupon, został usunięty z koszyka');
@@ -198,6 +205,15 @@ export default function Cart({
           return;
         }
 
+        const eligibleIds =
+          Array.isArray(data.discounted_products) && data.discounted_products.length > 0
+            ? data.discounted_products.map((p: { id: string }) => p.id)
+            : data.discounted_product?.id
+              ? [data.discounted_product.id]
+              : [];
+
+        const eligibleCount = eligibleIds.length > 0 ? cart?.filter((i) => eligibleIds.includes(i.product)).length : 0;
+
         setUsedDiscount({
           totalVoucherAmount: data.coupons_types.coupon_type === 'VOUCHER' ? data.amount : null,
           amount: data.coupons_types.coupon_type === 'VOUCHER' ? data.voucher_amount_left : data.amount,
@@ -205,7 +221,9 @@ export default function Cart({
           id: data.id,
           type: data.coupons_types.coupon_type,
           discounted_product: data.discounted_product,
+          discounted_products: data.discounted_products,
           affiliatedBy: data.affiliation_of,
+          eligibleCount: data.coupons_types.coupon_type === 'FIXED PRODUCT' ? eligibleCount : undefined,
         });
       })
       .catch((error) => {
