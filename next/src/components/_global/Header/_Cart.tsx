@@ -16,6 +16,7 @@ import { toast } from 'react-toastify';
 import styles from './Header.module.scss';
 import type { Cart, CartForm, EmptyCart, Grid } from './Header.types';
 import Popup from './Popup/Popup';
+import { Discount } from '@/global/types';
 
 const gtag: Gtag.Gtag = function () {
   // eslint-disable-next-line prefer-rest-params
@@ -98,8 +99,9 @@ export default function Cart({
   useEffect(() => {
     if (usedDiscount?.type === 'FIXED PRODUCT') {
       const eligibleIds =
-        Array.isArray((usedDiscount as any).discounted_products) && (usedDiscount as any).discounted_products.length > 0
-          ? (usedDiscount as any).discounted_products.map((p: { id: string }) => p.id)
+        Array.isArray((usedDiscount as Discount).discounted_products) &&
+        (usedDiscount as Discount).discounted_products.length > 0
+          ? (usedDiscount as Discount).discounted_products.map((p: { id: string }) => p.id)
           : usedDiscount.discounted_product?.id
             ? [usedDiscount.discounted_product.id]
             : [];
