@@ -67,7 +67,12 @@ export async function generateBill(data: any, id: string) {
                     ? [data.used_discount.discounted_product.id]
                     : [];
               if (eligibleIds.includes(product.id)) {
-                amount = (product.discount ?? product.price) - data.used_discount.amount / product.quantity;
+                // If total amount already includes sum across items, distribute equally per eligible item
+                const perItemAmount =
+                  data.used_discount.eligibleCount && data.used_discount.eligibleCount > 0
+                    ? Math.floor(data.used_discount.amount / data.used_discount.eligibleCount)
+                    : data.used_discount.amount;
+                amount = (product.discount ?? product.price) - perItemAmount / product.quantity;
               } else {
                 discount = 0;
               }
@@ -112,7 +117,11 @@ export async function generateBill(data: any, id: string) {
                       ? [data.used_discount.discounted_product.id]
                       : [];
                 if (eligibleIds.includes(product.id)) {
-                  amount = (product.discount ?? product.price) - data.used_discount.amount / product.quantity;
+                  const perItemAmount =
+                    data.used_discount.eligibleCount && data.used_discount.eligibleCount > 0
+                      ? Math.floor(data.used_discount.amount / data.used_discount.eligibleCount)
+                      : data.used_discount.amount;
+                  amount = (product.discount ?? product.price) - perItemAmount / product.quantity;
                 } else {
                   discount = 0;
                 }

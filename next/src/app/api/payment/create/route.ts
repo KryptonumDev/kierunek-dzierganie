@@ -113,6 +113,24 @@ export async function POST(request: Request) {
       }
     });
 
+    // Compute total discount for FIXED PRODUCT coupons across eligible lines
+    const overrideDiscount = (() => {
+      const d = input.discount;
+      if (!d || d.type !== 'FIXED PRODUCT') return d || null;
+      const eligibleIds =
+        Array.isArray((d as unknown as { discounted_products?: Array<{ id: string }> }).discounted_products) &&
+        (d as unknown as { discounted_products?: Array<{ id: string }> }).discounted_products!.length > 0
+          ? (d as unknown as { discounted_products: Array<{ id: string }> }).discounted_products.map((p) => p.id)
+          : d.discounted_product?.id
+            ? [d.discounted_product.id]
+            : [];
+
+      if (eligibleIds.length === 0) return d;
+      const eligibleCount = productItems.filter((p) => eligibleIds.includes(p.id)).length;
+      const total = d.amount * Math.max(0, eligibleCount);
+      return { ...d, amount: total, eligibleCount };
+    })();
+
     // Create order data with guest support
     const orderData = isGuestOrder(input)
       ? {
@@ -128,7 +146,7 @@ export async function POST(request: Request) {
           shipping: input.needDelivery && !input.shippingMethod?.data ? input.shipping : null,
           amount: input.totalAmount < 0 ? 0 : input.totalAmount,
           shipping_method: input.needDelivery ? input.shippingMethod : null,
-          used_discount: input.discount || null,
+          used_discount: overrideDiscount,
           used_virtual_money: null, // Guests cannot use virtual money
           paid_at: null,
           payment_id: null,
@@ -150,7 +168,7 @@ export async function POST(request: Request) {
           shipping: input.needDelivery && !input.shippingMethod?.data ? input.shipping : null,
           amount: input.totalAmount < 0 ? 0 : input.totalAmount,
           shipping_method: input.needDelivery ? input.shippingMethod : null,
-          used_discount: input.discount || null,
+          used_discount: overrideDiscount,
           used_virtual_money: input.virtualMoney,
           paid_at: null,
           payment_id: null,
