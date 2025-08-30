@@ -128,7 +128,7 @@ export async function POST(request: Request) {
       if (eligibleIds.length === 0) return d;
       const eligibleCount = productItems.filter((p) => eligibleIds.includes(p.id)).length;
       const total = d.amount * Math.max(0, eligibleCount);
-      return { ...d, amount: total, eligibleCount };
+      return { ...d, amount: total };
     })();
 
     // Create order data with guest support

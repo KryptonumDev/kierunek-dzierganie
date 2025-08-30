@@ -67,11 +67,12 @@ export async function generateBill(data: any, id: string) {
                     ? [data.used_discount.discounted_product.id]
                     : [];
               if (eligibleIds.includes(product.id)) {
-                // If total amount already includes sum across items, distribute equally per eligible item
+                // Distribute total discount equally per eligible item (compute eligibleCount here)
+                const eligibleCount = data.products.array.filter((p: { id: string }) =>
+                  eligibleIds.includes(p.id)
+                ).length;
                 const perItemAmount =
-                  data.used_discount.eligibleCount && data.used_discount.eligibleCount > 0
-                    ? Math.floor(data.used_discount.amount / data.used_discount.eligibleCount)
-                    : data.used_discount.amount;
+                  eligibleCount > 0 ? Math.floor(data.used_discount.amount / eligibleCount) : data.used_discount.amount;
                 amount = (product.discount ?? product.price) - perItemAmount / product.quantity;
               } else {
                 discount = 0;
@@ -117,9 +118,12 @@ export async function generateBill(data: any, id: string) {
                       ? [data.used_discount.discounted_product.id]
                       : [];
                 if (eligibleIds.includes(product.id)) {
+                  const eligibleCount = data.products.array.filter((p: { id: string }) =>
+                    eligibleIds.includes(p.id)
+                  ).length;
                   const perItemAmount =
-                    data.used_discount.eligibleCount && data.used_discount.eligibleCount > 0
-                      ? Math.floor(data.used_discount.amount / data.used_discount.eligibleCount)
+                    eligibleCount > 0
+                      ? Math.floor(data.used_discount.amount / eligibleCount)
                       : data.used_discount.amount;
                   amount = (product.discount ?? product.price) - perItemAmount / product.quantity;
                 } else {
