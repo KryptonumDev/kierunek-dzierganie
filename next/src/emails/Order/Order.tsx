@@ -29,6 +29,11 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
   const totalItemsPrice =
     data.products.array?.reduce((acc, item) => acc + (item.discount ?? item.price!) * item.quantity!, 0) ?? 0;
   const hasCourses = data.products.array?.some((item) => item.type === 'course') ?? false;
+  const discountCents = data.used_discount
+    ? data.used_discount.type === 'FIXED PRODUCT'
+      ? -Math.min(data.used_discount.amount, totalItemsPrice)
+      : calculateDiscountAmount(totalItemsPrice, data.used_discount, data.shipping_method?.price)
+    : 0;
   return (
     <div style={{ width: '620px', margin: '0 auto' }}>
       <div style={{ borderRadius: '6px 6px 0px 0px', backgroundColor: '#fdfbf8', padding: '36px 42px 48px 42px' }}>
@@ -210,9 +215,7 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
                     lineHeight: '150%',
                   }}
                 >
-                  {formatPrice(
-                    calculateDiscountAmount(totalItemsPrice, data.used_discount, data.shipping_method?.price)
-                  )}
+                  {formatPrice(discountCents)}
                 </span>
               </p>
             )}
@@ -266,9 +269,7 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
               >
                 {formatPrice(
                   totalItemsPrice +
-                    (data.used_discount
-                      ? calculateDiscountAmount(totalItemsPrice, data.used_discount, data.shipping_method?.price)
-                      : 0) -
+                    (data.used_discount ? discountCents : 0) -
                     (data.virtualMoney ? data.virtualMoney * 100 : 0) +
                     (data.shipping_method ? data.shipping_method.price : 0)
                 )}
