@@ -66,18 +66,8 @@ export const redirects = [
     permanent: true,
   },
   {
-    source: '/kursy-szydelkowania/drukowana-instrukcja-do-kursu-nietoperz-karzan',
-    destination: '/produkty/szydelkowanie',
-    permanent: true,
-  },
-  {
     source: '/kursy-szydelkowania/pakiet-materialow-do-krolikow',
     destination: '/produkty/szydelkowanie',
-    permanent: true,
-  },
-  {
-    source: '/kursy-szydelkowania/kurs-nietoperz-karzan',
-    destination: '/kursy-szydelkowania',
     permanent: true,
   },
   {
@@ -162,11 +152,7 @@ export const redirects = [
     destination: '/produkty/dzierganie/markery-knitpro-mindful-chakra',
     permanent: true,
   },
-  {
-    source: '/kursy-szydelkowania/materialy-do-kursu-nietoperz-karzan',
-    destination: '/kursy-szydelkowania/kurs-nietoperz-karzan-s',
-    permanent: true,
-  },
+
   {
     source: '/kursy-dziergania-na-drutach/druty-knitpro-basix-beech-8mm',
     destination: '/produkty/dzierganie',
