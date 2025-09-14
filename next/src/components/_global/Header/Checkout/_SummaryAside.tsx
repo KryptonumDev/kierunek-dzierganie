@@ -3,6 +3,7 @@ import { courseComplexityEnum } from '@/global/constants';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 import { formatPrice } from '@/utils/price-formatter';
 import { useMemo } from 'react';
+import type { Discount } from '@/global/types';
 import styles from './Checkout.module.scss';
 import type { AsideProps } from './Checkout.types';
 
@@ -11,6 +12,23 @@ export default function SummaryAside({ input }: AsideProps) {
     () => input.products?.array?.reduce((acc, curr) => acc + curr.quantity, 0) || 0,
     [input.products?.array]
   );
+
+  const discountsAmount = useMemo(() => {
+    const discounts = (input as unknown as { discounts?: Discount[] }).discounts;
+    if (!Array.isArray(discounts) || discounts.length === 0) return 0;
+    const price = input.amount;
+    const delivery = input.needDelivery ? input.delivery : 0;
+
+    const productTotal = discounts
+      .filter((d) => d.type === 'FIXED PRODUCT')
+      .reduce((sum, d) => sum + calculateDiscountAmount(price, d, 0), 0);
+    const baseAfterProducts = Math.max(0, price + delivery + productTotal);
+    const voucher = discounts.find((d) => d.type === 'VOUCHER');
+    const voucherTotal = voucher ? -Math.min(baseAfterProducts, voucher.totalVoucherAmount ?? voucher.amount ?? 0) : 0;
+    const cartWide = discounts.find((d) => d.type === 'PERCENTAGE' || d.type === 'FIXED CART');
+    if (cartWide && discounts.length === 1) return calculateDiscountAmount(price, cartWide, delivery);
+    return productTotal + voucherTotal;
+  }, [input]);
 
   return (
     <div className={styles['summary-aside']}>
@@ -27,7 +45,14 @@ export default function SummaryAside({ input }: AsideProps) {
           <span>{input.freeDelivery ? formatPrice(0) : formatPrice(input.delivery)}</span>
         </p>
       )}
-      {input.discount && (
+      {Array.isArray((input as unknown as { discounts?: Discount[] }).discounts) &&
+        ((input as unknown as { discounts?: Discount[] }).discounts as Discount[]).length > 0 && (
+          <p>
+            <span>Kupony</span>
+            <span>{formatPrice(discountsAmount)}</span>
+          </p>
+        )}
+      {!((input as unknown as { discounts?: Discount[] }).discounts || []).length && input.discount && (
         <p>
           <span>Kupon: {input.discount.code}</span>
           <span>{formatPrice(calculateDiscountAmount(input.amount, input.discount, input.delivery))}</span>
@@ -44,7 +69,12 @@ export default function SummaryAside({ input }: AsideProps) {
         <span>
           {formatPrice(
             input.amount +
-              (input.discount ? calculateDiscountAmount(input.amount, input.discount, input.delivery) : 0) -
+              (Array.isArray((input as unknown as { discounts?: Discount[] }).discounts) &&
+              ((input as unknown as { discounts?: Discount[] }).discounts as Discount[]).length > 0
+                ? discountsAmount
+                : input.discount
+                  ? calculateDiscountAmount(input.amount, input.discount, input.delivery)
+                  : 0) -
               (input.virtualMoney ? input.virtualMoney * 100 : 0) +
               (input.needDelivery && !input.freeDelivery ? input.delivery : 0),
             0

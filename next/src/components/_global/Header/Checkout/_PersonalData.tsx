@@ -4,7 +4,7 @@ import Input from '@/components/ui/Input';
 import Radio from '@/components/ui/Radio';
 import Select from '@/components/ui/Select';
 import { REGEX } from '@/global/constants';
-import type { MapPoint } from '@/global/types';
+import type { Discount, MapPoint } from '@/global/types';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 import { formatPrice } from '@/utils/price-formatter';
 import Script from 'next/script';
@@ -27,6 +27,25 @@ const generateNewInput = (
   selectedMapPoint: MapPoint | null,
   shippingMethods: { name: string; map: boolean; price: number }[]
 ) => {
+  // Compute combined discount for multi-coupon support (matches cart and server rules)
+  const discounts = (input as unknown as { discounts?: Discount[] }).discounts;
+  const delivery = shippingMethods.find((method) => method.name === data.shippingMethod)?.price || 0;
+  const discountsAmount = (() => {
+    if (!Array.isArray(discounts) || discounts.length === 0)
+      return input.discount ? calculateDiscountAmount(input.amount, input.discount, delivery) : 0;
+    const productTotal = discounts
+      .filter((d) => d.type === 'FIXED PRODUCT')
+      .reduce((sum, d) => sum + calculateDiscountAmount(input.amount, d, 0), 0);
+    const baseAfterProducts = Math.max(0, input.amount + delivery + productTotal);
+    const voucher = discounts.find((d) => d.type === 'VOUCHER');
+    const voucherTotal = voucher ? -Math.min(baseAfterProducts, voucher.totalVoucherAmount ?? voucher.amount ?? 0) : 0;
+    const cartWide = discounts.find((d) => d.type === 'PERCENTAGE' || d.type === 'FIXED CART');
+    if (cartWide && discounts.length === 1) return calculateDiscountAmount(input.amount, cartWide, delivery);
+    return productTotal + voucherTotal;
+  })();
+
+  // For analytics you may want to join codes here; not needed in payload
+
   return {
     ...input,
     firmOrder: data.invoiceType === 'Firma',
@@ -36,15 +55,10 @@ const generateNewInput = (
       price: shippingMethods.find((method) => method.name === data.shippingMethod)?.price || 0,
       data: shippingMethods.find((method) => method.name === data.shippingMethod)?.map ? selectedMapPoint : '',
     },
+    discounts: discounts, // keep array for server
     totalAmount:
       input.amount +
-      (input.discount
-        ? calculateDiscountAmount(
-            input.amount,
-            input.discount,
-            shippingMethods.find((method) => method.name === data.shippingMethod)?.price
-          )
-        : 0) -
+      discountsAmount -
       (input.virtualMoney ? input.virtualMoney * 100 : 0) +
       (input.needDelivery && !input.freeDelivery ? Number(input.delivery) : 0),
     client_notes: data.client_notes,

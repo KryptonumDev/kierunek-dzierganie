@@ -59,10 +59,9 @@ export default function Checkout({
   userEmail,
   billing,
   shipping,
-  usedDiscount,
+  usedDiscounts,
   usedVirtualMoney,
   userId,
-  setUsedDiscount,
   deliverySettings,
   freeShipping,
   shippingMethods,
@@ -116,7 +115,10 @@ export default function Checkout({
             ? Number(shippingMethods.find((method) => method.name === currentShippingMethod)?.price)
             : 0,
           freeDelivery: freeShipping > 0 && newAmount >= freeShipping,
-          discount: usedDiscount?.affiliatedBy === userId ? null : usedDiscount,
+          // Legacy single discount retained for old flows; new array provided in parallel
+          discount:
+            usedDiscounts.length === 1 && usedDiscounts[0]?.affiliatedBy === userId ? null : (usedDiscounts[0] ?? null),
+          discounts: usedDiscounts,
           virtualMoney: usedVirtualMoney,
           products: {
             array: fetchedItems.map((item) => {
@@ -158,9 +160,8 @@ export default function Checkout({
       input.isGuestCheckout,
       step,
       setInput,
-      usedDiscount,
+      usedDiscounts,
       usedVirtualMoney,
-      setUsedDiscount,
       deliverySettings,
     ]
   );

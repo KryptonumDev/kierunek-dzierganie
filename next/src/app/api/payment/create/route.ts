@@ -1,5 +1,5 @@
 import type { InputState } from '@/components/_global/Header/Checkout/Checkout.types';
-import { dedicatedVoucher, voucher } from '@/utils/create-voucher';
+import { dedicatedVoucher, voucher as generateVoucherPdf } from '@/utils/create-voucher';
 import { formatPrice } from '@/utils/price-formatter';
 import { createClient } from '@/utils/supabase-admin';
 import { Country, Currency, Encoding, Language, P24 } from '@ingameltd/node-przelewy24';
@@ -94,7 +94,7 @@ export async function POST(request: Request) {
         product.voucherData!.dedication;
         const blob = product.voucherData!.dedication
           ? await dedicatedVoucher({ code, date, amount, dedication: product.voucherData!.dedication })
-          : await voucher({ code, amount, date });
+          : await generateVoucherPdf({ code, amount, date });
 
         return {
           ...product,
@@ -113,28 +113,91 @@ export async function POST(request: Request) {
       }
     });
 
-    // Compute total discount for FIXED PRODUCT coupons across eligible lines
-    const overrideDiscount = (() => {
-      const d = input.discount;
-      if (!d || d.type !== 'FIXED PRODUCT') return d || null;
+    // Normalize discounts: support arrays (new) and single discount (legacy)
+    const discountsArray = (() => {
+      const arr = (
+        input as unknown as {
+          discounts?: Array<{
+            amount: number;
+            code: string;
+            id: string;
+            type: string;
+            discounted_products?: Array<{ id: string }>;
+            discounted_product?: { id: string } | null;
+            eligibleCount?: number;
+            totalVoucherAmount?: number | null;
+          }>;
+        }
+      ).discounts as
+        | Array<{
+            amount: number;
+            code: string;
+            id: string;
+            type: string;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            discounted_products?: Array<{ id: string }> | any;
+            discounted_product?: { id: string } | null;
+            eligibleCount?: number;
+            totalVoucherAmount?: number | null;
+          }>
+        | undefined;
+      if (Array.isArray(arr) && arr.length > 0) return arr;
+      return input.discount ? [input.discount] : [];
+    })();
+
+    // Compute total discounts per coupon; enforce simple v1 rules server-side
+    const computeFixedProductTotal = (d: {
+      amount: number;
+      discounted_products?: Array<{ id: string }> | undefined;
+      discounted_product?: { id: string } | null;
+    }) => {
       const eligibleIds =
-        Array.isArray((d as unknown as { discounted_products?: Array<{ id: string }> }).discounted_products) &&
-        (d as unknown as { discounted_products?: Array<{ id: string }> }).discounted_products!.length > 0
-          ? (d as unknown as { discounted_products: Array<{ id: string }> }).discounted_products.map((p) => p.id)
+        Array.isArray(d.discounted_products) && d.discounted_products.length > 0
+          ? d.discounted_products.map((p) => p.id)
           : d.discounted_product?.id
             ? [d.discounted_product.id]
             : [];
-
-      if (eligibleIds.length === 0) return d;
+      if (eligibleIds.length === 0) return 0;
       const eligibleUnits = productItems.reduce(
         (sum, p) => (eligibleIds.includes(p.id) ? sum + (p.quantity ?? 1) : sum),
         0
       );
-      const total = d.amount * Math.max(0, eligibleUnits);
-      const rest = { ...(d as unknown as Record<string, unknown>) };
-      delete (rest as Record<string, unknown>).eligibleCount;
-      return { ...(rest as typeof d), amount: total };
-    })();
+      return d.amount * Math.max(0, eligibleUnits);
+    };
+
+    // Separate by type
+    const fixedProduct = discountsArray.filter((d) => d.type === 'FIXED PRODUCT');
+    const voucher = discountsArray.filter((d) => d.type === 'VOUCHER');
+    const cartWide = discountsArray.filter((d) => d.type === 'PERCENTAGE' || d.type === 'FIXED CART');
+
+    // v1 policy enforcement: reject cart-wide mixes (soft-fail to legacy single)
+    if (cartWide.length > 0 && discountsArray.length > 1) {
+      return NextResponse.json({ error: 'Nie można łączyć kodów koszykowych z innymi zniżkami' }, { status: 400 });
+    }
+
+    // Calculate fixed-product total
+    const fixedProductTotal = fixedProduct.reduce((sum, d) => sum + computeFixedProductTotal(d), 0);
+
+    // Voucher last, capped by remaining total
+    const productsSubtotal = productItems.reduce(
+      (acc, p) => acc + (typeof p.discount === 'number' ? p.discount : p.price) * (p.quantity ?? 1),
+      0
+    );
+    const deliveryAmount = input.needDelivery ? (input.shippingMethod?.price ?? 0) : 0;
+    const baseAfterFixed = Math.max(0, productsSubtotal + deliveryAmount - fixedProductTotal);
+    const voucherUsed =
+      voucher.length > 0 ? Math.min(baseAfterFixed, voucher[0]!.totalVoucherAmount ?? voucher[0]!.amount) : 0;
+
+    // Compose persisted discounts
+    const used_discounts = discountsArray.map((d) => {
+      if (d.type === 'FIXED PRODUCT') {
+        return { ...d, amount: computeFixedProductTotal(d) };
+      }
+      if (d.type === 'VOUCHER') {
+        return { ...d, amount: voucherUsed };
+      }
+      return d; // PERCENTAGE/FIXED CART not mixed in v1
+    });
 
     // Create order data with guest support
     const orderData = isGuestOrder(input)
@@ -151,7 +214,8 @@ export async function POST(request: Request) {
           shipping: input.needDelivery && !input.shippingMethod?.data ? input.shipping : null,
           amount: input.totalAmount < 0 ? 0 : input.totalAmount,
           shipping_method: input.needDelivery ? input.shippingMethod : null,
-          used_discount: overrideDiscount,
+          used_discounts,
+          used_discount: used_discounts.length === 1 ? used_discounts[0]! : null,
           used_virtual_money: null, // Guests cannot use virtual money
           paid_at: null,
           payment_id: null,
@@ -173,7 +237,8 @@ export async function POST(request: Request) {
           shipping: input.needDelivery && !input.shippingMethod?.data ? input.shipping : null,
           amount: input.totalAmount < 0 ? 0 : input.totalAmount,
           shipping_method: input.needDelivery ? input.shippingMethod : null,
-          used_discount: overrideDiscount,
+          used_discounts,
+          used_discount: used_discounts.length === 1 ? used_discounts[0]! : null,
           used_virtual_money: input.virtualMoney,
           paid_at: null,
           payment_id: null,

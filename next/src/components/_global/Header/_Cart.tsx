@@ -43,8 +43,8 @@ export default function Cart({
   virtualWallet,
   setUsedVirtualMoney,
   usedVirtualMoney,
-  usedDiscount,
-  setUsedDiscount,
+  usedDiscounts,
+  setUsedDiscounts,
   userId,
   ownedCourses,
   freeShipping,
@@ -60,7 +60,6 @@ export default function Cart({
   } = useForm<CartForm>();
 
   const [isVirtualCoins, setIsVirtualCoins] = useState<boolean>(false);
-  const [isPromoCode, setIsPromoCode] = useState(false);
   const [couponVerifying, setCouponVerifying] = useState(false);
   const delivery = useMemo<number | null>(
     () =>
@@ -96,47 +95,38 @@ export default function Cart({
     return () => removeEventListener('keydown', () => setShowCart());
   }, [setShowCart]);
 
+  // Recompute eligible units for all FIXED PRODUCT coupons on any cart change
   useEffect(() => {
-    if (usedDiscount?.type === 'FIXED PRODUCT') {
+    if (!Array.isArray(usedDiscounts) || usedDiscounts.length === 0) return;
+
+    const next = usedDiscounts.map((d) => {
+      if (d.type !== 'FIXED PRODUCT') return d;
       const eligibleIds =
-        Array.isArray((usedDiscount as Discount).discounted_products) &&
-        (usedDiscount as Discount).discounted_products.length > 0
-          ? (usedDiscount as Discount).discounted_products.map((p: { id: string }) => p.id)
-          : usedDiscount.discounted_product?.id
-            ? [usedDiscount.discounted_product.id]
+        Array.isArray((d as Discount).discounted_products) && (d as Discount).discounted_products.length > 0
+          ? (d as Discount).discounted_products!.map((p: { id: string }) => p.id)
+          : d.discounted_product?.id
+            ? [d.discounted_product.id]
             : [];
+      const newEligibleCount =
+        eligibleIds.length > 0
+          ? Array.isArray(cart)
+            ? cart.reduce((sum, i) => (eligibleIds.includes(i.product) ? sum + (i.quantity ?? 1) : sum), 0)
+            : 0
+          : 0;
+      return { ...d, eligibleCount: newEligibleCount };
+    });
 
-      const product = eligibleIds.length === 0 ? cart?.[0] : cart?.find((item) => eligibleIds.includes(item.product));
-      if (!product) {
-        setUsedDiscount(null);
-        toast('Produkt, do którego przypisany jest kupon, został usunięty z koszyka');
-      }
-    }
-  }, [cart, usedDiscount, setUsedDiscount]);
+    // Auto-remove coupons that no longer apply
+    const filtered = next.filter((d) => d.type !== 'FIXED PRODUCT' || (d.eligibleCount ?? 0) > 0);
 
-  // Recompute eligible units for FIXED PRODUCT coupon on any cart change
-  useEffect(() => {
-    if (!usedDiscount || usedDiscount.type !== 'FIXED PRODUCT') return;
-
-    const eligibleIds =
-      Array.isArray((usedDiscount as Discount).discounted_products) &&
-      (usedDiscount as Discount).discounted_products.length > 0
-        ? (usedDiscount as Discount).discounted_products.map((p: { id: string }) => p.id)
-        : usedDiscount.discounted_product?.id
-          ? [usedDiscount.discounted_product.id]
-          : [];
-
-    const newEligibleCount =
-      eligibleIds.length > 0
-        ? Array.isArray(cart)
-          ? cart.reduce((sum, i) => (eligibleIds.includes(i.product) ? sum + (i.quantity ?? 1) : sum), 0)
-          : 0
-        : 0;
-
-    if ((usedDiscount.eligibleCount ?? 0) !== newEligibleCount) {
-      setUsedDiscount({ ...usedDiscount, eligibleCount: newEligibleCount });
-    }
-  }, [cart, usedDiscount, setUsedDiscount]);
+    // Avoid unnecessary state updates
+    const changed =
+      filtered.length !== usedDiscounts.length ||
+      filtered.some(
+        (d, i) => (d.eligibleCount ?? 0) !== (usedDiscounts[i]?.eligibleCount ?? 0) || d.code !== usedDiscounts[i]?.code
+      );
+    if (changed) setUsedDiscounts(filtered);
+  }, [cart, usedDiscounts, setUsedDiscounts]);
 
   // Unified cart validation: remove invalid items (related dependency missing, owned courses, conflicting bundles)
   useEffect(() => {
@@ -200,14 +190,19 @@ export default function Cart({
     return { ...item, _type: fetchedItems?.find((fetchedItem) => fetchedItem._id === item.id)?._type };
   });
 
+  const removeCoupon = (code: string) => {
+    setUsedDiscounts((prev) => prev.filter((d) => d.code !== code));
+  };
+
   const onSubmit = async () => {
+    const codes = (usedDiscounts ?? []).map((d) => d.code).filter(Boolean);
     const isVerfied = await fetch('/api/coupon/verify', {
       cache: 'no-cache',
       method: 'POST',
-      body: JSON.stringify({ code: discountCode, userId, cart: cartItems, isSubmit: true }),
+      body: JSON.stringify({ codes, userId, cart: cartItems, isSubmit: true }),
     });
 
-    if (isVerfied.ok || !discountCode) {
+    if (isVerfied.ok) {
       goToCheckout();
     } else {
       const data = await isVerfied.json();
@@ -217,51 +212,99 @@ export default function Cart({
 
   const verifyCoupon = async () => {
     setCouponVerifying(true);
+    const candidate = (discountCode || '').trim();
+    if (!candidate) {
+      setCouponVerifying(false);
+      toast('Wpisz kod rabatowy');
+      return;
+    }
+    if ((usedDiscounts ?? []).some((d) => (d.code || '').toLowerCase() === candidate.toLowerCase())) {
+      setCouponVerifying(false);
+      toast('Ten kod jest już dodany');
+      return;
+    }
+    const codes = [...((usedDiscounts ?? []).map((d) => d.code).filter(Boolean) as string[]), candidate];
 
     await fetch('/api/coupon/verify', {
       cache: 'no-cache',
       method: 'POST',
-      body: JSON.stringify({ code: discountCode, userId, cart: cartItems }),
+      body: JSON.stringify({ codes, userId, cart: cartItems }),
     })
       .then((res) => res.json())
-
-      .then((data) => {
-        if (data.error) {
-          toast(data.error);
+      .then((payload) => {
+        if (payload.error) {
+          toast(payload.error);
           return;
         }
 
-        const eligibleIds =
-          Array.isArray(data.discounted_products) && data.discounted_products.length > 0
-            ? data.discounted_products.map((p: { id: string }) => p.id)
-            : data.discounted_product?.id
-              ? [data.discounted_product.id]
-              : [];
-
-        const eligibleCount =
-          eligibleIds.length > 0
-            ? Array.isArray(cart)
-              ? cart.reduce((sum, i) => (eligibleIds.includes(i.product) ? sum + (i.quantity ?? 1) : sum), 0)
-              : 0
-            : 0;
-
-        setUsedDiscount({
-          totalVoucherAmount: data.coupons_types.coupon_type === 'VOUCHER' ? data.amount : null,
-          amount: data.coupons_types.coupon_type === 'VOUCHER' ? data.voucher_amount_left : data.amount,
-          code: discountCode,
-          id: data.id,
-          type: data.coupons_types.coupon_type,
-          discounted_product: data.discounted_product,
-          discounted_products: data.discounted_products,
-          affiliatedBy: data.affiliation_of,
-          eligibleCount: data.coupons_types.coupon_type === 'FIXED PRODUCT' ? eligibleCount : undefined,
-        });
+        const list = Array.isArray(payload.coupons) ? payload.coupons : [payload];
+        const mapped: Discount[] = list.map(
+          (data: {
+            id: string;
+            code: string;
+            amount: number;
+            voucher_amount_left?: number;
+            coupons_types?: { coupon_type?: string } | null;
+            discounted_product?: { id: string; name?: string } | null;
+            discounted_products?: Array<{ id: string; name?: string }> | null;
+            affiliation_of?: string | null;
+          }) => {
+            const type = data.coupons_types?.coupon_type;
+            const eligibleIds =
+              Array.isArray(data.discounted_products) && data.discounted_products.length > 0
+                ? data.discounted_products.map((p: { id: string }) => p.id)
+                : data.discounted_product?.id
+                  ? [data.discounted_product.id]
+                  : [];
+            const eligibleCount =
+              type === 'FIXED PRODUCT'
+                ? Array.isArray(cart)
+                  ? cart.reduce((sum, i) => (eligibleIds.includes(i.product) ? sum + (i.quantity ?? 1) : sum), 0)
+                  : 0
+                : undefined;
+            return {
+              totalVoucherAmount: type === 'VOUCHER' ? data.amount : null,
+              amount: type === 'VOUCHER' ? data.voucher_amount_left : data.amount,
+              code: data.code,
+              id: data.id,
+              type,
+              discounted_product: data.discounted_product,
+              discounted_products: data.discounted_products,
+              affiliatedBy: data.affiliation_of,
+              eligibleCount,
+            } as Discount;
+          }
+        );
+        setUsedDiscounts(mapped);
+        setValue('discount', '');
       })
       .catch((error) => {
         toast(error.message);
       })
       .finally(() => setCouponVerifying(false));
   };
+
+  const onDiscountKeyDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      verifyCoupon();
+    }
+  };
+
+  // Sum discounts for UI display
+  const discountsAmount = useMemo(() => {
+    if (!Array.isArray(usedDiscounts) || usedDiscounts.length === 0 || typeof totalItemsPrice !== 'number') return 0;
+    const deliveryVal = delivery ?? 0;
+    const productTotal = usedDiscounts
+      .filter((d) => d.type === 'FIXED PRODUCT')
+      .reduce((sum, d) => sum + calculateDiscountAmount(totalItemsPrice, d, 0), 0);
+    const baseAfterProducts = Math.max(0, totalItemsPrice + deliveryVal + productTotal); // productTotal is negative
+    const voucher = usedDiscounts.find((d) => d.type === 'VOUCHER');
+    const voucherTotal = voucher ? -Math.min(baseAfterProducts, voucher.totalVoucherAmount ?? voucher.amount ?? 0) : 0;
+    const cartWide = usedDiscounts.find((d) => d.type === 'PERCENTAGE' || d.type === 'FIXED CART');
+    if (cartWide && usedDiscounts.length === 1) return calculateDiscountAmount(totalItemsPrice, cartWide, delivery);
+    return productTotal + voucherTotal;
+  }, [usedDiscounts, totalItemsPrice, delivery]);
 
   const filteredFetchItems = useMemo(() => {
     if (!fetchedItems) return;
@@ -370,42 +413,51 @@ export default function Cart({
                     <div className={styles['line']} />
                     <div className={styles['additional-info']}>
                       <div className={styles['left-side']}>
-                        {isPromoCode ? (
-                          <div className={styles.promoCode}>
-                            <div className={styles.inputWrapper}>
-                              <Input
-                                label='Wpisz kod rabatowy'
-                                type='text'
-                                register={register('discount')}
-                                errors={errors}
-                              />
-                              <button
-                                onClick={() => {
-                                  setIsPromoCode((prev) => !prev);
-                                  setUsedDiscount(null);
-                                  setValue('discount', '');
-                                }}
-                              >
-                                {PromoCodeCrossIcon}
-                              </button>
-                            </div>
+                        <div className={styles.promoCode}>
+                          <div className={styles.inputWrapper}>
+                            <Input
+                              label='Wpisz kod rabatowy'
+                              type='text'
+                              register={register('discount')}
+                              errors={errors}
+                              onKeyDown={onDiscountKeyDown}
+                            />
                             <button
-                              disabled={couponVerifying}
-                              type='button'
-                              onClick={verifyCoupon}
-                              className={`link ${styles.apply}`}
+                              onClick={() => {
+                                setValue('discount', '');
+                              }}
                             >
-                              Zastosuj
+                              {PromoCodeCrossIcon}
                             </button>
                           </div>
-                        ) : (
-                          <Checkbox
-                            register={register('isDiscount')}
-                            label={<>Posiadam kod rabatowy</>}
-                            errors={errors}
-                            onChange={() => setIsPromoCode((prev) => !prev)}
-                          />
-                        )}
+                          <button
+                            disabled={couponVerifying}
+                            type='button'
+                            onClick={verifyCoupon}
+                            className={`link ${styles.apply}`}
+                          >
+                            Zastosuj
+                          </button>
+                          {Array.isArray(usedDiscounts) && usedDiscounts.length > 0 && (
+                            <div className={styles.appliedCoupons}>
+                              {usedDiscounts.map((d, i) => (
+                                <span
+                                  key={(d.code || d.id) + i}
+                                  className={styles.couponTag}
+                                >
+                                  {d.code}
+                                  <button
+                                    type='button'
+                                    aria-label={`Usuń kupon ${d.code}`}
+                                    onClick={() => removeCoupon(d.code)}
+                                  >
+                                    ×
+                                  </button>
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
                         {virtualWallet ? (
                           <>
                             {isVirtualCoins ? (
@@ -467,10 +519,10 @@ export default function Cart({
                             <span>{formatPrice(delivery)}</span>
                           </p>
                         )}
-                        {usedDiscount && (
+                        {Array.isArray(usedDiscounts) && usedDiscounts.length > 0 && (
                           <p>
-                            <span>Kupon: {usedDiscount.code}</span>
-                            <span>{formatPrice(calculateDiscountAmount(totalItemsPrice, usedDiscount, delivery))}</span>
+                            <span>Kupony</span>
+                            <span>{formatPrice(discountsAmount)}</span>
                           </p>
                         )}
                         {usedVirtualMoney && usedVirtualMoney > 0 && (
@@ -485,7 +537,7 @@ export default function Cart({
                             {formatPrice(
                               totalItemsPrice +
                                 (delivery ? delivery : 0) +
-                                (usedDiscount ? calculateDiscountAmount(totalItemsPrice, usedDiscount, delivery) : 0) -
+                                discountsAmount -
                                 (usedVirtualMoney ? usedVirtualMoney * 100 : 0),
                               0
                             )}

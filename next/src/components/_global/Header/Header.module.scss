@@ -725,6 +725,34 @@
             }
           }
         }
+
+        .appliedCoupons {
+          grid-column: 1 / -1;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin-top: 4px;
+
+          .couponTag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 16px;
+            background: var(--primary-300);
+            color: var(--primary-800);
+            font-size: calc(14rem / 16);
+
+            button {
+              padding: 0 6px;
+              min-width: 28px;
+              min-height: 28px;
+              font-size: 18px;
+              line-height: 1;
+              text-decoration: none;
+            }
+          }
+        }
       }
 
       .virtualCoins {

@@ -43,7 +43,7 @@ const Content = ({
   const [showCheckout, setShowCheckout] = useState(false);
   const [popupState, setPopupState] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
-  const [usedDiscount, setUsedDiscount] = useState<Discount | null>(null);
+  const [usedDiscounts, setUsedDiscounts] = useState<Discount[]>([]);
   const [usedVirtualMoney, setUsedVirtualMoney] = useState<number | null>(null);
   const [totalItemsCount, setTotalItemsCount] = useState<number>(0);
   const { cart, fetchedItems, updateItemQuantity, removeItem, totalUniqueItems } = useCartItems();
@@ -88,8 +88,8 @@ const Content = ({
           setShowCheckout(false);
           setPopupState(true);
         }}
-        setUsedDiscount={setUsedDiscount}
-        usedDiscount={usedDiscount}
+        setUsedDiscounts={setUsedDiscounts}
+        usedDiscounts={usedDiscounts}
         userEmail={userEmail}
         shipping={shipping}
         billing={billing}
@@ -126,8 +126,8 @@ const Content = ({
         virtualWallet={virtualWallet}
         setUsedVirtualMoney={setUsedVirtualMoney}
         usedVirtualMoney={usedVirtualMoney}
-        usedDiscount={usedDiscount}
-        setUsedDiscount={setUsedDiscount}
+        usedDiscounts={usedDiscounts}
+        setUsedDiscounts={setUsedDiscounts}
         userId={userId}
         ownedCourses={ownedCourses}
         deliverySettings={deliverySettings}

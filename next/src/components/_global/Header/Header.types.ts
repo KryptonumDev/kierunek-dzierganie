@@ -79,9 +79,9 @@ export type Cart = {
   PromoCodeCrossIcon: React.ReactNode;
   virtualWallet: number;
   setUsedVirtualMoney: React.Dispatch<React.SetStateAction<number | null>>;
-  setUsedDiscount: React.Dispatch<React.SetStateAction<Discount | null>>;
+  setUsedDiscounts: React.Dispatch<React.SetStateAction<Discount[]>>;
   usedVirtualMoney: number | null;
-  usedDiscount: Discount | null;
+  usedDiscounts: Discount[];
   userId?: string;
   deliverySettings: {
     deliveryPrice: number;
