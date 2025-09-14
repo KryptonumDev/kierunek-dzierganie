@@ -13,7 +13,7 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: Request) {
   const { code, userId, cart, isSubmit } = await request.json();
   try {
-    const { data, error } = await supabase
+    const { data: rows, error } = await supabase
       .from('coupons')
       .select(
         `
@@ -32,58 +32,102 @@ export async function POST(request: Request) {
         discounted_products
         `
       )
-      .eq('code', code)
-      .single();
+      .eq('code', code);
 
-    if (isSubmit) {
-      if (data?.affiliation_of && cart.find((item: { _type: string }) => item._type !== 'course')) {
-        return NextResponse.json({ error: 'Afiliacyjny kod rabatowy jest dostępny tylko dla kursów' }, { status: 500 });
-      } else return NextResponse.json(data);
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    if (error?.code === 'PGRST116' || data?.state === 1) {
+    const now = new Date().toISOString();
+    const list = rows ?? [];
+
+    if (list.length === 0) {
       return NextResponse.json({ error: 'Kod rabatowy nie istnieje' }, { status: 500 });
     }
 
-    if (data?.affiliation_of && cart.find((item: { _type: string }) => item._type !== 'course')) {
+    // Score coupons by applicability to current cart (for FIXED PRODUCT).
+    const scored = list
+      .filter((r) => r.state !== 1 && (!r.expiration_date || r.expiration_date >= now))
+      .map((r) => {
+        // @ts-expect-error wrong types from supabase
+        const type = r?.coupons_types?.coupon_type as string | undefined;
+        if (type === 'FIXED PRODUCT') {
+          const eligibleIds =
+            Array.isArray(r?.discounted_products) && r.discounted_products.length > 0
+              ? r.discounted_products.map((p: { id: string }) => p.id)
+              : r?.discounted_product?.id
+                ? [r.discounted_product.id]
+                : [];
+          const eligibleCount =
+            eligibleIds.length > 0
+              ? Array.isArray(cart)
+                ? cart.reduce(
+                    (sum: number, item: { product: string; quantity?: number }) =>
+                      eligibleIds.includes(item.product) ? sum + (item.quantity ?? 1) : sum,
+                    0
+                  )
+                : 0
+              : 0;
+          return { row: r, eligibleCount };
+        }
+        return { row: r, eligibleCount: 1 }; // Non-product-specific coupons considered applicable by default
+      })
+      .sort((a, b) => b.eligibleCount - a.eligibleCount);
+
+    // Prefer coupon that applies to the cart; otherwise take first active row; otherwise fallback to first row
+    const selected = scored.find((s) => s.eligibleCount > 0)?.row ?? scored[0]?.row ?? list[0];
+
+    if (!selected) {
+      return NextResponse.json({ error: 'Kod rabatowy nie istnieje' }, { status: 500 });
+    }
+
+    // Affiliation + submit pathway
+    if (isSubmit) {
+      if (selected?.affiliation_of && cart.find((item: { _type: string }) => item._type !== 'course')) {
+        return NextResponse.json({ error: 'Afiliacyjny kod rabatowy jest dostępny tylko dla kursów' }, { status: 500 });
+      }
+      return NextResponse.json(selected);
+    }
+
+    if (selected?.affiliation_of && cart.find((item: { _type: string }) => item._type !== 'course')) {
       return NextResponse.json({ error: 'Afiliacyjny kod rabatowy jest dostępny tylko dla kursów' }, { status: 500 });
     }
 
-    if (data?.affiliation_of === userId) {
+    if (selected?.affiliation_of === userId) {
       return NextResponse.json({ error: 'Nie możesz użyć własnego kodu afiliacyjnego' }, { status: 500 });
     }
 
-    if (data?.expiration_date < new Date().toISOString()) {
+    if (selected?.expiration_date && selected.expiration_date < now) {
       return NextResponse.json({ error: 'Kod rabatowy jest przeterminowany' }, { status: 500 });
     }
 
-    if (data?.per_user_limit) {
+    if (selected?.per_user_limit) {
       if (!userId)
         return NextResponse.json({ error: 'Musisz być zalogowany, aby użyć tego kodu rabatowego' }, { status: 500 });
 
       const { count } = await supabase
         .from('coupons_uses')
         .select('*', { count: 'exact', head: true })
-        .eq('used_coupon', data.id)
+        .eq('used_coupon', selected.id)
         .eq('used_by', userId);
 
-      if (count && data.per_user_limit >= count!) {
+      if (typeof count === 'number' && count >= selected.per_user_limit) {
         return NextResponse.json({ error: 'Osiągnięto limit użyć kodu rabatowego' }, { status: 500 });
       }
     }
 
-    if (data?.use_limit) {
+    if (selected?.use_limit) {
       const { count } = await supabase
         .from('coupons_uses')
         .select('*', { count: 'exact', head: true })
-        .eq('used_coupon', data.id);
+        .eq('used_coupon', selected.id);
 
-      if (count && data?.use_limit >= count!) {
+      if (typeof count === 'number' && count >= selected.use_limit) {
         return NextResponse.json({ error: 'Osiągnięto limit użyć kodu rabatowego' }, { status: 500 });
       }
     }
 
-    if (data?.affiliation_of) {
+    if (selected?.affiliation_of) {
       if (!userId)
         return NextResponse.json({ error: 'Musisz być zalogowany, aby użyć tego kodu rabatowego' }, { status: 500 });
 
@@ -104,43 +148,45 @@ export async function POST(request: Request) {
     }
 
     // @ts-expect-error wrong types from supabase
-    if (data?.coupons_types?.coupon_type === 'FIXED PRODUCT') {
+    if (selected?.coupons_types?.coupon_type === 'FIXED PRODUCT') {
       const eligibleIds =
-        Array.isArray(data?.discounted_products) && data.discounted_products.length > 0
-          ? data.discounted_products.map((p: { id: string }) => p.id)
-          : data?.discounted_product?.id
-            ? [data.discounted_product.id]
+        Array.isArray(selected?.discounted_products) && selected.discounted_products.length > 0
+          ? selected.discounted_products.map((p: { id: string }) => p.id)
+          : selected?.discounted_product?.id
+            ? [selected.discounted_product.id]
             : [];
 
-      // If no eligibleIds, coupon does not apply to any product
       const eligibleCount =
         eligibleIds.length > 0
-          ? cart.filter((item: { product: string }) => eligibleIds.includes(item.product)).length
+          ? Array.isArray(cart)
+            ? cart.reduce(
+                (sum: number, item: { product: string; quantity?: number }) =>
+                  eligibleIds.includes(item.product) ? sum + (item.quantity ?? 1) : sum,
+                0
+              )
+            : 0
           : 0;
 
       if (eligibleCount === 0) {
         return NextResponse.json({ error: 'Kod rabatowy nie dotyczy żadnego produktu w koszyku' }, { status: 500 });
       }
 
-      // Attach eligibleCount (augment response type locally)
-      (data as unknown as { eligibleCount?: number }).eligibleCount = eligibleCount;
+      (selected as unknown as { eligibleCount?: number }).eligibleCount = eligibleCount;
     }
 
     // @ts-expect-error wrong types from supabase
-    if (data?.coupons_types.coupon_type === 'VOUCHER') {
-      if (data.voucher_amount_left === 0) {
+    if (selected?.coupons_types?.coupon_type === 'VOUCHER') {
+      if (selected.voucher_amount_left === 0) {
         return NextResponse.json({ error: 'Voucher jest wyczerpany' }, { status: 500 });
       }
     }
 
-    if (error) NextResponse.json({ error: error.message }, { status: 500 });
-
     // Override amount for affiliate coupons to always be 50 PLN
-    if (data?.affiliation_of) {
-      data.amount = 5000; // Always 50 PLN for affiliate codes
+    if (selected?.affiliation_of) {
+      selected.amount = 5000; // Always 50 PLN for affiliate codes
     }
 
-    return NextResponse.json(data);
+    return NextResponse.json(selected);
   } catch (error) {
     console.log(error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

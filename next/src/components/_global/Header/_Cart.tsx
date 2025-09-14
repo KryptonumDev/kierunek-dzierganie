@@ -114,6 +114,30 @@ export default function Cart({
     }
   }, [cart, usedDiscount, setUsedDiscount]);
 
+  // Recompute eligible units for FIXED PRODUCT coupon on any cart change
+  useEffect(() => {
+    if (!usedDiscount || usedDiscount.type !== 'FIXED PRODUCT') return;
+
+    const eligibleIds =
+      Array.isArray((usedDiscount as Discount).discounted_products) &&
+      (usedDiscount as Discount).discounted_products.length > 0
+        ? (usedDiscount as Discount).discounted_products.map((p: { id: string }) => p.id)
+        : usedDiscount.discounted_product?.id
+          ? [usedDiscount.discounted_product.id]
+          : [];
+
+    const newEligibleCount =
+      eligibleIds.length > 0
+        ? Array.isArray(cart)
+          ? cart.reduce((sum, i) => (eligibleIds.includes(i.product) ? sum + (i.quantity ?? 1) : sum), 0)
+          : 0
+        : 0;
+
+    if ((usedDiscount.eligibleCount ?? 0) !== newEligibleCount) {
+      setUsedDiscount({ ...usedDiscount, eligibleCount: newEligibleCount });
+    }
+  }, [cart, usedDiscount, setUsedDiscount]);
+
   // Unified cart validation: remove invalid items (related dependency missing, owned courses, conflicting bundles)
   useEffect(() => {
     if (!fetchedItems) return;
@@ -214,7 +238,12 @@ export default function Cart({
               ? [data.discounted_product.id]
               : [];
 
-        const eligibleCount = eligibleIds.length > 0 ? cart?.filter((i) => eligibleIds.includes(i.product)).length : 0;
+        const eligibleCount =
+          eligibleIds.length > 0
+            ? Array.isArray(cart)
+              ? cart.reduce((sum, i) => (eligibleIds.includes(i.product) ? sum + (i.quantity ?? 1) : sum), 0)
+              : 0
+            : 0;
 
         setUsedDiscount({
           totalVoucherAmount: data.coupons_types.coupon_type === 'VOUCHER' ? data.amount : null,
