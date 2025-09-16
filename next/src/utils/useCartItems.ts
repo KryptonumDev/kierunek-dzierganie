@@ -16,10 +16,11 @@ export const useCartItems = () => {
           query: `
             *[(_type == 'product' || _type == 'course' || _type == 'bundle' || _type == 'voucher') && _id in $id]{
               ${PRODUCT_CARD_QUERY}
-              "related": *[_type == 'course' && references(^._id)][0]{
-                _id,
-                name
-              }
+              "related": *[
+                _type == 'course' && (
+                  materials_link._ref == ^._id || ^._id in related_products[]._ref
+                )
+              ][0]{ _id, name }
             }
           `,
           params: {
