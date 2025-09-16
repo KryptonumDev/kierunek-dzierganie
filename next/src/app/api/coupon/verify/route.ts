@@ -13,6 +13,10 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: Request) {
   const { code, codes, userId, cart, isSubmit } = await request.json();
   try {
+    // If no code(s) provided, treat as no coupon scenario (return OK)
+    if ((!code || String(code).trim().length === 0) && (!Array.isArray(codes) || codes.length === 0)) {
+      return NextResponse.json({ ok: true });
+    }
     // MULTI-CODE PATH
     if (Array.isArray(codes) && codes.length > 0) {
       const codesList = codes

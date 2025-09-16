@@ -196,6 +196,10 @@ export default function Cart({
 
   const onSubmit = async () => {
     const codes = (usedDiscounts ?? []).map((d) => d.code).filter(Boolean);
+    if (!codes.length) {
+      goToCheckout();
+      return;
+    }
     const isVerfied = await fetch('/api/coupon/verify', {
       cache: 'no-cache',
       method: 'POST',
