@@ -6,8 +6,21 @@ export async function checkUsedModifications(data: any) {
 
   // check if discount was used
   // New path: array of discounts (multi-coupon)
-  if (data && Array.isArray(data.used_discounts) && data.used_discounts.length > 0) {
+  const hasMulti = data && Array.isArray(data.used_discounts) && data.used_discounts.length > 0;
+  const hasLegacy = data && data.used_discount?.id;
+
+  if (hasMulti) {
     for (const d of data.used_discounts) {
+      // Idempotency: skip if this order+coupon already recorded
+      const { count: alreadyExists } = await supabase
+        .from('coupons_uses')
+        .select('*', { head: true, count: 'exact' })
+        .eq('used_coupon', d.id)
+        .eq('used_at', data.created_at);
+      if (typeof alreadyExists === 'number' && alreadyExists > 0) {
+        continue;
+      }
+
       let usedAmount: number | null = null;
       if (d?.type === 'VOUCHER') {
         const totalAmount =
@@ -19,6 +32,7 @@ export async function checkUsedModifications(data: any) {
           (data.shipping_method?.price ?? 0) -
           (data.used_virtual_money ?? 0);
 
+        // d.amount for vouchers is already the consumed amount at order creation time
         usedAmount = d.amount > totalAmount ? totalAmount : d.amount;
 
         const voucher = await supabase
@@ -34,7 +48,7 @@ export async function checkUsedModifications(data: any) {
         await supabase
           .from('coupons')
           .update({
-            voucher_amount_left: voucher.data?.voucher_amount_left - (usedAmount ?? 0),
+            voucher_amount_left: Math.max(0, (voucher.data?.voucher_amount_left ?? 0) - (usedAmount ?? 0)),
           })
           .eq('id', d.id);
       }
@@ -67,7 +81,8 @@ export async function checkUsedModifications(data: any) {
   }
 
   // Legacy path: single discount
-  error: if (data && data.used_discount?.id) {
+  // Guard against double-processing orders that also have used_discounts populated
+  error: if (!hasMulti && hasLegacy) {
     // create new coupons_uses record
 
     let usedAmount = null;
@@ -84,6 +99,14 @@ export async function checkUsedModifications(data: any) {
 
       usedAmount = data.used_discount.amount > totalAmount ? totalAmount : data.used_discount.amount;
 
+      // Idempotency: skip if this order+coupon already recorded
+      const { count: alreadyExists } = await supabase
+        .from('coupons_uses')
+        .select('*', { head: true, count: 'exact' })
+        .eq('used_coupon', data.used_discount.id)
+        .eq('used_at', data.created_at);
+      if (typeof alreadyExists === 'number' && alreadyExists > 0) break error;
+
       const voucher = await supabase
         .from('coupons')
         .select(
@@ -97,7 +120,7 @@ export async function checkUsedModifications(data: any) {
       const updateVoucherData = await supabase
         .from('coupons')
         .update({
-          voucher_amount_left: voucher.data?.voucher_amount_left - usedAmount,
+          voucher_amount_left: Math.max(0, (voucher.data?.voucher_amount_left ?? 0) - (usedAmount ?? 0)),
         })
         .eq('id', data.used_discount.id);
 

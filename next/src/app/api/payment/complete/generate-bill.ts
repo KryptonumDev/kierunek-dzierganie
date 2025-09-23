@@ -93,11 +93,10 @@ export async function generateBill(data: any, id: string) {
     // Sum of current products amount (after fixed-product/percentage)
     const currentProductsTotal = baseLines.reduce((sum: number, p: Line) => sum + p.unitPrice * p.quantity, 0);
 
-    // Apply FIXED CART and VOUCHER amounts (voucher.amount already equals used amount)
+    // Apply FIXED CART and VOUCHER amounts
+    // Important: for vouchers, d.amount already reflects the consumed amount on this order
     const fixedCartTotal = discounts.filter((d) => d.type === 'FIXED CART').reduce((sum, d) => sum + d.amount, 0);
-    const voucherUsed = discounts
-      .filter((d) => d.type === 'VOUCHER')
-      .reduce((sum, d) => sum + (d.totalVoucherAmount ?? d.amount), 0);
+    const voucherUsed = discounts.filter((d) => d.type === 'VOUCHER').reduce((sum, d) => sum + d.amount, 0);
     let remainingFixed = fixedCartTotal + voucherUsed;
 
     if (remainingFixed > 0 && currentProductsTotal > 0) {

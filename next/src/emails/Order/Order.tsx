@@ -358,7 +358,7 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
                         lineHeight: '150%',
                       }}
                     >
-                      {data.shipping.postcode}, {countryList().getLabel(data.shipping.country)}
+                      {data.shipping.postcode} {data.shipping.city}, {countryList().getLabel(data.shipping.country)}
                     </p>
                   )}
                   {data.shipping?.phone && (
@@ -453,7 +453,7 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
                     lineHeight: '150%',
                   }}
                 >
-                  {data.billing.postcode}, {countryList().getLabel(data.billing.country)}
+                  {data.billing.postcode} {data.billing.city}, {countryList().getLabel(data.billing.country)}
                 </p>
                 {data.billing.phone && (
                   <p

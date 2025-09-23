@@ -436,7 +436,7 @@ export async function POST(request: Request) {
 
     // @ts-expect-error wrong types from supabase
     if (selected?.coupons_types?.coupon_type === 'VOUCHER') {
-      if (selected.voucher_amount_left === 0) {
+      if ((selected.voucher_amount_left ?? 0) <= 0) {
         return NextResponse.json({ error: 'Voucher jest wyczerpany' }, { status: 500 });
       }
     }
