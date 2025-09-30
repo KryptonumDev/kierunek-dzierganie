@@ -22,7 +22,7 @@ const createInputState = (billing?: Billing, shipping?: Shipping, userEmail?: st
     firstName: shipping?.firstName ?? '',
     address1: shipping?.address1 ?? '',
     city: shipping?.city ?? '',
-    country: shipping?.country ?? '',
+    country: 'PL', // Hardcoded to Poland
     postcode: shipping?.postcode ?? '',
     phone: shipping?.phone ?? '',
   },
@@ -31,7 +31,7 @@ const createInputState = (billing?: Billing, shipping?: Shipping, userEmail?: st
     firstName: billing?.firstName ?? '',
     address1: billing?.address1 ?? '',
     city: billing?.city ?? '',
-    country: billing?.country ?? '',
+    country: 'PL', // Hardcoded to Poland
     postcode: billing?.postcode ?? '',
     email: userEmail ?? '',
     phone: billing?.phone ?? '',
@@ -165,8 +165,6 @@ export default function Checkout({
       deliverySettings,
     ]
   );
-
-  console.log(input.products?.array);
 
   useEffect(() => {
     addEventListener('keydown', (e) => {

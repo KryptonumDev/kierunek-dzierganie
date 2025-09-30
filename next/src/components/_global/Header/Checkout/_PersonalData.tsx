@@ -2,7 +2,6 @@ import Button from '@/components/ui/Button';
 import Checkbox from '@/components/ui/Checkbox';
 import Input from '@/components/ui/Input';
 import Radio from '@/components/ui/Radio';
-import Select from '@/components/ui/Select';
 import { REGEX } from '@/global/constants';
 import type { Discount, MapPoint } from '@/global/types';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
@@ -10,7 +9,6 @@ import { formatPrice } from '@/utils/price-formatter';
 import Script from 'next/script';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import countryList from 'react-select-country-list';
 import { toast } from 'react-toastify';
 import { useCart } from 'react-use-cart';
 import styles from './Checkout.module.scss';
@@ -67,7 +65,7 @@ const generateNewInput = (
       firstName: data.shippingSameAsBilling ? data.fullName : data.shippingFullName,
       address1: data.shippingSameAsBilling ? data.address : data.shippingAddress,
       city: data.shippingSameAsBilling ? data.city : data.shippingCity,
-      country: data.shippingSameAsBilling ? data.country : data.shippingCountry,
+      country: 'PL', // Hardcoded to Poland
       postcode: data.shippingSameAsBilling ? data.zipCode : data.shippingZipCode,
       email: data.email,
       phone: data.phoneNumber,
@@ -78,7 +76,7 @@ const generateNewInput = (
       firstName: data.fullName,
       address1: data.address,
       city: data.city,
-      country: data.country,
+      country: 'PL', // Hardcoded to Poland
       postcode: data.zipCode,
       email: data.email,
       phone: data.phoneNumber,
@@ -96,14 +94,12 @@ const generateDefaults = (input: InputState, shippingMethods: { name: string }[]
     email: input.billing.email,
     address: input.billing.address1,
     city: input.billing.city,
-    country: input.billing.country,
     zipCode: input.billing.postcode,
     phoneNumber: input.billing.phone,
 
     shippingFullName: input.shipping.firstName,
     shippingAddress: input.shipping.address1,
     shippingCity: input.shipping.city,
-    shippingCountry: input.shipping.country,
     shippingZipCode: input.shipping.postcode,
     client_notes: input.client_notes,
 
@@ -134,7 +130,6 @@ export default function PersonalData({
     handleSubmit,
     watch,
     setValue,
-    control,
     formState: { errors },
   } = useForm<FormValues>({ mode: 'all', defaultValues: generateDefaults(input, shippingMethods) });
 
@@ -153,7 +148,6 @@ export default function PersonalData({
     setValue('shippingAddress', watch('address'));
     setValue('shippingCity', watch('city'));
     setValue('shippingZipCode', watch('zipCode'));
-    setValue('shippingCountry', watch('country'));
   }, [shippingSameAsBilling, setValue, watch]);
 
   const initApaczka = () => {
@@ -438,14 +432,6 @@ export default function PersonalData({
               errors={errors}
             />
           </div>
-          <Select<FormValues>
-            control={control}
-            name={'country'}
-            rules={{ required: 'Pole wymagane' }}
-            label='Kraj'
-            errors={errors}
-            options={countryList().native().nativeData}
-          />
           <Input
             register={register('phoneNumber', {
               required: {
@@ -522,15 +508,6 @@ export default function PersonalData({
                       tabIndex={shippingSameAsBilling ? -1 : 0}
                     />
                   </div>
-                  <Select<FormValues>
-                    control={control}
-                    name={'shippingCountry'}
-                    rules={{ required: 'Pole wymagane' }}
-                    label='Kraj'
-                    errors={errors}
-                    options={countryList().native().nativeData}
-                    tabIndex={shippingSameAsBilling ? -1 : 0}
-                  />
                 </>
               )}
             </fieldset>

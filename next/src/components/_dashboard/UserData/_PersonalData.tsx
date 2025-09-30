@@ -3,17 +3,14 @@ import styles from './UserData.module.scss';
 import type { PersonalDataFormTypes, PersonalDataTypes } from './UserData.types';
 import Input from '@/components/ui/PasswordInput';
 import Button from '@/components/ui/Button';
-import countryList from 'react-select-country-list';
 import Radio from '@/components/ui/Radio';
 import { toast } from 'react-toastify';
-import Select from '@/components/ui/Select';
 import { createClient } from '@/utils/supabase-client';
 
 export default function PersonalData({ billing_data, id }: PersonalDataTypes) {
   const supabase = createClient();
 
   const {
-    control,
     register,
     handleSubmit,
     watch,
@@ -25,7 +22,6 @@ export default function PersonalData({ billing_data, id }: PersonalDataTypes) {
       address1: billing_data.address1,
       postcode: billing_data.postcode,
       city: billing_data.city,
-      country: billing_data.country,
       phone: billing_data.phone,
       invoiceType: billing_data.invoiceType ?? 'Osoba prywatna',
 
@@ -35,7 +31,9 @@ export default function PersonalData({ billing_data, id }: PersonalDataTypes) {
   });
 
   const onSubmit = async (data: PersonalDataFormTypes) => {
-    const res = await supabase.from('profiles').update({ billing_data: data }).eq('id', id);
+    // Hardcode country to Poland
+    const dataWithCountry = { ...data, country: 'PL' };
+    const res = await supabase.from('profiles').update({ billing_data: dataWithCountry }).eq('id', id);
 
     if (res.error) {
       toast('Wystąpił błąd podczas zapisywania danych');
@@ -132,14 +130,6 @@ export default function PersonalData({ billing_data, id }: PersonalDataTypes) {
           errors={errors}
         />
       </div>
-      <Select<PersonalDataFormTypes>
-        control={control}
-        name={'country'}
-        rules={{ required: 'Pole wymagane' }}
-        label='Kraj'
-        errors={errors}
-        options={countryList().native().nativeData}
-      />
       <Input
         register={register('phone')}
         label='Numer telefonu (opcjonalnie)'

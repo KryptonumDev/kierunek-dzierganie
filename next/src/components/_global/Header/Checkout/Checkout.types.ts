@@ -111,14 +111,12 @@ export type FormValues = {
   email: string;
   address: string;
   city: string;
-  country: string;
   zipCode: string;
   phoneNumber?: string;
 
   shippingFullName?: string;
   shippingAddress?: string;
   shippingCity?: string;
-  shippingCountry?: string;
   shippingZipCode?: string;
   client_notes: string;
 
