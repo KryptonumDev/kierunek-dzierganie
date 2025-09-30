@@ -23,6 +23,40 @@ const OrderData = ({ order }: OrderDataTypes) => {
     [order.products.array]
   );
 
+  // Calculate total discount amount (supports multiple coupons)
+  const discountsAmount = useMemo(() => {
+    // Use new discounts array if available, otherwise fall back to legacy single discount
+    const discounts =
+      order.discounts && order.discounts.length > 0 ? order.discounts : order.discount ? [order.discount] : [];
+
+    if (discounts.length === 0) return 0;
+
+    const delivery = order.shippingMethod?.price ?? 0;
+
+    // Sum FIXED PRODUCT discounts
+    const productTotal = discounts
+      .filter((d) => d.type === 'FIXED PRODUCT')
+      .reduce((sum, d) => sum + calculateDiscountAmount(totalItemsPrice, d, 0), 0);
+
+    // Calculate base after product-specific discounts
+    const baseAfterProducts = Math.max(0, totalItemsPrice + delivery + productTotal); // productTotal is negative
+
+    // Apply VOUCHER if present
+    const voucher = discounts.find((d) => d.type === 'VOUCHER');
+    const voucherTotal = voucher ? -Math.min(baseAfterProducts, voucher.totalVoucherAmount ?? voucher.amount ?? 0) : 0;
+
+    // Check for cart-wide discount (PERCENTAGE or FIXED CART)
+    const cartWide = discounts.find((d) => d.type === 'PERCENTAGE' || d.type === 'FIXED CART');
+
+    // If cart-wide discount is the only one, use simple calculation
+    if (cartWide && discounts.length === 1) {
+      return calculateDiscountAmount(totalItemsPrice, cartWide, delivery);
+    }
+
+    // Otherwise combine product-specific and voucher discounts
+    return productTotal + voucherTotal;
+  }, [order.discounts, order.discount, order.shippingMethod?.price, totalItemsPrice]);
+
   const createIntent = async () => {
     await fetch('/api/payment/recreate', {
       method: 'POST',
@@ -281,12 +315,16 @@ const OrderData = ({ order }: OrderDataTypes) => {
             <span>-{formatPrice(order.virtualMoney * 100)}</span>
           </p>
         )}
-        {order.discount && (
+        {/* Display coupons - supports both single and multiple coupons */}
+        {(order.discounts && order.discounts.length > 0 ? order.discounts : order.discount ? [order.discount] : [])
+          .length > 0 && (
           <p>
-            <span>Kupon: {order.discount.code}</span>
             <span>
-              {formatPrice(calculateDiscountAmount(totalItemsPrice, order.discount, order.shippingMethod?.price))}
+              {(order.discounts && order.discounts.length > 0 ? order.discounts : [order.discount!]).length === 1
+                ? `Kupon: ${(order.discounts && order.discounts.length > 0 ? order.discounts : [order.discount!])[0]!.code}`
+                : 'Kupony'}
             </span>
+            <span>{formatPrice(discountsAmount)}</span>
           </p>
         )}
         <p>
@@ -294,9 +332,7 @@ const OrderData = ({ order }: OrderDataTypes) => {
           <span>
             {formatPrice(
               totalItemsPrice +
-                (order.discount
-                  ? calculateDiscountAmount(totalItemsPrice, order.discount, order.shippingMethod?.price)
-                  : 0) -
+                discountsAmount -
                 (order.virtualMoney ? order.virtualMoney * 100 : 0) +
                 (order.shippingMethod ? order.shippingMethod.price : 0),
               0

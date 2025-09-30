@@ -509,7 +509,8 @@ export type Order = {
     price: number;
   };
   virtualMoney?: number | null;
-  discount?: Discount | null;
+  discount?: Discount | null; // Legacy single discount
+  discounts?: Discount[]; // New multi-discount support
   billing: Billing;
   shipping: Shipping;
   orders_statuses: {
