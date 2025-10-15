@@ -178,15 +178,33 @@ export async function POST(request: Request) {
     // Calculate fixed-product total
     const fixedProductTotal = fixedProduct.reduce((sum, d) => sum + computeFixedProductTotal(d), 0);
 
-    // Voucher last, capped by remaining total
+    // Base amounts (derived from products + delivery)
     const productsSubtotal = productItems.reduce(
       (acc, p) => acc + (typeof p.discount === 'number' ? p.discount : p.price) * (p.quantity ?? 1),
       0
     );
     const deliveryAmount = input.needDelivery ? (input.shippingMethod?.price ?? 0) : 0;
+
+    // Voucher is applied last and capped by remaining total after fixed-product discounts
     const baseAfterFixed = Math.max(0, productsSubtotal + deliveryAmount - fixedProductTotal);
     const voucherUsed =
       voucher.length > 0 ? Math.min(baseAfterFixed, voucher[0]!.totalVoucherAmount ?? voucher[0]!.amount) : 0;
+
+    // If there is a single cart-wide discount (percentage or fixed cart), apply it to products + delivery
+    let cartWideUsed = 0;
+    if (cartWide.length === 1 && discountsArray.length === 1) {
+      const d = cartWide[0]!;
+      if (d.type === 'PERCENTAGE') {
+        const pct = Math.max(0, Math.min(100, d.amount));
+        cartWideUsed = Math.floor(((productsSubtotal + deliveryAmount) * pct) / 100);
+      } else if (d.type === 'FIXED CART') {
+        cartWideUsed = Math.min(d.amount, productsSubtotal + deliveryAmount);
+      }
+    }
+
+    // Compute final payable total on the server – do NOT trust client-provided totals
+    const combinedDiscount = cartWideUsed > 0 ? cartWideUsed : fixedProductTotal + voucherUsed;
+    const computedFinalTotal = Math.max(0, productsSubtotal + deliveryAmount - combinedDiscount);
 
     // Compose persisted discounts
     const used_discounts = discountsArray.map((d) => {
@@ -209,10 +227,10 @@ export async function POST(request: Request) {
           products: {
             array: await Promise.all(products),
           },
-          status: input.totalAmount <= 0 ? (input.needDelivery ? 2 : 3) : 1,
+          status: computedFinalTotal <= 0 ? (input.needDelivery ? 2 : 3) : 1,
           billing: input.billing,
           shipping: input.needDelivery && !input.shippingMethod?.data ? input.shipping : null,
-          amount: input.totalAmount < 0 ? 0 : input.totalAmount,
+          amount: computedFinalTotal,
           shipping_method: input.needDelivery ? input.shippingMethod : null,
           used_discounts,
           used_discount: used_discounts.length === 1 ? used_discounts[0]! : null,
@@ -232,10 +250,10 @@ export async function POST(request: Request) {
           products: {
             array: await Promise.all(products),
           },
-          status: input.totalAmount <= 0 ? (input.needDelivery ? 2 : 3) : 1,
+          status: computedFinalTotal <= 0 ? (input.needDelivery ? 2 : 3) : 1,
           billing: input.billing,
           shipping: input.needDelivery && !input.shippingMethod?.data ? input.shipping : null,
-          amount: input.totalAmount < 0 ? 0 : input.totalAmount,
+          amount: computedFinalTotal,
           shipping_method: input.needDelivery ? input.shippingMethod : null,
           used_discounts,
           used_discount: used_discounts.length === 1 ? used_discounts[0]! : null,
@@ -257,7 +275,8 @@ export async function POST(request: Request) {
       throw new Error(error?.message || 'Error while creating order');
     }
 
-    if (input.totalAmount <= 0) {
+    // Use computed final total for branching logic
+    if (computedFinalTotal <= 0) {
       await checkUsedModifications(data);
       await updateItemsQuantity(data);
       await sendEmails(data);
@@ -273,7 +292,7 @@ export async function POST(request: Request) {
 
       const order = {
         sessionId: session,
-        amount: Number(input.totalAmount),
+        amount: Number(computedFinalTotal),
         currency: Currency.PLN,
         description: description,
         email: input.billing.email,

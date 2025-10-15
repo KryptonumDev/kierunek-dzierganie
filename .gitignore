@@ -99,3 +99,5 @@ temp/
 .Trashes
 ehthumbs.db
 Thumbs.db
+.vercel
+.env*.local

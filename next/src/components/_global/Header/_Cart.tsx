@@ -186,8 +186,11 @@ export default function Cart({
     });
   }, [fetchedItems, ownedCourses, removeItem]);
 
+  // Build sanitized cart payload for coupon verification (courses/bundles/vouchers forced to quantity=1)
   const cartItems = cart?.map((item) => {
-    return { ...item, _type: fetchedItems?.find((fetchedItem) => fetchedItem._id === item.id)?._type };
+    const type = fetchedItems?.find((f) => f._id === item.product)?._type;
+    const isNonQuantifiable = type === 'course' || type === 'bundle' || type === 'voucher';
+    return { ...item, _type: type, quantity: isNonQuantifiable ? 1 : item.quantity };
   });
 
   const removeCoupon = (code: string) => {

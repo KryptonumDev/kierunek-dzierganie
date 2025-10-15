@@ -15,6 +15,16 @@ const AddToCart = ({ id, variant, disabled, quantity = 1, voucherData, data }: P
   const productId = variant ? id + 'variant:' + variant : id;
 
   const addItemToCart = () => {
+    // Prevent duplicate adds for non-quantifiable items (courses, bundles, vouchers)
+    const isNonQuantifiable = data._type === 'course' || data._type === 'bundle' || data._type === 'voucher';
+
+    if (isNonQuantifiable && inCart(productId)) {
+      // Normalize to quantity=1 and inform user
+      updateItem(productId, { id: productId, product: id, variant, price: 0, voucherData: voucherData, quantity: 1 });
+      toast('Ten produkt jest już w koszyku');
+      return;
+    }
+
     if (voucherData?.amount && inCart(productId)) {
       updateItem(productId, { id: productId, product: id, variant, price: 0, voucherData: voucherData, quantity: 1 });
     } else {
@@ -44,7 +54,7 @@ const AddToCart = ({ id, variant, disabled, quantity = 1, voucherData, data }: P
         ],
       });
 
-      addItem({ id: productId, product: id, variant, price: 0, voucherData: voucherData }, quantity);
+      addItem({ id: productId, product: id, variant, price: 0, voucherData: voucherData }, isNonQuantifiable ? 1 : quantity);
     }
     toast('Produkt dodany do koszyka');
   };
