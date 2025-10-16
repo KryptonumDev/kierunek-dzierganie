@@ -310,6 +310,16 @@ export async function POST(request: Request) {
 
       const response = await p24.createTransaction(order);
 
+      // Persist session id for reconciliation/idempotency
+      try {
+        await supabase
+          .from('orders')
+          .update({ payment_id: session })
+          .eq('id', data.id);
+      } catch (e) {
+        console.error('Failed to persist P24 session id to order', e);
+      }
+
       return NextResponse.json(response);
     }
   } catch (error) {

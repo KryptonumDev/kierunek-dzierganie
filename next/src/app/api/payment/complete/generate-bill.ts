@@ -55,6 +55,26 @@ export async function generateBill(data: any, id: string) {
 
   const shippingPrice: number = data.shipping_method?.price ?? 0;
 
+  // Normalize ryczałt rate to iFirma-accepted fractional values
+  // Accepts either percentage input (e.g., 8.5) or fractional (e.g., 0.085)
+  const normalizeRyczalt = (value: number | null | undefined): number | null => {
+    if (value === null || value === undefined) return null;
+    const allowed: number[] = [0.03, 0.055, 0.085, 0.17, 0.2];
+    const epsilon = 0.0005; // tolerance for float rounding
+
+    // Convert percentage (e.g., 8.5) to fraction; pass through if already a fraction
+    const rawFraction = value > 1 ? value / 100 : value;
+    // Round to 3 decimals to avoid 0.09/0.06 issues
+    const fraction = Math.round(rawFraction * 1000) / 1000;
+
+    const matched = allowed.find((a) => Math.abs(fraction - a) < epsilon);
+    if (matched !== undefined) return matched;
+
+    throw new Error(
+      `Invalid ryczalt rate: ${value}. Allowed fractions: ${allowed.join(', ')}`
+    );
+  };
+
   // If no discounts, keep original pricing
   let productsWithDiscount: Array<Line & { amount: number; rabat: number }>;
   if (!discounts.length) {
@@ -151,7 +171,7 @@ export async function generateBill(data: any, id: string) {
         if (product.type === 'product') {
           return {
             StawkaVat: (product.vat ?? 0) / 100,
-            StawkaRyczaltu: product.ryczalt ? product.ryczalt / 100 : null,
+            StawkaRyczaltu: product.ryczalt !== undefined && product.ryczalt !== null ? normalizeRyczalt(product.ryczalt) : null,
             Ilosc: product.quantity,
             CenaJednostkowa: product.amount / 100,
             NazwaPelna: product.name,
@@ -163,7 +183,7 @@ export async function generateBill(data: any, id: string) {
 
         return {
           StawkaVat: (product.vat ?? 0) / 100,
-          StawkaRyczaltu: product.ryczalt ? product.ryczalt / 100 : null,
+          StawkaRyczaltu: product.ryczalt !== undefined && product.ryczalt !== null ? normalizeRyczalt(product.ryczalt) : null,
           Ilosc: 1,
           CenaJednostkowa: product.amount / 100,
           NazwaPelna: product.name,
@@ -190,7 +210,7 @@ export async function generateBill(data: any, id: string) {
   if (data.shipping_method) {
     requestContent.Pozycje.push({
       StawkaVat: settingsData!.value.vatDelivery / 100,
-      StawkaRyczaltu: settingsData!.value.ryczaltPhysical / 100,
+      StawkaRyczaltu: normalizeRyczalt(settingsData!.value.ryczaltPhysical),
       Ilosc: 1,
       CenaJednostkowa: (data.shipping_method.price ?? 0) / 100,
       NazwaPelna: data.shipping_method.name,

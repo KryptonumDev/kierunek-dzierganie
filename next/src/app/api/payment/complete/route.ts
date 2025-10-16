@@ -1,5 +1,6 @@
 'use server';
 import { NextResponse } from 'next/server';
+import { createClient } from '@/utils/supabase-admin';
 import { checkUsedModifications } from './check-used-modifications';
 import { GAConversionPurchase } from './GAConversionPurchase';
 import { generateBill } from './generate-bill';
@@ -18,7 +19,18 @@ export async function POST(request: Request) {
 
     if (!id) return NextResponse.json({ error: 'No order id provided' }, { status: 400 });
 
-    await verifyTransaction(amount, currency, orderId, sessionId);
+    // Fetch order from DB to verify against authoritative values and idempotency
+    const supabase = createClient();
+    const { data: orderRow } = await supabase.from('orders').select('*').eq('id', id).single();
+
+    // Idempotency: if already marked paid or progressed beyond pending, return OK
+    if (orderRow?.paid_at || (orderRow?.status && orderRow.status !== 1)) {
+      return NextResponse.json({}, { status: 200 });
+    }
+
+    // Prefer DB amount; fall back to payload
+    const expectedAmount: number = typeof orderRow?.amount === 'number' ? orderRow.amount : amount;
+    await verifyTransaction(expectedAmount, currency, orderId, sessionId);
 
     const { data, error } = await updateOrder(
       {
