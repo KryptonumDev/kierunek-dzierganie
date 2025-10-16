@@ -50,7 +50,25 @@ export async function POST(request: Request) {
     await updateItemsQuantity(data);
     console.log('payment/complete:data');
     console.log(data);
-    await generateBill(data, id);
+
+    // Generate invoice; if it fails, still complete digital orders to avoid long-running PENDING state
+    try {
+      await generateBill(data, id);
+    } catch (billError) {
+      console.error('❗ Invoice generation failed, setting fallback status', billError);
+      // Fallback: mark digital orders as COMPLETED (3); keep physical orders as IN PROGRESS (2)
+      try {
+        await updateOrder(
+          {
+            status: data.need_delivery ? 2 : 3,
+          },
+          id
+        );
+      } catch (statusError) {
+        console.error('❗ Failed to set fallback status after invoice error', statusError);
+      }
+    }
+
     await sendEmails(data);
 
     // Analytics tracking (supports both user and guest orders)
