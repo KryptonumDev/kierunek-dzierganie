@@ -43,6 +43,7 @@ export async function POST(request: Request) {
         discounted_products?: Array<{ id: string; name?: string }> | null;
         eligibleCount?: number;
         code?: string;
+        aggregates?: boolean;
       };
 
       const selectedCoupons: CouponRow[] = [];
@@ -70,6 +71,7 @@ export async function POST(request: Request) {
             (row['discounted_products'] as Array<{ id: string; name?: string }> | null | undefined) ?? null,
           eligibleCount: (row['eligibleCount'] as number | undefined) ?? undefined,
           code: row['code'] as string | undefined,
+          aggregates: (row['aggregates'] as boolean | undefined) ?? true,
         };
         return normalized;
       };
@@ -93,7 +95,8 @@ export async function POST(request: Request) {
             ),
             voucher_amount_left,
             discounted_product,
-            discounted_products
+            discounted_products,
+            aggregates
             `
           )
           .eq('code', c);
@@ -289,7 +292,8 @@ export async function POST(request: Request) {
         ),
         voucher_amount_left,
         discounted_product,
-        discounted_products
+        discounted_products,
+        aggregates
         `
       )
       .eq('code', code);

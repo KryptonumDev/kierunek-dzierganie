@@ -10,12 +10,14 @@ export function calculateDiscountAmount(price: number, discount: Discount, deliv
   }
 
   if (discount.type === 'FIXED PRODUCT') {
-    // Apply per eligible line item if available; clamp to cart price
+    // Apply per eligible line item if available unless aggregates is false; clamp to cart price
     const eligibleCount =
       typeof (discount as unknown as { eligibleCount?: number }).eligibleCount === 'number'
         ? (discount as unknown as { eligibleCount?: number }).eligibleCount!
         : 1;
-    const total = discount.amount * Math.max(0, eligibleCount);
+    const aggregates = (discount as unknown as { aggregates?: boolean }).aggregates;
+    const unitsUsed = aggregates === false ? Math.min(1, Math.max(0, eligibleCount)) : Math.max(0, eligibleCount);
+    const total = discount.amount * unitsUsed;
     return total > price ? -price : -total;
   }
 

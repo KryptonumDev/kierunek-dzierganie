@@ -70,9 +70,7 @@ export async function generateBill(data: any, id: string) {
     const matched = allowed.find((a) => Math.abs(fraction - a) < epsilon);
     if (matched !== undefined) return matched;
 
-    throw new Error(
-      `Invalid ryczalt rate: ${value}. Allowed fractions: ${allowed.join(', ')}`
-    );
+    throw new Error(`Invalid ryczalt rate: ${value}. Allowed fractions: ${allowed.join(', ')}`);
   };
 
   // If no discounts, keep original pricing
@@ -171,7 +169,8 @@ export async function generateBill(data: any, id: string) {
         if (product.type === 'product') {
           return {
             StawkaVat: (product.vat ?? 0) / 100,
-            StawkaRyczaltu: product.ryczalt !== undefined && product.ryczalt !== null ? normalizeRyczalt(product.ryczalt) : null,
+            StawkaRyczaltu:
+              product.ryczalt !== undefined && product.ryczalt !== null ? normalizeRyczalt(product.ryczalt) : null,
             Ilosc: product.quantity,
             CenaJednostkowa: product.amount / 100,
             NazwaPelna: product.name,
@@ -183,7 +182,8 @@ export async function generateBill(data: any, id: string) {
 
         return {
           StawkaVat: (product.vat ?? 0) / 100,
-          StawkaRyczaltu: product.ryczalt !== undefined && product.ryczalt !== null ? normalizeRyczalt(product.ryczalt) : null,
+          StawkaRyczaltu:
+            product.ryczalt !== undefined && product.ryczalt !== null ? normalizeRyczalt(product.ryczalt) : null,
           Ilosc: 1,
           CenaJednostkowa: product.amount / 100,
           NazwaPelna: product.name,

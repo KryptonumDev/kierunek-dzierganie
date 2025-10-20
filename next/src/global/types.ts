@@ -574,6 +574,8 @@ export type Discount = {
   discounted_products?: Array<{ id: string; name: string }> | any;
   // Number of eligible line items in cart/order for FIXED PRODUCT coupons
   eligibleCount?: number;
+  // If false, a FIXED PRODUCT discount applies once per order (no aggregation)
+  aggregates?: boolean;
   affiliatedBy: string | null;
 };
 

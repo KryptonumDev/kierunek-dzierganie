@@ -150,6 +150,7 @@ export async function POST(request: Request) {
       amount: number;
       discounted_products?: Array<{ id: string }> | undefined;
       discounted_product?: { id: string } | null;
+      aggregates?: boolean | null;
     }) => {
       const eligibleIds =
         Array.isArray(d.discounted_products) && d.discounted_products.length > 0
@@ -162,7 +163,8 @@ export async function POST(request: Request) {
         (sum, p) => (eligibleIds.includes(p.id) ? sum + (p.quantity ?? 1) : sum),
         0
       );
-      return d.amount * Math.max(0, eligibleUnits);
+      const unitsUsed = d.aggregates === false ? Math.min(1, Math.max(0, eligibleUnits)) : Math.max(0, eligibleUnits);
+      return d.amount * unitsUsed;
     };
 
     // Separate by type
@@ -312,10 +314,7 @@ export async function POST(request: Request) {
 
       // Persist session id for reconciliation/idempotency
       try {
-        await supabase
-          .from('orders')
-          .update({ payment_id: session })
-          .eq('id', data.id);
+        await supabase.from('orders').update({ payment_id: session }).eq('id', data.id);
       } catch (e) {
         console.error('Failed to persist P24 session id to order', e);
       }

@@ -255,6 +255,7 @@ export default function Cart({
             discounted_product?: { id: string; name?: string } | null;
             discounted_products?: Array<{ id: string; name?: string }> | null;
             affiliation_of?: string | null;
+            aggregates?: boolean | null;
           }) => {
             const type = data.coupons_types?.coupon_type;
             const eligibleIds =
@@ -279,6 +280,7 @@ export default function Cart({
               discounted_products: data.discounted_products,
               affiliatedBy: data.affiliation_of,
               eligibleCount,
+              aggregates: data.aggregates ?? true,
             } as Discount;
           }
         );
