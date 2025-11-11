@@ -159,6 +159,30 @@ export async function POST(request: Request) {
           return NextResponse.json({ error: 'Nie możesz użyć własnego kodu afiliacyjnego' }, { status: 400 });
         }
 
+        // Check if user is new (affiliate coupons only for new users)
+        if (selected?.affiliation_of) {
+          if (!userId)
+            return NextResponse.json(
+              { error: 'Musisz być zalogowany, aby użyć tego kodu rabatowego' },
+              { status: 401 }
+            );
+
+          const { data: affiliationData } = await supabase
+            .from('profiles')
+            .select('courses_progress(count), orders(count)')
+            .eq('id', userId)
+            .single();
+
+          if (affiliationData) {
+            if (affiliationData.courses_progress[0]!.count >= 1 || affiliationData.orders[0]!.count >= 1) {
+              return NextResponse.json(
+                { error: 'Tylko nowi użytkownicy mogą skorzystać z kodu afiliacyjnego' },
+                { status: 400 }
+              );
+            }
+          }
+        }
+
         if (selected?.expiration_date && selected.expiration_date < now) {
           return NextResponse.json({ error: `Kod ${c} jest przeterminowany` }, { status: 400 });
         }
