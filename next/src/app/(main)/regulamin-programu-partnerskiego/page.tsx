@@ -7,6 +7,7 @@ import FilesComponent, { FilesComponent_Query } from '@/components/_legal/FilesC
 import { Header_Query } from '@/components/_legal/Header';
 import { Contents_Query } from '@/components/_legal/Contents';
 import type { PartnershipProgramPage_QueryTypes } from './page.types';
+import { notFound } from 'next/navigation';
 
 const page = { name: 'Regulamin programu partnerskiego', path: '/regulamin-programu-partnerskiego' };
 
@@ -15,6 +16,10 @@ export default async function PartnershipProgramPage() {
     global: { tel, email },
     page: { content, header_Description, header_Heading, files },
   } = await getData();
+
+  if (!content || !header_Heading || !header_Description || !files) {
+    return notFound();
+  }
 
   return (
     <>
@@ -55,4 +60,3 @@ async function getData(): Promise<PartnershipProgramPage_QueryTypes> {
 export async function generateMetadata() {
   return await QueryMetadata('PartnershipProgram_Page', page.path);
 }
-
