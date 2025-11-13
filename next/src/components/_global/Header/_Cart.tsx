@@ -309,7 +309,7 @@ export default function Cart({
       .reduce((sum, d) => sum + calculateDiscountAmount(totalItemsPrice, d, 0), 0);
     const baseAfterProducts = Math.max(0, totalItemsPrice + deliveryVal + productTotal); // productTotal is negative
     const voucher = usedDiscounts.find((d) => d.type === 'VOUCHER');
-    const voucherTotal = voucher ? -Math.min(baseAfterProducts, voucher.totalVoucherAmount ?? voucher.amount ?? 0) : 0;
+    const voucherTotal = voucher ? -Math.min(baseAfterProducts, voucher.amount ?? 0) : 0;
     const cartWide = usedDiscounts.find((d) => d.type === 'PERCENTAGE' || d.type === 'FIXED CART');
     if (cartWide && usedDiscounts.length === 1) return calculateDiscountAmount(totalItemsPrice, cartWide, delivery);
     return productTotal + voucherTotal;

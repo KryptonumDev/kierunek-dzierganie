@@ -43,7 +43,7 @@ const OrderData = ({ order }: OrderDataTypes) => {
 
     // Apply VOUCHER if present
     const voucher = discounts.find((d) => d.type === 'VOUCHER');
-    const voucherTotal = voucher ? -Math.min(baseAfterProducts, voucher.totalVoucherAmount ?? voucher.amount ?? 0) : 0;
+    const voucherTotal = voucher ? -Math.min(baseAfterProducts, voucher.amount ?? 0) : 0;
 
     // Check for cart-wide discount (PERCENTAGE or FIXED CART)
     const cartWide = discounts.find((d) => d.type === 'PERCENTAGE' || d.type === 'FIXED CART');

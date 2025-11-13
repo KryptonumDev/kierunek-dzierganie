@@ -241,6 +241,14 @@ export async function POST(request: Request) {
           (selected as unknown as { eligibleCount?: number }).eligibleCount = eligibleCount;
         }
 
+        // CRITICAL FIX: Validate voucher balance (prevent overuse)
+        // @ts-expect-error wrong types from supabase
+        if (selected?.coupons_types?.coupon_type === 'VOUCHER') {
+          if ((selected.voucher_amount_left ?? 0) <= 0) {
+            return NextResponse.json({ error: `Voucher ${c} jest wyczerpany` }, { status: 400 });
+          }
+        }
+
         // Override amount for affiliate coupons to always be 50 PLN
         if (selected?.affiliation_of) {
           selected.amount = 5000;

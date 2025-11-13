@@ -24,7 +24,7 @@ export default function SummaryAside({ input }: AsideProps) {
       .reduce((sum, d) => sum + calculateDiscountAmount(price, d, 0), 0);
     const baseAfterProducts = Math.max(0, price + delivery + productTotal);
     const voucher = discounts.find((d) => d.type === 'VOUCHER');
-    const voucherTotal = voucher ? -Math.min(baseAfterProducts, voucher.totalVoucherAmount ?? voucher.amount ?? 0) : 0;
+    const voucherTotal = voucher ? -Math.min(baseAfterProducts, voucher.amount ?? 0) : 0;
     const cartWide = discounts.find((d) => d.type === 'PERCENTAGE' || d.type === 'FIXED CART');
     if (cartWide && discounts.length === 1) return calculateDiscountAmount(price, cartWide, delivery);
     return productTotal + voucherTotal;

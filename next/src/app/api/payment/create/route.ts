@@ -172,6 +172,27 @@ export async function POST(request: Request) {
     const voucher = discountsArray.filter((d) => d.type === 'VOUCHER');
     const cartWide = discountsArray.filter((d) => d.type === 'PERCENTAGE' || d.type === 'FIXED CART');
 
+    // CRITICAL FIX: Server-side voucher validation (protect against race conditions)
+    if (voucher.length > 0) {
+      const voucherId = voucher[0]!.id;
+      const { data: freshVoucher, error: voucherError } = await supabase
+        .from('coupons')
+        .select('voucher_amount_left')
+        .eq('id', voucherId)
+        .single();
+
+      if (voucherError || !freshVoucher) {
+        return NextResponse.json({ error: 'Nie można zweryfikować vouchera' }, { status: 500 });
+      }
+
+      if ((freshVoucher.voucher_amount_left ?? 0) <= 0) {
+        return NextResponse.json({ error: 'Voucher jest wyczerpany' }, { status: 400 });
+      }
+
+      // Update the voucher amount with fresh data from DB
+      voucher[0]!.amount = freshVoucher.voucher_amount_left;
+    }
+
     // v1 policy enforcement: reject cart-wide mixes (soft-fail to legacy single)
     if (cartWide.length > 0 && discountsArray.length > 1) {
       return NextResponse.json({ error: 'Nie można łączyć kodów koszykowych z innymi zniżkami' }, { status: 400 });
@@ -189,8 +210,8 @@ export async function POST(request: Request) {
 
     // Voucher is applied last and capped by remaining total after fixed-product discounts
     const baseAfterFixed = Math.max(0, productsSubtotal + deliveryAmount - fixedProductTotal);
-    const voucherUsed =
-      voucher.length > 0 ? Math.min(baseAfterFixed, voucher[0]!.totalVoucherAmount ?? voucher[0]!.amount) : 0;
+    // CRITICAL FIX: Use voucher[0]!.amount (remaining balance), NOT totalVoucherAmount (original amount)
+    const voucherUsed = voucher.length > 0 ? Math.min(baseAfterFixed, voucher[0]!.amount) : 0;
 
     // If there is a single cart-wide discount (percentage or fixed cart), apply it to products + delivery
     let cartWideUsed = 0;
