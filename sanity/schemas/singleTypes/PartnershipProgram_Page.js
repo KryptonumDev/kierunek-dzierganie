@@ -19,9 +19,11 @@ export default {
     {
       name: 'content',
       type: 'array',
-      of: [{
-        type: 'PartnershipProgram_Page_Content'
-      }],
+      of: [
+        {
+          type: 'PartnershipProgram_Page_Content',
+        },
+      ],
       title: 'Zawartość',
       fieldset: 'content',
     },
@@ -88,4 +90,3 @@ export const PartnershipProgram_Page_Content = {
     },
   },
 };
-

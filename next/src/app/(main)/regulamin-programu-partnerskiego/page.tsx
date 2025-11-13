@@ -17,7 +17,7 @@ export default async function PartnershipProgramPage() {
     page: { content, header_Description, header_Heading, files },
   } = await getData();
 
-  if (!content || !header_Heading || !header_Description || !files) {
+  if (!content || !header_Heading || !header_Description) {
     return notFound();
   }
 
