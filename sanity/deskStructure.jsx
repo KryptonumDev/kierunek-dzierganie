@@ -35,6 +35,7 @@ const WebPreview = ({ document }) => {
     NotFound_Page: '/not-found',
     PrivacyPolicy_Page: '/polityka-prywatnosci',
     Statute_Page: '/regulamin',
+    PartnershipProgram_Page: '/regulamin-programu-partnerskiego',
     StanVouchera_Page: '/stanvouchera',
     GuestThankYou_Page: '/dziekujemy-za-zamowienie',
     Blog_Page: '/blog',

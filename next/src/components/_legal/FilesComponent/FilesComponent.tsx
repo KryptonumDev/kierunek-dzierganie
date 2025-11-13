@@ -4,6 +4,7 @@ import type { Props } from './FilesComponent.types';
 import parseFileName from '@/utils/parse-file-name';
 
 const FilesComponent = ({ data }: Props) => {
+  if (!data || data.length === 0) return null;
   return (
     <section className={styles['FilesComponent']}>
       {data.map(({ asset: { originalFilename, size, url } }, index) => (

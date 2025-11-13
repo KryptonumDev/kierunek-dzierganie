@@ -225,6 +225,17 @@ export async function POST(request: Request) {
       }
     }
 
+    // Validate virtual money usage: ONLY allowed for courses and bundles
+    if (input.virtualMoney && input.virtualMoney > 0) {
+      const hasNonCourseProducts = productItems.some((item) => item.type !== 'course' && item.type !== 'bundle');
+      if (hasNonCourseProducts) {
+        return NextResponse.json(
+          { error: 'Wirtualne złotówki można wykorzystać tylko przy zakupie kursów' },
+          { status: 400 }
+        );
+      }
+    }
+
     // Compute final payable total on the server – do NOT trust client-provided totals
     const combinedDiscount = cartWideUsed > 0 ? cartWideUsed : fixedProductTotal + voucherUsed;
     const virtualMoneyAmount = input.virtualMoney ? input.virtualMoney * 100 : 0;

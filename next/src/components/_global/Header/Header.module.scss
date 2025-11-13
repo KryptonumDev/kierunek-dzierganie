@@ -783,6 +783,31 @@
           }
         }
       }
+
+      .virtualMoneyWrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        .checkboxWrapper {
+          &[data-disabled='true'] {
+            opacity: 0.4;
+            pointer-events: none;
+            user-select: none;
+          }
+        }
+
+        .restrictionMessage {
+          margin: 0;
+          padding: 12px 16px;
+          background: var(--primary-300);
+          border-left: 3px solid var(--primary-500);
+          border-radius: 4px;
+          font-size: calc(13rem / 16);
+          line-height: 1.5;
+          color: var(--primary-800);
+        }
+      }
     }
 
     .flex {

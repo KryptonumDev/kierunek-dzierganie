@@ -17,6 +17,7 @@ import Logout_Page from './singleTypes/dashboard/Logout_Page';
 import NotFound_Page from './singleTypes/NotFound_Page';
 import PrivacyPolicy_Page, { Privacy_Policy_Page_Content } from './singleTypes/PrivacyPolicy_Page';
 import Statute_Page, { Statute_Page_Content } from './singleTypes/Statute_Page';
+import PartnershipProgram_Page, { PartnershipProgram_Page_Content } from './singleTypes/PartnershipProgram_Page';
 
 import Cart from './singleTypes/Cart';
 import Authorization_Page from './singleTypes/dashboard/Authorization_Page';
@@ -58,6 +59,7 @@ export const singleTypes = [
   NotFound_Page,
   PrivacyPolicy_Page,
   Statute_Page,
+  PartnershipProgram_Page,
   Blog_Page,
   Cart,
   StanVouchera_Page,
@@ -247,6 +249,7 @@ export const schemaTypes = [
   Partners,
   Statute_Page_Content,
   Privacy_Policy_Page_Content,
+  PartnershipProgram_Page_Content,
   ImageAndText,
   MostPopularCourses,
   global_OrganizationSchema,

@@ -9,6 +9,7 @@ import ProductCard from '@/components/ui/ProductCard';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 import { formatToOnlyDigits } from '@/utils/format-to-only-digits';
 import { formatPrice } from '@/utils/price-formatter';
+import { canUseVirtualMoney, getVirtualMoneyRestrictionMessage } from '@/utils/can-use-virtual-money';
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -61,6 +62,11 @@ export default function Cart({
 
   const [isVirtualCoins, setIsVirtualCoins] = useState<boolean>(false);
   const [couponVerifying, setCouponVerifying] = useState(false);
+
+  // Check if virtual money can be used (only for courses and bundles)
+  const canApplyVirtualMoney = useMemo(() => canUseVirtualMoney(fetchedItems), [fetchedItems]);
+  const virtualMoneyRestrictionMessage = useMemo(() => getVirtualMoneyRestrictionMessage(fetchedItems), [fetchedItems]);
+
   const delivery = useMemo<number | null>(
     () =>
       fetchedItems?.some((item) => item.needDelivery)
@@ -87,6 +93,26 @@ export default function Cart({
       processedRemovalsRef.current.clear();
     }
   }, [cart]);
+
+  // Reset virtual money if cart becomes ineligible (e.g., physical products added)
+  useEffect(() => {
+    if (!canApplyVirtualMoney && (isVirtualCoins || usedVirtualMoney)) {
+      setIsVirtualCoins(false);
+      setUsedVirtualMoney(null);
+      setValue('virtual', '');
+      setValue('isVirtual', false);
+      if (virtualMoneyRestrictionMessage) {
+        toast.info(virtualMoneyRestrictionMessage);
+      }
+    }
+  }, [
+    canApplyVirtualMoney,
+    isVirtualCoins,
+    usedVirtualMoney,
+    setUsedVirtualMoney,
+    setValue,
+    virtualMoneyRestrictionMessage,
+  ]);
 
   useEffect(() => {
     addEventListener('keydown', (e) => {
@@ -487,6 +513,7 @@ export default function Cart({
                                       },
                                     })}
                                     errors={errors}
+                                    disabled={!canApplyVirtualMoney}
                                   />
                                   <div className={styles.mask}>
                                     <span className={styles.hide}>{usedVirtualMoney}</span>
@@ -502,14 +529,38 @@ export default function Cart({
                                     {VirtualCoinsCrossIcon}
                                   </button>
                                 </div>
+                                {!canApplyVirtualMoney && virtualMoneyRestrictionMessage && (
+                                  <p className={styles.restrictionMessage}>{virtualMoneyRestrictionMessage}</p>
+                                )}
                               </div>
                             ) : (
-                              <Checkbox
-                                register={register('isVirtual')}
-                                label={<>Chcę wykorzystać wirtualne złotówki</>}
-                                errors={errors}
-                                onChange={() => setIsVirtualCoins((prev) => !prev)}
-                              />
+                              <div className={styles.virtualMoneyWrapper}>
+                                <div
+                                  className={styles.checkboxWrapper}
+                                  data-disabled={!canApplyVirtualMoney}
+                                >
+                                  <Checkbox
+                                    register={register('isVirtual')}
+                                    label={<>Chcę wykorzystać wirtualne złotówki</>}
+                                    errors={errors}
+                                    onChange={(e) => {
+                                      if (!canApplyVirtualMoney) {
+                                        e.preventDefault();
+                                        if (virtualMoneyRestrictionMessage) {
+                                          toast.info(virtualMoneyRestrictionMessage);
+                                        }
+                                        return false;
+                                      }
+                                      setIsVirtualCoins((prev) => !prev);
+                                    }}
+                                    disabled={!canApplyVirtualMoney}
+                                    tabIndex={!canApplyVirtualMoney ? -1 : 0}
+                                  />
+                                </div>
+                                {!canApplyVirtualMoney && virtualMoneyRestrictionMessage && (
+                                  <p className={styles.restrictionMessage}>{virtualMoneyRestrictionMessage}</p>
+                                )}
+                              </div>
                             )}
                           </>
                         ) : null}
