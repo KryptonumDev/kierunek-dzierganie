@@ -206,7 +206,8 @@ export async function POST(request: Request) {
 
     // Compute final payable total on the server – do NOT trust client-provided totals
     const combinedDiscount = cartWideUsed > 0 ? cartWideUsed : fixedProductTotal + voucherUsed;
-    const computedFinalTotal = Math.max(0, productsSubtotal + deliveryAmount - combinedDiscount);
+    const virtualMoneyAmount = input.virtualMoney ? input.virtualMoney * 100 : 0;
+    const computedFinalTotal = Math.max(0, productsSubtotal + deliveryAmount - combinedDiscount - virtualMoneyAmount);
 
     // Compose persisted discounts
     const used_discounts = discountsArray.map((d) => {
