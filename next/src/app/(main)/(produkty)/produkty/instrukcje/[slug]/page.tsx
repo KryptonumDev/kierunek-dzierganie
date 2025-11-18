@@ -30,10 +30,12 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
         description,
         reviews,
         rating,
+        relatedCourses,
         videoProvider,
       },
     },
     user,
+    ownedCourses,
   } = await query(slug);
 
   return (
@@ -66,6 +68,8 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
         id={_id}
         type={type}
         variants={variants}
+        relatedCourses={relatedCourses}
+        ownedCourses={ownedCourses}
         physical={{
           basis: 'instruction',
           _id,
@@ -174,7 +178,8 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
             }
           },
           "relatedCourses": *[_type == 'course' && references(^._id)][]{
-            _id
+            _id,
+            name
           },
           "reviews": *[_type == 'productReviewCollection' && visible == true && references(^._id)][0...10]{
             rating,
@@ -192,7 +197,9 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
   // If product is not found for the given slug within this category, render 404
   if (!data?.product) notFound();
 
-  return { data: data, user: res.data?.firstName as string };
+  const ownedCourses = res.data?.courses_progress?.map((course) => course.course_id as string) ?? [];
+
+  return { data: data, user: res.data?.firstName as string, ownedCourses };
 };
 
 export async function generateStaticParams(): Promise<generateStaticParamsProps[]> {

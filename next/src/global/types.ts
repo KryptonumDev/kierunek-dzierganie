@@ -315,7 +315,7 @@ export type ProductPageQueryProps = {
       name: string;
       value: string;
     }>;
-    relatedCourses?: { _id: string }[];
+    relatedCourses?: { _id: string; name?: string }[];
     rating: number;
     reviewsCount: number;
     description: DescriptionTypes[];
@@ -325,6 +325,7 @@ export type ProductPageQueryProps = {
 export type ProductPageQuery = {
   data: ProductPageQueryProps;
   user: string | undefined;
+  ownedCourses?: string[];
 };
 
 export type CoursePageQueryProps = {

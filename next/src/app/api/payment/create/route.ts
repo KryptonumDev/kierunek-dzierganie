@@ -2,6 +2,7 @@ import type { InputState } from '@/components/_global/Header/Checkout/Checkout.t
 import { dedicatedVoucher, voucher as generateVoucherPdf } from '@/utils/create-voucher';
 import { formatPrice } from '@/utils/price-formatter';
 import { createClient } from '@/utils/supabase-admin';
+import sanityFetch from '@/utils/sanity.fetch';
 import { Country, Currency, Encoding, Language, P24 } from '@ingameltd/node-przelewy24';
 import { NextResponse } from 'next/server';
 import { checkUsedModifications } from '../complete/check-used-modifications';
@@ -57,6 +58,108 @@ export async function POST(request: Request) {
         timestamp: new Date().toISOString(),
       });
       return NextResponse.json({ error: 'Cannot create order with empty products array' }, { status: 400 });
+    }
+
+    // Server-side guard: block products whose parent course references them as materials/manuals
+    const productIdsNeedingRelation = Array.from(
+      new Set(productItems.filter((item) => item.type === 'product').map((item) => item.id))
+    );
+
+    console.log('productIdsNeedingRelation', productIdsNeedingRelation);
+    console.log('productItems', productItems);
+
+
+
+    const productRequiredCourseMap = new Map<string, { _id: string; name?: string }>();
+    if (productIdsNeedingRelation.length > 0) {
+      const sanityCourses = await sanityFetch<
+        Array<{
+          _id: string;
+          name?: string;
+          materials_link?: { _id: string; name?: string } | null;
+          related_products?: Array<{ _id: string; name?: string }> | null;
+        }>
+      >({
+        query: '*[_type == "course" && references($productIds)]{_id, name, "materials_link": materials_link->{_id, name}, "related_products": related_products[]->{_id, name}}',
+        params: { productIds: productIdsNeedingRelation },
+      });
+
+      const productIdSet = new Set(productIdsNeedingRelation);
+      sanityCourses?.forEach((course) => {
+        if (course.materials_link?._id && productIdSet.has(course.materials_link._id)) {
+          productRequiredCourseMap.set(course.materials_link._id, { _id: course._id, name: course.name });
+        }
+        course.related_products?.forEach((product) => {
+          if (product?._id && productIdSet.has(product._id)) {
+            productRequiredCourseMap.set(product._id, { _id: course._id, name: course.name });
+          }
+        });
+      });
+    }
+
+    if (productRequiredCourseMap.size > 0) {
+      const orderCourseIds = new Set<string>();
+      productItems.forEach((item) => {
+        if (item.type === 'course') {
+          orderCourseIds.add(item.id);
+        }
+        const linkedCourses = (item as { courses?: Array<{ _id?: string }> | null }).courses;
+        if (Array.isArray(linkedCourses)) {
+          linkedCourses.forEach((course) => {
+            if (course?._id) {
+              orderCourseIds.add(course._id);
+            }
+          });
+        }
+      });
+
+      const requiredCourseIds = new Set(
+        Array.from(productRequiredCourseMap.values())
+          .map((related) => related._id)
+          .filter((courseId): courseId is string => typeof courseId === 'string')
+      );
+
+      let ownedRelatedCourseIds = new Set<string>();
+      if (input.user_id && requiredCourseIds.size > 0) {
+        const { data: ownedCoursesData, error: ownedCoursesError } = await supabase
+          .from('courses_progress')
+          .select('course_id')
+          .eq('owner_id', input.user_id)
+          .in('course_id', Array.from(requiredCourseIds));
+
+        if (ownedCoursesError) {
+          console.error('Failed to verify course ownership', ownedCoursesError);
+          return NextResponse.json({ error: 'Nie udało się zweryfikować uprawnień do kursów' }, { status: 500 });
+        }
+
+        ownedRelatedCourseIds = new Set(
+          (ownedCoursesData ?? [])
+            .map((row) => row.course_id)
+            .filter((courseId): courseId is string => typeof courseId === 'string')
+        );
+      }
+
+      for (const product of productItems) {
+        const relatedCourse = productRequiredCourseMap.get(product.id);
+        if (!relatedCourse) continue;
+
+        const hasCourseInOrder = orderCourseIds.has(relatedCourse._id);
+        const userOwnsCourse = input.user_id ? ownedRelatedCourseIds.has(relatedCourse._id) : false;
+
+        if (!hasCourseInOrder && !userOwnsCourse) {
+          console.warn('Order blocked: product requires related course', {
+            productId: product.id,
+            relatedCourseId: relatedCourse._id,
+            userId: input.user_id ?? 'guest',
+          });
+          return NextResponse.json(
+            {
+              error: `Produkt "${product.name}" wymaga posiadania kursu "${relatedCourse.name}". Dodaj kurs do zamówienia lub zaloguj się na konto z dostępem do kursu.`,
+            },
+            { status: 400 }
+          );
+        }
+      }
     }
 
     const products = productItems.map(async (product) => {
@@ -303,8 +406,6 @@ export async function POST(request: Request) {
 
     const { data, error } = await supabase.from('orders').insert(orderData).select('*').single();
 
-    console.log('payment/create:data');
-    console.log(data);
 
     if (!data || error) {
       throw new Error(error?.message || 'Error while creating order');

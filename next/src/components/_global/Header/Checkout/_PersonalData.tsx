@@ -181,64 +181,70 @@ export default function PersonalData({
     const newInput = generateNewInput(data, input, selectedMapPoint, shippingMethods);
 
     setInput(newInput as InputState);
-    await fetch('/api/payment/create', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        input: newInput,
-        description: 'Zamówienie w sklepie internetowym Kierunek Dzierganie',
-      }),
-    })
-      .then((res) => res.json())
-      .then(({ link }) => {
-        if (!link) throw new Error('Błąd podczas tworzenia zamówienia');
 
-        if (typeof fbq !== 'undefined') {
-          fbq('track', 'InitiateCheckout', {
-            content_ids: newInput.products?.array.map(({ id }) => id),
-            contents: newInput.products?.array.map((el) => ({
-              id: el.id,
-              item_price: el.price! / 100,
-              quantity: el.quantity,
-            })),
-            content_type: 'product',
-            value: newInput.totalAmount / 100,
-            currency: 'PLN',
-          });
-        }
+    try {
+      const response = await fetch('/api/payment/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          input: newInput,
+          description: 'Zamówienie w sklepie internetowym Kierunek Dzierganie',
+        }),
+      });
 
-        gtag('event', 'begin_checkout', {
-          currency: 'PLN',
-          value: newInput.totalAmount / 100,
-          coupon: newInput.discount?.code,
-          // transaction_id: token,
-          // shipping: newInput.needDelivery
-          //   ? newInput.freeDelivery
-          //     ? 0
-          //     : newInput.shippingMethod.price / 100
-          //   : undefined,
-          items: newInput.products?.array.map((el) => ({
+      const payload = await response.json();
+
+      if (!response.ok) {
+        toast(payload?.error ?? 'Nie można utworzyć zamówienia. Spróbuj ponownie.');
+        return;
+      }
+
+      const { link } = payload;
+
+      if (!link) {
+        throw new Error('Błąd podczas tworzenia zamówienia');
+      }
+
+      if (typeof fbq !== 'undefined') {
+        fbq('track', 'InitiateCheckout', {
+          content_ids: newInput.products?.array.map(({ id }) => id),
+          contents: newInput.products?.array.map((el) => ({
             id: el.id,
-            name: el.name,
-            discount: el.discount ? (el.price! - el.discount) / 100 : undefined,
-            price: el.price! / 100,
-            item_variant: el.variantId,
-            item_category: el.type,
-            item_category2: el.basis,
+            item_price: el.price! / 100,
             quantity: el.quantity,
           })),
+          content_type: 'product',
+          value: newInput.totalAmount / 100,
+          currency: 'PLN',
         });
+      }
 
-        emptyCart();
-        window.location.href = link;
-      })
-      .catch((err) => {
-        toast('Błąd podczas tworzenia zamówienia');
-        console.log(err);
-      })
-      .finally(() => setSubmitting(false));
+      gtag('event', 'begin_checkout', {
+        currency: 'PLN',
+        value: newInput.totalAmount / 100,
+        coupon: newInput.discount?.code,
+        items: newInput.products?.array.map((el) => ({
+          id: el.id,
+          name: el.name,
+          discount: el.discount ? (el.price! - el.discount) / 100 : undefined,
+          price: el.price! / 100,
+          item_variant: el.variantId,
+          item_category: el.type,
+          item_category2: el.basis,
+          quantity: el.quantity,
+        })),
+      });
+
+      emptyCart();
+      window.location.href = link;
+    } catch (err) {
+      console.log(err);
+      toast('Błąd podczas tworzenia zamówienia');
+    } finally {
+      setSubmitting(false);
+    }
   });
 
   return (

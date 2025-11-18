@@ -159,6 +159,18 @@ export default function Cart({
     if (!fetchedItems) return;
 
     const plannedRemovals: Array<{ id: string; message: string }> = [];
+    const currentCartIds = new Set<string>();
+
+    fetchedItems.forEach((item) => {
+      const itemId = item.variant ? item._id + `variant:${item.variant._id}` : item._id;
+      currentCartIds.add(itemId);
+    });
+
+    processedRemovalsRef.current.forEach((id) => {
+      if (!currentCartIds.has(id)) {
+        processedRemovalsRef.current.delete(id);
+      }
+    });
 
     fetchedItems.forEach((el) => {
       const cartId = el.variant ? el._id + `variant:${el.variant._id}` : el._id;
@@ -208,7 +220,9 @@ export default function Cart({
     plannedRemovals.forEach(({ id, message }) => {
       processedRemovalsRef.current.add(id);
       removeItem(id);
-      toast(message, { toastId: `rm-${id}` });
+      const toastId = `rm-${id}`;
+      toast.dismiss(toastId);
+      toast(message, { toastId });
     });
   }, [fetchedItems, ownedCourses, removeItem]);
 

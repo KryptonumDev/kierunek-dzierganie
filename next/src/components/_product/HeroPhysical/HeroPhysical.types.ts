@@ -41,6 +41,8 @@ export type Props = {
   type?: string;
   variants?: ProductVariant[];
   physical: ProductPhysical;
+  relatedCourses?: Array<{ _id: string; name?: string }>;
+  ownedCourses?: string[];
 };
 
 export type AttributesTypes = Array<{

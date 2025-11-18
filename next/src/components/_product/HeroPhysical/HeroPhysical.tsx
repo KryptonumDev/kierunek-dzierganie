@@ -16,7 +16,7 @@ const gtag: Gtag.Gtag = function () {
   window.dataLayer?.push(arguments);
 };
 
-const HeroPhysical = ({ name, id, variants, physical }: Props) => {
+const HeroPhysical = ({ name, id, variants, physical, relatedCourses, ownedCourses }: Props) => {
   const attributes = useMemo(() => {
     if (!variants) return [];
     const arr = [] as AttributesTypes;
@@ -141,6 +141,8 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
       return () => clearTimeout(timeoutId);
     }
   }, [attributes.length, chosenVariant, id, physical.basis]);
+
+  const requiredCourse = relatedCourses?.[0] ?? null;
 
   return (
     <section className={styles['HeroPhysical']}>
@@ -271,6 +273,7 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
             variant={variants ? chosenVariant?._id : undefined}
             disabled={!count || chosenVariant!.countInStock <= 0}
             quantity={count}
+            ownedCourses={ownedCourses}
             data={{
               price: chosenVariant!.price,
               discount: chosenVariant!.discount,
@@ -279,6 +282,7 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
               _type: 'product',
               variant: variants ? chosenVariant!._id : undefined,
               basis: physical.basis,
+              relatedCourse: requiredCourse,
             }}
           />
         </div>
