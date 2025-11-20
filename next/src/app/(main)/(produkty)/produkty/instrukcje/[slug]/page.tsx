@@ -177,7 +177,7 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
               value
             }
           },
-          "relatedCourses": *[_type == 'course' && references(^._id)][]{
+          "relatedCourses": *[_type == 'course' && (materials_link._ref == ^._id || ^._id in related_products[]._ref)][]{
             _id,
             name
           },
@@ -196,6 +196,8 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
   });
   // If product is not found for the given slug within this category, render 404
   if (!data?.product) notFound();
+
+  console.log(data.product.relatedCourses);
 
   const ownedCourses = res.data?.courses_progress?.map((course) => course.course_id as string) ?? [];
 
