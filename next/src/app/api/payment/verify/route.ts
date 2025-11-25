@@ -8,6 +8,12 @@ export async function GET(request: Request) {
   const session = searchParams.get('session');
   const id = searchParams.get('id');
 
+  console.log('🔄 Payment verify request:', {
+    session,
+    orderId: id,
+    timestamp: new Date().toISOString(),
+  });
+
   try {
     const transactionHeaders = new Headers();
     transactionHeaders.append('Content-Type', 'application/json');
@@ -23,23 +29,47 @@ export async function GET(request: Request) {
 
     const responseData = await response.json();
 
+    console.log('📦 P24 transaction status response:', {
+      session,
+      orderId: id,
+      status: responseData?.data?.status,
+      hasData: !!responseData?.data,
+    });
+
     // Determine redirect URL based on order type
     const redirectUrl = await getRedirectUrl(id);
 
-    // Cannot read properties of undefined (reading 'status')
-    if (responseData.data.status == 1 || responseData.data.status == 2) {
-      // TODO: payment success status
+    // Safely check response status - handle undefined data gracefully
+    const transactionStatus = responseData?.data?.status;
+    
+    // P24 status codes: 1 = pending, 2 = completed
+    if (transactionStatus === 1 || transactionStatus === 2) {
+      console.log('✅ Payment verified, redirecting to:', redirectUrl);
       // Note: Cart clearing is handled on the thank you page for guest orders
       // For user orders, the cart should be cleared client-side after redirect
       return NextResponse.redirect(redirectUrl);
     }
 
-    // TODO: payment await status
+    // For any other status (including undefined), still redirect to the order page
+    // The webhook will handle the actual payment verification
+    console.log('⚠️ Transaction status not confirmed, redirecting anyway:', {
+      status: transactionStatus,
+      redirectUrl,
+    });
     return NextResponse.redirect(redirectUrl);
   } catch (error) {
-    console.log(error);
-    // TODO: payment error status - fallback to homepage for safety
-    return NextResponse.redirect('https://kierunekdzierganie.pl/');
+    console.error('❌ Payment verify error:', error, {
+      session,
+      orderId: id,
+    });
+    
+    // Try to redirect to order page if we have an ID, otherwise homepage
+    try {
+      const redirectUrl = await getRedirectUrl(id);
+      return NextResponse.redirect(redirectUrl);
+    } catch {
+      return NextResponse.redirect('https://kierunekdzierganie.pl/');
+    }
   }
 }
 
