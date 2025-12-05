@@ -103,7 +103,7 @@ export async function sendPaymentErrorNotification(context: PaymentErrorContext)
 
     await resend.emails.send({
       from: 'Kierunek Dzierganie <formularz@kierunekdzierganie.pl>',
-      to: ['oliwier@kryptonum.eu'],
+      to: ['oliwier@kryptonum.eu', 'kontakt@kierunekdzierganie.pl'],
       subject: subject,
       html: htmlContent,
     });
