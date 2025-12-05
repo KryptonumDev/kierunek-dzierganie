@@ -54,6 +54,20 @@ export async function processBackground({
   const bgStart = Date.now();
   const { sessionId, amount, currency, orderId: p24OrderId } = notificationData;
 
+  // ⚠️ TEMPORARY TEST ERROR - REMOVE AFTER TESTING ERROR EMAILS
+  await sendPaymentErrorNotification({
+    orderId,
+    sessionId,
+    amount: expectedAmount,
+    currency,
+    p24OrderId,
+    errorType: 'PROCESSING_ERROR',
+    errorMessage: 'TEST ERROR - This is a test to verify error emails are working. Please ignore.',
+    timestamp: new Date().toISOString(),
+  });
+  console.log('🧪 TEST: Error notification sent for testing purposes');
+  // ⚠️ END TEMPORARY TEST ERROR
+
   // 1. Verify transaction with P24
   try {
     await verifyTransaction(expectedAmount, currency, p24OrderId, sessionId);
