@@ -20,8 +20,6 @@ export async function verifyTransaction(amount: number, currency: string, orderI
     }, VERIFICATION_TIMEOUT_MS);
   });
 
-  // Race the verification against the timeout
-  // If P24 API is slow, we fail fast and can notify the client
   const verifyPromise = p24.verifyTransaction({
     amount,
     currency,
@@ -29,22 +27,5 @@ export async function verifyTransaction(amount: number, currency: string, orderI
     sessionId,
   });
 
-  console.log('⏱️ Starting P24 verification with timeout:', {
-    timeoutMs: VERIFICATION_TIMEOUT_MS,
-    amount,
-    orderId,
-    sessionId,
-  });
-
-  const startTime = Date.now();
-  
-  try {
-    await Promise.race([verifyPromise, timeoutPromise]);
-    const duration = Date.now() - startTime;
-    console.log(`⏱️ P24 verification completed in ${duration}ms`);
-  } catch (error) {
-    const duration = Date.now() - startTime;
-    console.error(`⏱️ P24 verification failed after ${duration}ms:`, error);
-    throw error;
-  }
+  await Promise.race([verifyPromise, timeoutPromise]);
 }

@@ -435,8 +435,7 @@ export async function POST(request: Request) {
         country: Country.Poland,
         language: Language.PL,
         urlReturn: `https://kierunekdzierganie.pl//api/payment/verify/?session=${session}&id=${data.id}`,
-        // TEMPORARY: Testing webhook fix on preview branch - REVERT BEFORE MERGING TO MAIN
-        urlStatus: `https://kierunek-dzierganie-git-webhook-fix-kryptonum.vercel.app/api/payment/complete/?session=${session}&id=${data.id}`,
+        urlStatus: `https://kierunekdzierganie.pl//api/payment/complete/?session=${session}&id=${data.id}`,
         timeLimit: 60,
         encoding: Encoding.UTF8,
         city: input.billing.city,
