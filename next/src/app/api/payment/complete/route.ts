@@ -1,16 +1,11 @@
-'use server';
+import { waitUntil } from '@vercel/functions';
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase-admin';
 import { P24, NotificationRequest } from '@ingameltd/node-przelewy24';
 import { checkUsedModifications } from './check-used-modifications';
-import { GAConversionPurchase } from './GAConversionPurchase';
-import { generateBill } from './generate-bill';
-import { MetaConversionPurchase } from './MetaConversionPurchase';
-import { sendEmails } from './send-emails';
+import { processBackground } from './process-background';
 import { sendPaymentErrorNotification } from './send-error-notification';
-import { updateItemsQuantity } from './update-items-quantity';
 import { updateOrder } from './update-order';
-import { verifyTransaction } from './verify-transaction';
 
 /**
  * Parse webhook body - handles both JSON and form-urlencoded formats
@@ -69,16 +64,10 @@ async function parseWebhookBody(request: Request): Promise<NotificationRequest |
 }
 
 export async function POST(request: Request) {
+  const syncStart = Date.now();
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
   const webhookContentType = request.headers.get('content-type');
-  
-  // Log incoming webhook for debugging
-  console.log('🔔 P24 Webhook received:', {
-    timestamp: new Date().toISOString(),
-    orderId: id,
-    contentType: webhookContentType,
-  });
 
   // Store notification data for error reporting (populated after parsing)
   let notificationData: NotificationRequest | null = null;
@@ -104,15 +93,6 @@ export async function POST(request: Request) {
 
     // Extract fields from notification
     const { sessionId, amount, currency, orderId } = notificationData;
-    
-    console.log('📦 P24 Notification data:', {
-      sessionId,
-      amount,
-      currency,
-      orderId,
-      merchantId: notificationData.merchantId,
-      methodId: notificationData.methodId,
-    });
 
     if (!id) {
       console.error('❌ P24 webhook missing order ID');
@@ -138,30 +118,19 @@ export async function POST(request: Request) {
       Number(process.env.P24_POS_ID!),
       process.env.P24_REST_API_KEY!,
       process.env.P24_CRC!,
-      { sandbox: process.env.SANDBOX === 'true' }
+      { sandbox: false }
     );
 
     // CRITICAL: Verify notification signature before processing
     // This ensures the webhook is genuinely from P24 and hasn't been tampered with
-    try {
-      const isNotificationValid = p24.verifyNotification(notificationData);
-      if (!isNotificationValid) {
-        console.error('❌ P24 notification signature verification failed', {
-          orderId: id,
-          sessionId,
-          timestamp: new Date().toISOString(),
-        });
-        return NextResponse.json({ error: 'Invalid notification signature' }, { status: 400 });
-      }
-      console.log('✅ P24 notification signature verified');
-    } catch (verifyError) {
-      console.error('❌ P24 notification verification threw error:', verifyError, {
+    const isNotificationValid = p24.verifyNotification(notificationData);
+    if (!isNotificationValid) {
+      console.error('❌ P24 notification signature verification failed', {
         orderId: id,
         sessionId,
+        timestamp: new Date().toISOString(),
       });
-      // Don't fail hard here - some P24 configurations might not have proper sign
-      // Log it but continue with transaction verification
-      console.warn('⚠️ Continuing without notification signature verification');
+      return NextResponse.json({ error: 'Invalid notification signature' }, { status: 400 });
     }
 
     // Fetch order from DB to verify against authoritative values and idempotency
@@ -192,57 +161,16 @@ export async function POST(request: Request) {
 
     // Idempotency: if already marked paid or progressed beyond pending, return OK
     if (orderRow?.paid_at || (orderRow?.status && orderRow.status !== 1)) {
-      console.log('ℹ️ Order already processed, skipping (idempotency)', {
-        orderId: id,
-        status: orderRow?.status,
-        paid_at: orderRow?.paid_at,
-      });
       return NextResponse.json({}, { status: 200 });
     }
 
     // Prefer DB amount; fall back to payload
     const expectedAmount: number = typeof orderRow?.amount === 'number' ? orderRow.amount : amount;
-    
-    // Verify the transaction with P24
-    console.log('🔄 Verifying transaction with P24...', {
-      orderId: id,
-      expectedAmount,
-      currency,
-      p24OrderId: orderId,
-      sessionId,
-    });
-    
-    try {
-      await verifyTransaction(expectedAmount, currency, orderId, sessionId);
-      console.log('✅ P24 transaction verified successfully');
-    } catch (verifyTxError) {
-      const verifyErrorMessage = verifyTxError instanceof Error ? verifyTxError.message : 'Unknown verification error';
-      const verifyErrorStack = verifyTxError instanceof Error ? verifyTxError.stack : undefined;
-      
-      console.error('❌ P24 transaction verification failed:', verifyTxError, {
-        orderId: id,
-        expectedAmount,
-        currency,
-        p24OrderId: orderId,
-        sessionId,
-      });
-      
-      await sendPaymentErrorNotification({
-        orderId: id,
-        sessionId,
-        amount: expectedAmount,
-        currency,
-        p24OrderId: orderId,
-        errorType: 'VERIFICATION_ERROR',
-        errorMessage: `P24 transaction verification failed: ${verifyErrorMessage}`,
-        errorStack: verifyErrorStack,
-        webhookContentType,
-        timestamp: new Date().toISOString(),
-      });
-      
-      // Return 500 so P24 might retry the webhook
-      return NextResponse.json({ error: 'Transaction verification failed' }, { status: 500 });
-    }
+
+    // ═══════════════════════════════════════════════════════════
+    // SYNC PHASE: Update order as PAID immediately
+    // This ensures P24 gets 200 response quickly
+    // ═══════════════════════════════════════════════════════════
 
     const { data, error } = await updateOrder(
       {
@@ -257,8 +185,6 @@ export async function POST(request: Request) {
       console.error('❌ Failed to update order:', error, { orderId: id });
       throw new Error(error.message);
     }
-    
-    console.log('✅ Order updated with payment data:', { orderId: id, status: 2 });
 
     // Guard: Prevent processing orders with empty product arrays
     if (!data.products?.array || data.products.array.length === 0) {
@@ -275,94 +201,40 @@ export async function POST(request: Request) {
       );
     }
 
+    // Mark coupons as used - must be sync to prevent race conditions
     await checkUsedModifications(data);
-    await updateItemsQuantity(data);
-    console.log('payment/complete:data');
-    console.log(data);
 
-    // Generate invoice; if it fails, still complete digital orders to avoid long-running PENDING state
-    try {
-      await generateBill(data, id);
-    } catch (billError) {
-      console.error('❗ Invoice generation failed, setting fallback status', billError);
-      // Fallback: mark digital orders as COMPLETED (3); keep physical orders as IN PROGRESS (2)
-      try {
-        await updateOrder(
-          {
-            status: data.need_delivery ? 2 : 3,
-          },
-          id
-        );
-      } catch (statusError) {
-        console.error('❗ Failed to set fallback status after invoice error', statusError);
-      }
-    }
+    // Schedule background processing (runs after we return 200)
+    waitUntil(
+      processBackground({
+        orderId: id,
+        orderData: data,
+        notificationData,
+        expectedAmount,
+      })
+    );
 
-    await sendEmails(data);
-
-    // Analytics tracking (supports both user and guest orders)
-    await GAConversionPurchase({
-      user_id: data.user_id || null, // Handle guest orders with null user_id
-      value: amount / 100,
-      transaction_id: String(orderId),
-      items: data.products.array.map(
-        ({
-          id,
-          name,
-          quantity,
-          discount,
-          price,
-        }: {
-          id: string;
-          name: string;
-          quantity: number;
-          discount: number;
-          price: number;
-        }) => ({
-          item_id: id,
-          item_name: name,
-          quantity: quantity,
-          price: discount ? discount / 100 : price / 100,
-        })
-      ),
-    });
-    await MetaConversionPurchase({
-      user_id: data.user_id || null, // Handle guest orders with null user_id
-      value: amount / 100,
-      transaction_id: String(orderId),
-      items: data.products.array.map(
-        ({
-          id,
-          name,
-          quantity,
-          discount,
-          price,
-        }: {
-          id: string;
-          name: string;
-          quantity: number;
-          discount: number;
-          price: number;
-        }) => ({
-          item_id: id,
-          item_name: name,
-          quantity: quantity,
-          price: discount ? discount / 100 : price / 100,
-        })
-      ),
-      email: data.billing.email,
-    });
-
-    console.log('✅ Payment completion successful:', { orderId: id });
+    // Return 200 immediately to P24
+    const syncDuration = Date.now() - syncStart;
+    console.log(`⏱️ [SYNC] Order ${id} completed in ${syncDuration}ms`);
     return NextResponse.json({}, { status: 200 });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     const errorStack = error instanceof Error ? error.stack : undefined;
     
-    console.error('❌ Payment completion error:', {
-      error: errorMessage,
-      stack: errorStack,
+    console.error('❌ Payment completion error:', { error: errorMessage, orderId: id });
+    
+    // Send error notification for unexpected errors
+    await sendPaymentErrorNotification({
       orderId: id,
+      sessionId: notificationData?.sessionId,
+      amount: notificationData?.amount,
+      currency: notificationData?.currency,
+      p24OrderId: notificationData?.orderId,
+      errorType: 'UNKNOWN_ERROR',
+      errorMessage: `Unexpected error in payment webhook: ${errorMessage}`,
+      errorStack,
+      webhookContentType,
       timestamp: new Date().toISOString(),
     });
     

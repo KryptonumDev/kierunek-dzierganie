@@ -33,12 +33,6 @@ export async function sendPaymentErrorNotification(context: PaymentErrorContext)
     timestamp,
   } = context;
 
-  // Don't send emails in development/sandbox mode
-  if (process.env.SANDBOX === 'true') {
-    console.log('📧 [SANDBOX] Would send error notification:', context);
-    return;
-  }
-
   try {
     const errorTypeLabels: Record<string, string> = {
       PARSE_ERROR: '🔴 Błąd parsowania webhooka',
@@ -109,7 +103,7 @@ export async function sendPaymentErrorNotification(context: PaymentErrorContext)
 
     await resend.emails.send({
       from: 'Kierunek Dzierganie <formularz@kierunekdzierganie.pl>',
-      to: ['oliwier@kryptonum.eu, kontakt@kierunekdzierganie.pl'],
+      to: ['oliwier@kryptonum.eu', 'kontakt@kierunekdzierganie.pl'],
       subject: subject,
       html: htmlContent,
     });

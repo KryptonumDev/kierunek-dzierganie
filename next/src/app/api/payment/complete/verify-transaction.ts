@@ -10,9 +10,7 @@ export async function verifyTransaction(amount: number, currency: string, orderI
     Number(process.env.P24_POS_ID!),
     process.env.P24_REST_API_KEY!,
     process.env.P24_CRC!,
-    {
-      sandbox: process.env.SANDBOX === 'true',
-    }
+    { sandbox: false }
   );
 
   // Create a timeout promise that rejects after VERIFICATION_TIMEOUT_MS

@@ -14,7 +14,7 @@
 
 ## Root Cause Analysis
 
-### The Payment Flow
+### The Payment Flow (Before Fix)
 
 ```
 1. Customer initiates payment
@@ -34,117 +34,38 @@
 
 P24 webhooks have a timeout of approximately **15-30 seconds**. If our server doesn't respond with HTTP 200 within that time, P24 considers it a timeout.
 
-**Current Webhook Handler Does Too Much:**
+**Old Webhook Handler Did Too Much Synchronously:**
 
-| Operation | Type | Est. Time |
-|-----------|------|-----------|
-| `parseWebhookBody()` | Local | ~0.1s |
-| `p24.verifyNotification()` | Local (hash) | ~0.1s |
-| `supabase.select()` | DB call | ~0.3s |
-| `verifyTransaction()` | **P24 API call** | **2-15s** ⚠️ |
-| `updateOrder()` | DB call | ~0.3s |
-| `checkUsedModifications()` | DB calls | ~0.5s |
-| `updateItemsQuantity()` | DB calls | ~1s |
-| `generateBill()` | PDF + iFirma API | ~5-10s |
-| `sendEmails()` | Resend API | ~3-5s |
-| `GAConversionPurchase()` | Google API | ~1-2s |
-| `MetaConversionPurchase()` | Meta API | ~1-2s |
-| **Total** | | **15-35s** ❌ |
-
-### The Critical Insight: Circular Dependency
-
-The `verifyTransaction()` function calls P24's API to confirm we accept the payment. This creates a circular dependency:
-
-```
-┌─────────────────────────────────────────────────────────┐
-│   P24 Server                    Your Server             │
-│                                                         │
-│   1. Sends webhook ─────────────────────► Receives      │
-│      ⏱️ Waiting for 200...                webhook       │
-│                                                         │
-│   2. Our server calls        ◄────────── verifyTransaction()
-│      P24's verify API                                   │
-│      (might be slow)                                    │
-│                                                         │
-│   ❌ TIMEOUT!                                           │
-│   P24 gave up waiting                                   │
-│   before we finished                                    │
-└─────────────────────────────────────────────────────────┘
-```
-
-**Why `paid_at` stays empty**: The timeout happens BEFORE `updateOrder()` is called because `verifyTransaction()` (which comes first) takes too long.
+| Operation                  | Type             | Est. Time     |
+| -------------------------- | ---------------- | ------------- |
+| `parseWebhookBody()`       | Local            | ~0.1s         |
+| `p24.verifyNotification()` | Local (hash)     | ~0.1s         |
+| `supabase.select()`        | DB call          | ~0.3s         |
+| `verifyTransaction()`      | **P24 API call** | **2-15s** ⚠️  |
+| `updateOrder()`            | DB call          | ~0.3s         |
+| `checkUsedModifications()` | DB calls         | ~0.5s         |
+| `updateItemsQuantity()`    | DB calls         | ~1s           |
+| `generateBill()`           | PDF + iFirma API | ~5-10s        |
+| `sendEmails()`             | Resend API       | ~3-5s         |
+| `GAConversionPurchase()`   | Google API       | ~1-2s         |
+| `MetaConversionPurchase()` | Meta API         | ~1-2s         |
+| **Total**                  |                  | **15-35s** ❌ |
 
 ---
 
-## What is `verifyTransaction()` Actually For?
+## Solution Implemented: Vercel `waitUntil()` Pattern
 
-**It's NOT about checking if payment is valid.** P24 already knows the payment happened.
+### The Fix
 
-**It's YOUR acknowledgment to P24**: "Yes, I received the notification, I confirm the amount, please transfer the funds to my merchant account."
+Split the webhook handler into two phases:
 
-According to P24 documentation:
-> "If you don't verify the transaction, the funds will not be transferred into your account."
+1. **SYNC Phase** (< 1 second): Critical operations, return 200 immediately
+2. **ASYNC Phase** (up to 60 seconds): Heavy processing runs in background via `waitUntil()`
 
-**However**, the timing might be flexible. P24 likely doesn't care if verification happens 1 second or 60 seconds after the webhook, as long as it happens eventually.
-
----
-
-## Solution: Async Verification Pattern
-
-### Core Idea
-
-1. **SYNC (Fast)**: Parse webhook, verify signature, update order → Return 200
-2. **ASYNC (Background)**: Verify with P24, generate invoice, send emails, analytics
-
-This ensures P24 gets a response in < 2 seconds, while all heavy processing happens afterward.
-
----
-
-## Implementation Plan
-
-### Phase 1: Database Migration
-
-**Add new fields to `orders` table:**
-
-| Field | Type | Default | Purpose |
-|-------|------|---------|---------|
-| `verification_status` | text | `'pending'` | Track P24 verification state |
-| `verification_attempted_at` | timestamp | null | When we last tried to verify |
-| `verification_error` | text | null | Error message if verification failed |
-| `post_processing_completed` | boolean | false | Track if emails/invoice sent |
-| `post_processing_error` | text | null | Error from post-processing |
-
-**`verification_status` enum values:**
-- `pending` - Not yet verified with P24
-- `verified` - Successfully verified
-- `failed` - Verification failed (needs manual review)
-- `skipped` - Order was free (no verification needed)
-
-**SQL Migration:**
-
-```sql
--- Add verification tracking fields
-ALTER TABLE orders 
-ADD COLUMN IF NOT EXISTS verification_status text DEFAULT 'pending',
-ADD COLUMN IF NOT EXISTS verification_attempted_at timestamptz,
-ADD COLUMN IF NOT EXISTS verification_error text,
-ADD COLUMN IF NOT EXISTS post_processing_completed boolean DEFAULT false,
-ADD COLUMN IF NOT EXISTS post_processing_error text;
-
--- Add index for finding pending verifications
-CREATE INDEX IF NOT EXISTS idx_orders_verification_pending 
-ON orders (verification_status, paid_at) 
-WHERE verification_status IN ('pending', 'failed');
-```
-
----
-
-### Phase 2: Split Webhook Handler
-
-**NEW Flow:**
+### New Payment Flow
 
 ```
-SYNC PHASE (Target: < 2 seconds)
+SYNC PHASE (Target: < 1 second)
 ═══════════════════════════════════════════════════════════
 1. Parse webhook body (JSON or form-urlencoded)
 2. Verify notification signature (local hash, fast)
@@ -154,288 +75,136 @@ SYNC PHASE (Target: < 2 seconds)
    - paid_at = now
    - payment_data = notification data
    - status = 2 (in progress)
-   - verification_status = 'pending'
 6. checkUsedModifications() - mark coupons as used
 7. ✅ RETURN 200 TO P24
 
 ASYNC PHASE (Runs via waitUntil after response)
 ═══════════════════════════════════════════════════════════
-8. verifyTransaction() with P24 (8s timeout)
-9. Update verification_status = 'verified' or 'failed'
-10. updateItemsQuantity()
-11. generateBill()
-12. sendEmails()
-13. GA/Meta analytics
-14. Update post_processing_completed = true
+8. verifyTransaction() with P24 (10s timeout)
+9. updateItemsQuantity()
+10. generateBill()
+11. sendEmails()
+12. GA/Meta analytics
+13. If ANY critical step fails → send error notification email
 ```
 
 ---
 
-### Phase 3: File Changes
+## Implementation Status: ✅ COMPLETED
 
-#### Files to Modify:
+### Files Changed
 
-| File | Changes |
-|------|---------|
-| `route.ts` | Split into sync/async, use Vercel `waitUntil()` |
-| `verify-transaction.ts` | Add 8-second timeout |
+| File                         | Changes                                                |
+| ---------------------------- | ------------------------------------------------------ |
+| `route.ts`                   | Split into sync/async using `waitUntil()`, timing logs |
+| `send-error-notification.ts` | Fixed email recipients bug, removed sandbox check      |
+| `verify-transaction.ts`      | Hardcoded `sandbox: false`                             |
 
-#### New Files to Create:
+### New Files Created
 
-| File | Purpose |
-|------|---------|
-| `process-async.ts` | Contains all async operations |
-| `/api/payment/process-pending/route.ts` | Manual/cron retry endpoint |
+| File                    | Purpose                                  |
+| ----------------------- | ---------------------------------------- |
+| `process-background.ts` | Contains all async/background operations |
 
----
+### Bugs Fixed
 
-### Phase 4: Sync Phase Implementation
+| Bug                                                 | Fix                                         |
+| --------------------------------------------------- | ------------------------------------------- |
+| Malformed email recipients `['a@b.com, c@d.com']`   | Changed to `['a@b.com', 'c@d.com']`         |
+| Missing error notification in outer catch block     | Added `sendPaymentErrorNotification()` call |
+| SANDBOX check blocking emails                       | Removed the check entirely                  |
+| `'use server'` directive (incorrect for API routes) | Removed                                     |
+| Signature verification "continue anyway"            | Made it fail properly                       |
 
-**`route.ts` - Fast Response Path:**
+### Dependencies Added
 
-```typescript
-// SYNC PHASE - Must complete in < 2 seconds
-export async function POST(request: Request) {
-  // 1. Parse webhook
-  const notificationData = await parseWebhookBody(request);
-  if (!notificationData) return error(400);
-
-  // 2. Verify signature (local, fast)
-  const isValid = p24.verifyNotification(notificationData);
-  if (!isValid) return error(400);
-
-  // 3. Fetch order
-  const { data: order } = await supabase.from('orders').select('*').eq('id', id);
-  if (!order) return error(404);
-
-  // 4. Idempotency check
-  if (order.paid_at || order.status !== 1) return ok(200);
-
-  // 5. Update order as PAID (optimistic)
-  await supabase.from('orders').update({
-    paid_at: new Date(),
-    payment_data: notificationData,
-    status: 2,
-    verification_status: 'pending', // Will verify async
-  }).eq('id', id);
-
-  // 6. Mark coupons as used (must be sync to prevent race)
-  await checkUsedModifications(order);
-
-  // 7. Return 200 immediately
-  // 8. Trigger async processing
-  waitUntil(processAsync(id, notificationData));
-
-  return NextResponse.json({}, { status: 200 });
-}
+```
+@vercel/functions@3.3.4
 ```
 
 ---
 
-### Phase 5: Async Phase Implementation
+## Console Logs (Minimal)
 
-**`process-async.ts`:**
+Only two timing logs per successful request:
 
-```typescript
-export async function processAsync(orderId: string, notificationData: NotificationRequest) {
-  const supabase = createClient();
-  
-  // Fetch full order data
-  const { data: order } = await supabase.from('orders').select('*').eq('id', orderId);
-
-  // 1. VERIFY WITH P24 (with timeout)
-  try {
-    await verifyTransactionWithTimeout(
-      order.amount,
-      notificationData.currency,
-      notificationData.orderId,
-      notificationData.sessionId,
-      8000 // 8 second timeout
-    );
-    
-    await supabase.from('orders').update({
-      verification_status: 'verified',
-      verification_attempted_at: new Date(),
-    }).eq('id', orderId);
-    
-  } catch (error) {
-    await supabase.from('orders').update({
-      verification_status: 'failed',
-      verification_error: error.message,
-      verification_attempted_at: new Date(),
-    }).eq('id', orderId);
-    
-    // Alert - verification failed
-    await sendPaymentErrorNotification({
-      orderId,
-      errorType: 'VERIFICATION_ERROR',
-      errorMessage: error.message,
-      // ...
-    });
-    
-    // Continue with other processing anyway
-    // Customer paid, we should still send confirmation
-  }
-
-  // 2. Update stock
-  await updateItemsQuantity(order);
-
-  // 3. Generate invoice
-  try {
-    await generateBill(order, orderId);
-  } catch (error) {
-    console.error('Invoice generation failed', error);
-    // Don't block - invoice can be generated later
-  }
-
-  // 4. Send emails
-  try {
-    await sendEmails(order);
-  } catch (error) {
-    console.error('Email sending failed', error);
-  }
-
-  // 5. Analytics
-  await GAConversionPurchase({ /* ... */ });
-  await MetaConversionPurchase({ /* ... */ });
-
-  // 6. Mark complete
-  await supabase.from('orders').update({
-    post_processing_completed: true,
-  }).eq('id', orderId);
-}
 ```
+⏱️ [SYNC] Order abc123 completed in 487ms
+⏱️ [BACKGROUND] Order abc123 completed in 8543ms
+```
+
+Error logs are kept for debugging:
+
+- `❌ Failed to parse webhook body`
+- `❌ P24 notification signature verification failed`
+- `❌ Failed to fetch order from DB`
+- `❌ Failed to update order`
+- `❌ [BACKGROUND] P24 verification failed`
+- `❌ [BACKGROUND] Stock update failed`
+- `❌ [BACKGROUND] Invoice generation failed`
+- `❌ [BACKGROUND] Failed to send emails`
+- `❌ [BACKGROUND] GA/Meta tracking failed`
 
 ---
 
-### Phase 6: Recovery Mechanism
+## Error Notifications
 
-**`/api/payment/process-pending/route.ts`:**
+Error emails are sent to `oliwier@kryptonum.eu` and `kontakt@kierunekdzierganie.pl` for:
 
-For orders where async processing failed or didn't complete.
-
-```typescript
-export async function POST(request: Request) {
-  const supabase = createClient();
-  
-  // Find orders needing attention
-  const { data: pendingOrders } = await supabase
-    .from('orders')
-    .select('*')
-    .in('verification_status', ['pending', 'failed'])
-    .not('paid_at', 'is', null)
-    .lt('paid_at', new Date(Date.now() - 60 * 60 * 1000)); // > 1 hour old
-
-  const results = [];
-  
-  for (const order of pendingOrders) {
-    try {
-      // Re-attempt verification
-      await verifyTransactionWithTimeout(/* ... */);
-      
-      await supabase.from('orders').update({
-        verification_status: 'verified',
-        verification_attempted_at: new Date(),
-      }).eq('id', order.id);
-      
-      results.push({ id: order.id, status: 'verified' });
-    } catch (error) {
-      results.push({ id: order.id, status: 'failed', error: error.message });
-    }
-  }
-
-  return NextResponse.json({ processed: results });
-}
-```
-
-**Trigger Options:**
-- Manual call from admin panel
-- Vercel Cron (every 15 minutes)
-- External monitoring service
+| Error Type           | When                                     |
+| -------------------- | ---------------------------------------- |
+| `PARSE_ERROR`        | Webhook body can't be parsed             |
+| `VERIFICATION_ERROR` | P24 transaction verification fails       |
+| `UPDATE_ERROR`       | Database update fails                    |
+| `PROCESSING_ERROR`   | Stock update or invoice generation fails |
+| `UNKNOWN_ERROR`      | Any unexpected error in outer catch      |
 
 ---
 
-### Phase 7: Add Timeout to verifyTransaction
+## Testing Strategy
 
-**`verify-transaction.ts`:**
+### Test with Real 0.01 PLN Transaction
 
-```typescript
-export async function verifyTransactionWithTimeout(
-  amount: number,
-  currency: string,
-  orderId: number,
-  sessionId: string,
-  timeoutMs: number = 8000
-) {
-  const p24 = new P24(/* ... */);
+1. **Prepare test product** - Use a product with coupon/discount so total = 0.01 PLN (1 grosz)
+2. **Deploy the fix** to production
+3. **Make test purchase** through full checkout flow
+4. **Verify results**
 
-  const timeoutPromise = new Promise((_, reject) => {
-    setTimeout(() => reject(new Error('P24 verification timeout')), timeoutMs);
-  });
+### Verification Checklist
 
-  const verifyPromise = p24.verifyTransaction({
-    amount,
-    currency,
-    orderId,
-    sessionId,
-  });
+| Check             | How to Verify                  | Expected             |
+| ----------------- | ------------------------------ | -------------------- |
+| P24 gets 200 fast | Vercel logs: `⏱️ [SYNC]`       | < 1 second           |
+| P24 no timeout    | Check P24 merchant panel       | No timeout errors    |
+| Order marked paid | Supabase: check `paid_at`      | Set immediately      |
+| Background works  | Vercel logs: `⏱️ [BACKGROUND]` | Completes within 60s |
+| Invoice generated | Check iFirma or storage        | PDF exists           |
+| Email received    | Check inbox                    | Confirmation arrives |
+| Error emails work | Temporarily break code, verify | Error email received |
 
-  await Promise.race([verifyPromise, timeoutPromise]);
-}
-```
-
----
-
-## Monitoring & Alerts
-
-### Error Scenarios & Actions:
-
-| Scenario | Alert | Action |
-|----------|-------|--------|
-| Webhook parse fails | Email immediately | Check P24 webhook format |
-| Signature invalid | Log only | Might be spam/attack |
-| Order update fails | Email immediately | Critical - investigate |
-| Verification times out | Email + mark pending | Retry later |
-| Verification fails | Email + mark failed | Manual review needed |
-| Invoice fails | Log | Can retry manually |
-| Email sending fails | Log | Can retry manually |
-
-### Monitoring Queries:
+### SQL to Check Order Status
 
 ```sql
--- Orders needing manual attention
-SELECT id, paid_at, verification_status, verification_error
-FROM orders 
-WHERE verification_status IN ('pending', 'failed')
-AND paid_at < NOW() - INTERVAL '1 hour'
-ORDER BY paid_at DESC;
-
--- Verification success rate (last 7 days)
-SELECT 
-  verification_status,
-  COUNT(*) as count
+SELECT id, paid_at, status, payment_data
 FROM orders
-WHERE paid_at > NOW() - INTERVAL '7 days'
-GROUP BY verification_status;
+WHERE id = 'your-test-order-id';
 ```
 
 ---
 
-## Implementation Order
+## What If Background Processing Fails?
 
-| Step | Task | Time Est. | Priority |
-|------|------|-----------|----------|
-| 1 | Database migration (dev first) | 15 min | High |
-| 2 | Create `process-async.ts` | 30 min | High |
-| 3 | Modify `route.ts` (split sync/async) | 45 min | High |
-| 4 | Add timeout to `verify-transaction.ts` | 10 min | High |
-| 5 | Create `/api/payment/process-pending` | 30 min | Medium |
-| 6 | Update error notifications | 15 min | Medium |
-| 7 | Testing in sandbox mode | 1 hour | High |
-| 8 | Deploy to production | 15 min | High |
-| 9 | Monitor for 1 week | Ongoing | High |
+Since customer already paid and `paid_at` is set in sync phase, the order is "safe":
 
-**Total estimated time: ~4 hours**
+| Failure                | Impact                                     | Recovery                     |
+| ---------------------- | ------------------------------------------ | ---------------------------- |
+| P24 verification fails | Funds may not transfer to merchant account | Manual verification or retry |
+| Stock update fails     | Quantities not decremented                 | Manual update                |
+| Invoice fails          | No PDF generated                           | Generate manually later      |
+| Emails fail            | Customer doesn't get confirmation          | Resend manually              |
+| Analytics fail         | Lost conversion tracking                   | Not critical                 |
+
+All critical failures trigger error notification email for manual intervention.
 
 ---
 
@@ -443,9 +212,9 @@ GROUP BY verification_status;
 
 If issues arise after deployment:
 
-1. **Database fields are additive** - won't break existing functionality
-2. **Can revert `route.ts`** - restore sync version if needed
-3. **Recovery endpoint** - can manually process any stuck orders
+1. **Database is unchanged** - no migration needed for this fix
+2. **Can revert to previous version** - git revert the changes
+3. **Error emails** - will alert immediately if something breaks
 4. **All changes are backwards compatible**
 
 ---
@@ -454,45 +223,11 @@ If issues arise after deployment:
 
 After deployment, verify:
 
-- ✅ P24 webhook response time < 2 seconds (check Vercel logs)
-- ✅ Zero timeout errors from P24
-- ✅ All orders have `verification_status = 'verified'` within 5 minutes of payment
-- ✅ No orders stuck in `pending` verification > 1 hour
+- ✅ P24 webhook response time < 1 second (check `⏱️ [SYNC]` timing in Vercel logs)
+- ✅ Zero timeout errors from P24 (check P24 merchant panel)
+- ✅ All orders have `paid_at` set immediately after payment
 - ✅ Customer emails sent within 2 minutes of payment
-
----
-
-## Code Changes Already Made
-
-### 1. Webhook Body Parsing (Completed)
-
-Added support for both JSON and form-urlencoded webhooks in `route.ts`:
-
-```typescript
-async function parseWebhookBody(request: Request): Promise<NotificationRequest | null>
-```
-
-### 2. P24 Notification Signature Verification (Completed)
-
-Added `p24.verifyNotification()` call before processing.
-
-### 3. Comprehensive Logging (Completed)
-
-Added emoji-prefixed logs throughout the flow:
-- `🔔 P24 Webhook received`
-- `📦 P24 Notification data`
-- `✅ P24 notification signature verified`
-- `🔄 Verifying transaction with P24...`
-- `✅ P24 transaction verified successfully`
-- `❌` for all error scenarios
-
-### 4. Error Email Notifications (Completed)
-
-Created `send-error-notification.ts` that emails `oliwier@kryptonum.eu` for:
-- Parse errors
-- Verification errors
-- Update errors
-- Unknown errors
+- ✅ Error notification emails arrive when something fails
 
 ---
 
@@ -504,45 +239,24 @@ Created `send-error-notification.ts` that emails `oliwier@kryptonum.eu` for:
 
 ---
 
-## Current Implementation Status
-
-### ✅ Phase 1: Immediate Visibility (COMPLETED)
-
-Instead of implementing the full async pattern immediately, we started with **visibility first**:
-
-1. **Error Email Notifications** - `oliwier@kryptonum.eu` receives email when:
-   - Webhook parsing fails
-   - P24 verification times out
-   - P24 verification fails
-   - Order update fails
-   - Any other unexpected error
-
-2. **8-Second Timeout on P24 Verification** - If P24's API doesn't respond in 8 seconds:
-   - We fail fast (don't wait forever)
-   - Email notification is sent
-   - Client knows immediately there's a problem
-   - Can manually intervene
-
-3. **Comprehensive Logging** - All steps are logged with timing:
-   - `⏱️ Starting P24 verification with timeout`
-   - `⏱️ P24 verification completed in Xms`
-   - `⏱️ P24 verification failed after Xms`
-
-### 🔮 Phase 2: Async Pattern (IF NEEDED)
-
-If email notifications show frequent timeouts, we'll implement the full async verification pattern described above. But first, let's gather data on how often this actually happens.
-
----
-
 ## Changelog
 
-| Date | Change |
-|------|--------|
-| 2024-11-25 | Initial analysis and documentation |
-| 2024-11-25 | Added webhook parsing for both JSON and form-urlencoded |
-| 2024-11-25 | Added P24 notification signature verification |
-| 2024-11-25 | Added comprehensive logging |
-| 2024-11-25 | Added error email notifications to oliwier@kryptonum.eu |
-| 2024-11-25 | Added 8-second timeout to verifyTransaction() |
-| TBD | Implement async verification pattern (if needed based on data) |
-
+| Date       | Change                                                                           |
+| ---------- | -------------------------------------------------------------------------------- |
+| 2024-11-25 | Initial analysis and documentation                                               |
+| 2024-11-25 | Added webhook parsing for both JSON and form-urlencoded                          |
+| 2024-11-25 | Added P24 notification signature verification                                    |
+| 2024-11-25 | Added comprehensive logging                                                      |
+| 2024-11-25 | Added error email notifications (with bugs)                                      |
+| 2024-11-25 | Added 10-second timeout to verifyTransaction()                                   |
+| 2024-12-05 | Discovered email notification bugs (malformed recipients, missing catch handler) |
+| 2024-12-05 | Decision: Implement `waitUntil()` pattern                                        |
+| 2024-12-05 | Installed `@vercel/functions` package                                            |
+| 2024-12-05 | Created `process-background.ts` for async operations                             |
+| 2024-12-05 | Refactored `route.ts` to use sync/async pattern with `waitUntil()`               |
+| 2024-12-05 | Fixed email recipients bug in `send-error-notification.ts`                       |
+| 2024-12-05 | Removed SANDBOX checks (testing with real 0.01 PLN payments)                     |
+| 2024-12-05 | Added error notifications for stock/invoice failures                             |
+| 2024-12-05 | Added timing logs (`⏱️ [SYNC]` and `⏱️ [BACKGROUND]`)                            |
+| 2024-12-05 | Added error notification to outer catch block                                    |
+| 2024-12-05 | **Implementation complete - ready for testing**                                  |
