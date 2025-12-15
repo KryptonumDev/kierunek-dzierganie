@@ -20,7 +20,8 @@ export default async function AffiliatePage() {
         visible={false}
         data={page}
       />
-      {isSubscribed ? (
+      {/* TODO: Remove "false &&" to restore normal behavior */}
+      {false && isSubscribed ? (
         <>
           <Balance
             heading={subscribed.hero.heading}
@@ -36,30 +37,14 @@ export default async function AffiliatePage() {
         </>
       ) : (
         <>
-          <TextSection
-            {...unsubscribed.hero}
-            isSubscribed={isSubscribed}
-            userId={userId}
-          />
-          <TextSection
-            {...unsubscribed.explainer}
-            isSubscribed={isSubscribed}
-            userId={userId}
-          />
+          <TextSection {...unsubscribed.hero} />
+          <TextSection {...unsubscribed.explainer} />
+          <TextSection {...unsubscribed.simplicity} />
+          <TextSection {...unsubscribed.instructions} />
           <AffiliateCode
             {...subscribed.AffiliateCode}
-            isSubscribed={isSubscribed}
+            isSubscribed={false}
             code={affiliateCode}
-            userId={userId}
-          />
-          <TextSection
-            {...unsubscribed.simplicity}
-            isSubscribed={isSubscribed}
-            userId={userId}
-          />
-          <TextSection
-            {...unsubscribed.instructions}
-            isSubscribed={isSubscribed}
             userId={userId}
           />
         </>
