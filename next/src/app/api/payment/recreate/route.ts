@@ -43,8 +43,7 @@ export async function POST(request: Request) {
 
     const session = String(id + 'X' + Math.floor(Math.random() * 10000));
     
-    // Use environment variable for base URL to support preview deployments
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://kierunekdzierganie.pl';
+
 
     const order = {
       sessionId: session,
@@ -54,8 +53,8 @@ export async function POST(request: Request) {
       email: email,
       country: Country.Poland,
       language: Language.PL,
-      urlReturn: `${baseUrl}/api/payment/verify/?session=${session}&id=${id}`,
-      urlStatus: `${baseUrl}/api/payment/complete/?session=${session}&id=${id}`,
+      urlReturn: `https://kierunek-dzierganie-git-fix-voucher-orphan-coupons-kryptonum.vercel.app//api/payment/verify/?session=${session}&id=${id}`,
+      urlStatus: `https://kierunek-dzierganie-git-fix-voucher-orphan-coupons-kryptonum.vercel.app//api/payment/complete/?session=${session}&id=${id}`,
       timeLimit: 60,
       encoding: Encoding.UTF8,
       city: city,
