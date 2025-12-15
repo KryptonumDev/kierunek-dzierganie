@@ -7,6 +7,8 @@ import { sendPaymentErrorNotification } from './send-error-notification';
 import { updateItemsQuantity } from './update-items-quantity';
 import { updateOrder } from './update-order';
 import { verifyTransaction } from './verify-transaction';
+import { createVoucherCoupons } from './create-voucher-coupons';
+import { createClient } from '@/utils/supabase-admin';
 
 interface OrderData {
   user_id: string | null;
@@ -134,14 +136,40 @@ export async function processBackground({
     }
   }
 
-  // 4. Send confirmation emails
+  // 4. Create voucher coupons (if any) - MUST happen before sending emails
+  // This was moved from payment/create to prevent orphaned coupons from multiple clicks
+  let finalOrderData = orderData;
   try {
-    await sendEmails(orderData);
+    const supabase = createClient();
+    finalOrderData = await createVoucherCoupons(orderData, supabase);
+  } catch (voucherError) {
+    const errorMessage = voucherError instanceof Error ? voucherError.message : 'Unknown voucher error';
+    const errorStack = voucherError instanceof Error ? voucherError.stack : undefined;
+    
+    console.error('❌ [BACKGROUND] Failed to create voucher coupons:', voucherError);
+    
+    await sendPaymentErrorNotification({
+      orderId,
+      sessionId,
+      amount: expectedAmount,
+      currency,
+      p24OrderId,
+      errorType: 'PROCESSING_ERROR',
+      errorMessage: `Failed to create voucher coupons: ${errorMessage}`,
+      errorStack,
+      timestamp: new Date().toISOString(),
+    });
+    // Continue - customer already paid, will need manual intervention
+  }
+
+  // 5. Send confirmation emails
+  try {
+    await sendEmails(finalOrderData);
   } catch (emailError) {
     console.error('❌ [BACKGROUND] Failed to send emails:', emailError);
   }
 
-  // 5. Analytics tracking (GA + Meta)
+  // 6. Analytics tracking (GA + Meta)
   try {
     await GAConversionPurchase({
       user_id: orderData.user_id || null,
