@@ -1,6 +1,4 @@
 import type { InputState } from '@/components/_global/Header/Checkout/Checkout.types';
-import { dedicatedVoucher, voucher as generateVoucherPdf } from '@/utils/create-voucher';
-import { formatPrice } from '@/utils/price-formatter';
 import { createClient } from '@/utils/supabase-admin';
 import sanityFetch from '@/utils/sanity.fetch';
 import { Country, Currency, Encoding, Language, P24 } from '@ingameltd/node-przelewy24';
@@ -8,8 +6,8 @@ import { NextResponse } from 'next/server';
 import { checkUsedModifications } from '../complete/check-used-modifications';
 import { sendEmails } from '../complete/send-emails';
 import { updateItemsQuantity } from '../complete/update-items-quantity';
-import { generateRandomCode } from '@/utils/generate-random-code';
 import { generateGuestOrderToken, isGuestOrder } from '@/utils/generate-guest-order-token';
+import { createVoucherCoupons } from '../complete/create-voucher-coupons';
 // import { pdf } from '@react-pdf/renderer';
 
 export const dynamic = 'force-dynamic';
@@ -162,46 +160,17 @@ export async function POST(request: Request) {
       }
     }
 
+    // NOTE: Voucher coupons are NO LONGER created here to prevent orphaned coupons
+    // when users click multiple times. Coupons are created AFTER payment confirmation
+    // in /api/payment/complete via createVoucherCoupons()
     const products = productItems.map(async (product) => {
       if (product.type === 'voucher') {
-        // create instance in supabase
-        const { data, error } = await supabase
-          .from('coupons')
-          .insert({
-            description: 'Voucher',
-            type: 5,
-            code: generateRandomCode(),
-            state: 2,
-            amount: product.voucherData!.amount,
-            voucher_amount_left: product.voucherData!.amount,
-            // three months from now
-            expiration_date: new Date(new Date().setMonth(new Date().getMonth() + 3)),
-          })
-          .select('*')
-          .single();
-
-        if (error) {
-          console.log('Error while creating voucher: ', error.message);
-          return {
-            ...product,
-            voucherBase64: null,
-            vat: 0,
-            ryczalt: 0,
-          };
-        }
-
-        const code = data.code;
-        const amount = formatPrice(product.voucherData!.amount);
-        const date = data.expiration_date;
-
-        product.voucherData!.dedication;
-        const blob = product.voucherData!.dedication
-          ? await dedicatedVoucher({ code, date, amount, dedication: product.voucherData!.dedication })
-          : await generateVoucherPdf({ code, amount, date });
-
+        // Don't create coupon yet - just pass voucher data through
+        // Coupon will be created after payment is confirmed
         return {
           ...product,
-          voucherBase64: blob,
+          voucherBase64: null, // Will be generated after payment
+          voucherPending: true, // Flag to indicate coupon needs to be created
           vat: 0,
           ryczalt: 3,
         };
@@ -413,9 +382,13 @@ export async function POST(request: Request) {
 
     // Use computed final total for branching logic
     if (computedFinalTotal <= 0) {
-      await checkUsedModifications(data);
-      await updateItemsQuantity(data);
-      await sendEmails(data);
+      // For free orders (100% discount), create voucher coupons immediately
+      // since there's no payment webhook to trigger this
+      const updatedOrderData = await createVoucherCoupons(data, supabase);
+      
+      await checkUsedModifications(updatedOrderData);
+      await updateItemsQuantity(updatedOrderData);
+      await sendEmails(updatedOrderData);
 
       // Redirect based on order type
       const redirectUrl = isGuestOrder(input)
@@ -426,6 +399,7 @@ export async function POST(request: Request) {
     } else {
       const session = String(data.id + 'X' + Math.floor(Math.random() * 10000));
 
+      
       const order = {
         sessionId: session,
         amount: Number(computedFinalTotal),
@@ -434,8 +408,8 @@ export async function POST(request: Request) {
         email: input.billing.email,
         country: Country.Poland,
         language: Language.PL,
-        urlReturn: `https://kierunekdzierganie.pl//api/payment/verify/?session=${session}&id=${data.id}`,
-        urlStatus: `https://kierunekdzierganie.pl//api/payment/complete/?session=${session}&id=${data.id}`,
+        urlReturn: `https://kierunekdzierganie.pl/api/payment/verify/?session=${session}&id=${data.id}`,
+        urlStatus: `https://kierunekdzierganie.pl/api/payment/complete/?session=${session}&id=${data.id}`,
         timeLimit: 60,
         encoding: Encoding.UTF8,
         city: input.billing.city,

@@ -42,6 +42,8 @@ export async function POST(request: Request) {
     }
 
     const session = String(id + 'X' + Math.floor(Math.random() * 10000));
+    
+
 
     const order = {
       sessionId: session,
