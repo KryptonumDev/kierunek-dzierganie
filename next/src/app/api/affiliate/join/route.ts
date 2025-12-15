@@ -25,13 +25,10 @@ export async function POST(request: Request) {
       amount: 5000,
     });
 
-    const { error: error2 } = await supabase.from('virtual_wallet').insert({
-      owner: userId,
-      amount: 0,
-    });
+    // Note: virtual_wallet insert removed - transactions are now self-contained
+    // and balance is calculated from virtual_wallet_transactions table
 
     if (error) throw new Error(error.message);
-    if (error2) throw new Error(error2.message);
 
     return NextResponse.json({}, { status: 200 });
   } catch (error) {

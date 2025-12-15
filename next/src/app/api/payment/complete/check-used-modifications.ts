@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase-admin';
+import { addPoints, spendPoints } from '@/utils/virtual-wallet';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function checkUsedModifications(data: any) {
@@ -62,20 +63,7 @@ export async function checkUsedModifications(data: any) {
 
       const couponData = await supabase.from('coupons').select('affiliation_of').eq('id', d.id).single();
       if (couponData.data && couponData.data.affiliation_of) {
-        const prevValueResult = await supabase
-          .from('virtual_wallet')
-          .select('amount')
-          .eq('owner', couponData.data.affiliation_of)
-          .single();
-
-        if (!prevValueResult.error) {
-          await supabase
-            .from('virtual_wallet')
-            .update({
-              amount: prevValueResult.data!.amount + 50,
-            })
-            .eq('owner', couponData.data.affiliation_of);
-        }
+        await addPoints(supabase, couponData.data.affiliation_of, 50, 'Prowizja za polecenie', data.id);
       }
     }
   }
@@ -142,41 +130,15 @@ export async function checkUsedModifications(data: any) {
 
     // check if used discount was affiliated by some user
     if (couponData.data && couponData.data.affiliation_of) {
-      // get current amount of affiliation discount code owner
-      const prevValueResult = await supabase
-        .from('virtual_wallet')
-        .select('amount')
-        .eq('owner', couponData.data.affiliation_of)
-        .single();
-
-      // check if error occurred during select of code owner
-      if (prevValueResult.error) break error;
-
       // add 50zł to affiliation discount code owner
-      await supabase
-        .from('virtual_wallet')
-        .update({
-          amount: prevValueResult.data!.amount + 50,
-        })
-        .eq('owner', couponData.data.affiliation_of);
+      await addPoints(supabase, couponData.data.affiliation_of, 50, 'Prowizja za polecenie', data.id);
     }
   }
 
   // check if virtual money was used (skip for guest orders)
-  error: if (data && data.used_virtual_money && data.user_id) {
-    // get current amount of user virtual money
-    const prevValueResult = await supabase.from('virtual_wallet').select('amount').eq('owner', data.user_id).single();
-
-    // check if error occurred during selecting of user virtual money
-    if (prevValueResult.error) break error;
-
+  if (data && data.used_virtual_money && data.user_id) {
     // decrease user virtual money by used amount
-    await supabase
-      .from('virtual_wallet')
-      .update({
-        amount: prevValueResult.data!.amount - data.used_virtual_money,
-      })
-      .eq('owner', data.user_id);
+    await spendPoints(supabase, data.user_id, data.used_virtual_money, data.id);
   } else if (data && data.used_virtual_money && !data.user_id) {
     console.log('Skipping virtual money operations for guest order');
   }

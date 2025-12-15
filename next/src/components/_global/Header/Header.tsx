@@ -18,6 +18,7 @@ const Header = async () => {
   } = await supabase.auth.getUser();
 
   let data;
+  let virtualWalletBalance = 0;
 
   if (user) {
     const response = await supabase
@@ -27,9 +28,6 @@ const Header = async () => {
           id,
           billing_data,
           shipping_data,
-          virtual_wallet (
-            amount
-          ),
           courses_progress (
             course_id
           )
@@ -39,6 +37,10 @@ const Header = async () => {
       .single();
 
     data = response.data;
+
+    // Fetch virtual wallet balance using RPC function
+    const { data: balance } = await supabase.rpc('get_available_balance', { user_id: user.id });
+    virtualWalletBalance = balance ?? 0;
   }
 
   const adminClient = createAdminClient();
@@ -79,8 +81,7 @@ const Header = async () => {
       billing={data?.billing_data}
       userId={user?.id}
       deliverySettings={deliverySettings}
-      // @ts-expect-error - virtual_wallet is not array, bug in supabase
-      virtualWallet={data?.virtual_wallet?.amount}
+      virtualWallet={virtualWalletBalance}
       ownedCourses={data?.courses_progress?.map((course) => course.course_id as string)}
       freeShipping={(freeShipping?.freeDeliveryAmount as number) ?? 0}
     />
