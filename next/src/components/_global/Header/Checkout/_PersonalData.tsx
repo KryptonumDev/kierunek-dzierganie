@@ -423,6 +423,10 @@ export default function PersonalData({
                   value: true,
                   message: 'Pole wymagane',
                 },
+                pattern: {
+                  value: REGEX.zip,
+                  message: 'Niepoprawny kod pocztowy',
+                },
               })}
               label='Kod pocztowy'
               errors={errors}
@@ -494,6 +498,10 @@ export default function PersonalData({
                         required: {
                           value: true,
                           message: 'Pole wymagane',
+                        },
+                        pattern: {
+                          value: REGEX.zip,
+                          message: 'Niepoprawny kod pocztowy',
                         },
                       })}
                       label='Kod pocztowy'

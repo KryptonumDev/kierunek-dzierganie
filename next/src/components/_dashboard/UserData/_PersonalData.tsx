@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button';
 import Radio from '@/components/ui/Radio';
 import { toast } from 'react-toastify';
 import { createClient } from '@/utils/supabase-client';
+import { REGEX } from '@/global/constants';
 
 export default function PersonalData({ billing_data, id }: PersonalDataTypes) {
   const supabase = createClient();
@@ -114,6 +115,10 @@ export default function PersonalData({ billing_data, id }: PersonalDataTypes) {
             required: {
               value: true,
               message: 'Pole wymagane',
+            },
+            pattern: {
+              value: REGEX.zip,
+              message: 'Niepoprawny kod pocztowy',
             },
           })}
           label='Kod pocztowy'

@@ -3,6 +3,9 @@ import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
+// Polish postal code regex: XX-XXX (two digits, hyphen, three digits)
+const POLISH_POSTAL_CODE_REGEX = /^\d{2}-\d{3}$/;
+
 export async function POST(request: Request) {
   const {
     id,
@@ -24,6 +27,15 @@ export async function POST(request: Request) {
     totalAmount: number | string;
     description: string;
   } = await request.json();
+
+  // Server-side postal code validation
+  if (!postcode || !POLISH_POSTAL_CODE_REGEX.test(postcode)) {
+    console.error('Invalid postal code in recreate:', postcode);
+    return NextResponse.json(
+      { error: 'Niepoprawny kod pocztowy (wymagany format: XX-XXX, np. 00-001)' },
+      { status: 400 }
+    );
+  }
 
   try {
     const p24 = new P24(

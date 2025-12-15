@@ -12,12 +12,38 @@ import { createVoucherCoupons } from '../complete/create-voucher-coupons';
 
 export const dynamic = 'force-dynamic';
 
+// Polish postal code regex: XX-XXX (two digits, hyphen, three digits)
+const POLISH_POSTAL_CODE_REGEX = /^\d{2}-\d{3}$/;
+
 export async function POST(request: Request) {
   const { input, description }: { input: InputState; description: string } = await request.json();
   const supabase = createClient();
 
   console.log('payment/create:input');
   console.log(input);
+
+  // Server-side postal code validation
+  const billingPostcode = input.billing?.postcode;
+  const shippingPostcode = input.shipping?.postcode;
+
+  if (!billingPostcode || !POLISH_POSTAL_CODE_REGEX.test(billingPostcode)) {
+    console.error('Invalid billing postal code:', billingPostcode);
+    return NextResponse.json(
+      { error: 'Niepoprawny kod pocztowy do faktury (wymagany format: XX-XXX, np. 00-001)' },
+      { status: 400 }
+    );
+  }
+
+  // Validate shipping postal code only if delivery is needed and shipping is different from billing
+  if (input.needDelivery && input.shippingSameAsBilling && shippingPostcode) {
+    if (!POLISH_POSTAL_CODE_REGEX.test(shippingPostcode)) {
+      console.error('Invalid shipping postal code:', shippingPostcode);
+      return NextResponse.json(
+        { error: 'Niepoprawny kod pocztowy dostawy (wymagany format: XX-XXX, np. 00-001)' },
+        { status: 400 }
+      );
+    }
+  }
 
   // update user default data for next orders (skip for guest orders)
   if (input.user_id && !input.isGuestCheckout) {
