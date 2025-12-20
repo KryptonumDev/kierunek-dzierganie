@@ -14,7 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Footer />
         <PreviewDeploymentInfo />
       </CartProvider>
-      <ToastContainer className='toast' />
+      <ToastContainer className='toast' limit={10} />
     </>
   );
 }

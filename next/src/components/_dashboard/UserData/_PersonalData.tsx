@@ -38,6 +38,7 @@ export default function PersonalData({ billing_data, id }: PersonalDataTypes) {
 
     if (res.error) {
       toast('Wystąpił błąd podczas zapisywania danych');
+      return;
     }
 
     toast('Dane zostały zapisane');

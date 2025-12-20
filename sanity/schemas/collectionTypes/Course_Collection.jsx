@@ -84,6 +84,14 @@ export default {
       group: 'configuration',
     },
     {
+      name: 'printed_manual',
+      title: '⚠️ Instrukcja drukowana (DANE LEGACY)',
+      type: 'reference',
+      to: [{ type: 'product' }],
+      description: 'UWAGA: To pole zawiera dane z starej platformy. Aby mieć pełną kontrolę nad powiązaniami produktów, przenieś tę wartość do pola "Produkty powiązane" powyżej i wyczyść to pole. Dopóki to pole jest wypełnione, użytkownicy muszą posiadać kurs aby kupić ten produkt.',
+      group: 'configuration',
+    },
+    {
       name: 'files',
       type: 'array',
       title: 'Pliki do pobrania',
