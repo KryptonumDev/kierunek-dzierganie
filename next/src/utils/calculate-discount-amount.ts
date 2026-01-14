@@ -2,7 +2,8 @@ import type { Discount } from '@/global/types';
 
 export function calculateDiscountAmount(price: number, discount: Discount, delivery: number | null | undefined) {
   if (discount.type === 'PERCENTAGE') {
-    return -price * (discount.amount / 100);
+    // Apply percentage discount to products + delivery to match server-side calculation
+    return -Math.floor(((price + (delivery ?? 0)) * discount.amount) / 100);
   }
 
   if (discount.type === 'FIXED CART' || discount.type === 'VOUCHER') {
