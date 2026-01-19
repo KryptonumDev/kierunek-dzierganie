@@ -2,7 +2,6 @@ import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import {
   type CategoryRestrictions,
-  isItemEligibleForCoupon,
   hasEligibleItems,
   calculateEligibleSubtotal,
   getEligibleItemIds,
@@ -152,10 +151,10 @@ export async function POST(request: Request) {
                 eligibleIds.length > 0
                   ? Array.isArray(cart)
                     ? cart.reduce(
-                        (sum: number, item: { product: string; quantity?: number; _type?: string }) =>
-                          eligibleIds.includes(item.product) ? sum + (item.quantity ?? 1) : sum,
-                        0
-                      )
+                      (sum: number, item: { product: string; quantity?: number; _type?: string }) =>
+                        eligibleIds.includes(item.product) ? sum + (item.quantity ?? 1) : sum,
+                      0
+                    )
                     : 0
                   : 0;
               return { row: r, eligibleCount, eligibleIds };
@@ -255,10 +254,10 @@ export async function POST(request: Request) {
             eligibleIds.length > 0
               ? Array.isArray(cart)
                 ? cart.reduce(
-                    (sum: number, item: { product: string; quantity?: number }) =>
-                      eligibleIds.includes(item.product) ? sum + (item.quantity ?? 1) : sum,
-                    0
-                  )
+                  (sum: number, item: { product: string; quantity?: number }) =>
+                    eligibleIds.includes(item.product) ? sum + (item.quantity ?? 1) : sum,
+                  0
+                )
                 : 0
               : 0;
           if (eligibleCount === 0) {
@@ -425,10 +424,10 @@ export async function POST(request: Request) {
             eligibleIds.length > 0
               ? Array.isArray(cart)
                 ? cart.reduce(
-                    (sum: number, item: { product: string; quantity?: number }) =>
-                      eligibleIds.includes(item.product) ? sum + (item.quantity ?? 1) : sum,
-                    0
-                  )
+                  (sum: number, item: { product: string; quantity?: number }) =>
+                    eligibleIds.includes(item.product) ? sum + (item.quantity ?? 1) : sum,
+                  0
+                )
                 : 0
               : 0;
           return { row: r, eligibleCount };
@@ -523,10 +522,10 @@ export async function POST(request: Request) {
         eligibleIds.length > 0
           ? Array.isArray(cart)
             ? cart.reduce(
-                (sum: number, item: { product: string; quantity?: number }) =>
-                  eligibleIds.includes(item.product) ? sum + (item.quantity ?? 1) : sum,
-                0
-              )
+              (sum: number, item: { product: string; quantity?: number }) =>
+                eligibleIds.includes(item.product) ? sum + (item.quantity ?? 1) : sum,
+              0
+            )
             : 0
           : 0;
 
