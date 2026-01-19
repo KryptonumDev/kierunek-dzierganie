@@ -13,20 +13,37 @@ export default function SummaryAside({ input }: AsideProps) {
     [input.products?.array]
   );
 
+  // Calculate discounts - NO LONGER includes delivery (except FREE DELIVERY type)
   const discountsAmount = useMemo(() => {
     const discounts = (input as unknown as { discounts?: Discount[] }).discounts;
     if (!Array.isArray(discounts) || discounts.length === 0) return 0;
-    const price = input.amount;
-    const delivery = input.needDelivery ? input.delivery : 0;
 
+    // Products subtotal (NO delivery in discount calculation)
+    const productsSubtotal = input.amount;
+
+    // FIXED PRODUCT discounts
     const productTotal = discounts
       .filter((d) => d.type === 'FIXED PRODUCT')
-      .reduce((sum, d) => sum + calculateDiscountAmount(price, d, 0), 0);
-    const baseAfterProducts = Math.max(0, price + delivery + productTotal);
+      .reduce((sum, d) => sum + calculateDiscountAmount(productsSubtotal, d), 0);
+
+    const baseAfterProducts = Math.max(0, productsSubtotal + productTotal); // productTotal is negative
+
+    // VOUCHER (respects eligibleSubtotal if available)
     const voucher = discounts.find((d) => d.type === 'VOUCHER');
-    const voucherTotal = voucher ? -Math.min(baseAfterProducts, voucher.amount ?? 0) : 0;
+    let voucherTotal = 0;
+    if (voucher) {
+      const voucherBase = voucher.eligibleSubtotal !== undefined
+        ? Math.min(voucher.eligibleSubtotal, baseAfterProducts)
+        : baseAfterProducts;
+      voucherTotal = -Math.min(voucherBase, voucher.amount ?? 0);
+    }
+
+    // Cart-wide discount (PERCENTAGE or FIXED CART)
     const cartWide = discounts.find((d) => d.type === 'PERCENTAGE' || d.type === 'FIXED CART');
-    if (cartWide && discounts.length === 1) return calculateDiscountAmount(price, cartWide, delivery);
+    if (cartWide && discounts.length === 1) {
+      return calculateDiscountAmount(productsSubtotal, cartWide, cartWide.eligibleSubtotal);
+    }
+
     return productTotal + voucherTotal;
   }, [input]);
 
@@ -55,7 +72,7 @@ export default function SummaryAside({ input }: AsideProps) {
       {!((input as unknown as { discounts?: Discount[] }).discounts || []).length && input.discount && (
         <p>
           <span>Kupon: {input.discount.code}</span>
-          <span>{formatPrice(calculateDiscountAmount(input.amount, input.discount, input.delivery))}</span>
+          <span>{formatPrice(calculateDiscountAmount(input.amount, input.discount, input.discount.eligibleSubtotal))}</span>
         </p>
       )}
       {input.virtualMoney && input.virtualMoney > 0 && (
@@ -73,7 +90,7 @@ export default function SummaryAside({ input }: AsideProps) {
               ((input as unknown as { discounts?: Discount[] }).discounts as Discount[]).length > 0
                 ? discountsAmount
                 : input.discount
-                  ? calculateDiscountAmount(input.amount, input.discount, input.delivery)
+                  ? calculateDiscountAmount(input.amount, input.discount, input.discount.eligibleSubtotal)
                   : 0) -
               (input.virtualMoney ? input.virtualMoney * 100 : 0) +
               (input.needDelivery && !input.freeDelivery ? input.delivery : 0),

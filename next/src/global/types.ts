@@ -560,6 +560,22 @@ export type Shipping = {
   phone: string;
 };
 
+/**
+ * Category restrictions for coupons.
+ * Determines which products a coupon can be applied to.
+ * Null means no restrictions (coupon applies to all products).
+ */
+export type CategoryRestrictions = {
+  /** Restrict to specific product types: course, product (physical), or bundle */
+  product_types?: ('course' | 'product' | 'bundle')[] | null;
+  /** For courses/bundles: restrict to crocheting or knitting */
+  course_basis?: ('crocheting' | 'knitting')[] | null;
+  /** For physical products: restrict to specific categories */
+  product_categories?:
+    | ('instruction' | 'materials' | 'other' | 'crocheting' | 'knitting')[]
+    | null;
+} | null;
+
 export type Discount = {
   amount: number;
   code: string;
@@ -578,6 +594,12 @@ export type Discount = {
   // If false, a FIXED PRODUCT discount applies once per order (no aggregation)
   aggregates?: boolean;
   affiliatedBy: string | null;
+  // Category restrictions for the coupon (PERCENTAGE, FIXED CART, VOUCHER types)
+  category_restrictions?: CategoryRestrictions;
+  // Subtotal of items eligible for this coupon (when category_restrictions is set)
+  eligibleSubtotal?: number;
+  // IDs of cart items eligible for this coupon (when category_restrictions is set)
+  eligibleItemIds?: string[];
 };
 
 export type MapPoint = {

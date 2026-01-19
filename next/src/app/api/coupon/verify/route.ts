@@ -1,5 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
+import {
+  type CategoryRestrictions,
+  isItemEligibleForCoupon,
+  hasEligibleItems,
+  calculateEligibleSubtotal,
+  getEligibleItemIds,
+  getRestrictionDescription,
+  couponTypeSupportsRestrictions,
+} from '@/utils/coupon-eligibility';
 
 const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_KEY!, {
   auth: {
@@ -9,6 +18,16 @@ const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env
 });
 
 export const dynamic = 'force-dynamic';
+
+// Cart item type for eligibility checks
+type CartItem = {
+  product: string;
+  quantity?: number;
+  _type?: string;
+  basis?: string;
+  price?: number;
+  discount?: number;
+};
 
 export async function POST(request: Request) {
   const { code, codes, userId, cart, isSubmit } = await request.json();
@@ -44,6 +63,9 @@ export async function POST(request: Request) {
         eligibleCount?: number;
         code?: string;
         aggregates?: boolean;
+        category_restrictions?: CategoryRestrictions;
+        eligibleSubtotal?: number;
+        eligibleItemIds?: string[];
       };
 
       const selectedCoupons: CouponRow[] = [];
@@ -72,6 +94,9 @@ export async function POST(request: Request) {
           eligibleCount: (row['eligibleCount'] as number | undefined) ?? undefined,
           code: row['code'] as string | undefined,
           aggregates: (row['aggregates'] as boolean | undefined) ?? true,
+          category_restrictions: (row['category_restrictions'] as CategoryRestrictions) ?? null,
+          eligibleSubtotal: (row['eligibleSubtotal'] as number | undefined) ?? undefined,
+          eligibleItemIds: (row['eligibleItemIds'] as string[] | undefined) ?? undefined,
         };
         return normalized;
       };
@@ -96,7 +121,8 @@ export async function POST(request: Request) {
             voucher_amount_left,
             discounted_product,
             discounted_products,
-            aggregates
+            aggregates,
+            category_restrictions
             `
           )
           .eq('code', c);
@@ -249,6 +275,46 @@ export async function POST(request: Request) {
           }
         }
 
+        // Category restrictions validation for non-FIXED-PRODUCT coupons
+        // @ts-expect-error wrong types from supabase
+        const couponType = selected?.coupons_types?.coupon_type as string | undefined;
+        const restrictions = selected?.category_restrictions as CategoryRestrictions;
+
+        // Guard: FIXED PRODUCT should not have category restrictions (enforced in admin, but double-check)
+        if (couponType === 'FIXED PRODUCT' && restrictions) {
+          console.warn('FIXED PRODUCT coupon has category_restrictions - ignoring', {
+            couponId: selected.id,
+            code: c,
+          });
+          selected.category_restrictions = null;
+        }
+
+        // For coupons that support restrictions, validate eligibility
+        if (couponTypeSupportsRestrictions(couponType) && restrictions && Array.isArray(cart)) {
+          // Transform cart items for eligibility check
+          const cartItemsForCheck = cart.map((item: CartItem) => ({
+            _type: item._type || 'product',
+            basis: item.basis,
+            _id: item.product,
+            product: item.product,
+            quantity: item.quantity ?? 1,
+            price: item.discount ?? item.price ?? 0,
+            discount: item.discount,
+          }));
+
+          if (!hasEligibleItems(cartItemsForCheck, restrictions)) {
+            const description = getRestrictionDescription(restrictions);
+            return NextResponse.json(
+              { error: `Kod ${c} nie dotyczy żadnego produktu w koszyku.${description ? ` ${description}` : ''}` },
+              { status: 400 }
+            );
+          }
+
+          // Calculate and attach eligible subtotal and item IDs
+          (selected as unknown as CouponRow).eligibleSubtotal = calculateEligibleSubtotal(cartItemsForCheck, restrictions);
+          (selected as unknown as CouponRow).eligibleItemIds = getEligibleItemIds(cartItemsForCheck, restrictions);
+        }
+
         // Override amount for affiliate coupons to always be 50 PLN
         if (selected?.affiliation_of) {
           selected.amount = 5000;
@@ -325,7 +391,8 @@ export async function POST(request: Request) {
         voucher_amount_left,
         discounted_product,
         discounted_products,
-        aggregates
+        aggregates,
+        category_restrictions
         `
       )
       .eq('code', code);
@@ -475,6 +542,52 @@ export async function POST(request: Request) {
       if ((selected.voucher_amount_left ?? 0) <= 0) {
         return NextResponse.json({ error: 'Voucher jest wyczerpany' }, { status: 500 });
       }
+    }
+
+    // Category restrictions validation for non-FIXED-PRODUCT coupons
+    // @ts-expect-error wrong types from supabase
+    const singleCouponType = selected?.coupons_types?.coupon_type as string | undefined;
+    const singleRestrictions = selected?.category_restrictions as CategoryRestrictions;
+
+    // Guard: FIXED PRODUCT should not have category restrictions
+    if (singleCouponType === 'FIXED PRODUCT' && singleRestrictions) {
+      console.warn('FIXED PRODUCT coupon has category_restrictions - ignoring', {
+        couponId: selected.id,
+        code,
+      });
+      selected.category_restrictions = null;
+    }
+
+    // For coupons that support restrictions, validate eligibility
+    if (couponTypeSupportsRestrictions(singleCouponType) && singleRestrictions && Array.isArray(cart)) {
+      // Transform cart items for eligibility check
+      const cartItemsForCheck = cart.map((item: CartItem) => ({
+        _type: item._type || 'product',
+        basis: item.basis,
+        _id: item.product,
+        product: item.product,
+        quantity: item.quantity ?? 1,
+        price: item.discount ?? item.price ?? 0,
+        discount: item.discount,
+      }));
+
+      if (!hasEligibleItems(cartItemsForCheck, singleRestrictions)) {
+        const description = getRestrictionDescription(singleRestrictions);
+        return NextResponse.json(
+          { error: `Kod rabatowy nie dotyczy żadnego produktu w koszyku.${description ? ` ${description}` : ''}` },
+          { status: 400 }
+        );
+      }
+
+      // Calculate and attach eligible subtotal and item IDs
+      (selected as unknown as { eligibleSubtotal?: number }).eligibleSubtotal = calculateEligibleSubtotal(
+        cartItemsForCheck,
+        singleRestrictions
+      );
+      (selected as unknown as { eligibleItemIds?: string[] }).eligibleItemIds = getEligibleItemIds(
+        cartItemsForCheck,
+        singleRestrictions
+      );
     }
 
     // Override amount for affiliate coupons to always be 50 PLN

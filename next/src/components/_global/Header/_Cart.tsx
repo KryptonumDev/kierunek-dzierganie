@@ -10,6 +10,12 @@ import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 import { formatToOnlyDigits } from '@/utils/format-to-only-digits';
 import { formatPrice } from '@/utils/price-formatter';
 import { canUseVirtualMoney, getVirtualMoneyRestrictionMessage } from '@/utils/can-use-virtual-money';
+import {
+  type CategoryRestrictions,
+  calculateEligibleSubtotal,
+  getEligibleItemIds,
+  getRestrictionDescription,
+} from '@/utils/coupon-eligibility';
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -121,38 +127,68 @@ export default function Cart({
     return () => removeEventListener('keydown', () => setShowCart());
   }, [setShowCart]);
 
-  // Recompute eligible units for all FIXED PRODUCT coupons on any cart change
+  // Recompute eligible units for FIXED PRODUCT coupons and eligibleSubtotal for category-restricted coupons
   useEffect(() => {
     if (!Array.isArray(usedDiscounts) || usedDiscounts.length === 0) return;
 
     const next = usedDiscounts.map((d) => {
-      if (d.type !== 'FIXED PRODUCT') return d;
-      const eligibleIds =
-        Array.isArray((d as Discount).discounted_products) && (d as Discount).discounted_products.length > 0
-          ? (d as Discount).discounted_products!.map((p: { id: string }) => p.id)
-          : d.discounted_product?.id
-            ? [d.discounted_product.id]
-            : [];
-      const newEligibleCount =
-        eligibleIds.length > 0
-          ? Array.isArray(cart)
-            ? cart.reduce((sum, i) => (eligibleIds.includes(i.product) ? sum + (i.quantity ?? 1) : sum), 0)
-            : 0
-          : 0;
-      return { ...d, eligibleCount: newEligibleCount };
+      // For FIXED PRODUCT: recalculate eligibleCount
+      if (d.type === 'FIXED PRODUCT') {
+        const eligibleIds =
+          Array.isArray((d as Discount).discounted_products) && (d as Discount).discounted_products.length > 0
+            ? (d as Discount).discounted_products!.map((p: { id: string }) => p.id)
+            : d.discounted_product?.id
+              ? [d.discounted_product.id]
+              : [];
+        const newEligibleCount =
+          eligibleIds.length > 0
+            ? Array.isArray(cart)
+              ? cart.reduce((sum, i) => (eligibleIds.includes(i.product) ? sum + (i.quantity ?? 1) : sum), 0)
+              : 0
+            : 0;
+        return { ...d, eligibleCount: newEligibleCount };
+      }
+
+      // For coupons with category restrictions: recalculate eligibleSubtotal
+      if (d.category_restrictions && fetchedItems) {
+        const itemsForCheck = fetchedItems.map((item) => ({
+          _type: item._type,
+          basis: item.basis,
+          _id: item._id,
+          quantity: item.quantity ?? 1,
+          price: item.price,
+          discount: item.discount,
+        }));
+        const newEligibleSubtotal = calculateEligibleSubtotal(itemsForCheck, d.category_restrictions);
+        const newEligibleItemIds = getEligibleItemIds(itemsForCheck, d.category_restrictions);
+        return { ...d, eligibleSubtotal: newEligibleSubtotal, eligibleItemIds: newEligibleItemIds };
+      }
+
+      return d;
     });
 
-    // Auto-remove coupons that no longer apply
+    // Auto-remove FIXED PRODUCT coupons that no longer apply
     const filtered = next.filter((d) => d.type !== 'FIXED PRODUCT' || (d.eligibleCount ?? 0) > 0);
+
+    // Auto-remove category-restricted coupons if no eligible items remain
+    const finalFiltered = filtered.filter((d) => {
+      if (d.category_restrictions && d.eligibleItemIds) {
+        return d.eligibleItemIds.length > 0;
+      }
+      return true;
+    });
 
     // Avoid unnecessary state updates
     const changed =
-      filtered.length !== usedDiscounts.length ||
-      filtered.some(
-        (d, i) => (d.eligibleCount ?? 0) !== (usedDiscounts[i]?.eligibleCount ?? 0) || d.code !== usedDiscounts[i]?.code
+      finalFiltered.length !== usedDiscounts.length ||
+      finalFiltered.some(
+        (d, i) =>
+          (d.eligibleCount ?? 0) !== (usedDiscounts[i]?.eligibleCount ?? 0) ||
+          (d.eligibleSubtotal ?? 0) !== (usedDiscounts[i]?.eligibleSubtotal ?? 0) ||
+          d.code !== usedDiscounts[i]?.code
       );
-    if (changed) setUsedDiscounts(filtered);
-  }, [cart, usedDiscounts, setUsedDiscounts]);
+    if (changed) setUsedDiscounts(finalFiltered);
+  }, [cart, fetchedItems, usedDiscounts, setUsedDiscounts]);
 
   // Unified cart validation: remove invalid items (related dependency missing, owned courses, conflicting bundles)
   useEffect(() => {
@@ -227,10 +263,21 @@ export default function Cart({
   }, [fetchedItems, ownedCourses, removeItem]);
 
   // Build sanitized cart payload for coupon verification (courses/bundles/vouchers forced to quantity=1)
+  // Include basis for category restriction eligibility checks
   const cartItems = cart?.map((item) => {
-    const type = fetchedItems?.find((f) => f._id === item.product)?._type;
+    const fetchedItem = fetchedItems?.find((f) => f._id === item.product);
+    const type = fetchedItem?._type;
+    const basis = fetchedItem?.basis;
     const isNonQuantifiable = type === 'course' || type === 'bundle' || type === 'voucher';
-    return { ...item, _type: type, quantity: isNonQuantifiable ? 1 : item.quantity };
+    const price = fetchedItem?.discount ?? fetchedItem?.price ?? 0;
+    return {
+      ...item,
+      _type: type,
+      basis,
+      quantity: isNonQuantifiable ? 1 : item.quantity,
+      price,
+      discount: fetchedItem?.discount,
+    };
   });
 
   const removeCoupon = (code: string) => {
@@ -296,8 +343,14 @@ export default function Cart({
             discounted_products?: Array<{ id: string; name?: string }> | null;
             affiliation_of?: string | null;
             aggregates?: boolean | null;
+            category_restrictions?: CategoryRestrictions;
+            eligibleSubtotal?: number;
+            eligibleItemIds?: string[];
           }) => {
             const type = data.coupons_types?.coupon_type;
+            const restrictions = data.category_restrictions;
+
+            // For FIXED PRODUCT: calculate eligible count from discounted_products
             const eligibleIds =
               Array.isArray(data.discounted_products) && data.discounted_products.length > 0
                 ? data.discounted_products.map((p: { id: string }) => p.id)
@@ -310,6 +363,25 @@ export default function Cart({
                   ? cart.reduce((sum, i) => (eligibleIds.includes(i.product) ? sum + (i.quantity ?? 1) : sum), 0)
                   : 0
                 : undefined;
+
+            // For coupons with category restrictions: calculate eligible subtotal from fetched items
+            let eligibleSubtotal: number | undefined = data.eligibleSubtotal;
+            let eligibleItemIds: string[] | undefined = data.eligibleItemIds;
+
+            // Recalculate on client if we have fetched items (more accurate prices)
+            if (restrictions && fetchedItems && type !== 'FIXED PRODUCT') {
+              const itemsForCheck = fetchedItems.map((item) => ({
+                _type: item._type,
+                basis: item.basis,
+                _id: item._id,
+                quantity: item.quantity ?? 1,
+                price: item.price,
+                discount: item.discount,
+              }));
+              eligibleSubtotal = calculateEligibleSubtotal(itemsForCheck, restrictions);
+              eligibleItemIds = getEligibleItemIds(itemsForCheck, restrictions);
+            }
+
             return {
               totalVoucherAmount: type === 'VOUCHER' ? data.amount : null,
               amount: type === 'VOUCHER' ? data.voucher_amount_left : data.amount,
@@ -321,11 +393,26 @@ export default function Cart({
               affiliatedBy: data.affiliation_of,
               eligibleCount,
               aggregates: data.aggregates ?? true,
+              category_restrictions: restrictions,
+              eligibleSubtotal,
+              eligibleItemIds,
             } as Discount;
           }
         );
         setUsedDiscounts(mapped);
         setValue('discount', '');
+
+        // Show toast for newly added restricted coupons
+        const newCoupon = mapped.find((m) => m.code.toLowerCase() === candidate.toLowerCase());
+        if (newCoupon?.category_restrictions) {
+          const desc = getRestrictionDescription(newCoupon.category_restrictions);
+          const eligibleCount = newCoupon.eligibleItemIds?.length ?? 0;
+          const totalCount = fetchedItems?.length ?? 0;
+          toast.info(
+            `Kod ${newCoupon.code} został dodany. ${desc || ''} (${eligibleCount} z ${totalCount} produktów spełnia warunki)`,
+            { autoClose: 5000 }
+          );
+        }
       })
       .catch((error) => {
         toast(error.message);
@@ -341,19 +428,40 @@ export default function Cart({
   };
 
   // Sum discounts for UI display
+  // IMPORTANT: Discounts NO LONGER apply to delivery (except FREE DELIVERY type)
   const discountsAmount = useMemo(() => {
     if (!Array.isArray(usedDiscounts) || usedDiscounts.length === 0 || typeof totalItemsPrice !== 'number') return 0;
-    const deliveryVal = delivery ?? 0;
+
+    // Products subtotal (NO delivery in discount calculation)
+    const productsSubtotal = totalItemsPrice;
+
+    // FIXED PRODUCT discounts (no category restrictions for this type)
     const productTotal = usedDiscounts
       .filter((d) => d.type === 'FIXED PRODUCT')
-      .reduce((sum, d) => sum + calculateDiscountAmount(totalItemsPrice, d, 0), 0);
-    const baseAfterProducts = Math.max(0, totalItemsPrice + deliveryVal + productTotal); // productTotal is negative
+      .reduce((sum, d) => sum + calculateDiscountAmount(productsSubtotal, d), 0);
+
+    const baseAfterProducts = Math.max(0, productsSubtotal + productTotal); // productTotal is negative
+
+    // Voucher (respects category restrictions via eligibleSubtotal)
     const voucher = usedDiscounts.find((d) => d.type === 'VOUCHER');
-    const voucherTotal = voucher ? -Math.min(baseAfterProducts, voucher.amount ?? 0) : 0;
+    let voucherTotal = 0;
+    if (voucher) {
+      // If voucher has restrictions, use eligibleSubtotal; otherwise use remaining after products
+      const voucherBase = voucher.eligibleSubtotal !== undefined
+        ? Math.min(voucher.eligibleSubtotal, baseAfterProducts)
+        : baseAfterProducts;
+      voucherTotal = -Math.min(voucherBase, voucher.amount ?? 0);
+    }
+
+    // Cart-wide discount (PERCENTAGE or FIXED CART) - can only be used alone
     const cartWide = usedDiscounts.find((d) => d.type === 'PERCENTAGE' || d.type === 'FIXED CART');
-    if (cartWide && usedDiscounts.length === 1) return calculateDiscountAmount(totalItemsPrice, cartWide, delivery);
+    if (cartWide && usedDiscounts.length === 1) {
+      // Use eligibleSubtotal if coupon has category restrictions
+      return calculateDiscountAmount(productsSubtotal, cartWide, cartWide.eligibleSubtotal);
+    }
+
     return productTotal + voucherTotal;
-  }, [usedDiscounts, totalItemsPrice, delivery]);
+  }, [usedDiscounts, totalItemsPrice]);
 
   const filteredFetchItems = useMemo(() => {
     if (!fetchedItems) return;
@@ -489,21 +597,42 @@ export default function Cart({
                           </button>
                           {Array.isArray(usedDiscounts) && usedDiscounts.length > 0 && (
                             <div className={styles.appliedCoupons}>
-                              {usedDiscounts.map((d, i) => (
-                                <span
-                                  key={(d.code || d.id) + i}
-                                  className={styles.couponTag}
-                                >
-                                  {d.code}
-                                  <button
-                                    type='button'
-                                    aria-label={`Usuń kupon ${d.code}`}
-                                    onClick={() => removeCoupon(d.code)}
+                              {usedDiscounts.map((d, i) => {
+                                const restrictionDesc = d.category_restrictions
+                                  ? getRestrictionDescription(d.category_restrictions)
+                                  : null;
+                                const eligibleCount = d.eligibleItemIds?.length ?? 0;
+                                const totalCount = fetchedItems?.length ?? 0;
+                                const hasRestriction = !!d.category_restrictions;
+
+                                return (
+                                  <div
+                                    key={(d.code || d.id) + i}
+                                    className={styles.couponTagWrapper}
                                   >
-                                    ×
-                                  </button>
-                                </span>
-                              ))}
+                                    <span className={styles.couponTag}>
+                                      {d.code}
+                                      <button
+                                        type='button'
+                                        aria-label={`Usuń kupon ${d.code}`}
+                                        onClick={() => removeCoupon(d.code)}
+                                      >
+                                        ×
+                                      </button>
+                                    </span>
+                                    {hasRestriction && (
+                                      <span className={styles.couponRestriction}>
+                                        {restrictionDesc}
+                                        {totalCount > 0 && (
+                                          <span className={styles.couponEligibility}>
+                                            {' '}({eligibleCount} z {totalCount} {totalCount === 1 ? 'produktu' : 'produktów'})
+                                          </span>
+                                        )}
+                                      </span>
+                                    )}
+                                  </div>
+                                );
+                              })}
                             </div>
                           )}
                         </div>
@@ -594,10 +723,49 @@ export default function Cart({
                           </p>
                         )}
                         {Array.isArray(usedDiscounts) && usedDiscounts.length > 0 && (
-                          <p>
-                            <span>Kupony</span>
-                            <span>{formatPrice(discountsAmount)}</span>
-                          </p>
+                          <div className={styles.couponsBreakdown}>
+                            <p className={styles.couponsHeader}>
+                              <span>Kupony</span>
+                              <span>{formatPrice(discountsAmount)}</span>
+                            </p>
+                            {usedDiscounts.map((d, i) => {
+                              const restrictionDesc = d.category_restrictions
+                                ? getRestrictionDescription(d.category_restrictions)
+                                : null;
+                              // Calculate individual discount amount for display
+                              const individualDiscount = (() => {
+                                if (d.type === 'FIXED PRODUCT') {
+                                  return calculateDiscountAmount(totalItemsPrice, d);
+                                }
+                                if (d.type === 'VOUCHER') {
+                                  const baseAfterProducts = Math.max(0, totalItemsPrice);
+                                  const voucherBase = d.eligibleSubtotal !== undefined
+                                    ? Math.min(d.eligibleSubtotal, baseAfterProducts)
+                                    : baseAfterProducts;
+                                  return -Math.min(voucherBase, d.amount ?? 0);
+                                }
+                                // PERCENTAGE or FIXED CART
+                                return calculateDiscountAmount(totalItemsPrice, d, d.eligibleSubtotal);
+                              })();
+                              const typeLabel = d.type === 'PERCENTAGE' ? `${d.amount}%` : 
+                                               d.type === 'FIXED CART' ? formatPrice(d.amount) :
+                                               d.type === 'VOUCHER' ? 'Voucher' :
+                                               d.type === 'FIXED PRODUCT' ? 'Na produkt' : '';
+
+                              return (
+                                <p key={(d.code || d.id) + i} className={styles.couponDetail}>
+                                  <span className={styles.couponDetailInfo}>
+                                    {d.code}
+                                    {typeLabel && <span className={styles.couponType}>({typeLabel})</span>}
+                                    {restrictionDesc && (
+                                      <span className={styles.couponDetailRestriction}>{restrictionDesc}</span>
+                                    )}
+                                  </span>
+                                  <span>{formatPrice(individualDiscount)}</span>
+                                </p>
+                              );
+                            })}
+                          </div>
                         )}
                         {usedVirtualMoney && usedVirtualMoney > 0 && (
                           <p>

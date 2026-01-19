@@ -24,6 +24,7 @@ const OrderData = ({ order }: OrderDataTypes) => {
   );
 
   // Calculate total discount amount (supports multiple coupons)
+  // NOTE: Discounts no longer apply to delivery (except FREE DELIVERY type)
   const discountsAmount = useMemo(() => {
     // Use new discounts array if available, otherwise fall back to legacy single discount
     const discounts =
@@ -31,31 +32,38 @@ const OrderData = ({ order }: OrderDataTypes) => {
 
     if (discounts.length === 0) return 0;
 
-    const delivery = order.shippingMethod?.price ?? 0;
+    // Products subtotal (NO delivery in discount calculation)
+    const productsSubtotal = totalItemsPrice;
 
     // Sum FIXED PRODUCT discounts
     const productTotal = discounts
       .filter((d) => d.type === 'FIXED PRODUCT')
-      .reduce((sum, d) => sum + calculateDiscountAmount(totalItemsPrice, d, 0), 0);
+      .reduce((sum, d) => sum + calculateDiscountAmount(productsSubtotal, d), 0);
 
     // Calculate base after product-specific discounts
-    const baseAfterProducts = Math.max(0, totalItemsPrice + delivery + productTotal); // productTotal is negative
+    const baseAfterProducts = Math.max(0, productsSubtotal + productTotal); // productTotal is negative
 
-    // Apply VOUCHER if present
+    // Apply VOUCHER if present (respects eligibleSubtotal if available)
     const voucher = discounts.find((d) => d.type === 'VOUCHER');
-    const voucherTotal = voucher ? -Math.min(baseAfterProducts, voucher.amount ?? 0) : 0;
+    let voucherTotal = 0;
+    if (voucher) {
+      const voucherBase = voucher.eligibleSubtotal !== undefined
+        ? Math.min(voucher.eligibleSubtotal, baseAfterProducts)
+        : baseAfterProducts;
+      voucherTotal = -Math.min(voucherBase, voucher.amount ?? 0);
+    }
 
     // Check for cart-wide discount (PERCENTAGE or FIXED CART)
     const cartWide = discounts.find((d) => d.type === 'PERCENTAGE' || d.type === 'FIXED CART');
 
-    // If cart-wide discount is the only one, use simple calculation
+    // If cart-wide discount is the only one, use calculation with eligibleSubtotal
     if (cartWide && discounts.length === 1) {
-      return calculateDiscountAmount(totalItemsPrice, cartWide, delivery);
+      return calculateDiscountAmount(productsSubtotal, cartWide, cartWide.eligibleSubtotal);
     }
 
     // Otherwise combine product-specific and voucher discounts
     return productTotal + voucherTotal;
-  }, [order.discounts, order.discount, order.shippingMethod?.price, totalItemsPrice]);
+  }, [order.discounts, order.discount, totalItemsPrice]);
 
   const createIntent = async () => {
     await fetch('/api/payment/recreate', {

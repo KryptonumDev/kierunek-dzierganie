@@ -8,6 +8,7 @@ import { sendEmails } from '../complete/send-emails';
 import { updateItemsQuantity } from '../complete/update-items-quantity';
 import { generateGuestOrderToken, isGuestOrder } from '@/utils/generate-guest-order-token';
 import { createVoucherCoupons } from '../complete/create-voucher-coupons';
+import { type CategoryRestrictions, calculateEligibleSubtotal } from '@/utils/coupon-eligibility';
 // import { pdf } from '@react-pdf/renderer';
 
 export const dynamic = 'force-dynamic';
@@ -224,6 +225,8 @@ export async function POST(request: Request) {
             discounted_product?: { id: string } | null;
             eligibleCount?: number;
             totalVoucherAmount?: number | null;
+            category_restrictions?: CategoryRestrictions;
+            eligibleSubtotal?: number;
           }>;
         }
       ).discounts as
@@ -237,6 +240,8 @@ export async function POST(request: Request) {
             discounted_product?: { id: string } | null;
             eligibleCount?: number;
             totalVoucherAmount?: number | null;
+            category_restrictions?: CategoryRestrictions;
+            eligibleSubtotal?: number;
           }>
         | undefined;
       if (Array.isArray(arr) && arr.length > 0) return arr;
@@ -306,21 +311,59 @@ export async function POST(request: Request) {
     );
     const deliveryAmount = input.needDelivery ? (input.shippingMethod?.price ?? 0) : 0;
 
-    // Voucher is applied last and capped by remaining total after fixed-product discounts
-    const baseAfterFixed = Math.max(0, productsSubtotal + deliveryAmount - fixedProductTotal);
-    // CRITICAL FIX: Use voucher[0]!.amount (remaining balance), NOT totalVoucherAmount (original amount)
-    const voucherUsed = voucher.length > 0 ? Math.min(baseAfterFixed, voucher[0]!.amount) : 0;
+    // Helper to transform product items for eligibility check
+    const transformProductForEligibility = (item: (typeof productItems)[0]) => ({
+      _type: item.type as 'course' | 'product' | 'bundle' | 'voucher',
+      basis: (item as unknown as { basis?: string }).basis,
+      _id: item.id,
+      product: item.id,
+      quantity: item.quantity ?? 1,
+      price: item.price,
+      discount: typeof item.discount === 'number' ? item.discount : undefined,
+    });
 
-    // If there is a single cart-wide discount (percentage or fixed cart), apply it to products + delivery
+    // If there is a single cart-wide discount (percentage or fixed cart), apply it to products only (NOT delivery)
     let cartWideUsed = 0;
     if (cartWide.length === 1 && discountsArray.length === 1) {
       const d = cartWide[0]!;
+      const restrictions = d.category_restrictions;
+
+      // Calculate eligible subtotal - either from restrictions or full products subtotal
+      let eligibleSubtotal = productsSubtotal;
+      if (restrictions) {
+        const itemsForCheck = productItems.map(transformProductForEligibility);
+        eligibleSubtotal = calculateEligibleSubtotal(itemsForCheck, restrictions);
+      }
+
       if (d.type === 'PERCENTAGE') {
         const pct = Math.max(0, Math.min(100, d.amount));
-        cartWideUsed = Math.floor(((productsSubtotal + deliveryAmount) * pct) / 100);
+        // Percentage of eligible products only - NO DELIVERY
+        cartWideUsed = Math.floor((eligibleSubtotal * pct) / 100);
       } else if (d.type === 'FIXED CART') {
-        cartWideUsed = Math.min(d.amount, productsSubtotal + deliveryAmount);
+        // Fixed amount capped at eligible products subtotal - NO DELIVERY
+        cartWideUsed = Math.min(d.amount, eligibleSubtotal);
       }
+    }
+
+    // Voucher is applied last and capped by remaining total after fixed-product discounts
+    // Voucher also respects category restrictions and does NOT apply to delivery
+    const baseAfterFixed = Math.max(0, productsSubtotal - fixedProductTotal - cartWideUsed);
+    let voucherUsed = 0;
+    if (voucher.length > 0) {
+      const v = voucher[0]!;
+      const voucherRestrictions = v.category_restrictions;
+
+      // Calculate voucher cap based on restrictions
+      let voucherCap = baseAfterFixed;
+      if (voucherRestrictions) {
+        const itemsForCheck = productItems.map(transformProductForEligibility);
+        const eligibleForVoucher = calculateEligibleSubtotal(itemsForCheck, voucherRestrictions);
+        // Voucher is capped by the lesser of: eligible items subtotal or remaining after other discounts
+        voucherCap = Math.min(eligibleForVoucher, baseAfterFixed);
+      }
+
+      // CRITICAL FIX: Use voucher[0]!.amount (remaining balance), NOT totalVoucherAmount (original amount)
+      voucherUsed = Math.min(voucherCap, v.amount);
     }
 
     // Validate virtual money usage: ONLY allowed for courses and bundles
@@ -335,9 +378,12 @@ export async function POST(request: Request) {
     }
 
     // Compute final payable total on the server – do NOT trust client-provided totals
-    const combinedDiscount = cartWideUsed > 0 ? cartWideUsed : fixedProductTotal + voucherUsed;
+    // IMPORTANT: Discounts only apply to products, delivery is always charged separately
+    const combinedProductDiscount = cartWideUsed > 0 ? cartWideUsed : fixedProductTotal + voucherUsed;
     const virtualMoneyAmount = input.virtualMoney ? input.virtualMoney * 100 : 0;
-    const computedFinalTotal = Math.max(0, productsSubtotal + deliveryAmount - combinedDiscount - virtualMoneyAmount);
+    // Calculate discounted products subtotal first, then add delivery
+    const discountedProductsTotal = Math.max(0, productsSubtotal - combinedProductDiscount - virtualMoneyAmount);
+    const computedFinalTotal = discountedProductsTotal + deliveryAmount;
 
     // Compose persisted discounts
     const used_discounts = discountsArray.map((d) => {
@@ -374,6 +420,8 @@ export async function POST(request: Request) {
           need_delivery: input.needDelivery,
           client_notes: input.client_notes,
           free_delivery: input.freeDelivery,
+          // Version 2: Discounts apply only to products, not delivery. Supports category_restrictions.
+          discount_logic_version: 2,
         }
       : {
           user_id: input.user_id,
@@ -397,6 +445,8 @@ export async function POST(request: Request) {
           need_delivery: input.needDelivery,
           client_notes: input.client_notes,
           free_delivery: input.freeDelivery,
+          // Version 2: Discounts apply only to products, not delivery. Supports category_restrictions.
+          discount_logic_version: 2,
         };
 
     const { data, error } = await supabase.from('orders').insert(orderData).select('*').single();

@@ -2,6 +2,7 @@ import { createClient } from '@/utils/supabase-admin';
 import CryptoJS from 'crypto-js';
 import Hex from 'crypto-js/enc-hex';
 import countryList from 'react-select-country-list';
+import { type CategoryRestrictions, isItemEligibleForCoupon } from '@/utils/coupon-eligibility';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function generateBill(data: any, id: string) {
@@ -17,6 +18,9 @@ export async function generateBill(data: any, id: string) {
     discounted_product?: { id: string } | null;
     discounted_products?: Array<{ id: string }>;
     totalVoucherAmount?: number | null;
+    category_restrictions?: CategoryRestrictions;
+    eligibleSubtotal?: number;
+    eligibleItemIds?: string[];
   }> = Array.isArray(data.used_discounts) ? data.used_discounts : data.used_discount ? [data.used_discount] : [];
 
   // TEMP: If the bought items is only a voucher, don't generate a bill
@@ -38,6 +42,9 @@ export async function generateBill(data: any, id: string) {
     unitPrice: number;
     vat?: number;
     ryczalt?: number | null;
+    // For category restriction eligibility
+    _type?: string;
+    basis?: string;
   };
   const baseLines: Line[] = data.products.array.map(
     (product: {
@@ -47,13 +54,25 @@ export async function generateBill(data: any, id: string) {
       quantity: number;
       name: string;
       type: string;
+      _type?: string;
+      basis?: string;
     }) => ({
       ...product,
       unitPrice: (product.discount ?? product.price) as number, // cents
+      // Ensure _type and basis are available for eligibility checks
+      _type: product._type ?? product.type,
+      basis: product.basis,
     })
   );
 
-  const shippingPrice: number = data.shipping_method?.price ?? 0;
+  // Helper to check if a product line is eligible for a coupon's category restrictions
+  const isLineEligible = (line: Line, restrictions: CategoryRestrictions | undefined): boolean => {
+    if (!restrictions) return true;
+    return isItemEligibleForCoupon(
+      { _type: line._type ?? line.type, basis: line.basis },
+      restrictions
+    );
+  };
 
   // Normalize ryczałt rate to iFirma-accepted fractional values
   // Accepts either percentage input (e.g., 8.5) or fractional (e.g., 0.085)
@@ -73,12 +92,118 @@ export async function generateBill(data: any, id: string) {
     throw new Error(`Invalid ryczalt rate: ${value}. Allowed fractions: ${allowed.join(', ')}`);
   };
 
+  // Check discount logic version: version 2+ uses category restrictions and doesn't reduce shipping
+  // Version 1 (or undefined) is legacy: discounts apply to all products and can reduce shipping
+  const isV2Logic = data.discount_logic_version >= 2;
+  const shippingPrice: number = data.shipping_method?.price ?? 0;
+
   // If no discounts, keep original pricing
   let productsWithDiscount: Array<Line & { amount: number; rabat: number }>;
   if (!discounts.length) {
     const mapped = baseLines.map((p: Line) => ({ ...p, amount: p.unitPrice, rabat: 0 }));
     productsWithDiscount = mapped as Array<Line & { amount: number; rabat: number }>;
+  } else if (isV2Logic) {
+    // ========== VERSION 2 LOGIC ==========
+    // Discounts apply only to eligible products (based on category_restrictions)
+    // Discounts never reduce shipping (except FREE_DELIVERY type)
+
+    // Apply PERCENTAGE coupon (only to eligible items based on category restrictions)
+    const percent = discounts.find((d) => d.type === 'PERCENTAGE');
+    if (percent && discounts.length === 1) {
+      const pct = Math.max(0, Math.min(100, percent.amount));
+      const restrictions = percent.category_restrictions;
+      baseLines.forEach((p) => {
+        // Only apply percentage if item is eligible for this coupon's restrictions
+        if (isLineEligible(p, restrictions)) {
+          p.unitPrice = Math.max(1, Math.floor((p.unitPrice * (100 - pct)) / 100));
+        }
+      });
+    }
+
+    // Apply FIXED PRODUCT coupons per eligible unit (no category restrictions for FIXED PRODUCT)
+    const fixedProductCoupons = discounts.filter((d) => d.type === 'FIXED PRODUCT');
+    for (const c of fixedProductCoupons) {
+      const ids =
+        Array.isArray(c.discounted_products) && c.discounted_products.length > 0
+          ? c.discounted_products.map((p: { id: string }) => p.id)
+          : c.discounted_product?.id
+            ? [c.discounted_product.id]
+            : [];
+      if (ids.length === 0) continue;
+      const eligibleUnits = baseLines.filter((p) => ids.includes(p.id)).reduce((sum, p) => sum + (p.quantity ?? 1), 0);
+      if (eligibleUnits <= 0) continue;
+      const perUnit = Math.floor(c.amount / eligibleUnits);
+      baseLines.forEach((p: Line) => {
+        if (ids.includes(p.id)) {
+          p.unitPrice = Math.max(1, p.unitPrice - perUnit);
+        }
+      });
+    }
+
+    // Apply FIXED CART and VOUCHER amounts (respecting category restrictions)
+    const fixedCartCoupons = discounts.filter((d) => d.type === 'FIXED CART');
+    const voucherCoupons = discounts.filter((d) => d.type === 'VOUCHER');
+
+    // Process each FIXED CART coupon with its own restrictions
+    for (const c of fixedCartCoupons) {
+      const restrictions = c.category_restrictions;
+      const eligibleLines = baseLines.filter((p) => isLineEligible(p, restrictions));
+      const eligibleTotal = eligibleLines.reduce((sum, p) => sum + p.unitPrice * p.quantity, 0);
+
+      if (eligibleTotal > 0 && c.amount > 0) {
+        const amountToDistribute = Math.min(c.amount, eligibleTotal);
+        const shares = eligibleLines.map((p) => ({
+          id: p.id,
+          share: (p.unitPrice * p.quantity) / eligibleTotal,
+        }));
+        let distributed = 0;
+        eligibleLines.forEach((p, idx) => {
+          const alloc =
+            idx === eligibleLines.length - 1
+              ? amountToDistribute - distributed
+              : Math.floor(amountToDistribute * shares[idx]!.share);
+          distributed += Math.max(0, alloc);
+          const perUnitDeduct = Math.floor(alloc / Math.max(1, p.quantity));
+          p.unitPrice = Math.max(1, p.unitPrice - perUnitDeduct);
+        });
+      }
+    }
+
+    // Process each VOUCHER coupon with its own restrictions
+    for (const c of voucherCoupons) {
+      const restrictions = c.category_restrictions;
+      const eligibleLines = baseLines.filter((p) => isLineEligible(p, restrictions));
+      const eligibleTotal = eligibleLines.reduce((sum, p) => sum + p.unitPrice * p.quantity, 0);
+
+      if (eligibleTotal > 0 && c.amount > 0) {
+        const amountToDistribute = Math.min(c.amount, eligibleTotal);
+        const shares = eligibleLines.map((p) => ({
+          id: p.id,
+          share: (p.unitPrice * p.quantity) / eligibleTotal,
+        }));
+        let distributed = 0;
+        eligibleLines.forEach((p, idx) => {
+          const alloc =
+            idx === eligibleLines.length - 1
+              ? amountToDistribute - distributed
+              : Math.floor(amountToDistribute * shares[idx]!.share);
+          distributed += Math.max(0, alloc);
+          const perUnitDeduct = Math.floor(alloc / Math.max(1, p.quantity));
+          p.unitPrice = Math.max(1, p.unitPrice - perUnitDeduct);
+        });
+      }
+    }
+
+    // Prepare mapped result
+    const mapped2 = baseLines.map((p: Line) => ({ ...p, amount: p.unitPrice, rabat: 0 }));
+    productsWithDiscount = mapped2 as Array<Line & { amount: number; rabat: number }>;
+
+    // V2: Discounts never reduce shipping (handled by FREE_DELIVERY type separately)
   } else {
+    // ========== VERSION 1 (LEGACY) LOGIC ==========
+    // Discounts apply to ALL products regardless of category
+    // Remaining discounts can reduce shipping
+
     // Apply PERCENTAGE if it is the only coupon
     const percent = discounts.find((d) => d.type === 'PERCENTAGE');
     if (percent && discounts.length === 1) {
@@ -111,14 +236,13 @@ export async function generateBill(data: any, id: string) {
     // Sum of current products amount (after fixed-product/percentage)
     const currentProductsTotal = baseLines.reduce((sum: number, p: Line) => sum + p.unitPrice * p.quantity, 0);
 
-    // Apply FIXED CART and VOUCHER amounts
-    // Important: for vouchers, d.amount already reflects the consumed amount on this order
+    // Apply FIXED CART and VOUCHER amounts (legacy: to ALL products)
     const fixedCartTotal = discounts.filter((d) => d.type === 'FIXED CART').reduce((sum, d) => sum + d.amount, 0);
     const voucherUsed = discounts.filter((d) => d.type === 'VOUCHER').reduce((sum, d) => sum + d.amount, 0);
     let remainingFixed = fixedCartTotal + voucherUsed;
 
     if (remainingFixed > 0 && currentProductsTotal > 0) {
-      // Distribute proportionally across products
+      // Distribute proportionally across ALL products
       const shares = baseLines.map((p: Line) => ({
         id: p.id,
         qty: p.quantity,
@@ -134,7 +258,6 @@ export async function generateBill(data: any, id: string) {
         const perUnitDeduct = Math.floor(alloc / Math.max(1, p.quantity));
         p.unitPrice = Math.max(1, p.unitPrice - perUnitDeduct);
       });
-      // Any remaining undistributed cents will implicitly stay in shipping adjustment below
       remainingFixed = Math.max(0, remainingFixed - distributed);
     }
 
@@ -142,10 +265,9 @@ export async function generateBill(data: any, id: string) {
     const mapped2 = baseLines.map((p: Line) => ({ ...p, amount: p.unitPrice, rabat: 0 }));
     productsWithDiscount = mapped2 as Array<Line & { amount: number; rabat: number }>;
 
-    // If remainingFixed still > 0 after product allocation, reduce shipping line
+    // Legacy: If remainingFixed still > 0 after product allocation, reduce shipping line
     if (remainingFixed > 0 && data.shipping_method) {
       const newShipping = Math.max(0, shippingPrice - remainingFixed);
-      // mutate for later use below
       (data as { shipping_method: { price: number } }).shipping_method.price = newShipping;
     }
   }
@@ -204,7 +326,7 @@ export async function generateBill(data: any, id: string) {
       Email: data.billing.email,
       OsobaFizyczna: data.billing.invoiceType !== 'Firma',
     },
-    Uwagi: data.used_discount?.type === 'DELIVERY' ? 'Darmowa wysyłka.' : '',
+    Uwagi: (data.used_discount?.type === 'DELIVERY' || discounts.some((d) => d.type === 'DELIVERY')) ? 'Darmowa wysyłka.' : '',
   };
 
   if (data.shipping_method) {
