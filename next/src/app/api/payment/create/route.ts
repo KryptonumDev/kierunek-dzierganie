@@ -231,18 +231,18 @@ export async function POST(request: Request) {
         }
       ).discounts as
         | Array<{
-            amount: number;
-            code: string;
-            id: string;
-            type: string;
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            discounted_products?: Array<{ id: string }> | any;
-            discounted_product?: { id: string } | null;
-            eligibleCount?: number;
-            totalVoucherAmount?: number | null;
-            category_restrictions?: CategoryRestrictions;
-            eligibleSubtotal?: number;
-          }>
+          amount: number;
+          code: string;
+          id: string;
+          type: string;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          discounted_products?: Array<{ id: string }> | any;
+          discounted_product?: { id: string } | null;
+          eligibleCount?: number;
+          totalVoucherAmount?: number | null;
+          category_restrictions?: CategoryRestrictions;
+          eligibleSubtotal?: number;
+        }>
         | undefined;
       if (Array.isArray(arr) && arr.length > 0) return arr;
       return input.discount ? [input.discount] : [];
@@ -399,55 +399,55 @@ export async function POST(request: Request) {
     // Create order data with guest support
     const orderData = isGuestOrder(input)
       ? {
-          user_id: null,
-          guest_email: input.billing.email,
-          guest_order_token: generateGuestOrderToken(),
-          is_guest_order: true,
-          products: {
-            array: await Promise.all(products),
-          },
-          status: computedFinalTotal <= 0 ? (input.needDelivery ? 2 : 3) : 1,
-          billing: input.billing,
-          shipping: input.needDelivery && !input.shippingMethod?.data ? input.shipping : null,
-          amount: computedFinalTotal,
-          shipping_method: input.needDelivery ? input.shippingMethod : null,
-          used_discounts,
-          used_discount: used_discounts.length === 1 ? used_discounts[0]! : null,
-          used_virtual_money: null, // Guests cannot use virtual money
-          paid_at: null,
-          payment_id: null,
-          payment_method: 'Przelewy24',
-          need_delivery: input.needDelivery,
-          client_notes: input.client_notes,
-          free_delivery: input.freeDelivery,
-          // Version 2: Discounts apply only to products, not delivery. Supports category_restrictions.
-          discount_logic_version: 2,
-        }
+        user_id: null,
+        guest_email: input.billing.email,
+        guest_order_token: generateGuestOrderToken(),
+        is_guest_order: true,
+        products: {
+          array: await Promise.all(products),
+        },
+        status: computedFinalTotal <= 0 ? (input.needDelivery ? 2 : 3) : 1,
+        billing: input.billing,
+        shipping: input.needDelivery && !input.shippingMethod?.data ? input.shipping : null,
+        amount: computedFinalTotal,
+        shipping_method: input.needDelivery ? input.shippingMethod : null,
+        used_discounts,
+        used_discount: used_discounts.length === 1 ? used_discounts[0]! : null,
+        used_virtual_money: null, // Guests cannot use virtual money
+        paid_at: null,
+        payment_id: null,
+        payment_method: 'Przelewy24',
+        need_delivery: input.needDelivery,
+        client_notes: input.client_notes,
+        free_delivery: input.freeDelivery,
+        // Version 2: Discounts apply only to products, not delivery. Supports category_restrictions.
+        discount_logic_version: 2,
+      }
       : {
-          user_id: input.user_id,
-          guest_email: null,
-          guest_order_token: null,
-          is_guest_order: false,
-          products: {
-            array: await Promise.all(products),
-          },
-          status: computedFinalTotal <= 0 ? (input.needDelivery ? 2 : 3) : 1,
-          billing: input.billing,
-          shipping: input.needDelivery && !input.shippingMethod?.data ? input.shipping : null,
-          amount: computedFinalTotal,
-          shipping_method: input.needDelivery ? input.shippingMethod : null,
-          used_discounts,
-          used_discount: used_discounts.length === 1 ? used_discounts[0]! : null,
-          used_virtual_money: input.virtualMoney,
-          paid_at: null,
-          payment_id: null,
-          payment_method: 'Przelewy24',
-          need_delivery: input.needDelivery,
-          client_notes: input.client_notes,
-          free_delivery: input.freeDelivery,
-          // Version 2: Discounts apply only to products, not delivery. Supports category_restrictions.
-          discount_logic_version: 2,
-        };
+        user_id: input.user_id,
+        guest_email: null,
+        guest_order_token: null,
+        is_guest_order: false,
+        products: {
+          array: await Promise.all(products),
+        },
+        status: computedFinalTotal <= 0 ? (input.needDelivery ? 2 : 3) : 1,
+        billing: input.billing,
+        shipping: input.needDelivery && !input.shippingMethod?.data ? input.shipping : null,
+        amount: computedFinalTotal,
+        shipping_method: input.needDelivery ? input.shippingMethod : null,
+        used_discounts,
+        used_discount: used_discounts.length === 1 ? used_discounts[0]! : null,
+        used_virtual_money: input.virtualMoney,
+        paid_at: null,
+        payment_id: null,
+        payment_method: 'Przelewy24',
+        need_delivery: input.needDelivery,
+        client_notes: input.client_notes,
+        free_delivery: input.freeDelivery,
+        // Version 2: Discounts apply only to products, not delivery. Supports category_restrictions.
+        discount_logic_version: 2,
+      };
 
     const { data, error } = await supabase.from('orders').insert(orderData).select('*').single();
 
@@ -461,7 +461,7 @@ export async function POST(request: Request) {
       // For free orders (100% discount), create voucher coupons immediately
       // since there's no payment webhook to trigger this
       const updatedOrderData = await createVoucherCoupons(data, supabase);
-      
+
       await checkUsedModifications(updatedOrderData);
       await updateItemsQuantity(updatedOrderData);
       await sendEmails(updatedOrderData);
@@ -475,7 +475,7 @@ export async function POST(request: Request) {
     } else {
       const session = String(data.id + 'X' + Math.floor(Math.random() * 10000));
 
-      
+
       const order = {
         sessionId: session,
         amount: Number(computedFinalTotal),
