@@ -85,6 +85,7 @@ export async function generateStaticParams(): Promise<generateStaticParamsProps[
         }
       }
     `,
+    tags: ['BlogPost_Collection', 'BlogCategory_Collection'],
   });
   const allCategories = data.flatMap((post) => post.categories || []);
   const uniqueCategories = allCategories.filter(

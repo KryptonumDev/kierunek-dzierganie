@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styles from './HeroVirtual.module.scss';
 import Gallery from '@/components/ui/Gallery';
 import type { HeroVirtualTypes } from './HeroVirtual.types';
@@ -10,13 +10,28 @@ import { Hearth, PayPo } from '@/components/ui/Icons';
 import Img from '@/components/ui/image';
 import Button from '@/components/ui/Button';
 import type { VideoProvider } from '@/components/ui/VideoPlayer/VideoPlayer.types';
+import { getProductUserData } from '@/utils/user-actions';
 
 const gtag: Gtag.Gtag = function () {
   // eslint-disable-next-line prefer-rest-params
   window.dataLayer?.push(arguments);
 };
 
-const HeroVirtual = ({ alreadyBought, course, previewLessons }: HeroVirtualTypes) => {
+const HeroVirtual = ({ alreadyBought: initialAlreadyBought, course, previewLessons }: HeroVirtualTypes) => {
+  // Fetch ownership client-side if not provided (allows static page rendering)
+  const [alreadyBought, setAlreadyBought] = useState(initialAlreadyBought ?? false);
+  const [ownershipLoading, setOwnershipLoading] = useState(initialAlreadyBought === undefined);
+  useEffect(() => {
+    if (initialAlreadyBought === undefined) {
+      getProductUserData()
+        .then((data) => {
+          if (data.ownedCourses.includes(course._id)) {
+            setAlreadyBought(true);
+          }
+        })
+        .finally(() => setOwnershipLoading(false));
+    }
+  }, [initialAlreadyBought, course._id]);
   const images = useMemo(() => {
     const images: Array<{
       data: ImgType | string;
@@ -106,8 +121,7 @@ const HeroVirtual = ({ alreadyBought, course, previewLessons }: HeroVirtualTypes
             <small>Najniższa cena z 30 dni przed obniżką: {formatPrice(course.price!)}</small>
           </div>
         </div>
-        <div className={styles['flex']}>
-          {/* TODO: check is course already bought by user and show link to dashboard */}
+        <div className={`${styles['flex']} ${ownershipLoading ? styles['actions-loading'] : ''}`}>
           {alreadyBought ? (
             <Button href={`/moje-konto/kursy/${course.slug}`}>Przejdź do kursu</Button>
           ) : (

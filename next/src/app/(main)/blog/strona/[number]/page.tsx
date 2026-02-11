@@ -68,6 +68,7 @@ export async function generateStaticParams(): Promise<generateStaticParamsBlogPa
     query: /* groq */ `
       count(*[_type == "BlogPost_Collection"][])
     `,
+    tags: ['BlogPost_Collection'],
   });
   const totalPages = Math.ceil(blogPostCollectionItems / POSTS_PER_PAGE);
   return Array.from({ length: totalPages }, (_, index) => ({

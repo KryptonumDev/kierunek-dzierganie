@@ -1,7 +1,7 @@
 import type { VideoProvider } from '@/components/ui/VideoPlayer/VideoPlayer.types';
 
 export type Props = {
-  alreadySubscribed: boolean;
+  alreadySubscribed?: boolean;
   course: {
     slug: string;
     name: string;

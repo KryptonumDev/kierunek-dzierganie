@@ -3,10 +3,21 @@ import Card from '@/components/_global/Reviews/_Card';
 import styles from './Reviews.module.scss';
 import type { ReviewsTypes } from './Reviews.types';
 import Button from '@/components/ui/Button';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AddReview from '@/components/_global/AddReview';
+import { getProductUserData } from '@/utils/user-actions';
 
-const Reviews = ({ user, alreadyBought, reviews, course, product }: ReviewsTypes) => {
+const Reviews = ({ user: initialUser, alreadyBought, reviews, course, product }: ReviewsTypes) => {
+  // Fetch user data client-side if not provided (allows static page rendering)
+  const [user, setUser] = useState(initialUser);
+  useEffect(() => {
+    if (initialUser === undefined) {
+      getProductUserData().then((data) => {
+        if (data.firstName) setUser(data.firstName);
+      });
+    }
+  }, [initialUser]);
+
   const [addReview, setAddReview] = useState<null | boolean>(null);
 
   if (reviews.length === 0) {

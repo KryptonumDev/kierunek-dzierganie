@@ -10,13 +10,23 @@ import ColorPicker from './ColorPicker';
 import styles from './HeroPhysical.module.scss';
 import type { AttributesTypes, Props, SelectedAttributesTypes } from './HeroPhysical.types';
 import type { VideoProvider } from '@/components/ui/VideoPlayer/VideoPlayer.types';
+import { getProductUserData } from '@/utils/user-actions';
 
 const gtag: Gtag.Gtag = function () {
   // eslint-disable-next-line prefer-rest-params
   window.dataLayer?.push(arguments);
 };
 
-const HeroPhysical = ({ name, id, variants, physical, relatedCourses, ownedCourses }: Props) => {
+const HeroPhysical = ({ name, id, variants, physical, relatedCourses, ownedCourses: initialOwnedCourses }: Props) => {
+  // Fetch ownedCourses client-side if not provided (allows static page rendering)
+  const [ownedCourses, setOwnedCourses] = useState(initialOwnedCourses);
+  useEffect(() => {
+    if (initialOwnedCourses === undefined) {
+      getProductUserData().then((data) => {
+        if (data.ownedCourses.length > 0) setOwnedCourses(data.ownedCourses);
+      });
+    }
+  }, [initialOwnedCourses]);
   const attributes = useMemo(() => {
     if (!variants) return [];
     const arr = [] as AttributesTypes;

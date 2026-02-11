@@ -12,8 +12,16 @@ import { toast } from 'react-toastify';
 import { setCookie } from '@/utils/set-cookie';
 import VideoPlayer from '@/components/ui/VideoPlayer/VideoPlayer';
 
-const LessonHero = ({ lesson, course, alreadySubscribed }: Props) => {
+const LessonHero = ({ lesson, course, alreadySubscribed: initialAlreadySubscribed }: Props) => {
   const [status, setStatus] = useState({ sending: false });
+
+  // Check cookie client-side if not provided from server
+  const alreadySubscribed = (() => {
+    if (initialAlreadySubscribed !== undefined) return initialAlreadySubscribed;
+    if (typeof document === 'undefined' || !course.previewGroupMailerLite) return false;
+    return document.cookie.split('; ').some((c) => c.startsWith(`${course.previewGroupMailerLite}=`));
+  })();
+
   const [popupOpen, setPopupOpen] = useState(alreadySubscribed ? false : !!course.previewGroupMailerLite);
 
   const {

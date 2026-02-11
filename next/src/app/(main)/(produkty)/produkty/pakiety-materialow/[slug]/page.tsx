@@ -7,34 +7,29 @@ import Reviews from '@/components/_product/Reviews';
 import { Img_Query } from '@/components/ui/image';
 import ProductSchema from '@/global/Schema/ProductSchema';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
-import type { ProductPageQuery, ProductPageQueryProps, generateStaticParamsProps } from '@/global/types';
+import type { ProductPageQueryProps, generateStaticParamsProps } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
-import { createClient } from '@/utils/supabase-server';
 import { notFound } from 'next/navigation';
 
 const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
   const {
-    data: {
-      product: {
-        name,
-        _id,
-        _type,
-        type,
-        variants,
-        price,
-        discount,
-        featuredVideo,
-        countInStock,
-        gallery,
-        parameters,
-        description,
-        reviews,
-        rating,
-        relatedCourses,
-      },
+    product: {
+      name,
+      _id,
+      _type,
+      type,
+      variants,
+      price,
+      discount,
+      featuredVideo,
+      countInStock,
+      gallery,
+      parameters,
+      description,
+      reviews,
+      rating,
+      relatedCourses,
     },
-    user,
-    ownedCourses,
   } = await query(slug);
 
   return (
@@ -68,7 +63,6 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
         type={type}
         variants={variants}
           relatedCourses={relatedCourses}
-          ownedCourses={ownedCourses}
         physical={{
           basis: 'materials',
           _id,
@@ -86,7 +80,6 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
         {description?.length > 0 && <Description data={description} />}
         {parameters?.length > 0 && <Parameters parameters={parameters} />}
         <Reviews
-          user={user}
           alreadyBought={true}
           reviews={reviews}
           course={false}
@@ -106,26 +99,7 @@ export async function generateMetadata({ params: { slug } }: { params: { slug: s
   return await QueryMetadata(['product'], `/produkty/pakiety-materialow/${slug}`, slug);
 }
 
-const query = async (slug: string): Promise<ProductPageQuery> => {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const res = await supabase
-    .from('profiles')
-    .select(
-      `
-        id,
-        billing_data->firstName,
-        courses_progress (
-          course_id
-        )
-      `
-    )
-    .eq('id', user?.id)
-    .single();
-
+const query = async (slug: string): Promise<ProductPageQueryProps> => {
   const data = await sanityFetch<ProductPageQueryProps>({
     query: /* groq */ `
       {
@@ -190,9 +164,7 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
   // If product is not found for the given slug within this category, render 404
   if (!data?.product) notFound();
 
-  const ownedCourses = res.data?.courses_progress?.map((course) => course.course_id as string) ?? [];
-
-  return { data: data, user: res.data?.firstName as string, ownedCourses };
+  return data;
 };
 
 export async function generateStaticParams(): Promise<generateStaticParamsProps[]> {
@@ -202,6 +174,7 @@ export async function generateStaticParams(): Promise<generateStaticParamsProps[
         'slug': slug.current,
       }
     `,
+    tags: ['product'],
   });
 
   return data.map(({ slug }) => ({

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import styles from './Header.module.scss';
 import type { QueryProps } from './Header.types';
+import { getUserHeaderData, type UserHeaderData } from './_actions';
 import Search from './Search/Search';
 import Annotation from './_Annotation';
 import Nav from './_Nav';
@@ -26,12 +27,6 @@ const Content = ({
   VirtualCoinsCrossIcon,
   PromoCodeCrossIcon,
   cart: { highlighted },
-  userEmail,
-  shipping,
-  billing,
-  virtualWallet,
-  userId,
-  ownedCourses,
   counts,
   deliverySettings,
   freeShipping,
@@ -39,6 +34,13 @@ const Content = ({
   ChatIcon,
   UserIcon,
 }: QueryProps) => {
+  // Fetch user-specific data client-side to keep the page statically renderable
+  const [userData, setUserData] = useState<UserHeaderData>({ virtualWallet: 0 });
+  useEffect(() => {
+    getUserHeaderData().then(setUserData);
+  }, []);
+  const { userId, userEmail, shipping, billing, virtualWallet, ownedCourses } = userData;
+
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [popupState, setPopupState] = useState(true);

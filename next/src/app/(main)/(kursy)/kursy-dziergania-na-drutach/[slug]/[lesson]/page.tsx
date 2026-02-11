@@ -3,15 +3,11 @@ import sanityFetch from '@/utils/sanity.fetch';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import type { generateLessonStaticParamsProps } from '@/global/types';
-import { createClient } from '@/utils/supabase-server';
 import PreviewLesson, { type PreviewLessonTypes } from '@/components/_product/PreviewLesson';
 import Reviews from '@/components/_product/Reviews';
-import { cookies } from 'next/headers';
 
 const Course = async ({ params: { slug, lesson: lessonSlug } }: { params: { slug: string; lesson: string } }) => {
   const { course, lesson } = await query(slug, lessonSlug);
-
-  const alreadySubscribed = course.previewGroupMailerLite ? !!cookies().get(course.previewGroupMailerLite) : false;
 
   return (
     <>
@@ -35,10 +31,8 @@ const Course = async ({ params: { slug, lesson: lessonSlug } }: { params: { slug
       <PreviewLesson
         course={course}
         lesson={lesson}
-        alreadySubscribed={alreadySubscribed}
       />
       <Reviews
-        user={''}
         alreadyBought={false}
         reviews={course.reviews}
         course={true}
@@ -54,34 +48,6 @@ const Course = async ({ params: { slug, lesson: lessonSlug } }: { params: { slug
 export default Course;
 
 const query = async (slug: string, lesson: string): Promise<PreviewLessonTypes> => {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const id = [];
-
-  const res = await supabase
-    .from('profiles')
-    .select(
-      `
-        id,
-        billing_data->firstName,
-        courses_progress (
-          id,
-          course_id,
-          owner_id,
-          progress
-        )
-      `
-    )
-    .eq('id', user?.id)
-    .single();
-
-  if (res.data?.courses_progress) {
-    id.push(...res.data!.courses_progress.map((course) => course.course_id));
-  }
-
   const data: PreviewLessonTypes = await sanityFetch({
     query: /* groq */ `
     {
@@ -141,6 +107,7 @@ export async function generateStaticParams() {
         }
       }
     `,
+    tags: ['course', 'lesson'],
   });
 
   return data

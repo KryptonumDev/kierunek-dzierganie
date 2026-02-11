@@ -11,7 +11,6 @@ export type useCartItems = {
 
 export type QueryProps = {
   markdownNavAnnotation: JSX.Element;
-  ownedCourses?: string[];
   global: {
     image_knitting: ImgType;
     image_crochet: ImgType;
@@ -44,11 +43,6 @@ export type QueryProps = {
   NavigationCrossIcon: React.ReactNode;
   PopupCrossIcon: React.ReactNode;
   PromoCodeCrossIcon: React.ReactNode;
-  userId?: string;
-  userEmail?: string;
-  shipping?: Shipping;
-  billing?: Billing;
-  virtualWallet: number;
   deliverySettings: {
     deliveryPrice: number;
     paczkomatPrice: number;
