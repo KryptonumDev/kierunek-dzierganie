@@ -5,7 +5,7 @@ import styles from './Package.module.scss';
 import type { PackageTypes } from './Package.types';
 
 const Package = ({ product, heading, paragraph, courses }: PackageTypes) => {
-  const validCourses = [...courses, ...courses, ...courses, ...courses, ...courses, ...courses, ...courses, ...courses, ...courses].filter(Boolean);
+  const validCourses = courses.filter(Boolean);
   const alwaysVisibleCount = 4;
   const visibleCourses = validCourses.slice(0, alwaysVisibleCount);
 
