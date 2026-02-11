@@ -45,6 +45,7 @@ const authenticatedClient = createClient({
  * @param {string[]} [tags] - Recommended. The tags for Next Caching.
  * @param {QueryParams} [params={}] - Optional. Used to query dynamic pages, like blog posts.
  * @param {boolean} [useAuthClient=false] - Optional. Force usage of the authenticated client (for stock checks, etc.).
+ * @param {boolean} [noCache=false] - Optional. Skip all caching (Next.js Data Cache + Sanity CDN). Use for critical paths like payments.
  * @returns {Promise<QueryResponse>} Returns a promise of the page object.
  */
 export default async function sanityFetch<QueryResponse>({
@@ -52,13 +53,15 @@ export default async function sanityFetch<QueryResponse>({
   tags,
   params = {},
   useAuthClient = false,
+  noCache = false,
 }: {
   query: string;
   tags?: string[];
   params?: QueryParams;
   useAuthClient?: boolean;
+  noCache?: boolean;
 }): Promise<QueryResponse> {
-  const client = isPreviewDeployment || useAuthClient ? authenticatedClient : publicClient;
+  const client = isPreviewDeployment || useAuthClient || noCache ? authenticatedClient : publicClient;
 
   return await client.fetch<QueryResponse>(query, params, {
     ...(!isProductionDeployment
@@ -66,11 +69,13 @@ export default async function sanityFetch<QueryResponse>({
           cache: 'reload',
         }
       : {
-          ...(isPreviewDeployment
-            ? { cache: 'no-cache' }
-            : tags
-              ? { next: { tags } }
-              : { next: { revalidate: 3600 } }),
+          ...(noCache
+            ? { cache: 'no-store' }
+            : isPreviewDeployment
+              ? { cache: 'no-cache' }
+              : tags
+                ? { next: { tags } }
+                : { next: { revalidate: 3600 } }),
         }),
   });
 }

@@ -107,6 +107,7 @@ export async function POST(request: Request) {
       >({
         query: '*[_type == "course" && references($productIds)]{_id, name, "materials_link": materials_link->{_id, name}, "related_products": related_products[]->{_id, name}}',
         params: { productIds: productIdsNeedingRelation },
+        noCache: true,
       });
 
       const productIdSet = new Set(productIdsNeedingRelation);
