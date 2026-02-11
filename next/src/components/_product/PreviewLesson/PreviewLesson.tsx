@@ -59,7 +59,7 @@ const LessonHero = ({ lesson, course, alreadySubscribed: initialAlreadySubscribe
   };
 
   const handleTimeUpdate = (seconds: number) => {
-    localStorage.setItem(`video-progress-${lesson.video}-${lesson.videoProvider || 'vimeo'}`, String(seconds));
+    window.localStorage.setItem(`video-progress-${lesson.video}-${lesson.videoProvider || 'vimeo'}`, String(seconds));
   };
 
   return (
@@ -144,9 +144,14 @@ const LessonHero = ({ lesson, course, alreadySubscribed: initialAlreadySubscribe
               provider={lesson.videoProvider}
               libraryId={course.libraryId}
               libraryApiKey={course.libraryApiKey}
-              start={Number(
-                localStorage?.getItem(`video-progress-${lesson.video}-${lesson.videoProvider || 'vimeo'}`) ?? 0
-              )}
+              start={
+                typeof window === 'undefined'
+                  ? 0
+                  : Number(
+                      window.localStorage.getItem(`video-progress-${lesson.video}-${lesson.videoProvider || 'vimeo'}`) ??
+                        0
+                    )
+              }
               onTimeUpdate={handleTimeUpdate}
             />
           </div>

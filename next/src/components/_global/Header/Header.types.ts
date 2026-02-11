@@ -1,4 +1,4 @@
-import type { Billing, Discount, ImgType, ProductCard, Shipping } from '@/global/types';
+import type { Discount, ImgType, ProductCard } from '@/global/types';
 import { ReactNode } from 'react';
 import type { Item } from 'react-use-cart';
 
