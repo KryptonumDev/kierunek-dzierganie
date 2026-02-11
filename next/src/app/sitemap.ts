@@ -143,5 +143,15 @@ const query = async (): Promise<FetchTypes> => {
         }
       }
     `,
+    tags: [
+      'product',
+      'voucher',
+      'course',
+      'bundle',
+      'landingPage',
+      'BlogPost_Collection',
+      'BlogCategory_Collection',
+      'CustomerCaseStudy_Collection',
+    ],
   });
 };

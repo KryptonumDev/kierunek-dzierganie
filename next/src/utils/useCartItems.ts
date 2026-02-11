@@ -28,6 +28,7 @@ export const useCartItems = () => {
           params: {
             id: rawCart?.map((el) => el.product) || [],
           },
+          tags: ['product', 'course', 'bundle', 'voucher'],
         });
 
         const newArr = rawCart
