@@ -1,10 +1,14 @@
 import Markdown from '@/components/ui/markdown';
 import ProductCard from '@/components/ui/ProductCard';
+import PackageCoursesModal from '@/components/_product/Package/PackageCoursesModal';
 import styles from './Package.module.scss';
 import type { PackageTypes } from './Package.types';
 
 const Package = ({ product, heading, paragraph, courses }: PackageTypes) => {
-  console.log(courses);
+  const validCourses = [...courses, ...courses, ...courses, ...courses, ...courses, ...courses, ...courses, ...courses, ...courses].filter(Boolean);
+  const alwaysVisibleCount = 4;
+  const visibleCourses = validCourses.slice(0, alwaysVisibleCount);
+
   return (
     <section className={`${styles['Package']} sec-wo-margin`}>
       <header>
@@ -15,16 +19,15 @@ const Package = ({ product, heading, paragraph, courses }: PackageTypes) => {
         <Arrow />
         <ProductCard data={product} />
         <div className={styles['cards']}>
-          <p>Pakiet zawiera</p>
-          {courses.map((course) => {
-            return !course ? null : (
-              <ProductCard
-                horizontal={true}
-                key={course._id}
-                data={course}
-              />
-            );
-          })}
+          <p>Pakiet zawiera ({validCourses.length})</p>
+          {[...visibleCourses].map((course, index) => (
+            <ProductCard
+              horizontal={true}
+              key={`${course._id}-preview-${index}`}
+              data={course}
+            />
+          ))}
+          <PackageCoursesModal courses={validCourses} />
         </div>
       </div>
     </section>

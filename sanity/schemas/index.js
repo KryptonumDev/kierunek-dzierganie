@@ -151,6 +151,7 @@ import MostPopularCourses from './components/MostPopularCourses';
 import Newsletter from './components/Newsletter';
 import Opinions, { Opinions_List } from './components/Opinions';
 import Partners from './components/Partners';
+import ProductOptionsSection, { ProductOptionsSection_Item } from './components/ProductOptionsSection';
 import productParameters from './components/productParameters';
 import productVariant from './components/productVariant';
 import Reviews from './components/Reviews';
@@ -288,6 +289,8 @@ export const schemaTypes = [
   TeamShowcase_Item,
   TeamShowcase,
   LogoSection,
+  ProductOptionsSection,
+  ProductOptionsSection_Item,
   DiscountHero,
   TimerBox,
   ImageHeading,
