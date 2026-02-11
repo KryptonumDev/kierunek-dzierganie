@@ -24,17 +24,24 @@ export async function checkUsedModifications(data: any) {
 
       let usedAmount: number | null = null;
       if (d?.type === 'VOUCHER') {
-        const totalAmount =
+        const productsTotal =
           data.products.array.reduce(
             (acc: number, product: { price: number; discount: number | null; quantity: number }) =>
               acc + (product.discount ?? product.price) * product.quantity,
             0
-          ) +
-          (data.shipping_method?.price ?? 0) -
-          (data.used_virtual_money ?? 0);
+          );
+
+        // Subtract other non-voucher discounts (FIXED PRODUCT, etc.) for a tighter safety cap
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const otherDiscountsTotal = (data.used_discounts as any[])
+          .filter((disc: { type?: string }) => disc.type !== 'VOUCHER')
+          .reduce((acc: number, disc: { amount?: number }) => acc + (disc.amount ?? 0), 0);
+
+        // Voucher cap: products minus other discounts minus virtual money (NO shipping – vouchers don't cover delivery)
+        const maxVoucherAmount = Math.max(0, productsTotal - otherDiscountsTotal - (data.used_virtual_money ?? 0));
 
         // d.amount for vouchers is already the consumed amount at order creation time
-        usedAmount = d.amount > totalAmount ? totalAmount : d.amount;
+        usedAmount = Math.min(d.amount, maxVoucherAmount);
 
         const voucher = await supabase
           .from('coupons')

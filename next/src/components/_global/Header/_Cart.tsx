@@ -738,7 +738,11 @@ export default function Cart({
                                   return calculateDiscountAmount(totalItemsPrice, d);
                                 }
                                 if (d.type === 'VOUCHER') {
-                                  const baseAfterProducts = Math.max(0, totalItemsPrice);
+                                  // Account for FIXED PRODUCT discounts before computing voucher display amount
+                                  const fixedProductTotal = usedDiscounts
+                                    .filter((disc) => disc.type === 'FIXED PRODUCT')
+                                    .reduce((sum, disc) => sum + calculateDiscountAmount(totalItemsPrice, disc), 0);
+                                  const baseAfterProducts = Math.max(0, totalItemsPrice + fixedProductTotal); // fixedProductTotal is negative
                                   const voucherBase = d.eligibleSubtotal !== undefined
                                     ? Math.min(d.eligibleSubtotal, baseAfterProducts)
                                     : baseAfterProducts;
