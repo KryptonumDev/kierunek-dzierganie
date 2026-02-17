@@ -36,9 +36,16 @@ const OrderData = ({ order }: OrderDataTypes) => {
     const productsSubtotal = totalItemsPrice;
 
     // Sum FIXED PRODUCT discounts
-    const productTotal = discounts
-      .filter((d) => d.type === 'FIXED PRODUCT')
-      .reduce((sum, d) => sum + calculateDiscountAmount(productsSubtotal, d), 0);
+    // NOTE: In stored orders, the server pre-computes the FIXED PRODUCT total
+    // (per-unit amount × eligible units) and saves it in `amount`. We must NOT
+    // call calculateDiscountAmount here because it would multiply by eligibleCount
+    // again, causing a double-multiplication bug (e.g., -40 zł shown as -80 zł).
+    const productTotal = Math.max(
+      -productsSubtotal,
+      discounts
+        .filter((d) => d.type === 'FIXED PRODUCT')
+        .reduce((sum, d) => sum - (d.amount ?? 0), 0)
+    );
 
     // Calculate base after product-specific discounts
     const baseAfterProducts = Math.max(0, productsSubtotal + productTotal); // productTotal is negative
