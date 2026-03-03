@@ -18,9 +18,9 @@ type OfferSectionProps = {
 };
 
 const OfferSection = ({ offeredItems, discountAmount, expirationDate, couponCode }: OfferSectionProps) => {
-  const { minutes, seconds } = useCountdown(expirationDate);
+  const { hours, minutes, seconds } = useCountdown(expirationDate);
   const hasExpired = new Date(expirationDate).getTime() < Date.now();
-  const isExpired = hasExpired || (minutes === '00' && seconds === '00');
+  const isExpired = hasExpired || (!hours && minutes === '00' && seconds === '00');
 
   const copyCoupon = () => {
     navigator.clipboard.writeText(couponCode);
@@ -47,6 +47,12 @@ const OfferSection = ({ offeredItems, discountAmount, expirationDate, couponCode
       >
         <span className={styles.timerLabel}>Promocja kończy się za</span>
         <span className={styles.timerCountdown}>
+          {hours && (
+            <>
+              <strong>{hours}</strong>
+              <span>godz</span>
+            </>
+          )}
           <strong>{minutes}</strong>
           <span>min</span>
           <strong>{seconds}</strong>
