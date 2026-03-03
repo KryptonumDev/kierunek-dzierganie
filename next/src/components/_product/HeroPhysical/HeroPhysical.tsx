@@ -81,7 +81,7 @@ const HeroPhysical = ({ name, id, variants, physical, relatedCourses, ownedCours
         libraryApiKey: chosenVariant.libraryApiKey,
       });
     }
-    chosenVariant?.gallery?.forEach((el) => images.push({ type: 'image', data: el }));
+    chosenVariant?.gallery?.forEach((el) => el && images.push({ type: 'image', data: el }));
     return images;
   }, [chosenVariant]);
 
