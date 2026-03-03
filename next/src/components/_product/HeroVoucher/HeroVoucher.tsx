@@ -67,7 +67,7 @@ const HeroVoucher = ({ data }: Props) => {
         libraryApiKey: data.libraryApiKey,
       });
     }
-    data?.gallery!.forEach((el) => images.push({ type: 'image', data: el }));
+    data?.gallery?.forEach((el) => images.push({ type: 'image', data: el }));
     return images;
   }, [data]);
 
