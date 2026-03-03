@@ -1,0 +1,386 @@
+.PostPurchaseHero {
+  padding: clamp(2.5rem, 5vw, 4.5rem) 0;
+}
+
+.container {
+  max-width: var(--maxWidth);
+  margin: 0 auto;
+  padding: 0 var(--pageMargin);
+  display: grid;
+  /* Left: slim confirmation strip | Right: wide offer */
+  grid-template-columns: 280px 1fr;
+  gap: clamp(2rem, 4vw, 5rem);
+  align-items: start;
+
+  @media (max-width: 960px) {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+/* Single item: give the confirmation column more room,
+   cap the offer so it doesn't stretch unnecessarily wide */
+.containerSingle {
+  grid-template-columns: 360px 1fr;
+
+  .offer {
+    max-width: 520px;
+    justify-self: end;
+  }
+
+  @media (max-width: 960px) {
+    grid-template-columns: 1fr;
+
+    .offer {
+      max-width: none;
+    }
+  }
+}
+
+/* ──────────────────────────────────────
+   LEFT — minimal confirmation strip
+────────────────────────────────────── */
+
+.confirmation {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: sticky;
+  top: 8rem;
+
+  @media (max-width: 960px) {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--primary-200, #ede3de);
+  }
+}
+
+.checkIcon {
+  color: var(--primary-700, #53423c);
+  flex-shrink: 0;
+
+  @media (max-width: 960px) {
+    order: -1;
+  }
+}
+
+.confirmationLabel {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--primary-500, #9e8a84);
+
+  @media (max-width: 960px) {
+    align-self: center;
+  }
+}
+
+.confirmationText {
+  font-size: 0.8125rem;
+  color: var(--primary-500, #9e8a84);
+  line-height: 1.6;
+
+  @media (max-width: 960px) {
+    width: 100%;
+    font-size: 0.875rem;
+  }
+}
+
+.orderLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8125rem;
+  color: var(--primary-700, #53423c);
+  width: max-content;
+}
+
+/* ──────────────────────────────────────
+   RIGHT — offer section
+────────────────────────────────────── */
+
+.offer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.offerHeading {
+  font-size: clamp(1.25rem, 3vw, 1.875rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--primary-800, #3b2e29);
+}
+
+.offerParagraph {
+  font-size: 0.9375rem;
+  color: var(--primary-600, #7a6560);
+  line-height: 1.6;
+  max-width: 60ch;
+}
+
+/* ── Timer ── */
+
+.timer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--primary-200, #ede3de);
+  color: var(--primary-800, #3b2e29);
+  border-radius: 0.625rem;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.875rem;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+}
+
+.timerLabel {
+  color: var(--primary-600, #7a6560);
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+
+.timerCountdown {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  font-variant-numeric: tabular-nums;
+  margin-left: auto;
+
+  @media (max-width: 600px) {
+    margin-left: 0;
+  }
+
+  strong {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--primary-800, #3b2e29);
+  }
+
+  span {
+    font-size: 0.75rem;
+    color: var(--primary-500, #9e8a84);
+    margin-right: 0.35rem;
+  }
+}
+
+/* ── Product cards ── */
+
+.offerItems {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.offerItemsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.offerItem {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 0.875rem;
+  overflow: hidden;
+  border: 1px solid var(--primary-200, #ede3de);
+  transition:
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(59, 46, 41, 0.06);
+    border-color: var(--primary-300, #d4c5bf);
+  }
+}
+
+/* Invisible cover link — makes the full card clickable */
+.offerItemCoverLink {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+}
+
+.offerItemImage {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .offerItem:hover & img {
+    transform: scale(1.03);
+  }
+}
+
+.offerItemData {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  padding: 1rem 1.125rem 1.25rem;
+  flex: 1;
+}
+
+.offerItemName {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--primary-800, #3b2e29);
+  line-height: 1.35;
+}
+
+.offerItemPrice {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.originalPrice {
+  font-size: 0.8125rem;
+  text-decoration: line-through;
+  color: var(--primary-400, #b4a29c);
+}
+
+.discountedPrice {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--primary-800, #3b2e29);
+}
+
+/* Button sits above the cover link */
+.offerItemBtn {
+  position: relative;
+  z-index: 1;
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+/* ── Coupon block ── */
+
+.couponBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.couponNotice {
+  font-size: 0.8125rem;
+  color: var(--primary-500, #9e8a84);
+  line-height: 1.5;
+}
+
+.couponRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  padding: 0.875rem 1.125rem;
+  background: var(--primary-100, #faf4f0);
+  border-radius: 0.625rem;
+  border: 1px dashed var(--primary-400, #b4a29c);
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+
+  &:hover {
+    background: var(--primary-200, #ede3de);
+    border-color: var(--primary-500, #9e8a84);
+  }
+
+  &:active {
+    background: var(--primary-300, #d4c5bf);
+  }
+}
+
+.couponLabel {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--primary-500, #9e8a84);
+}
+
+.couponCodeWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.couponCode {
+  font-family: monospace;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--primary-800, #3b2e29);
+}
+
+.copyBtn {
+  font-size: 0.8125rem;
+  margin-left: auto;
+  color: var(--primary-700, #53423c);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 2px;
+  transition: text-decoration-color 0.15s ease;
+
+  /* Activates both on direct hover (via the outer button) and parent hover */
+  .couponRow:hover & {
+    text-decoration-color: var(--primary-700, #53423c);
+  }
+}
+
+/* ── Expired state ── */
+
+.offerExpired {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  background: var(--primary-200, #ede3de);
+  border-radius: 0.875rem;
+  text-align: center;
+}
+
+.expiredLabel {
+  font-weight: 700;
+  font-size: 1.0625rem;
+  color: var(--primary-700, #53423c);
+}
+
+.expiredMessage {
+  font-size: 0.875rem;
+  color: var(--primary-600, #7a6560);
+}
+
+/* ── Active offer wrapper ── */
+
+.offerActive {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}

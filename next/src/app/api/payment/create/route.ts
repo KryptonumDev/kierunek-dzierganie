@@ -1,5 +1,7 @@
 import type { InputState } from '@/components/_global/Header/Checkout/Checkout.types';
+import { hasPostPurchaseOffer } from '@/utils/resolve-post-purchase-offer';
 import { createClient } from '@/utils/supabase-admin';
+import { siteUrl } from '@/utils/site-url';
 import sanityFetch from '@/utils/sanity.fetch';
 import { Country, Currency, Encoding, Language, P24 } from '@ingameltd/node-przelewy24';
 import { NextResponse } from 'next/server';
@@ -468,9 +470,15 @@ export async function POST(request: Request) {
       await sendEmails(updatedOrderData);
 
       // Redirect based on order type
-      const redirectUrl = isGuestOrder(input)
-        ? 'https://kierunekdzierganie.pl/dziekujemy-za-zamowienie'
-        : `https://kierunekdzierganie.pl/moje-konto/zakupy/${data.id}`;
+      let redirectUrl: string;
+      if (isGuestOrder(input)) {
+        redirectUrl = siteUrl + '/dziekujemy-za-zamowienie';
+      } else {
+        const offerConfigured = await hasPostPurchaseOffer(productItems);
+        redirectUrl = offerConfigured
+          ? `${siteUrl}/dziekujemy/${data.id}`
+          : `${siteUrl}/moje-konto/zakupy/${data.id}`;
+      }
 
       return NextResponse.json({ link: redirectUrl });
     } else {
@@ -485,8 +493,8 @@ export async function POST(request: Request) {
         email: input.billing.email,
         country: Country.Poland,
         language: Language.PL,
-        urlReturn: `https://kierunekdzierganie.pl/api/payment/verify/?session=${session}&id=${data.id}`,
-        urlStatus: `https://kierunekdzierganie.pl/api/payment/complete/?session=${session}&id=${data.id}`,
+        urlReturn: `${siteUrl}/api/payment/verify/?session=${session}&id=${data.id}`,
+        urlStatus: `${siteUrl}/api/payment/complete/?session=${session}&id=${data.id}`,
         timeLimit: 60,
         encoding: Encoding.UTF8,
         city: input.billing.city,
