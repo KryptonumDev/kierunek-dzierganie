@@ -50,7 +50,7 @@ const HeroVirtual = ({ alreadyBought: initialAlreadyBought, course, previewLesso
         libraryApiKey: course.libraryApiKey,
       });
     }
-    course?.gallery!.forEach((el) => images.push({ type: 'image', data: el }));
+    course?.gallery?.forEach((el) => el && images.push({ type: 'image', data: el }));
     return images;
   }, [course]);
 

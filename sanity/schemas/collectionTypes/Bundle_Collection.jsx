@@ -137,6 +137,87 @@ export default {
       of: [ColumnImageSection, OrderedList, Standout, UnorderedList, TextSection],
     },
     {
+      name: 'postPurchaseOffer',
+      title: 'Oferta po zakupie',
+      type: 'object',
+      description: 'Skonfiguruj ofertę specjalną wyświetlaną użytkownikowi zaraz po zakupie tego pakietu.',
+      group: 'postPurchaseOffer',
+      options: {
+        collapsible: true,
+        collapsed: true,
+      },
+      fields: [
+        {
+          name: 'enabled',
+          type: 'boolean',
+          title: 'Aktywna oferta po zakupie',
+          description:
+            'Włącz, aby po zakupie tego pakietu wyświetlała się dedykowana strona z podziękowaniem i ofertą specjalną.',
+          initialValue: false,
+        },
+        {
+          name: 'heading',
+          type: 'markdown',
+          title: 'Nagłówek oferty',
+          description: 'Główny nagłówek wyświetlany w sekcji z ofertą (np. "Specjalna oferta tylko dla Ciebie!").',
+          hidden: ({ parent }) => !parent?.enabled,
+          validation: Rule =>
+            Rule.custom((value, context) => {
+              if (context.parent?.enabled && !value) return 'Wymagane gdy oferta jest aktywna';
+              return true;
+            }),
+        },
+        {
+          name: 'paragraph',
+          type: 'markdown',
+          title: 'Paragraf oferty',
+          description: 'Dodatkowy opis lub zachęta do skorzystania z oferty (opcjonalnie).',
+          hidden: ({ parent }) => !parent?.enabled,
+        },
+        {
+          name: 'offeredItems',
+          title: 'Oferowane produkty',
+          type: 'array',
+          description: 'Kursy lub pakiety kursów, które mają być zaproponowane po zakupie.',
+          hidden: ({ parent }) => !parent?.enabled,
+          of: [{ type: 'reference', to: [{ type: 'course' }, { type: 'bundle' }] }],
+          validation: Rule =>
+            Rule.custom((value, context) => {
+              if (context.parent?.enabled && (!value || value.length === 0))
+                return 'Dodaj co najmniej jeden produkt do oferty';
+              return true;
+            }),
+        },
+        {
+          name: 'discountAmount',
+          type: 'number',
+          title: 'Wysokość rabatu w groszach',
+          description: 'Wartość rabatu wyrażona w groszach (np. 5000 = 50 zł). Rabat dotyczy każdego oferowanego produktu.',
+          hidden: ({ parent }) => !parent?.enabled,
+          validation: Rule =>
+            Rule.custom((value, context) => {
+              if (context.parent?.enabled && !value) return 'Wymagane gdy oferta jest aktywna';
+              if (value !== undefined && value <= 0) return 'Rabat musi być większy od 0';
+              return true;
+            }),
+        },
+        {
+          name: 'discountTimeMinutes',
+          type: 'number',
+          title: 'Czas trwania oferty w minutach',
+          description: 'Po upływie tego czasu od momentu zakupu oferta wygaśnie (np. 30 = 30 minut).',
+          hidden: ({ parent }) => !parent?.enabled,
+          validation: Rule =>
+            Rule.custom((value, context) => {
+              if (context.parent?.enabled && !value) return 'Wymagane gdy oferta jest aktywna';
+              if (value !== undefined && (!Number.isInteger(value) || value <= 1))
+                return 'Wartość musi być liczbą całkowitą większą od 1';
+              return true;
+            }),
+        },
+      ],
+    },
+    {
       name: 'seo',
       type: 'seo',
       title: 'SEO',
@@ -144,6 +225,10 @@ export default {
     },
   ],
   groups: [
+    {
+      name: 'postPurchaseOffer',
+      title: 'Oferta po zakupie',
+    },
     {
       name: 'seo',
       title: 'SEO',

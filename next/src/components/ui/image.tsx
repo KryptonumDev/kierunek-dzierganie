@@ -25,11 +25,11 @@ type ImgProps = (
 } & React.HTMLAttributes<HTMLImageElement | null>;
 
 const Img = ({ data, src, width, height, alt, sizes, priority, ...props }: ImgProps) => {
-  const placeholder = data?.asset.metadata?.lqip || defaultPlaceholder;
-  if (data) {
+  const placeholder = data?.asset?.metadata?.lqip || defaultPlaceholder;
+  if (data?.asset) {
     src = data.asset.url;
-    width = width || data.asset.metadata.dimensions.width;
-    height = width || data.asset.metadata.dimensions.height;
+    width = width || data.asset.metadata?.dimensions?.width;
+    height = height || data.asset.metadata?.dimensions?.height;
     alt = alt || data.asset.altText;
   }
 

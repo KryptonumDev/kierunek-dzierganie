@@ -1,5 +1,7 @@
-import { NextResponse } from 'next/server';
+import { hasPostPurchaseOffer } from '@/utils/resolve-post-purchase-offer';
 import { createClient } from '@/utils/supabase-admin';
+import { siteUrl } from '@/utils/site-url';
+import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -68,29 +70,41 @@ export async function GET(request: Request) {
       const redirectUrl = await getRedirectUrl(id);
       return NextResponse.redirect(redirectUrl);
     } catch {
-      return NextResponse.redirect('https://kierunekdzierganie.pl/');
+      return NextResponse.redirect(siteUrl + '/');
     }
   }
 }
 
 async function getRedirectUrl(orderId: string | null): Promise<string> {
   if (!orderId) {
-    return 'https://kierunekdzierganie.pl/';
+    return siteUrl + '/';
   }
 
   try {
     const supabase = createClient();
-    const { data: order } = await supabase.from('orders').select('is_guest_order').eq('id', orderId).single();
+    const { data: order } = await supabase
+      .from('orders')
+      .select('is_guest_order, products')
+      .eq('id', orderId)
+      .single();
 
-    // Guest orders redirect to thank you page, user orders to dashboard
+    // Guest orders always go to the static thank-you page
     if (order?.is_guest_order) {
-      return 'https://kierunekdzierganie.pl/dziekujemy-za-zamowienie';
-    } else {
-      return `https://kierunekdzierganie.pl/moje-konto/zakupy/${orderId}`;
+      return siteUrl + '/dziekujemy-za-zamowienie';
     }
+
+    // Logged-in user: check whether any purchased product has postPurchaseOffer configured
+    const productItems: Array<{ id: string; type: string }> = order?.products?.array ?? [];
+    const offerConfigured = await hasPostPurchaseOffer(productItems);
+
+    if (offerConfigured) {
+      console.log('🎁 Post-purchase offer found, redirecting to /dziekujemy:', orderId);
+      return `${siteUrl}/dziekujemy/${orderId}`;
+    }
+
+    return `${siteUrl}/moje-konto/zakupy/${orderId}`;
   } catch (error) {
     console.error('Error fetching order data:', error);
-    // Fallback to homepage for safety
-    return 'https://kierunekdzierganie.pl/';
+    return siteUrl + '/';
   }
 }

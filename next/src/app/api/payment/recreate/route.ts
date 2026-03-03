@@ -1,5 +1,6 @@
 import { P24, Currency, Country, Language, Encoding } from '@ingameltd/node-przelewy24';
 import { NextResponse } from 'next/server';
+import { siteUrl } from '@/utils/site-url';
 
 export const dynamic = 'force-dynamic';
 
@@ -65,8 +66,8 @@ export async function POST(request: Request) {
       email: email,
       country: Country.Poland,
       language: Language.PL,
-      urlReturn: `https://kierunekdzierganie.pl/api/payment/verify/?session=${session}&id=${id}`,
-      urlStatus: `https://kierunekdzierganie.pl/api/payment/complete/?session=${session}&id=${id}`,
+      urlReturn: `${siteUrl}/api/payment/verify/?session=${session}&id=${id}`,
+      urlStatus: `${siteUrl}/api/payment/complete/?session=${session}&id=${id}`,
       timeLimit: 60,
       encoding: Encoding.UTF8,
       city: city,

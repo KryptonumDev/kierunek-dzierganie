@@ -54,6 +54,9 @@ const gallerySwitch = (data: ImgType | string, size: 'big' | 'small', videoProvi
 
 const Gallery = ({ images }: GalleryTypes) => {
   const [selectedImage, setSelectedImage] = useState(0);
+
+  if (!images || images.length === 0) return null;
+
   return (
     <div className={styles['gallery']}>
       {
