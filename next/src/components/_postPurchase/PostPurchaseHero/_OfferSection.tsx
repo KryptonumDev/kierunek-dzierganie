@@ -13,14 +13,14 @@ import styles from './PostPurchaseHero.module.scss';
 type OfferSectionProps = {
   offeredItems: OfferedItem[];
   discountAmount: number;
-  expirationDate: string;
+  expirationDate: string | null;
   couponCode: string;
 };
 
 const OfferSection = ({ offeredItems, discountAmount, expirationDate, couponCode }: OfferSectionProps) => {
-  const { hours, minutes, seconds } = useCountdown(expirationDate);
-  const hasExpired = new Date(expirationDate).getTime() < Date.now();
-  const isExpired = hasExpired || (!hours && minutes === '00' && seconds === '00');
+  const { hours, minutes, seconds } = useCountdown(expirationDate ?? undefined);
+  const hasExpired = expirationDate ? new Date(expirationDate).getTime() < Date.now() : false;
+  const isExpired = hasExpired || (!!expirationDate && !hours && minutes === '00' && seconds === '00');
 
   const copyCoupon = () => {
     navigator.clipboard.writeText(couponCode);
@@ -40,25 +40,27 @@ const OfferSection = ({ offeredItems, discountAmount, expirationDate, couponCode
 
   return (
     <div className={styles.offerActive}>
-      {/* Timer */}
-      <div
-        className={styles.timer}
-        aria-live='polite'
-      >
-        <span className={styles.timerLabel}>Promocja kończy się za</span>
-        <span className={styles.timerCountdown}>
-          {hours && (
-            <>
-              <strong>{hours}</strong>
-              <span>godz</span>
-            </>
-          )}
-          <strong>{minutes}</strong>
-          <span>min</span>
-          <strong>{seconds}</strong>
-          <span>sek</span>
-        </span>
-      </div>
+      {/* Timer — only rendered when an expiration date is configured */}
+      {expirationDate && (
+        <div
+          className={styles.timer}
+          aria-live='polite'
+        >
+          <span className={styles.timerLabel}>Promocja kończy się za</span>
+          <span className={styles.timerCountdown}>
+            {hours && (
+              <>
+                <strong>{hours}</strong>
+                <span>godz</span>
+              </>
+            )}
+            <strong>{minutes}</strong>
+            <span>min</span>
+            <strong>{seconds}</strong>
+            <span>sek</span>
+          </span>
+        </div>
+      )}
 
       {/* Product cards — 2-column grid when multiple items */}
       <div className={`${styles.offerItems} ${multipleItems ? styles.offerItemsGrid : ''}`}>

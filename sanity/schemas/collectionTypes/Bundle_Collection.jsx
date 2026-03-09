@@ -204,13 +204,12 @@ export default {
         {
           name: 'discountTimeMinutes',
           type: 'number',
-          title: 'Czas trwania oferty w minutach',
-          description: 'Po upływie tego czasu od momentu zakupu oferta wygaśnie (np. 30 = 30 minut).',
+          title: 'Czas trwania oferty w minutach (opcjonalne)',
+          description: 'Po upływie tego czasu od momentu zakupu oferta wygaśnie (np. 30 = 30 minut). Zostaw puste, aby oferta była bezterminowa.',
           hidden: ({ parent }) => !parent?.enabled,
           validation: Rule =>
-            Rule.custom((value, context) => {
-              if (context.parent?.enabled && !value) return 'Wymagane gdy oferta jest aktywna';
-              if (value !== undefined && (!Number.isInteger(value) || value <= 1))
+            Rule.custom((value) => {
+              if (value !== undefined && value !== null && (!Number.isInteger(value) || value <= 1))
                 return 'Wartość musi być liczbą całkowitą większą od 1';
               return true;
             }),

@@ -19,7 +19,7 @@ export type PostPurchaseOfferPayload = {
   heading: string;
   paragraph: string | null;
   discountAmount: number;
-  expirationDate: string;
+  expirationDate: string | null;
   couponCode: string;
   offeredItems: OfferedItem[];
 };
@@ -38,7 +38,7 @@ type SanityProductWithOffer = {
     heading: string;
     paragraph?: string;
     discountAmount: number;
-    discountTimeMinutes: number;
+    discountTimeMinutes?: number | null;
     offeredItems: OfferedItem[];
   };
 };
@@ -164,15 +164,19 @@ export async function resolvePostPurchaseOffer(
     .maybeSingle();
 
   let couponCode: string;
-  let expirationDate: string;
+  let expirationDate: string | null;
 
   if (existingCoupon) {
     couponCode = existingCoupon.code;
-    expirationDate = existingCoupon.expiration_date;
+    expirationDate = existingCoupon.expiration_date ?? null;
   } else {
-    // Expiration anchored to paid_at so timer survives page refreshes
-    const paidAt = order.paid_at ? new Date(order.paid_at) : new Date();
-    const expiry = new Date(paidAt.getTime() + offerConfig.discountTimeMinutes * 60_000);
+    // Expiration anchored to paid_at so timer survives page refreshes.
+    // If discountTimeMinutes is not set, the coupon has no expiry (infinite offer).
+    let expiry: string | null = null;
+    if (offerConfig.discountTimeMinutes) {
+      const paidAt = order.paid_at ? new Date(order.paid_at) : new Date();
+      expiry = new Date(paidAt.getTime() + offerConfig.discountTimeMinutes * 60_000).toISOString();
+    }
 
     const discountedProducts = offerConfig.offeredItems.map((item) => ({
       id: item._id,
@@ -188,7 +192,7 @@ export async function resolvePostPurchaseOffer(
         state: 2, // active
         amount: offerConfig.discountAmount,
         use_limit: 1,
-        expiration_date: expiry.toISOString(),
+        expiration_date: expiry,
         discounted_product: discountedProducts[0] ?? null,
         discounted_products: discountedProducts,
         course_discount_data: {
@@ -205,7 +209,7 @@ export async function resolvePostPurchaseOffer(
     }
 
     couponCode = newCoupon.code;
-    expirationDate = newCoupon.expiration_date;
+    expirationDate = newCoupon.expiration_date ?? null;
   }
 
   return {
