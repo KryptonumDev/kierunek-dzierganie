@@ -245,6 +245,7 @@ export async function POST(request: Request) {
           totalVoucherAmount?: number | null;
           category_restrictions?: CategoryRestrictions;
           eligibleSubtotal?: number;
+          aggregates?: boolean | null;
         }>
         | undefined;
       if (Array.isArray(arr) && arr.length > 0) return arr;
