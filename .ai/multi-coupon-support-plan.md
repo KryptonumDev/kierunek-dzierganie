@@ -12,7 +12,7 @@ Enable applying multiple coupon codes in a single order, with clear stacking rul
 - **CART-WIDE coupons (PERCENTAGE, FIXED CART)**: At most one, not combinable with other coupons in v1.
 - **VOUCHER**: At most one per order. Applied last, after other discounts. Amount consumed = min(voucher_amount_left, remaining total).
 - **AFFILIATE**: Keep current rules (only courses, cannot use own, new users only if enforced). Not combinable with other coupons in v1.
-- **Overlapping product targeting** (two coupon codes that both target the same product id): reject the second code in v1.
+- **Overlapping product targeting** (two coupon codes that both target the same product id): allowed. Combined per-product FIXED PRODUCT discounts are capped at the product's effective price to prevent over-discounting.
 
 Notes:
 
@@ -132,7 +132,7 @@ Completion hooks: `next/src/app/api/payment/complete/check-used-modifications.ts
 ## Testing matrix
 
 - Two FIXED PRODUCT codes targeting disjoint products; quantities scale per unit; both apply.
-- Two FIXED PRODUCT codes overlapping a product; second rejected (UI and API).
+- Two FIXED PRODUCT codes overlapping a product; both apply, combined discount capped at product price.
 - Voucher + product coupon: allowed in v1; voucher applied last and capped.
 - Two vouchers: rejected.
 - CART-WIDE + any other coupon: rejected in v1.

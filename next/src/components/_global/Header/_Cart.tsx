@@ -432,13 +432,40 @@ export default function Cart({
   const discountsAmount = useMemo(() => {
     if (!Array.isArray(usedDiscounts) || usedDiscounts.length === 0 || typeof totalItemsPrice !== 'number') return 0;
 
-    // Products subtotal (NO delivery in discount calculation)
     const productsSubtotal = totalItemsPrice;
 
-    // FIXED PRODUCT discounts (no category restrictions for this type)
-    const productTotal = usedDiscounts
-      .filter((d) => d.type === 'FIXED PRODUCT')
-      .reduce((sum, d) => sum + calculateDiscountAmount(productsSubtotal, d), 0);
+    // FIXED PRODUCT discounts with per-product price cap to prevent
+    // stacked coupons from exceeding any individual product's price
+    const productTotal = (() => {
+      const fixedDiscounts = usedDiscounts.filter((d) => d.type === 'FIXED PRODUCT');
+      if (fixedDiscounts.length === 0 || !fetchedItems) return 0;
+      const perProductDiscount = new Map<string, number>();
+      for (const d of fixedDiscounts) {
+        const eligibleIds =
+          Array.isArray(d.discounted_products) && d.discounted_products.length > 0
+            ? d.discounted_products.map((p: { id: string }) => p.id)
+            : d.discounted_product?.id
+              ? [d.discounted_product.id]
+              : [];
+        for (const item of fetchedItems) {
+          if (!eligibleIds.includes(item._id)) continue;
+          const qty = item.quantity ?? 1;
+          const unitsUsed = d.aggregates === false ? Math.min(1, qty) : qty;
+          perProductDiscount.set(
+            item._id,
+            (perProductDiscount.get(item._id) ?? 0) + d.amount * unitsUsed
+          );
+        }
+      }
+      let total = 0;
+      for (const [productId, rawDiscount] of perProductDiscount) {
+        const item = fetchedItems.find((i) => i._id === productId);
+        if (!item) continue;
+        const effectivePrice = (item.discount ?? item.price ?? 0) * (item.quantity ?? 1);
+        total += Math.min(rawDiscount, effectivePrice);
+      }
+      return -total;
+    })();
 
     const baseAfterProducts = Math.max(0, productsSubtotal + productTotal); // productTotal is negative
 
@@ -446,7 +473,6 @@ export default function Cart({
     const voucher = usedDiscounts.find((d) => d.type === 'VOUCHER');
     let voucherTotal = 0;
     if (voucher) {
-      // If voucher has restrictions, use eligibleSubtotal; otherwise use remaining after products
       const voucherBase = voucher.eligibleSubtotal !== undefined
         ? Math.min(voucher.eligibleSubtotal, baseAfterProducts)
         : baseAfterProducts;
@@ -456,12 +482,11 @@ export default function Cart({
     // Cart-wide discount (PERCENTAGE or FIXED CART) - can only be used alone
     const cartWide = usedDiscounts.find((d) => d.type === 'PERCENTAGE' || d.type === 'FIXED CART');
     if (cartWide && usedDiscounts.length === 1) {
-      // Use eligibleSubtotal if coupon has category restrictions
       return calculateDiscountAmount(productsSubtotal, cartWide, cartWide.eligibleSubtotal);
     }
 
     return productTotal + voucherTotal;
-  }, [usedDiscounts, totalItemsPrice]);
+  }, [usedDiscounts, totalItemsPrice, fetchedItems]);
 
   const filteredFetchItems = useMemo(() => {
     if (!fetchedItems) return;

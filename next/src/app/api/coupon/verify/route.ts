@@ -343,30 +343,6 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'Kod afiliacyjny nie łączy się z innymi zniżkami' }, { status: 400 });
       }
 
-      // Overlap detection for FIXED PRODUCT coupons
-      const fixedProductCoupons = selectedCoupons.filter((c) => typeOf(c) === 'FIXED PRODUCT');
-      if (fixedProductCoupons.length > 1) {
-        const getIds = (c: CouponRow) =>
-          Array.isArray(c?.discounted_products) && c.discounted_products.length > 0
-            ? c.discounted_products.map((p: { id: string }) => p.id)
-            : c?.discounted_product?.id
-              ? [c.discounted_product.id]
-              : [];
-        const used = new Set<string>();
-        for (const c of fixedProductCoupons) {
-          const ids = getIds(c);
-          for (const id of ids) {
-            if (used.has(id)) {
-              return NextResponse.json(
-                { error: 'Kody nakładają się na te same produkty – usuń jeden z nich' },
-                { status: 400 }
-              );
-            }
-            used.add(id);
-          }
-        }
-      }
-
       // Submit path: keep same course-only check already done per coupon; just return coupons
       return NextResponse.json({ coupons: selectedCoupons });
     }

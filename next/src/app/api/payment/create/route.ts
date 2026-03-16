@@ -304,8 +304,38 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Nie można łączyć kodów koszykowych z innymi zniżkami' }, { status: 400 });
     }
 
-    // Calculate fixed-product total
-    const fixedProductTotal = fixedProduct.reduce((sum, d) => sum + computeFixedProductTotal(d), 0);
+    // Calculate fixed-product total with per-product price cap to prevent
+    // stacked coupons from exceeding any individual product's price
+    const fixedProductTotal = (() => {
+      if (fixedProduct.length === 0) return 0;
+      const perProductDiscount = new Map<string, number>();
+      for (const d of fixedProduct) {
+        const eligibleIds =
+          Array.isArray(d.discounted_products) && d.discounted_products.length > 0
+            ? d.discounted_products.map((p) => p.id)
+            : d.discounted_product?.id
+              ? [d.discounted_product.id]
+              : [];
+        for (const item of productItems) {
+          if (!eligibleIds.includes(item.id)) continue;
+          const qty = item.quantity ?? 1;
+          const unitsUsed = d.aggregates === false ? Math.min(1, qty) : qty;
+          perProductDiscount.set(
+            item.id,
+            (perProductDiscount.get(item.id) ?? 0) + d.amount * unitsUsed
+          );
+        }
+      }
+      let total = 0;
+      for (const [productId, rawDiscount] of perProductDiscount) {
+        const item = productItems.find((p) => p.id === productId);
+        if (!item) continue;
+        const effectivePrice =
+          (typeof item.discount === 'number' ? item.discount : item.price) * (item.quantity ?? 1);
+        total += Math.min(rawDiscount, effectivePrice);
+      }
+      return total;
+    })();
 
     // Base amounts (derived from products + delivery)
     const productsSubtotal = productItems.reduce(
