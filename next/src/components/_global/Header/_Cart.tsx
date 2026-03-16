@@ -458,12 +458,12 @@ export default function Cart({
         }
       }
       let total = 0;
-      for (const [productId, rawDiscount] of perProductDiscount) {
+      perProductDiscount.forEach((rawDiscount, productId) => {
         const item = fetchedItems.find((i) => i._id === productId);
-        if (!item) continue;
+        if (!item) return;
         const effectivePrice = (item.discount ?? item.price ?? 0) * (item.quantity ?? 1);
         total += Math.min(rawDiscount, effectivePrice);
-      }
+      });
       return -total;
     })();
 

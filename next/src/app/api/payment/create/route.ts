@@ -328,13 +328,13 @@ export async function POST(request: Request) {
         }
       }
       let total = 0;
-      for (const [productId, rawDiscount] of perProductDiscount) {
+      perProductDiscount.forEach((rawDiscount, productId) => {
         const item = productItems.find((p) => p.id === productId);
-        if (!item) continue;
+        if (!item) return;
         const effectivePrice =
           (typeof item.discount === 'number' ? item.discount : item.price) * (item.quantity ?? 1);
         total += Math.min(rawDiscount, effectivePrice);
-      }
+      });
       return total;
     })();
 
