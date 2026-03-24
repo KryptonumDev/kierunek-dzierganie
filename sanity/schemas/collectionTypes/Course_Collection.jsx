@@ -102,14 +102,17 @@ export default {
       type: 'array',
       title: 'Pliki do pobrania',
       of: [{ type: 'file' }],
-      hidden: ({ document }) => document.type === 'program',
+      description: 'Pliki dostępne dla całego kursu lub programu, niezależnie od konkretnej lekcji.',
+      group: 'configuration',
     },
     {
       name: 'files_alter',
       type: 'array',
       title: 'Pliki do pobrania dla leworęcznych',
       of: [{ type: 'file' }],
-      hidden: ({ document }) => document.type === 'program',
+      description:
+        'Wersje plików dla osób leworęcznych, dostępne dla całego kursu lub programu.',
+      group: 'configuration',
     },
     {
       name: 'complexity',
@@ -264,7 +267,7 @@ export default {
       name: 'videoProvider',
       type: 'string',
       title: 'Dostawca wideo',
-      description: 'Wybierz platformę hostingową dla tego filmu (brak wyboru oznacza Vimeo)',
+      description: 'Wybierz platformę hostingową dla tego filmu. Domyślnie dla nowych kursów i programów używamy Bunny.net.',
       options: {
         list: [
           { title: 'Vimeo', value: 'vimeo' },
@@ -273,7 +276,7 @@ export default {
         ],
         layout: 'radio',
       },
-      initialValue: 'vimeo',
+      initialValue: 'bunnyNet',
       group: 'description',
     },
     {

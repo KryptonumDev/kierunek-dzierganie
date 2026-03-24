@@ -43,7 +43,7 @@ export default {
       name: 'videoProvider',
       type: 'string',
       title: 'Dostawca wideo',
-      description: 'Wybierz platformę hostingową dla tego filmu (brak wyboru oznacza Vimeo)',
+      description: 'Wybierz platformę hostingową dla tego filmu. Domyślnie dla nowych pakietów używamy Bunny.net.',
       options: {
         list: [
           { title: 'Vimeo', value: 'vimeo' },
@@ -52,7 +52,7 @@ export default {
         ],
         layout: 'radio',
       },
-      initialValue: 'vimeo',
+      initialValue: 'bunnyNet',
     },
     {
       name: 'basis',
