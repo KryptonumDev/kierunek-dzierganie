@@ -202,6 +202,14 @@ export const PRODUCT_CARD_QUERY = `
   courses[]->{
     _id,
     automatizationId,
+    previewGroupMailerLite,
+    accessMode,
+    accessFixedDate,
+  },
+  grantedCourses[]->{
+    _id,
+    automatizationId,
+    previewGroupMailerLite,
     accessMode,
     accessFixedDate,
   },

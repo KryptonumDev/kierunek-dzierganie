@@ -156,6 +156,35 @@ export default {
       group: 'configuration',
     },
     {
+      name: 'grantedCourses',
+      type: 'array',
+      title: 'Kursy nadawane automatycznie',
+      description:
+        'Po zakupie użytkownik automatycznie otrzyma dostęp także do wskazanych kursów.',
+      of: [
+        {
+          type: 'reference',
+          to: [{ type: 'course' }],
+          options: {
+            filter: ({ document }) => {
+              const courseId = document?._id?.replace('drafts.', '');
+
+              if (!courseId) {
+                return { filter: '_type == "course"' };
+              }
+
+              return {
+                filter: '_type == "course" && _id != $courseId',
+                params: { courseId },
+              };
+            },
+          },
+        },
+      ],
+      validation: Rule => Rule.unique(),
+      group: 'configuration',
+    },
+    {
       name: 'accessMode',
       type: 'string',
       title: 'Sposób ograniczenia dostępu',

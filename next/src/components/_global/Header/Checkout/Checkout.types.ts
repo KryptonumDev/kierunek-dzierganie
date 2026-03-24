@@ -1,4 +1,4 @@
-import type { Billing, Complexity, Discount, ImgType, MapPoint, Shipping } from '@/global/types';
+import type { Billing, Complexity, CourseGrantLink, Discount, ImgType, MapPoint, Shipping } from '@/global/types';
 import type { Dispatch, SetStateAction } from 'react';
 import type { useCartItems } from '../Header.types';
 
@@ -56,6 +56,7 @@ export type InputState = {
       complexity: Complexity | null;
       basis: 'crocheting' | 'knitting' | 'other' | 'instruction' | 'materials';
       variantId?: string;
+      courses?: CourseGrantLink[] | null;
       voucherData?: {
         dedication: {
           from: string;
