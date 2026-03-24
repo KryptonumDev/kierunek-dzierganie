@@ -37,6 +37,14 @@ export type ImgType = {
   };
 };
 
+export type CourseGrantLink = {
+  _id: string;
+  automatizationId?: string | null;
+  previewGroupMailerLite?: string | null;
+  accessMode?: CourseAccessMode | null;
+  accessFixedDate?: string | null;
+};
+
 export type ProductCard = {
   _type: 'product' | 'course' | 'bundle' | 'voucher';
   _id: string;
@@ -56,6 +64,7 @@ export type ProductCard = {
   rating: number;
   needDelivery: boolean;
   automatizationId: string | null;
+  previewGroupMailerLite?: string | null;
   accessMode?: CourseAccessMode | null;
   accessFixedDate?: string | null;
   materials_link?: {
@@ -117,12 +126,8 @@ export type ProductCard = {
     featuredVideo: string;
     gallery: ImgType;
   }> | null;
-  courses: Array<{
-    _id: string;
-    automatizationId: string;
-    accessMode?: CourseAccessMode | null;
-    accessFixedDate?: string | null;
-  }>;
+  courses?: CourseGrantLink[] | null;
+  grantedCourses?: CourseGrantLink[] | null;
   related?: {
     _id: string;
     name: string;

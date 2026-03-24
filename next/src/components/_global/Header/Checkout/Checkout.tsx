@@ -1,4 +1,4 @@
-import type { Billing, Shipping, ProductCard } from '@/global/types';
+import type { Billing, CourseGrantLink, ProductCard, Shipping } from '@/global/types';
 import { getProductBasis } from '@/utils/get-product-basis';
 import { validateGuestCart } from '@/utils/validate-guest-cart';
 import { useEffect, useState } from 'react';
@@ -39,6 +39,34 @@ const createInputState = (billing?: Billing, shipping?: Shipping, userEmail?: st
     invoiceType: billing?.invoiceType ?? 'Osoba prywatna',
   },
 });
+
+const getGrantedCourseLinks = (item: ProductCard): CourseGrantLink[] | null => {
+  if (item._type === 'bundle') {
+    return item.courses ?? null;
+  }
+
+  if (item._type !== 'course') {
+    return null;
+  }
+
+  const deduplicatedCourses = new Map<string, CourseGrantLink>();
+
+  [
+    {
+      _id: item._id,
+      automatizationId: item.automatizationId,
+      previewGroupMailerLite: item.previewGroupMailerLite,
+      accessMode: item.accessMode,
+      accessFixedDate: item.accessFixedDate,
+    },
+    ...(item.grantedCourses ?? []),
+  ].forEach((course) => {
+    if (!course?._id || deduplicatedCourses.has(course._id)) return;
+    deduplicatedCourses.set(course._id, course);
+  });
+
+  return Array.from(deduplicatedCourses.values());
+};
 
 const stepContent = (props: MappingProps, fetchedItems: ProductCard[] | null) => ({
   1: (
@@ -133,10 +161,7 @@ export default function Checkout({
                 quantity: item.quantity!,
                 image: item.variants?.[0]?.gallery ? item.variants[0].gallery : item.gallery!,
                 complexity: item.complexity || null,
-                courses:
-                  item._type === 'course'
-                    ? [{ _id: item._id, automatizationId: item.automatizationId }]
-                    : (item.courses ?? null),
+                courses: getGrantedCourseLinks(item),
                 variantId: item.variant?._id,
                 type: item._type,
                 voucherData: item.voucherData,

@@ -102,7 +102,7 @@ export async function POST(request: Request) {
       if (item.type === 'course') {
         orderCourseIds.add(item.id);
       }
-      const linkedCourses = (item as { courses?: Array<{ _id?: string }> | null }).courses;
+      const linkedCourses = item.courses;
       if (Array.isArray(linkedCourses)) {
         linkedCourses.forEach((course) => {
           if (course?._id) {
@@ -229,9 +229,7 @@ export async function POST(request: Request) {
       } else {
         return {
           ...product,
-          // @ts-expect-error - product.courses is not defined in types... todo later
           vat: product.courses ? settingsData?.value.vatCourses : settingsData?.value.vatPhysical,
-          // @ts-expect-error - product.courses is not defined in types... todo later
           ryczalt: product.courses ? settingsData?.value.ryczaltCourses : settingsData?.value.ryczaltPhysical,
         };
       }
