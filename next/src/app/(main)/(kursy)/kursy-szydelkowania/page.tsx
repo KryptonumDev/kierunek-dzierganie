@@ -8,6 +8,8 @@ import type { CrochetingPage_QueryTypes } from '../page.types';
 import ProductsListing from '@/components/_global/ProductsListing';
 import Markdown from '@/components/ui/markdown';
 import { PRODUCT_CARD_QUERY } from '@/global/constants';
+import { getActiveOwnedCourseIds } from '@/utils/course-access';
+import { filterAvailableStorefrontProducts, getTodayInWarsawDateString } from '@/utils/storefront-course-availability';
 import { createClient } from '@/utils/supabase-server';
 import LogoSection, { LogoSection_Query } from '@/components/_global/LogoSection';
 
@@ -45,7 +47,8 @@ const CrochetingPage = async ({ searchParams }: { searchParams: { [key: string]:
         `
         id,
         courses_progress (
-          course_id
+          course_id,
+          access_expires_at
         )
       `
       )
@@ -74,7 +77,7 @@ const CrochetingPage = async ({ searchParams }: { searchParams: { [key: string]:
         courses={true}
         productsTotalCount={productsTotalCount}
         authors={authors}
-        ownedCourses={res?.data?.courses_progress?.map((course) => course.course_id as string)}
+        ownedCourses={getActiveOwnedCourseIds(res?.data?.courses_progress)}
         bestSeller={listing_HighlightedCourse}
         bestSellerBadge={listing_HighlightedCourse_Badge}
       />
@@ -86,7 +89,8 @@ const CrochetingPage = async ({ searchParams }: { searchParams: { [key: string]:
 export default CrochetingPage;
 
 const query = async (searchParams: { [key: string]: string }): Promise<CrochetingPage_QueryTypes> => {
-  return await sanityFetch<CrochetingPage_QueryTypes>({
+  const pageNumber = Number(searchParams.strona ?? 1);
+  const data = await sanityFetch<CrochetingPage_QueryTypes>({
     query: /* groq */ `{
       "page": *[_type == "CrochetingCourses_Page"][0] {
         ${LogoSection_Query(true)}
@@ -109,7 +113,7 @@ const query = async (searchParams: { [key: string]: string }): Promise<Crochetin
         && (!defined($complexity) || complexity == $complexity)
         && (!defined($author) || author->slug.current == $author)
         && (!defined($discount) || defined(discount))
-      ][$before...$after]{
+      ]{
         ${PRODUCT_CARD_QUERY}
       },
       "productsTotalCount": count(*[
@@ -136,8 +140,6 @@ const query = async (searchParams: { [key: string]: string }): Promise<Crochetin
     }
     `,
     params: {
-      before: (Number(searchParams.strona ?? 1) - 1) * 9,
-      after: Number(searchParams.strona ?? 1) * 9,
       category: searchParams.rodzaj ?? null,
       complexity: searchParams['poziom-trudnosci'] ?? null,
       author: searchParams.autor ?? null,
@@ -146,6 +148,14 @@ const query = async (searchParams: { [key: string]: string }): Promise<Crochetin
     },
     tags: ['CrochetingCourses_Page', 'course', 'bundle', 'courseCategory', 'CourseAuthor_Collection'],
   });
+
+  const availableProducts = filterAvailableStorefrontProducts(data.products, getTodayInWarsawDateString());
+
+  return {
+    ...data,
+    products: availableProducts.slice((pageNumber - 1) * 9, pageNumber * 9),
+    productsTotalCount: availableProducts.length,
+  };
 };
 
 export async function generateMetadata() {

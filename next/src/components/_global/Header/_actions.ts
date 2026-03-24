@@ -1,6 +1,7 @@
 'use server';
 
 import type { Billing, Shipping } from '@/global/types';
+import { getActiveOwnedCourseIds } from '@/utils/course-access';
 import { createClient } from '@/utils/supabase-server';
 
 export type UserHeaderData = {
@@ -31,7 +32,8 @@ export async function getUserHeaderData(): Promise<UserHeaderData> {
         billing_data,
         shipping_data,
         courses_progress (
-          course_id
+          course_id,
+          access_expires_at
         )
       `
     )
@@ -47,6 +49,6 @@ export async function getUserHeaderData(): Promise<UserHeaderData> {
     shipping: data?.shipping_data as Shipping | undefined,
     billing: data?.billing_data as Billing | undefined,
     virtualWallet: balance ?? 0,
-    ownedCourses: data?.courses_progress?.map((course: { course_id: string }) => course.course_id as string),
+    ownedCourses: getActiveOwnedCourseIds(data?.courses_progress),
   };
 }

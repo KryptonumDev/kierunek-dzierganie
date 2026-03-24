@@ -3,6 +3,7 @@ import ProgramChapters from '@/components/_dashboard/ProgramChapters';
 import RelatedFiles from '@/components/_dashboard/RelatedFiles';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
 import type { Course, CoursesProgress, File } from '@/global/types';
+import { findActiveCourseProgress } from '@/utils/course-access';
 import { checkCourseProgress } from '@/utils/check-course-progress';
 import type { QueryProps as MapNotesQueryProps } from '@/utils/map-note';
 import mapNotes from '@/utils/map-note';
@@ -85,7 +86,8 @@ const query = async (slug: string): Promise<QueryProps> => {
           id,
           course_id,
           owner_id,
-          progress
+          progress,
+          access_expires_at
         )
       `
     )
@@ -169,16 +171,12 @@ const query = async (slug: string): Promise<QueryProps> => {
     },
   });
 
-  if (!res?.data || !res.data!.courses_progress.some((el) => el.course_id === data.course._id)) return notFound();
-
-  const course_progress = res.data!.courses_progress.find((el) => el.course_id === data.course._id)!;
+  const course_progress = findActiveCourseProgress(res.data?.courses_progress, data.course._id);
+  if (!res?.data || !course_progress) return notFound();
 
   const notes = mapNotes(course_progress, data.course as unknown as MapNotesQueryProps['course']);
 
-  const progress = await checkCourseProgress(
-    data.course,
-    res.data!.courses_progress.find((el) => el.course_id === data.course._id)!
-  );
+  const progress = await checkCourseProgress(data.course, course_progress);
 
   return {
     course: data.course,

@@ -5,6 +5,7 @@ import SuggestedCourses from '@/components/_dashboard/SuggestedCourses';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
 import { PRODUCT_CARD_QUERY } from '@/global/constants';
 import type { CoursesProgress } from '@/global/types';
+import { findActiveCourseProgress, getActiveOwnedCourseIds } from '@/utils/course-access';
 import getCourseCompletionPercentage from '@/utils/get-course-completion-percentage';
 import mapNotes, { QueryProps } from '@/utils/map-note';
 import sanityFetch from '@/utils/sanity.fetch';
@@ -64,7 +65,8 @@ const query = async (slug: string): Promise<QueryProps> => {
           id,
           course_id,
           owner_id,
-          progress
+          progress,
+          access_expires_at
         )
       `
     )
@@ -72,7 +74,7 @@ const query = async (slug: string): Promise<QueryProps> => {
     .returns<{ id: string; firstName: string; courses_progress: CoursesProgress[] }[]>()
     .single();
 
-  const ownedCourses = res.data?.courses_progress.map((el) => el.course_id);
+  const ownedCourses = getActiveOwnedCourseIds(res.data?.courses_progress);
   ownedCourses ?? notFound();
 
   const data: QueryProps = await sanityFetch({
@@ -106,9 +108,8 @@ const query = async (slug: string): Promise<QueryProps> => {
     },
   });
 
-  if (!res.data!.courses_progress.some((el) => el.course_id === data.course._id)) return notFound();
-
-  const course_progress = res.data!.courses_progress.find((el) => el.course_id === data.course._id)!;
+  const course_progress = findActiveCourseProgress(res.data?.courses_progress, data.course._id);
+  if (!course_progress) return notFound();
 
   const notes = mapNotes(course_progress, data.course);
 

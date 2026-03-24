@@ -1,5 +1,6 @@
 'use server';
 
+import { getActiveOwnedCourseIds } from '@/utils/course-access';
 import { createClient } from '@/utils/supabase-server';
 
 export type ProductUserData = {
@@ -24,7 +25,8 @@ export async function getProductUserData(): Promise<ProductUserData> {
       `
         billing_data->firstName,
         courses_progress (
-          course_id
+          course_id,
+          access_expires_at
         )
       `
     )
@@ -33,6 +35,6 @@ export async function getProductUserData(): Promise<ProductUserData> {
 
   return {
     firstName: (data?.firstName as string) || undefined,
-    ownedCourses: data?.courses_progress?.map((course: { course_id: string }) => course.course_id as string) ?? [],
+    ownedCourses: getActiveOwnedCourseIds(data?.courses_progress),
   };
 }
