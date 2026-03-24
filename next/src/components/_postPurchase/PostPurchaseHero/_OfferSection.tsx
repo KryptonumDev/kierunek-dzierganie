@@ -12,17 +12,20 @@ import styles from './PostPurchaseHero.module.scss';
 
 type OfferSectionProps = {
   offeredItems: OfferedItem[];
-  discountAmount: number;
+  offerMode: 'discounted' | 'standard';
+  discountAmount: number | null;
   expirationDate: string | null;
-  couponCode: string;
+  couponCode: string | null;
 };
 
-const OfferSection = ({ offeredItems, discountAmount, expirationDate, couponCode }: OfferSectionProps) => {
+const OfferSection = ({ offeredItems, offerMode, discountAmount, expirationDate, couponCode }: OfferSectionProps) => {
   const { hours, minutes, seconds } = useCountdown(expirationDate ?? undefined);
   const hasExpired = expirationDate ? new Date(expirationDate).getTime() < Date.now() : false;
   const isExpired = hasExpired || (!!expirationDate && !hours && minutes === '00' && seconds === '00');
+  const hasDiscount = offerMode === 'discounted' && typeof discountAmount === 'number' && discountAmount > 0;
 
   const copyCoupon = () => {
+    if (!couponCode) return;
     navigator.clipboard.writeText(couponCode);
     toast('Kod został skopiowany do schowka');
   };
@@ -40,8 +43,8 @@ const OfferSection = ({ offeredItems, discountAmount, expirationDate, couponCode
 
   return (
     <div className={styles.offerActive}>
-      {/* Timer — only rendered when an expiration date is configured */}
-      {expirationDate && (
+      {/* Timer — rendered only for discounted offers with an expiry */}
+      {hasDiscount && expirationDate && (
         <div
           className={styles.timer}
           aria-live='polite'
@@ -66,7 +69,7 @@ const OfferSection = ({ offeredItems, discountAmount, expirationDate, couponCode
       <div className={`${styles.offerItems} ${multipleItems ? styles.offerItemsGrid : ''}`}>
         {offeredItems.map((item) => {
           const basePrice = item.discount ?? item.price;
-          const discountedPrice = Math.max(0, basePrice - discountAmount);
+          const discountedPrice = hasDiscount ? Math.max(0, basePrice - discountAmount) : basePrice;
           const itemHref = `${pageUrls[item.basis as 'knitting' | 'crocheting']}/${item.slug}`;
 
           return (
@@ -93,14 +96,14 @@ const OfferSection = ({ offeredItems, discountAmount, expirationDate, couponCode
               <div className={styles.offerItemData}>
                 <p className={styles.offerItemName}>{item.name}</p>
                 <p className={styles.offerItemPrice}>
-                  <span className={styles.originalPrice}>{formatPrice(basePrice)}</span>
+                  {hasDiscount && <span className={styles.originalPrice}>{formatPrice(basePrice)}</span>}
                   <span className={styles.discountedPrice}>{formatPrice(discountedPrice)}</span>
                 </p>
                 <Button
                   href={itemHref}
                   className={styles.offerItemBtn}
                 >
-                  Kup za {formatPrice(discountedPrice)}
+                  {hasDiscount ? `Kup za ${formatPrice(discountedPrice)}` : 'Zobacz kurs'}
                 </Button>
               </div>
             </div>
@@ -109,26 +112,28 @@ const OfferSection = ({ offeredItems, discountAmount, expirationDate, couponCode
       </div>
 
       {/* Coupon — clicking anywhere copies the code */}
-      <div className={styles.couponBlock}>
-        {multipleItems && (
-          <p className={styles.couponNotice}>
-            Kod działa jednorazowo — wybierz jeden kurs i użyj go przy kasie.
-          </p>
-        )}
-        <button
-          className={styles.couponRow}
-          onClick={copyCoupon}
-          title='Kliknij, aby skopiować kod'
-          type='button'
-        >
-          <span className={styles.couponLabel}>Twój kod rabatowy — kliknij, aby skopiować</span>
-          <div className={styles.couponCodeWrapper}>
-            <span className={styles.couponCode}>{couponCode}</span>
-            {/* Styled as a link visually; the outer button handles the click */}
-            <span className={styles.copyBtn}>Skopiuj</span>
-          </div>
-        </button>
-      </div>
+      {hasDiscount && couponCode && (
+        <div className={styles.couponBlock}>
+          {multipleItems && (
+            <p className={styles.couponNotice}>
+              Kod działa jednorazowo — wybierz jeden kurs i użyj go przy kasie.
+            </p>
+          )}
+          <button
+            className={styles.couponRow}
+            onClick={copyCoupon}
+            title='Kliknij, aby skopiować kod'
+            type='button'
+          >
+            <span className={styles.couponLabel}>Twój kod rabatowy — kliknij, aby skopiować</span>
+            <div className={styles.couponCodeWrapper}>
+              <span className={styles.couponCode}>{couponCode}</span>
+              {/* Styled as a link visually; the outer button handles the click */}
+              <span className={styles.copyBtn}>Skopiuj</span>
+            </div>
+          </button>
+        </div>
+      )}
     </div>
   );
 };

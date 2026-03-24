@@ -8,8 +8,8 @@
   padding: 0 var(--pageMargin);
   display: grid;
   /* Left: slim confirmation strip | Right: wide offer */
-  grid-template-columns: 280px 1fr;
-  gap: clamp(2rem, 4vw, 5rem);
+  grid-template-columns: minmax(260px, 300px) minmax(0, 1fr);
+  gap: clamp(3rem, 5vw, 5.5rem);
   align-items: start;
 
   @media (max-width: 960px) {
@@ -47,6 +47,7 @@
   gap: 0.75rem;
   position: sticky;
   top: 8rem;
+  padding-right: clamp(0.5rem, 1vw, 1rem);
 
   @media (max-width: 960px) {
     position: static;
@@ -54,6 +55,7 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem 1rem;
+    padding-right: 0;
     padding-bottom: 1.5rem;
     border-bottom: 1px solid var(--primary-200, #ede3de);
   }

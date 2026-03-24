@@ -602,15 +602,35 @@ export default {
             }),
         },
         {
+          name: 'offerMode',
+          type: 'string',
+          title: 'Tryb oferty',
+          description:
+            'Wybierz, czy oferta ma zawierać dodatkowy rabat, czy ma być jedynie propozycją innych kursów bez kuponu rabatowego.',
+          hidden: ({ parent }) => !parent?.enabled,
+          initialValue: 'discounted',
+          options: {
+            list: [
+              { title: 'Oferta z rabatem', value: 'discounted' },
+              { title: 'Oferta bez rabatu', value: 'standard' },
+            ],
+            layout: 'radio',
+          },
+        },
+        {
           name: 'discountAmount',
           type: 'number',
           title: 'Wysokość rabatu w groszach',
-          description: 'Wartość rabatu wyrażona w groszach (np. 5000 = 50 zł). Rabat dotyczy każdego oferowanego produktu.',
-          hidden: ({ parent }) => !parent?.enabled,
+          description:
+            'Wartość rabatu wyrażona w groszach (np. 5000 = 50 zł). To pole jest wymagane tylko dla oferty z rabatem.',
+          hidden: ({ parent }) => !parent?.enabled || parent?.offerMode === 'standard',
           validation: Rule =>
             Rule.custom((value, context) => {
-              if (context.parent?.enabled && !value) return 'Wymagane gdy oferta jest aktywna';
-              if (value !== undefined && value <= 0) return 'Rabat musi być większy od 0';
+              const offerMode = context.parent?.offerMode ?? 'discounted';
+              if (context.parent?.enabled && offerMode === 'discounted' && (value === undefined || value === null)) {
+                return 'Wymagane gdy oferta z rabatem jest aktywna';
+              }
+              if (value !== undefined && value !== null && value <= 0) return 'Rabat musi być większy od 0';
               return true;
             }),
         },
@@ -618,8 +638,9 @@ export default {
           name: 'discountTimeMinutes',
           type: 'number',
           title: 'Czas trwania oferty w minutach (opcjonalne)',
-          description: 'Po upływie tego czasu od momentu zakupu oferta wygaśnie (np. 30 = 30 minut). Zostaw puste, aby oferta była bezterminowa.',
-          hidden: ({ parent }) => !parent?.enabled,
+          description:
+            'Po upływie tego czasu od momentu zakupu promocja wygaśnie (np. 30 = 30 minut). Zostaw puste, aby promocja była bezterminowa.',
+          hidden: ({ parent }) => !parent?.enabled || parent?.offerMode === 'standard',
           validation: Rule =>
             Rule.custom((value) => {
               if (value !== undefined && value !== null && (!Number.isInteger(value) || value <= 1))
