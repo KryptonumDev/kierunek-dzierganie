@@ -22,9 +22,13 @@ type QueryProps = {
       _id: string;
       name: string;
       slug: string;
+      type: 'course' | 'program';
       generateCertificate: boolean;
+      files: File[];
+      files_alter: File[];
       chapters: {
         _id: string;
+        dateOfUnlock?: string | null;
         lessons: {
           _id: string;
           files: File[];
@@ -126,11 +130,29 @@ const query = async (): Promise<QueryProps> => {
         _id,
         name,
         "slug": slug.current,
+        type,
         generateCertificate,
+        files[]{
+          asset->{
+            url,
+            size,
+            originalFilename,
+            _id
+          }
+        },
+        files_alter[]{
+          asset->{
+            url,
+            size,
+            originalFilename,
+            _id
+          }
+        },
         chapters {
           chapterName,
           chapterDescription,
           "_id": _key,
+          dateOfUnlock,
           lessons[]->{
             _id,
             name,

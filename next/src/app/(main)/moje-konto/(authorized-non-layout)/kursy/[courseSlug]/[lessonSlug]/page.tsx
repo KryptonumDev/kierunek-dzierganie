@@ -10,6 +10,7 @@ import type { Chapter, Course, CoursesProgress, File, ImgType } from '@/global/t
 import type { VideoProvider } from '@/components/ui/VideoPlayer/VideoPlayer.types';
 import { findActiveCourseProgress } from '@/utils/course-access';
 import { checkCourseProgress } from '@/utils/check-course-progress';
+import { isProgramChapterUnlocked } from '@/utils/is-program-chapter-unlocked';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createClient } from '@/utils/supabase-server';
 import { cookies } from 'next/headers';
@@ -52,33 +53,30 @@ export default async function Course({
   );
 
   const currentChapterInfo = (() => {
-    let currentChapter = course.chapters[0]!;
-    let isFindChapter = false;
-    let currentChapterIndex = 0;
-    let currentLessonIndex = 0;
+    for (let chapterIndex = 0; chapterIndex < course.chapters.length; chapterIndex++) {
+      const chapter = course.chapters[chapterIndex]!;
+      const lessonIndex = chapter.lessons.findIndex((currentLesson) => currentLesson._id === lesson._id);
 
-    course.chapters.every((chapter) => {
-      chapter.lessons.forEach((currentLesson) => {
-        if (currentLesson._id === lesson._id) {
-          currentChapter = chapter;
-          isFindChapter = true;
-        }
-      });
-      return !isFindChapter;
-    });
+      if (lessonIndex !== -1) {
+        return {
+          currentChapter: chapter,
+          currentChapterIndex: chapterIndex,
+          currentLessonIndex: lessonIndex,
+          isFindChapter: true,
+        };
+      }
+    }
 
-    course.chapters.every((chapter, i) => {
-      if (chapter.chapterName === currentChapter.chapterName) currentChapterIndex = i;
-      return !currentChapterIndex;
-    });
-
-    currentChapter.lessons.every((currentLesson, i) => {
-      if (currentLesson._id === lesson._id) currentLessonIndex = i;
-      return !currentLessonIndex;
-    });
-
-    return { currentChapter, currentChapterIndex, currentLessonIndex };
+    return {
+      currentChapter: null,
+      currentChapterIndex: 0,
+      currentLessonIndex: 0,
+      isFindChapter: false,
+    };
   })();
+
+  if (!currentChapterInfo.isFindChapter || !currentChapterInfo.currentChapter) return notFound();
+  if (!isProgramChapterUnlocked(course.type, currentChapterInfo.currentChapter)) return notFound();
 
   const closedMaterials = cookies().get(`relatedMaterials-${id}`);
 
