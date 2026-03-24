@@ -15,12 +15,15 @@ export type OfferedItem = {
   image: ImgType | null;
 };
 
+export type PostPurchaseOfferMode = 'discounted' | 'standard';
+
 export type PostPurchaseOfferPayload = {
   heading: string;
   paragraph: string | null;
-  discountAmount: number;
+  offerMode: PostPurchaseOfferMode;
+  discountAmount: number | null;
   expirationDate: string | null;
-  couponCode: string;
+  couponCode: string | null;
   offeredItems: OfferedItem[];
 };
 
@@ -37,7 +40,8 @@ type SanityProductWithOffer = {
     enabled: boolean;
     heading: string;
     paragraph?: string;
-    discountAmount: number;
+    offerMode?: PostPurchaseOfferMode;
+    discountAmount?: number | null;
     discountTimeMinutes?: number | null;
     offeredItems: OfferedItem[];
   };
@@ -46,6 +50,20 @@ type SanityProductWithOffer = {
 type OrderProduct = {
   id: string;
   type: string;
+};
+
+type PreviewableOfferDocument = {
+  _id: string;
+  _type: 'course' | 'bundle';
+  postPurchaseOffer?: {
+    enabled: boolean;
+    heading: string;
+    paragraph?: string;
+    offerMode?: PostPurchaseOfferMode;
+    discountAmount?: number | null;
+    discountTimeMinutes?: number | null;
+    offeredItems: OfferedItem[];
+  };
 };
 
 /**
@@ -122,6 +140,7 @@ export async function resolvePostPurchaseOffer(
           enabled,
           heading,
           paragraph,
+          offerMode,
           discountAmount,
           discountTimeMinutes,
           "offeredItems": offeredItems[] -> {
@@ -156,6 +175,17 @@ export async function resolvePostPurchaseOffer(
     return { type: 'no-offer' };
   }
 
+  const configuredOfferMode: PostPurchaseOfferMode =
+    offerConfig.offerMode === 'standard' ? 'standard' : 'discounted';
+
+  // Expiration anchored to paid_at so timer survives page refreshes.
+  // The timer applies only to discounted offers.
+  let expirationDate: string | null = null;
+  if (configuredOfferMode === 'discounted' && offerConfig.discountTimeMinutes) {
+    const paidAt = order.paid_at ? new Date(order.paid_at) : new Date();
+    expirationDate = new Date(paidAt.getTime() + offerConfig.discountTimeMinutes * 60_000).toISOString();
+  }
+
   // Idempotency check — return the existing coupon if one was already created for this order
   const { data: existingCoupon } = await supabase
     .from('coupons')
@@ -163,53 +193,72 @@ export async function resolvePostPurchaseOffer(
     .contains('course_discount_data', { order_id: orderId })
     .maybeSingle();
 
-  let couponCode: string;
-  let expirationDate: string | null;
+  const existingCouponAmount =
+    typeof existingCoupon?.amount === 'number' && existingCoupon.amount > 0 ? existingCoupon.amount : null;
 
-  if (existingCoupon) {
-    couponCode = existingCoupon.code;
-    expirationDate = existingCoupon.expiration_date ?? null;
-  } else {
-    // Expiration anchored to paid_at so timer survives page refreshes.
-    // If discountTimeMinutes is not set, the coupon has no expiry (infinite offer).
-    let expiry: string | null = null;
-    if (offerConfig.discountTimeMinutes) {
-      const paidAt = order.paid_at ? new Date(order.paid_at) : new Date();
-      expiry = new Date(paidAt.getTime() + offerConfig.discountTimeMinutes * 60_000).toISOString();
-    }
+  if (existingCoupon?.code && existingCouponAmount) {
+    return {
+      type: 'offer',
+      offer: {
+        heading: offerConfig.heading,
+        paragraph: offerConfig.paragraph ?? null,
+        offerMode: 'discounted',
+        discountAmount: existingCouponAmount,
+        expirationDate: existingCoupon.expiration_date ?? expirationDate,
+        couponCode: existingCoupon.code,
+        offeredItems: offerConfig.offeredItems,
+      },
+    };
+  }
 
-    const discountedProducts = offerConfig.offeredItems.map((item) => ({
-      id: item._id,
-      name: item.name,
-    }));
+  if (configuredOfferMode === 'standard') {
+    return {
+      type: 'offer',
+      offer: {
+        heading: offerConfig.heading,
+        paragraph: offerConfig.paragraph ?? null,
+        offerMode: 'standard',
+        discountAmount: null,
+        expirationDate: null,
+        couponCode: null,
+        offeredItems: offerConfig.offeredItems,
+      },
+    };
+  }
 
-    const { data: newCoupon, error: couponError } = await supabase
-      .from('coupons')
-      .insert({
-        description: 'Post-purchase offer',
-        type: 3, // FIXED PRODUCT
-        code: generateRandomCode(),
-        state: 2, // active
-        amount: offerConfig.discountAmount,
-        use_limit: 1,
-        expiration_date: expiry,
-        discounted_product: discountedProducts[0] ?? null,
-        discounted_products: discountedProducts,
-        course_discount_data: {
-          order_id: orderId,
-          user_id: userId,
-        },
-      })
-      .select('code, expiration_date')
-      .single();
+  if (typeof offerConfig.discountAmount !== 'number' || offerConfig.discountAmount <= 0) {
+    console.error('❌ Invalid post-purchase discount configuration for order', orderId);
+    return { type: 'no-offer' };
+  }
 
-    if (couponError || !newCoupon) {
-      console.error('❌ Failed to create post-purchase coupon for order', orderId, couponError?.message);
-      return { type: 'no-offer' };
-    }
+  const discountedProducts = offerConfig.offeredItems.map((item) => ({
+    id: item._id,
+    name: item.name,
+  }));
 
-    couponCode = newCoupon.code;
-    expirationDate = newCoupon.expiration_date ?? null;
+  const { data: newCoupon, error: couponError } = await supabase
+    .from('coupons')
+    .insert({
+      description: 'Post-purchase offer',
+      type: 3, // FIXED PRODUCT
+      code: generateRandomCode(),
+      state: 2, // active
+      amount: offerConfig.discountAmount,
+      use_limit: 1,
+      expiration_date: expirationDate,
+      discounted_product: discountedProducts[0] ?? null,
+      discounted_products: discountedProducts,
+      course_discount_data: {
+        order_id: orderId,
+        user_id: userId,
+      },
+    })
+    .select('code, expiration_date')
+    .single();
+
+  if (couponError || !newCoupon) {
+    console.error('❌ Failed to create post-purchase coupon for order', orderId, couponError?.message);
+    return { type: 'no-offer' };
   }
 
   return {
@@ -217,9 +266,93 @@ export async function resolvePostPurchaseOffer(
     offer: {
       heading: offerConfig.heading,
       paragraph: offerConfig.paragraph ?? null,
+      offerMode: 'discounted',
       discountAmount: offerConfig.discountAmount,
+      expirationDate: newCoupon.expiration_date ?? expirationDate,
+      couponCode: newCoupon.code,
+      offeredItems: offerConfig.offeredItems,
+    },
+  };
+}
+
+export async function resolvePostPurchaseOfferPreview(
+  documentId: string,
+  documentType: 'course' | 'bundle'
+): Promise<Exclude<ResolvePostPurchaseOfferResult, { type: 'forbidden' }>> {
+  const normalizedDocumentId = documentId.replace('drafts.', '');
+
+  const previewDocument = await sanityFetch<PreviewableOfferDocument | null>({
+    query: /* groq */ `
+      *[
+        _type == $documentType &&
+        (_id == $documentId || _id == "drafts." + $documentId)
+      ][0]{
+        _id,
+        _type,
+        postPurchaseOffer {
+          enabled,
+          heading,
+          paragraph,
+          offerMode,
+          discountAmount,
+          discountTimeMinutes,
+          "offeredItems": offeredItems[] -> {
+            _id,
+            _type,
+            name,
+            price,
+            discount,
+            basis,
+            "slug": slug.current,
+            "image": gallery[0] {
+              ${Img_Query}
+            },
+          },
+        }
+      }
+    `,
+    params: {
+      documentId: normalizedDocumentId,
+      documentType,
+    },
+    useAuthClient: true,
+    noCache: true,
+  });
+
+  if (!previewDocument) {
+    return { type: 'not-found' };
+  }
+
+  const offerConfig = previewDocument.postPurchaseOffer;
+
+  if (!offerConfig?.enabled || !offerConfig.offeredItems?.length) {
+    return { type: 'no-offer' };
+  }
+
+  const offerMode: PostPurchaseOfferMode = offerConfig.offerMode === 'standard' ? 'standard' : 'discounted';
+  const previewDiscountAmount =
+    offerMode === 'discounted' && typeof offerConfig.discountAmount === 'number' && offerConfig.discountAmount > 0
+      ? offerConfig.discountAmount
+      : null;
+
+  if (offerMode === 'discounted' && previewDiscountAmount === null) {
+    return { type: 'no-offer' };
+  }
+
+  const expirationDate =
+    offerMode === 'discounted' && offerConfig.discountTimeMinutes
+      ? new Date(Date.now() + offerConfig.discountTimeMinutes * 60_000).toISOString()
+      : null;
+
+  return {
+    type: 'offer',
+    offer: {
+      heading: offerConfig.heading,
+      paragraph: offerConfig.paragraph ?? null,
+      offerMode,
+      discountAmount: previewDiscountAmount,
       expirationDate,
-      couponCode,
+      couponCode: previewDiscountAmount ? 'PODGLAD-RABAT' : null,
       offeredItems: offerConfig.offeredItems,
     },
   };

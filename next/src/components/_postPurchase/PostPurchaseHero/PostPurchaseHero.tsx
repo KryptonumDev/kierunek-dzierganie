@@ -4,7 +4,7 @@ import type { PostPurchaseHeroProps } from './PostPurchaseHero.types';
 import OfferSection from './_OfferSection';
 import styles from './PostPurchaseHero.module.scss';
 
-const PostPurchaseHero = ({ orderId, offer }: PostPurchaseHeroProps) => {
+const PostPurchaseHero = ({ orderId, offer, previewMode = false }: PostPurchaseHeroProps) => {
   return (
     <section className={styles.PostPurchaseHero}>
       <div className={`${styles.container} ${offer.offeredItems.length === 1 ? styles.containerSingle : ''}`}>
@@ -12,17 +12,26 @@ const PostPurchaseHero = ({ orderId, offer }: PostPurchaseHeroProps) => {
         {/* ── Left: minimal confirmation ── */}
         <aside className={styles.confirmation}>
           <CheckIcon />
-          <p className={styles.confirmationLabel}>Zamówienie przyjęte</p>
-          <p className={styles.confirmationText}>
-            Szczegóły oraz dostęp do kursu znajdziesz na swoim koncie. Potwierdzenie
-            wysłaliśmy na podany adres&nbsp;e-mail.
+          <p className={styles.confirmationLabel}>
+            {previewMode ? 'Podgląd oferty po zakupie' : 'Zamówienie przyjęte'}
           </p>
-          <Link
-            href={`/moje-konto/zakupy/${orderId}`}
-            className={`link ${styles.orderLink}`}
-          >
-            Szczegóły zamówienia →
-          </Link>
+          <p className={styles.confirmationText}>
+            {previewMode
+              ? 'Tak będzie wyglądać oferta wyświetlana klientowi zaraz po zakupie tego produktu.'
+              : 'Szczegóły oraz dostęp do kursu znajdziesz na swoim koncie. Potwierdzenie wysłaliśmy na podany adres e-mail.'}
+          </p>
+          {previewMode ? (
+            <p className={styles.orderLink}>W podglądzie nie tworzymy prawdziwego zamówienia ani kuponu.</p>
+          ) : (
+            orderId && (
+              <Link
+                href={`/moje-konto/zakupy/${orderId}`}
+                className={`link ${styles.orderLink}`}
+              >
+                Szczegóły zamówienia →
+              </Link>
+            )
+          )}
         </aside>
 
         {/* ── Right: offer ── */}
@@ -33,6 +42,7 @@ const PostPurchaseHero = ({ orderId, offer }: PostPurchaseHeroProps) => {
           )}
           <OfferSection
             offeredItems={offer.offeredItems}
+            offerMode={offer.offerMode}
             discountAmount={offer.discountAmount}
             expirationDate={offer.expirationDate}
             couponCode={offer.couponCode}

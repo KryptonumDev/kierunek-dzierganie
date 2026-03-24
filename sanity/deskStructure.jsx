@@ -1,6 +1,11 @@
 import { collectionTypes, schemaTypes, singleTypes } from './schemas';
 
-const url = 'https://kierunek-dzierganie-git-dev-kryptonum.vercel.app';
+const previewBaseUrl = 'https://kierunek-dzierganie-git-dev-kryptonum.vercel.app/';
+
+const getPreviewUrl = (pathname = '') => {
+  return new URL(pathname, previewBaseUrl).toString();
+};
+
 const WebPreview = ({ document }) => {
   const {
     displayed: { _type, basis, slug },
@@ -9,20 +14,26 @@ const WebPreview = ({ document }) => {
   const type = _type + (basis ? `_${basis}` : '');
 
   const typeArray = {
-    product_crocheting: '/produkty-do-szydelkowania/',
-    product_knitting: '/produkty-do-dziergania/',
-    course_crocheting: '/kurs-szydelkowania/',
-    course_knitting: '/kurs-dziergania-na-drutach/',
-    bundle_crocheting: '/kurs-szydelkowania/',
-    bundle_knitting: '/kurs-dziergania-na-drutach/',
-    voucher_crocheting: '/produkty-do-szydelkowania/',
-    voucher_knitting: '/produkty-do-dziergania/',
+    product_crocheting: '/produkty/szydelkowanie/',
+    product_knitting: '/produkty/dzierganie/',
+    product_other: '/produkty/inne/',
+    product_instruction: '/produkty/instrukcje/',
+    product_materials: '/produkty/pakiety-materialow/',
+    course_crocheting: '/kursy-szydelkowania/',
+    course_knitting: '/kursy-dziergania-na-drutach/',
+    bundle_crocheting: '/kursy-szydelkowania/',
+    bundle_knitting: '/kursy-dziergania-na-drutach/',
+    voucher_crocheting: '/produkty/szydelkowanie/',
+    voucher_knitting: '/produkty/dzierganie/',
     landingPage: '/landing/',
     CustomerCaseStudy_Collection: '/historia-kursantek/',
     BlogPost_Collection: '/blog/',
     homepage: '',
-    KnittingProducts_Page: '/produkty-do-dziergania',
-    CrochetingProducts_Page: '/produkty-do-szydelkowania',
+    KnittingProducts_Page: '/produkty/dzierganie',
+    CrochetingProducts_Page: '/produkty/szydelkowanie',
+    OtherProducts_Page: '/produkty/inne',
+    Instructions_Page: '/produkty/instrukcje',
+    MaterialsPackages_Page: '/produkty/pakiety-materialow',
     KnittingCourses_Page: '/kursy-dziergania-na-drutach',
     CrochetingCourses_Page: '/kursy-szydelkowania',
     Team_Page: '/zespol',
@@ -41,9 +52,43 @@ const WebPreview = ({ document }) => {
     Blog_Page: '/blog',
   };
 
+  const previewPath = typeArray[type];
+
+  if (typeof previewPath !== 'string') {
+    return (
+      <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
+        Nie udało się zbudować adresu podglądu dla tego dokumentu.
+      </div>
+    );
+  }
+
   return (
     <iframe
-      src={url + typeArray[type] + (slug?.current ?? '')}
+      src={getPreviewUrl(`${previewPath}${slug?.current ?? ''}`)}
+      style={{ width: '100%', height: '100%' }}
+      frameBorder={0}
+    />
+  );
+};
+
+const OfferPreview = ({ document }) => {
+  const {
+    displayed: { _type, _id },
+  } = document;
+
+  const documentId = _id?.replace('drafts.', '');
+
+  if (!documentId || (_type !== 'course' && _type !== 'bundle')) {
+    return (
+      <div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
+        Podgląd oferty po zakupie jest dostępny tylko dla kursów i pakietów kursów.
+      </div>
+    );
+  }
+
+  return (
+    <iframe
+      src={getPreviewUrl(`/podglad/oferta-po-zakupie/${_type}/${documentId}`)}
       style={{ width: '100%', height: '100%' }}
       frameBorder={0}
     />
@@ -111,6 +156,8 @@ const createDocumentTypeListItem = (S, name) => {
             .views([
               S.view.form().title('Edycja'),
               !withoutPreview.includes(name) && S.view.component(WebPreview).title('Podgląd'),
+              (name === 'course' || name === 'bundle') &&
+                S.view.component(OfferPreview).title('Podgląd oferty po zakupie'),
             ])
         )
     );

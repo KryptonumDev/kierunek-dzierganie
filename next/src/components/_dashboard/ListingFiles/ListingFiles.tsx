@@ -1,11 +1,26 @@
 import FileItem from '@/components/ui/FileItem';
 import type { File } from '@/global/types';
+import { isProgramChapterUnlocked } from '@/utils/is-program-chapter-unlocked';
 import type { QueryProps as MapNotesQueryProps } from '@/utils/map-note';
 import mapNotes from '@/utils/map-note';
 import { useMemo } from 'react';
 import RelatedNotes from '../RelatedNotes';
 import styles from './ListingFiles.module.scss';
 import type { ListingFilesTypes } from './ListingFiles.types';
+
+const mergeUniqueFiles = (...fileGroups: Array<File[] | null | undefined>) => {
+  const uniqueFiles = new Map<string, File>();
+
+  fileGroups.forEach((files) => {
+    files?.forEach((file) => {
+      const assetId = file?.asset?._id;
+      if (!assetId || uniqueFiles.has(assetId)) return;
+      uniqueFiles.set(assetId, file);
+    });
+  });
+
+  return Array.from(uniqueFiles.values());
+};
 
 const ListingFiles = ({ courses, left_handed, progress }: ListingFilesTypes) => {
   const transformFiles = useMemo(() => {
@@ -30,18 +45,20 @@ const ListingFiles = ({ courses, left_handed, progress }: ListingFilesTypes) => 
       const obj: ArrElement = {
         name: course.name,
         slug: course.slug,
-        files: [],
-        filesAlt: [],
+        files: mergeUniqueFiles(course.files),
+        filesAlt: mergeUniqueFiles(course.files_alter),
         showCert: false,
         notes: [],
       };
 
-      // get all files from lessons
+      // Collect lesson files in addition to any course/program-wide files.
       course.chapters?.forEach((chapter) => {
+        if (!isProgramChapterUnlocked(course.type, chapter)) return;
+
         chapter?.lessons?.forEach((lesson) => {
           if (!lesson) return;
-          if (lesson.files) obj.files.push(...lesson.files);
-          if (lesson.files_alter) obj.filesAlt.push(...lesson.files_alter);
+          obj.files = mergeUniqueFiles(obj.files, lesson.files);
+          obj.filesAlt = mergeUniqueFiles(obj.filesAlt, lesson.files_alter);
         });
       });
 
