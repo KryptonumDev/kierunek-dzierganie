@@ -19,7 +19,10 @@ const AffiliateCode = ({ heading, paragraph, isSubscribed, code, userId }: Affil
             </div>
           </div>
         ) : (
-          <Subscribe userId={userId}>Świetnie! Generuję kod</Subscribe>
+          <>
+            <Subscribe userId={userId}>Dołączam do programu</Subscribe>
+            <p className={styles.additionalInfo}>Po dołączeniu do programu, dostaniesz swój unikalny kod</p>
+          </>
         )}
       </div>
     </section>

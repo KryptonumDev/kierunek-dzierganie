@@ -4,7 +4,7 @@ export type Props = {
   heading: string;
   paragraph: string;
   list: {
-    icon: ImgType;
+    icon?: ImgType;
     title: string;
     description: string;
     image?: ImgType;

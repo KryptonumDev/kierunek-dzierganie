@@ -52,6 +52,7 @@ export async function generateStaticParams(): Promise<generateStaticParamsProps[
         "slug": slug.current,
       }
     `,
+    tags: ['CustomerCaseStudy_Collection'],
   });
 
   return data.map(({ slug }) => ({

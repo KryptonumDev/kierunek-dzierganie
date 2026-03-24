@@ -4,7 +4,7 @@ import { formatNumberToSpaces } from '@/utils/format-number-to-spaces';
 import type { BalanceTypes } from './Balance.types';
 
 const paragraph = (balance: number) =>
-  `Masz już ${formatNumberToSpaces(balance ?? 0)} wirtualnych złotówek. Gdy dodasz produkt do koszyka, możesz zapłacić **zarówno zwykłymi, jak i wirtualnymi**.`;
+  `Masz już ${formatNumberToSpaces(balance ?? 0)} wirtualnych złotówek. Gdy dodasz **kurs** do koszyka, możesz zapłacić **zarówno zwykłymi, jak i wirtualnymi złotówkami**.\n\n**Uwaga:** Wirtualne złotówki można wykorzystać tylko przy zakupie kursów online. Nie można ich użyć do zakupu produktów fizycznych ani voucherów.`;
 
 const Balance = ({ heading, balance, name }: BalanceTypes) => {
   heading = heading.replace(' ${name}', name ? ` ${name}` : '');

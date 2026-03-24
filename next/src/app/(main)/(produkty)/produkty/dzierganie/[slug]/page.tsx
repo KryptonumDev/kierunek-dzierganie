@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import sanityFetch from '@/utils/sanity.fetch';
-import type { ProductPageQuery, ProductPageQueryProps, generateStaticParamsProps } from '@/global/types';
+import type { ProductPageQueryProps, generateStaticParamsProps } from '@/global/types';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import HeroPhysical from '@/components/_product/HeroPhysical';
 import Parameters from '@/components/_product/Parameters';
@@ -9,31 +9,28 @@ import Informations from '@/components/_product/Informations';
 import Description, { Description_Query } from '@/components/_product/Description';
 import { Img_Query } from '@/components/ui/image';
 import Reviews from '@/components/_product/Reviews';
-import { createClient } from '@/utils/supabase-server';
 import ProductSchema from '@/global/Schema/ProductSchema';
 import HeroVoucher from '@/components/_product/HeroVoucher/HeroVoucher';
 
 const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
   const {
-    data: {
-      product: {
-        name,
-        _id,
-        _type,
-        type,
-        variants,
-        price,
-        discount,
-        featuredVideo,
-        countInStock,
-        gallery,
-        parameters,
-        description,
-        reviews,
-        rating,
-      },
+    product: {
+      name,
+      _id,
+      _type,
+      type,
+      variants,
+      price,
+      discount,
+      featuredVideo,
+      countInStock,
+      gallery,
+      parameters,
+      description,
+      reviews,
+      rating,
+      relatedCourses,
     },
-    user,
   } = await query(slug);
 
   return (
@@ -82,6 +79,7 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
           id={_id}
           type={type}
           variants={variants}
+          relatedCourses={relatedCourses}
           physical={{
             basis: 'crocheting',
             _id,
@@ -100,7 +98,6 @@ const Product = async ({ params: { slug } }: { params: { slug: string } }) => {
         {description?.length > 0 && <Description data={description} />}
         {parameters?.length > 0 && <Parameters parameters={parameters} />}
         <Reviews
-          user={user}
           alreadyBought={true}
           reviews={reviews}
           course={false}
@@ -120,29 +117,7 @@ export async function generateMetadata({ params: { slug } }: { params: { slug: s
   return await QueryMetadata(['product', 'voucher'], `/produkty/dzierganie/${slug}`, slug);
 }
 
-const query = async (slug: string): Promise<ProductPageQuery> => {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const res = await supabase
-    .from('profiles')
-    .select(
-      `
-        id,
-        billing_data->firstName,
-        courses_progress (
-          id,
-          course_id,
-          owner_id,
-          progress
-        )
-      `
-    )
-    .eq('id', user?.id)
-    .single();
-
+const query = async (slug: string): Promise<ProductPageQueryProps> => {
   const data = await sanityFetch<ProductPageQueryProps>({
     query: /* groq */ `
     {
@@ -187,8 +162,9 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
             value
           }
         },
-        "relatedCourses": *[_type == 'course' && references(^._id)][]{
-          _id
+        "relatedCourses": *[_type == 'course' && (materials_link._ref == ^._id || ^._id in related_products[]._ref)][]{
+          _id,
+          name
         },
         "reviews": *[_type == 'productReviewCollection' && visible == true && references(^._id)][0...10]{
           rating,
@@ -203,10 +179,10 @@ const query = async (slug: string): Promise<ProductPageQuery> => {
     params: { slug },
     tags: ['product', 'course', 'voucher', 'productReviewCollection'],
   });
+  // If product is not found for the given slug within this category, render 404
+  if (!data?.product) notFound();
 
-  !data && notFound();
-
-  return { data: data, user: res.data?.firstName as string };
+  return data;
 };
 
 export async function generateStaticParams(): Promise<generateStaticParamsProps[]> {
@@ -216,6 +192,7 @@ export async function generateStaticParams(): Promise<generateStaticParamsProps[
         'slug': slug.current,
       }
     `,
+    tags: ['product', 'voucher'],
   });
 
   return data.map(({ slug }) => ({

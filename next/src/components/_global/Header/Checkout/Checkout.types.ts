@@ -1,4 +1,4 @@
-import type { Billing, Complexity, Discount, ImgType, MapPoint, Shipping } from '@/global/types';
+import type { Billing, Complexity, CourseGrantLink, Discount, ImgType, MapPoint, Shipping } from '@/global/types';
 import type { Dispatch, SetStateAction } from 'react';
 import type { useCartItems } from '../Header.types';
 
@@ -13,9 +13,9 @@ export type Props = {
   billing?: Billing;
   userId?: string;
   virtualWallet: number;
-  usedDiscount: Discount | null;
+  usedDiscounts: Discount[];
   usedVirtualMoney: number | null;
-  setUsedDiscount: Dispatch<SetStateAction<Discount | null>>;
+  setUsedDiscounts: Dispatch<SetStateAction<Discount[]>>;
   deliverySettings: {
     deliveryPrice: number;
     paczkomatPrice: number;
@@ -34,6 +34,7 @@ export type InputState = {
   freeDelivery: boolean;
   firmOrder: boolean;
   shippingSameAsBilling: boolean;
+  isGuestCheckout?: boolean; // New field for guest checkout flag
   shipping: Shipping;
   shippingMethod?: {
     data: string | MapPoint | null;
@@ -55,6 +56,7 @@ export type InputState = {
       complexity: Complexity | null;
       basis: 'crocheting' | 'knitting' | 'other' | 'instruction' | 'materials';
       variantId?: string;
+      courses?: CourseGrantLink[] | null;
       voucherData?: {
         dedication: {
           from: string;
@@ -64,12 +66,16 @@ export type InputState = {
         amount: number;
         type: 'PHYSICAL' | 'DIGITAL';
       };
+      automatizationId?: string | null;
     }[];
   };
   client_notes: string;
   delivery: number;
   virtualMoney?: number | null;
-  discount?: Discount | null;
+  discount?: Discount | null; // legacy
+  // New multi-discount array; server consumes this when present
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  discounts?: Discount[];
   needDelivery: boolean;
   user_id?: string;
   amount: number;
@@ -106,14 +112,12 @@ export type FormValues = {
   email: string;
   address: string;
   city: string;
-  country: string;
   zipCode: string;
   phoneNumber?: string;
 
   shippingFullName?: string;
   shippingAddress?: string;
   shippingCity?: string;
-  shippingCountry?: string;
   shippingZipCode?: string;
   client_notes: string;
 

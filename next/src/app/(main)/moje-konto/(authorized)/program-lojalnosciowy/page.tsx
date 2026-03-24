@@ -29,37 +29,21 @@ export default async function AffiliatePage() {
           />
           <AffiliateCode
             {...subscribed.AffiliateCode}
-            isSubscribed={isSubscribed}
+            isSubscribed={true}
             code={affiliateCode}
             userId={userId}
           />
         </>
       ) : (
         <>
-          <TextSection
-            {...unsubscribed.hero}
-            isSubscribed={isSubscribed}
-            userId={userId}
-          />
-          <TextSection
-            {...unsubscribed.explainer}
-            isSubscribed={isSubscribed}
-            userId={userId}
-          />
+          <TextSection {...unsubscribed.hero} />
+          <TextSection {...unsubscribed.explainer} />
+          <TextSection {...unsubscribed.simplicity} />
+          <TextSection {...unsubscribed.instructions} />
           <AffiliateCode
             {...subscribed.AffiliateCode}
-            isSubscribed={isSubscribed}
+            isSubscribed={false}
             code={affiliateCode}
-            userId={userId}
-          />
-          <TextSection
-            {...unsubscribed.simplicity}
-            isSubscribed={isSubscribed}
-            userId={userId}
-          />
-          <TextSection
-            {...unsubscribed.instructions}
-            isSubscribed={isSubscribed}
             userId={userId}
           />
         </>
@@ -89,14 +73,14 @@ async function query(): Promise<AffiliatePage_QueryTypes> {
       billing_data->firstName,
       coupons (
         code
-      ),
-      virtual_wallet (
-        amount
       )
     `
     )
     .eq('id', user!.id)
     .single();
+
+  // Fetch virtual wallet balance using RPC function
+  const { data: walletBalance } = await adminbase.rpc('get_available_balance', { user_id: user!.id });
 
   const res = await sanityFetch<AffiliatePage_QueryTypes>({
     query: /* groq */ `
@@ -139,7 +123,6 @@ async function query(): Promise<AffiliatePage_QueryTypes> {
     name: data!.firstName as string,
     // @ts-expect-error - coupons is not array, bug in supabase
     affiliateCode: data!.coupons?.code,
-    // @ts-expect-error - virtual_wallet is not array, bug in supabase
-    balance: data!.virtual_wallet?.amount,
+    balance: walletBalance ?? 0,
   };
 }

@@ -91,6 +91,12 @@ const createDiscount = async (
         id: course.id,
         name: course.name,
       },
+      discounted_products: [
+        {
+          id: course.id,
+          name: course.name,
+        },
+      ],
       state: 2,
       amount,
       expiration_date: new Date(new Date().getTime() + duration * 60000),

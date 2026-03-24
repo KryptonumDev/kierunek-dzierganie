@@ -9,6 +9,12 @@ import {
   UnorderedList,
 } from '../components/Product_Components';
 
+const accessModeOptions = [
+  { title: 'Bez ograniczenia czasu', value: 'unlimited' },
+  { title: 'Przez określoną liczbę miesięcy od zakupu', value: 'duration_months' },
+  { title: 'Do wskazanej daty', value: 'fixed_date' },
+];
+
 export default {
   name: 'course',
   title: 'Kursy',
@@ -23,22 +29,12 @@ export default {
       validation: Rule => Rule.required(),
       group: 'configuration',
     },
-    {
-      name: 'name',
-      type: 'string',
-      title: 'Nazwa kursu',
-      validation: Rule => Rule.required(),
-      group: 'configuration',
-    },
+    { name: 'name', type: 'string', title: 'Nazwa kursu', validation: Rule => Rule.required(), group: 'configuration' },
     {
       name: 'slug',
       type: 'slug',
-      options: {
-        source: 'name',
-      },
-      components: {
-        input: CourseSlug,
-      },
+      options: { source: 'name' },
+      components: { input: CourseSlug },
       title: 'Slug',
       validation: Rule => Rule.required(),
       group: 'configuration',
@@ -49,14 +45,8 @@ export default {
       title: 'Rodzaj kursu',
       options: {
         list: [
-          {
-            title: 'Szydełkowanie',
-            value: 'crocheting',
-          },
-          {
-            title: 'Dzierganie na drutach',
-            value: 'knitting',
-          },
+          { title: 'Szydełkowanie', value: 'crocheting' },
+          { title: 'Dzierganie na drutach', value: 'knitting' },
         ],
       },
       validation: Rule => Rule.required(),
@@ -68,14 +58,8 @@ export default {
       title: 'Typ kursu',
       options: {
         list: [
-          {
-            title: 'Kurs',
-            value: 'course',
-          },
-          {
-            title: 'Program',
-            value: 'program',
-          },
+          { title: 'Kurs', value: 'course' },
+          { title: 'Program', value: 'program' },
         ],
       },
       initialValue: 'course',
@@ -86,20 +70,11 @@ export default {
       name: 'category',
       type: 'reference',
       title: 'Kategoria',
-      to: [
-        {
-          type: 'courseCategory',
-        },
-      ],
+      to: [{ type: 'courseCategory' }],
       validation: Rule => Rule.required(),
       group: 'configuration',
     },
-    {
-      title: 'Długość kursu',
-      name: 'courseLength',
-      type: 'string',
-      group: 'configuration',
-    },
+    { title: 'Długość kursu', name: 'courseLength', type: 'string', group: 'configuration' },
     {
       name: 'materials_link',
       title: 'Dodatkowe materiały',
@@ -108,25 +83,32 @@ export default {
       group: 'configuration',
     },
     {
+      name: 'related_products',
+      title: 'Produkty powiązane',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'product' }] }],
+      group: 'configuration',
+    },
+    {
+      name: 'printed_manual',
+      title: '⚠️ Instrukcja drukowana (DANE LEGACY)',
+      type: 'reference',
+      to: [{ type: 'product' }],
+      description: 'UWAGA: To pole zawiera dane z starej platformy. Aby mieć pełną kontrolę nad powiązaniami produktów, przenieś tę wartość do pola "Produkty powiązane" powyżej i wyczyść to pole. Dopóki to pole jest wypełnione, użytkownicy muszą posiadać kurs aby kupić ten produkt.',
+      group: 'configuration',
+    },
+    {
       name: 'files',
       type: 'array',
       title: 'Pliki do pobrania',
-      of: [
-        {
-          type: 'file',
-        },
-      ],
+      of: [{ type: 'file' }],
       hidden: ({ document }) => document.type === 'program',
     },
     {
       name: 'files_alter',
       type: 'array',
       title: 'Pliki do pobrania dla leworęcznych',
-      of: [
-        {
-          type: 'file',
-        },
-      ],
+      of: [{ type: 'file' }],
       hidden: ({ document }) => document.type === 'program',
     },
     {
@@ -174,6 +156,77 @@ export default {
       group: 'configuration',
     },
     {
+      name: 'grantedCourses',
+      type: 'array',
+      title: 'Kursy nadawane automatycznie',
+      description:
+        'Po zakupie użytkownik automatycznie otrzyma dostęp także do wskazanych kursów.',
+      of: [
+        {
+          type: 'reference',
+          to: [{ type: 'course' }],
+          options: {
+            filter: ({ document }) => {
+              const courseId = document?._id?.replace('drafts.', '');
+
+              if (!courseId) {
+                return { filter: '_type == "course"' };
+              }
+
+              return {
+                filter: '_type == "course" && _id != $courseId',
+                params: { courseId },
+              };
+            },
+          },
+        },
+      ],
+      validation: Rule => Rule.unique(),
+      group: 'configuration',
+    },
+    {
+      name: 'accessMode',
+      type: 'string',
+      title: 'Sposób ograniczenia dostępu',
+      description:
+        'Określa, czy kurs ma być dostępny bez limitu, przez określoną liczbę miesięcy od zakupu, czy tylko do wybranej daty.',
+      options: {
+        list: accessModeOptions,
+      },
+      initialValue: 'unlimited',
+      validation: Rule => Rule.required(),
+      group: 'configuration',
+    },
+    {
+      name: 'accessDurationMonths',
+      type: 'number',
+      title: 'Dostęp przez liczbę miesięcy od zakupu',
+      description: 'Np. 6 oznacza dostęp przez 6 miesięcy liczonych od momentu zakupu przez użytkownika.',
+      hidden: ({ document }) => document?.accessMode !== 'duration_months',
+      validation: Rule =>
+        Rule.custom((value, context) => {
+          if (context.document?.accessMode !== 'duration_months') return true;
+          if (value === undefined || value === null) return 'Podaj liczbę miesięcy dla ograniczenia czasowego';
+          if (!Number.isInteger(value) || value <= 0) return 'Wpisz liczbę całkowitą większą od 0';
+          return true;
+        }),
+      group: 'configuration',
+    },
+    {
+      name: 'accessFixedDate',
+      type: 'date',
+      title: 'Dostęp do wskazanej daty',
+      description: 'Po tej dacie użytkownik traci dostęp do kursu, nawet jeśli kupił go wcześniej.',
+      hidden: ({ document }) => document?.accessMode !== 'fixed_date',
+      validation: Rule =>
+        Rule.custom((value, context) => {
+          if (context.document?.accessMode !== 'fixed_date') return true;
+          if (!value) return 'Wybierz datę końca dostępu';
+          return true;
+        }),
+      group: 'configuration',
+    },
+    {
       name: 'price',
       type: 'number',
       title: 'Cena w groszach',
@@ -191,12 +244,7 @@ export default {
       validation: Rule => Rule.min(0),
       group: 'prices',
     },
-    {
-      name: 'excerpt',
-      type: 'markdown',
-      title: 'Krótki opis na karcie wyróżnionego produktu',
-      group: 'description',
-    },
+    { name: 'excerpt', type: 'markdown', title: 'Krótki opis na karcie wyróżnionego produktu', group: 'description' },
     {
       name: 'gallery',
       type: 'array',
@@ -204,17 +252,7 @@ export default {
       of: [{ type: 'image', validation: Rule => Rule.required() }],
       group: 'description',
     },
-    {
-      name: 'chapters',
-      type: 'array',
-      title: 'Rozdziały',
-      of: [
-        {
-          type: 'ChapterList',
-        },
-      ],
-      group: 'description',
-    },
+    { name: 'chapters', type: 'array', title: 'Rozdziały', of: [{ type: 'ChapterList' }], group: 'description' },
     {
       name: 'description',
       type: 'array',
@@ -249,13 +287,7 @@ export default {
       name: 'previewLessons',
       type: 'array',
       title: 'Podgląd kursu',
-      of: [
-        {
-          type: 'reference',
-          to: [{ type: 'lesson' }],
-          validation: Rule => Rule.required(),
-        },
-      ],
+      of: [{ type: 'reference', to: [{ type: 'lesson' }], validation: Rule => Rule.required() }],
       group: 'preview',
     },
     {
@@ -304,14 +336,9 @@ export default {
             },
           ],
           preview: {
-            select: {
-              heading: 'heading',
-            },
+            select: { heading: 'heading' },
             prepare({ heading }) {
-              return {
-                title: 'Nagłówek',
-                subtitle: removeMarkdown(heading),
-              };
+              return { title: 'Nagłówek', subtitle: removeMarkdown(heading) };
             },
           },
         },
@@ -363,20 +390,12 @@ export default {
                                 }),
                               },
                             },
-                            {
-                              name: 'additionalInfo',
-                              title: 'Dodatkowa informacja (opcjonalna)',
-                              type: 'markdown',
-                            },
+                            { name: 'additionalInfo', title: 'Dodatkowa informacja (opcjonalna)', type: 'markdown' },
                           ],
                         },
                       ],
                     },
-                    {
-                      name: 'additionalInfo',
-                      title: 'Dodatkowa informacja (opcjonalna)',
-                      type: 'markdown',
-                    },
+                    { name: 'additionalInfo', title: 'Dodatkowa informacja (opcjonalna)', type: 'markdown' },
                   ],
                 },
               ],
@@ -390,14 +409,9 @@ export default {
             },
           ],
           preview: {
-            select: {
-              heading: 'heading',
-            },
+            select: { heading: 'heading' },
             prepare({ heading }) {
-              return {
-                title: 'Grupy Materiałów',
-                subtitle: removeMarkdown(heading),
-              };
+              return { title: 'Grupy Materiałów', subtitle: removeMarkdown(heading) };
             },
           },
         },
@@ -436,14 +450,9 @@ export default {
             },
           ],
           preview: {
-            select: {
-              title: 'heading',
-            },
+            select: { title: 'heading' },
             prepare({ title }) {
-              return {
-                title: 'Dedykowany pakiet',
-                subtitle: removeMarkdown(title),
-              };
+              return { title: 'Dedykowany pakiet', subtitle: removeMarkdown(title) };
             },
           },
         },
@@ -483,11 +492,7 @@ export default {
                   type: 'object',
                   fields: [
                     { name: 'shopName', title: 'Nazwa sklepu', type: 'string', validation: Rule => Rule.required() },
-                    {
-                      name: 'shopLink',
-                      title: 'Link do sklepu (opcjonalny)',
-                      type: 'url',
-                    },
+                    { name: 'shopLink', title: 'Link do sklepu (opcjonalny)', type: 'url' },
                     {
                       name: 'salePercentage',
                       title: 'Procent rabatu',
@@ -500,11 +505,7 @@ export default {
             },
           ],
           preview: {
-            select: {
-              title: 'heading',
-              subtitle: 'paragraph',
-              imageList: 'imageList',
-            },
+            select: { title: 'heading', subtitle: 'paragraph', imageList: 'imageList' },
             prepare({ title, subtitle, imageList }) {
               return {
                 title: removeMarkdown(title) || 'Rabaty partnerskie',
@@ -534,67 +535,112 @@ export default {
                 {
                   type: 'reference',
                   to: [{ type: 'product' }],
-                  options: {
-                    filter: ({ document }) => ({
-                      filter: 'basis == $basis && visible == true',
-                      params: { basis: document.basis },
-                    }),
-                  },
                 },
               ],
               validation: Rule => Rule.max(3).required(),
             },
           ],
           preview: {
-            select: {
-              title: 'heading',
-            },
+            select: { title: 'heading' },
             prepare({ title }) {
-              return {
-                title: 'Dodatkowe materiały',
-                subtitle: removeMarkdown(title),
-              };
+              return { title: 'Dodatkowe materiały', subtitle: removeMarkdown(title) };
             },
           },
         },
       ],
     },
     {
-      name: 'seo',
-      type: 'seo',
-      title: 'SEO',
-      group: 'seo',
+      name: 'postPurchaseOffer',
+      title: 'Oferta po zakupie',
+      type: 'object',
+      description: 'Skonfiguruj ofertę specjalną wyświetlaną użytkownikowi zaraz po zakupie tego kursu.',
+      group: 'postPurchaseOffer',
+      options: {
+        collapsible: true,
+        collapsed: true,
+      },
+      fields: [
+        {
+          name: 'enabled',
+          type: 'boolean',
+          title: 'Aktywna oferta po zakupie',
+          description:
+            'Włącz, aby po zakupie tego kursu wyświetlała się dedykowana strona z podziękowaniem i ofertą specjalną.',
+          initialValue: false,
+        },
+        {
+          name: 'heading',
+          type: 'markdown',
+          title: 'Nagłówek oferty',
+          description: 'Główny nagłówek wyświetlany w sekcji z ofertą (np. "Specjalna oferta tylko dla Ciebie!").',
+          hidden: ({ parent }) => !parent?.enabled,
+          validation: Rule =>
+            Rule.custom((value, context) => {
+              if (context.parent?.enabled && !value) return 'Wymagane gdy oferta jest aktywna';
+              return true;
+            }),
+        },
+        {
+          name: 'paragraph',
+          type: 'markdown',
+          title: 'Paragraf oferty',
+          description: 'Dodatkowy opis lub zachęta do skorzystania z oferty (opcjonalnie).',
+          hidden: ({ parent }) => !parent?.enabled,
+        },
+        {
+          name: 'offeredItems',
+          title: 'Oferowane produkty',
+          type: 'array',
+          description: 'Kursy lub pakiety kursów, które mają być zaproponowane po zakupie.',
+          hidden: ({ parent }) => !parent?.enabled,
+          of: [{ type: 'reference', to: [{ type: 'course' }, { type: 'bundle' }] }],
+          validation: Rule =>
+            Rule.custom((value, context) => {
+              if (context.parent?.enabled && (!value || value.length === 0))
+                return 'Dodaj co najmniej jeden produkt do oferty';
+              return true;
+            }),
+        },
+        {
+          name: 'discountAmount',
+          type: 'number',
+          title: 'Wysokość rabatu w groszach',
+          description: 'Wartość rabatu wyrażona w groszach (np. 5000 = 50 zł). Rabat dotyczy każdego oferowanego produktu.',
+          hidden: ({ parent }) => !parent?.enabled,
+          validation: Rule =>
+            Rule.custom((value, context) => {
+              if (context.parent?.enabled && !value) return 'Wymagane gdy oferta jest aktywna';
+              if (value !== undefined && value <= 0) return 'Rabat musi być większy od 0';
+              return true;
+            }),
+        },
+        {
+          name: 'discountTimeMinutes',
+          type: 'number',
+          title: 'Czas trwania oferty w minutach (opcjonalne)',
+          description: 'Po upływie tego czasu od momentu zakupu oferta wygaśnie (np. 30 = 30 minut). Zostaw puste, aby oferta była bezterminowa.',
+          hidden: ({ parent }) => !parent?.enabled,
+          validation: Rule =>
+            Rule.custom((value) => {
+              if (value !== undefined && value !== null && (!Number.isInteger(value) || value <= 1))
+                return 'Wartość musi być liczbą całkowitą większą od 1';
+              return true;
+            }),
+        },
+      ],
     },
+    { name: 'seo', type: 'seo', title: 'SEO', group: 'seo' },
   ],
   groups: [
-    {
-      name: 'configuration',
-      title: 'Konfiguracja',
-    },
-    {
-      name: 'prices',
-      title: 'Ceny',
-    },
-    {
-      name: 'description',
-      title: 'Treści',
-    },
-    {
-      name: 'preview',
-      title: 'Podgląd kursu',
-    },
-    {
-      name: 'seo',
-      title: 'SEO',
-    },
+    { name: 'configuration', title: 'Konfiguracja' },
+    { name: 'prices', title: 'Ceny' },
+    { name: 'description', title: 'Treści' },
+    { name: 'preview', title: 'Podgląd kursu' },
+    { name: 'postPurchaseOffer', title: 'Oferta po zakupie' },
+    { name: 'seo', title: 'SEO' },
   ],
   preview: {
-    select: {
-      name: 'name',
-      gallery: 'gallery',
-      price: 'price',
-      discount: 'discount',
-    },
+    select: { name: 'name', gallery: 'gallery', price: 'price', discount: 'discount' },
     prepare({ name, gallery, price, discount }) {
       return {
         title: name,

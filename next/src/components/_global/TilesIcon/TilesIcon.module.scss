@@ -67,6 +67,16 @@
         padding: clamp(20px, calc(32vw / 7.68), 32px) clamp(12px, calc(32vw / 7.68), 32px)
           clamp(12px, calc(32vw / 7.68), 32px);
       }
+
+      &[data-has-icon='false'] {
+        margin-top: 0;
+        padding-top: clamp(32px, calc(44vw / 7.68), 52px);
+
+        h2,
+        h3 {
+          margin-top: 0;
+        }
+      }
     }
 
     @media (max-width: 799px) {

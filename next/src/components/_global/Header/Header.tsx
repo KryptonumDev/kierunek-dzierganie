@@ -3,43 +3,12 @@ import Markdown from '@/components/ui/markdown';
 import { PRODUCT_CARD_QUERY } from '@/global/constants';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createClient as createAdminClient } from '@/utils/supabase-admin';
-import { createClient } from '@/utils/supabase-server';
 import Content from './_Content';
 import type { QueryProps } from './Header.types';
 
 const Header = async () => {
   const { global, cart, counts } = await query();
   const nav_annotation = <Markdown>{global.nav_Annotation ?? ''}</Markdown>;
-
-  const supabase = createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  let data;
-
-  if (user) {
-    const response = await supabase
-      .from('profiles')
-      .select(
-        `
-          id,
-          billing_data,
-          shipping_data,
-          virtual_wallet (
-            amount
-          ),
-          courses_progress (
-            course_id
-          )
-        `
-      )
-      .eq('id', user?.id)
-      .single();
-
-    data = response.data;
-  }
 
   const adminClient = createAdminClient();
 
@@ -74,14 +43,7 @@ const Header = async () => {
       PromoCodeCrossIcon={PromoCodeCrossIcon}
       cart={cart}
       counts={counts}
-      userEmail={user?.email}
-      shipping={data?.shipping_data}
-      billing={data?.billing_data}
-      userId={user?.id}
       deliverySettings={deliverySettings}
-      // @ts-expect-error - virtual_wallet is not array, bug in supabase
-      virtualWallet={data?.virtual_wallet?.amount}
-      ownedCourses={data?.courses_progress?.map((course) => course.course_id as string)}
       freeShipping={(freeShipping?.freeDeliveryAmount as number) ?? 0}
     />
   );

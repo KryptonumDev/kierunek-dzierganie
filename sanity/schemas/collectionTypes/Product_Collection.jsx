@@ -219,6 +219,13 @@ export default {
         'Klucz API biblioteki bunny.net, Jeśli klucz nie zostanie wybrany, filmy będą pobierane z bilbioteki testowej',
     },
     {
+      name: 'automatizationId',
+      type: 'string',
+      title: 'Identyfikator automatyzacji',
+      description: 'ID grupy w automatyzacji MailerLite - osoby kupujące ten produkt zostaną dodane do tej grupy',
+      group: 'configuration',
+    },
+    {
       name: 'seo',
       type: 'seo',
       title: 'SEO',

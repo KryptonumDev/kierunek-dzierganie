@@ -31,6 +31,14 @@
     justify-content: space-between;
     align-items: center;
     margin-top: clamp(16px, calc(28vw / 7.68), 36px);
+    transition: filter 0.3s ease, opacity 0.3s ease;
+
+    &.actions-loading {
+      filter: blur(3px);
+      opacity: 0.6;
+      pointer-events: none;
+      user-select: none;
+    }
 
     .price {
       p {

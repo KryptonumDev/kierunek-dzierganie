@@ -16,6 +16,7 @@ import type { TableOfContentTypes } from '@/components/_product/TableOfContent/T
 import type { VideoProvider } from '@/components/ui/VideoPlayer/VideoPlayer.types';
 
 export type Complexity = 'dla-poczatkujacych' | 'dla-srednio-zaawansowanych' | 'dla-zaawansowanych';
+export type CourseAccessMode = 'unlimited' | 'duration_months' | 'fixed_date';
 
 export type CtaType = {
   href: string;
@@ -34,6 +35,14 @@ export type ImgType = {
       lqip: string;
     };
   };
+};
+
+export type CourseGrantLink = {
+  _id: string;
+  automatizationId?: string | null;
+  previewGroupMailerLite?: string | null;
+  accessMode?: CourseAccessMode | null;
+  accessFixedDate?: string | null;
 };
 
 export type ProductCard = {
@@ -55,6 +64,9 @@ export type ProductCard = {
   rating: number;
   needDelivery: boolean;
   automatizationId: string | null;
+  previewGroupMailerLite?: string | null;
+  accessMode?: CourseAccessMode | null;
+  accessFixedDate?: string | null;
   materials_link?: {
     _id: string;
     gallery?: ImgType;
@@ -114,10 +126,8 @@ export type ProductCard = {
     featuredVideo: string;
     gallery: ImgType;
   }> | null;
-  courses: Array<{
-    _id: string;
-    automatizationId: string;
-  }>;
+  courses?: CourseGrantLink[] | null;
+  grantedCourses?: CourseGrantLink[] | null;
   related?: {
     _id: string;
     name: string;
@@ -315,7 +325,7 @@ export type ProductPageQueryProps = {
       name: string;
       value: string;
     }>;
-    relatedCourses?: { _id: string }[];
+    relatedCourses?: { _id: string; name?: string }[];
     rating: number;
     reviewsCount: number;
     description: DescriptionTypes[];
@@ -325,6 +335,7 @@ export type ProductPageQueryProps = {
 export type ProductPageQuery = {
   data: ProductPageQueryProps;
   user: string | undefined;
+  ownedCourses?: string[];
 };
 
 export type CoursePageQueryProps = {
@@ -365,7 +376,7 @@ export type CoursePageQueryProps = {
         } & ProductCard);
   } & TableOfContentTypes &
     ReviewsTypes;
-  card: ProductCard;
+  card: ProductCard | null;
   relatedCourses: ProductCard[];
 };
 
@@ -420,6 +431,10 @@ export type CoursesProgress = {
   id: number;
   course_id: string;
   owner_id: string;
+  access_granted_at?: string | null;
+  access_expires_at?: string | null;
+  access_source_order_id?: number | null;
+  mailerlite_access_removed_at?: string | null;
   progress: {
     [key: string]: {
       [key: string]: {
@@ -509,7 +524,8 @@ export type Order = {
     price: number;
   };
   virtualMoney?: number | null;
-  discount?: Discount | null;
+  discount?: Discount | null; // Legacy single discount
+  discounts?: Discount[]; // New multi-discount support
   billing: Billing;
   shipping: Shipping;
   orders_statuses: {
@@ -558,6 +574,22 @@ export type Shipping = {
   phone: string;
 };
 
+/**
+ * Category restrictions for coupons.
+ * Determines which products a coupon can be applied to.
+ * Null means no restrictions (coupon applies to all products).
+ */
+export type CategoryRestrictions = {
+  /** Restrict to specific product types: course, product (physical), or bundle */
+  product_types?: ('course' | 'product' | 'bundle')[] | null;
+  /** For courses/bundles: restrict to crocheting or knitting */
+  course_basis?: ('crocheting' | 'knitting')[] | null;
+  /** For physical products: restrict to specific categories */
+  product_categories?:
+    | ('instruction' | 'materials' | 'other' | 'crocheting' | 'knitting')[]
+    | null;
+} | null;
+
 export type Discount = {
   amount: number;
   code: string;
@@ -568,7 +600,20 @@ export type Discount = {
     id: string;
     name: string;
   };
+  // Optional new array-based field during transition; server may include it
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  discounted_products?: Array<{ id: string; name: string }> | any;
+  // Number of eligible line items in cart/order for FIXED PRODUCT coupons
+  eligibleCount?: number;
+  // If false, a FIXED PRODUCT discount applies once per order (no aggregation)
+  aggregates?: boolean;
   affiliatedBy: string | null;
+  // Category restrictions for the coupon (PERCENTAGE, FIXED CART, VOUCHER types)
+  category_restrictions?: CategoryRestrictions;
+  // Subtotal of items eligible for this coupon (when category_restrictions is set)
+  eligibleSubtotal?: number;
+  // IDs of cart items eligible for this coupon (when category_restrictions is set)
+  eligibleItemIds?: string[];
 };
 
 export type MapPoint = {

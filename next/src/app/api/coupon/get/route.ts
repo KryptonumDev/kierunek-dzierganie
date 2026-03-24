@@ -22,7 +22,10 @@ export async function POST(request: Request) {
           coupons_types (
             coupon_type
           ),
-          voucher_amount_left
+          voucher_amount_left,
+          discounted_product,
+          discounted_products,
+          category_restrictions
         `
       )
       .eq('code', code)

@@ -1,11 +1,16 @@
 import { DOMAIN } from '@/global/constants';
 import sanityFetch from '@/utils/sanity.fetch';
+import { filterAvailableStorefrontProducts } from '@/utils/storefront-course-availability';
 import type { MetadataRoute } from 'next';
 
 type FetchTypes = {
   [key: string]: {
     slug: string;
     displayPage?: boolean;
+    _type?: 'course' | 'bundle';
+    accessMode?: 'unlimited' | 'duration_months' | 'fixed_date' | null;
+    accessFixedDate?: string | null;
+    courses?: { accessMode?: 'unlimited' | 'duration_months' | 'fixed_date' | null; accessFixedDate?: string | null }[];
   }[];
 };
 
@@ -66,11 +71,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${DOMAIN}/historia-kursantek/${slug}`,
       lastModified: new Date(),
     })),
-    ...CrochetingCourses_Collection.map(({ slug }) => ({
+    ...filterAvailableStorefrontProducts(CrochetingCourses_Collection).map(({ slug }) => ({
       url: `${DOMAIN}/kursy-szydelkowania/${slug}`,
       lastModified: new Date(),
     })),
-    ...KnittingCourses_Collection.map(({ slug }) => ({
+    ...filterAvailableStorefrontProducts(KnittingCourses_Collection).map(({ slug }) => ({
       url: `${DOMAIN}/kursy-dziergania-na-drutach/${slug}`,
       lastModified: new Date(),
     })),
@@ -118,10 +123,24 @@ const query = async (): Promise<FetchTypes> => {
           'slug': slug.current
         },
         'CrochetingCourses_Collection': *[(_type == 'course' || _type == 'bundle') && basis =='crocheting' && visible == true][] {
-          'slug': slug.current
+          _type,
+          'slug': slug.current,
+          accessMode,
+          accessFixedDate,
+          courses[]->{
+            accessMode,
+            accessFixedDate,
+          }
         },
         'KnittingCourses_Collection': *[(_type == 'course' || _type == 'bundle') && basis =='knitting' && visible == true][] {
-          'slug': slug.current
+          _type,
+          'slug': slug.current,
+          accessMode,
+          accessFixedDate,
+          courses[]->{
+            accessMode,
+            accessFixedDate,
+          }
         },
         'CrochetingProducts_Collection': *[(_type=='product'|| _type=='voucher') && basis =='crocheting' && visible == true][] {
           'slug': slug.current
@@ -143,5 +162,15 @@ const query = async (): Promise<FetchTypes> => {
         }
       }
     `,
+    tags: [
+      'product',
+      'voucher',
+      'course',
+      'bundle',
+      'landingPage',
+      'BlogPost_Collection',
+      'BlogCategory_Collection',
+      'CustomerCaseStudy_Collection',
+    ],
   });
 };

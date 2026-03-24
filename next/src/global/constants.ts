@@ -131,6 +131,8 @@ export const PRODUCT_CARD_QUERY = `
   visible,
   basis,
   _type,
+  accessMode,
+  accessFixedDate,
   "reviewsCount": count(*[_type == 'productReviewCollection' && references(^._id)]),
   "rating": math::avg(*[_type == 'productReviewCollection' && references(^._id)]{rating}.rating),
   gallery[0]{
@@ -200,7 +202,18 @@ export const PRODUCT_CARD_QUERY = `
   courses[]->{
     _id,
     automatizationId,
+    previewGroupMailerLite,
+    accessMode,
+    accessFixedDate,
   },
+  grantedCourses[]->{
+    _id,
+    automatizationId,
+    previewGroupMailerLite,
+    accessMode,
+    accessFixedDate,
+  },
+  automatizationId,
 `;
 
 export const MATERIAL_PACKAGE_QUERY = `materialsPackage[] {

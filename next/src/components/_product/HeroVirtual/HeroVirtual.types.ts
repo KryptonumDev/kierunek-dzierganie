@@ -7,7 +7,7 @@ export type HeroVirtualTypes = {
     libraryId?: string;
     libraryApiKey?: string;
   };
-  alreadyBought: boolean;
+  alreadyBought?: boolean;
   previewLessons?: {
     slug: string;
   };

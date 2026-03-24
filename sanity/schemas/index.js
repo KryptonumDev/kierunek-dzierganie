@@ -17,6 +17,7 @@ import Logout_Page from './singleTypes/dashboard/Logout_Page';
 import NotFound_Page from './singleTypes/NotFound_Page';
 import PrivacyPolicy_Page, { Privacy_Policy_Page_Content } from './singleTypes/PrivacyPolicy_Page';
 import Statute_Page, { Statute_Page_Content } from './singleTypes/Statute_Page';
+import PartnershipProgram_Page, { PartnershipProgram_Page_Content } from './singleTypes/PartnershipProgram_Page';
 
 import Cart from './singleTypes/Cart';
 import Authorization_Page from './singleTypes/dashboard/Authorization_Page';
@@ -34,6 +35,7 @@ import MaterialsPackages_Page from './singleTypes/MaterialsPackages_Page';
 import OtherProducts_Page from './singleTypes/OtherProducts_Page';
 import OurBrands_Page from './singleTypes/OurBrands_Page';
 import StanVouchera_Page from './singleTypes/StanVoucher_Page';
+import GuestThankYou_Page from './singleTypes/GuestThankYou_Page';
 import Team_Page from './singleTypes/Team_Page';
 
 export const singleTypes = [
@@ -57,9 +59,11 @@ export const singleTypes = [
   NotFound_Page,
   PrivacyPolicy_Page,
   Statute_Page,
+  PartnershipProgram_Page,
   Blog_Page,
   Cart,
   StanVouchera_Page,
+  GuestThankYou_Page,
 ];
 
 // Collection Types
@@ -147,6 +151,7 @@ import MostPopularCourses from './components/MostPopularCourses';
 import Newsletter from './components/Newsletter';
 import Opinions, { Opinions_List } from './components/Opinions';
 import Partners from './components/Partners';
+import ProductOptionsSection, { ProductOptionsSection_Item } from './components/ProductOptionsSection';
 import productParameters from './components/productParameters';
 import productVariant from './components/productVariant';
 import Reviews from './components/Reviews';
@@ -245,6 +250,7 @@ export const schemaTypes = [
   Partners,
   Statute_Page_Content,
   Privacy_Policy_Page_Content,
+  PartnershipProgram_Page_Content,
   ImageAndText,
   MostPopularCourses,
   global_OrganizationSchema,
@@ -283,6 +289,8 @@ export const schemaTypes = [
   TeamShowcase_Item,
   TeamShowcase,
   LogoSection,
+  ProductOptionsSection,
+  ProductOptionsSection_Item,
   DiscountHero,
   TimerBox,
   ImageHeading,

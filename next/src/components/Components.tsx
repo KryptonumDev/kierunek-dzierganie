@@ -21,6 +21,10 @@ import Introduction, { Introduction_Query, type IntroductionProps } from '@/comp
 import Newsletter, { Newsletter_Query, type NewsletterProps } from '@/components/_global/Newsletter';
 import Opinions, { Opinions_Query, type OpinionsProps } from '@/components/_global/Opinions';
 import Partners, { Partners_Query, type PartnersProps } from '@/components/_global/Partners';
+import ProductOptionsSection, {
+  ProductOptionsSection_Query,
+  type ProductOptionsSectionProps,
+} from '@/components/_global/ProductOptionsSection';
 import Reviews, { Reviews_Query, type ReviewsProps } from '@/components/_global/Reviews';
 import SimpleCtaSection, {
   SimpleCtaSection_Query,
@@ -77,6 +81,7 @@ export type ComponentMap = {
   CompaniesShowcase: CompaniesShowcaseTypes;
   TeamShowcase: TeamShowcaseTypes;
   LogoSection: LogoSectionTypes;
+  ProductOptionsSection: ProductOptionsSectionProps;
 };
 
 export type ComponentProps = ComponentMap[keyof ComponentMap] & { _type: string };
@@ -156,6 +161,7 @@ export const getComponentMap = (item: ComponentProps, index: number) => {
     CompaniesShowcase: <CompaniesShowcase {...(item as CompaniesShowcaseTypes)} />,
     TeamShowcase: <TeamShowcase {...(item as TeamShowcaseTypes)} />,
     LogoSection: <LogoSection {...(item as LogoSectionTypes)} />,
+    ProductOptionsSection: <ProductOptionsSection {...(item as ProductOptionsSectionProps)} />,
   };
 };
 
@@ -207,6 +213,7 @@ export const ComponentsLits = `
     ${CompaniesShowcase_Query}
     ${TeamShowcase_Query}
     ${LogoSection_Query(false)}
+    ${ProductOptionsSection_Query}
 `;
 
 export const Components_Query = /* groq */ `

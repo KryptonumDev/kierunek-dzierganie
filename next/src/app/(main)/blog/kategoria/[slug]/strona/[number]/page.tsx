@@ -90,6 +90,7 @@ export async function generateStaticParams(): Promise<generateBlogCategoryPageSt
         }
       }
     `,
+    tags: ['BlogPost_Collection', 'BlogCategory_Collection'],
   });
 
   return data

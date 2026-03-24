@@ -49,9 +49,8 @@ export const TilesIcon_Item = {
     {
       name: 'icon',
       type: 'image',
-      title: 'Ikona',
-      description: 'Ikona w formacie SVG.',
-      validation: Rule => Rule.required(),
+      title: 'Ikona (opcjonalnie)',
+      description: 'Ikona w formacie SVG. Jeśli nie zostanie dodana, kafelek będzie wyświetlany bez ikony.',
     },
     {
       name: 'title',

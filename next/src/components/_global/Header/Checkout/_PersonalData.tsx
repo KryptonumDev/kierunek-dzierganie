@@ -2,15 +2,13 @@ import Button from '@/components/ui/Button';
 import Checkbox from '@/components/ui/Checkbox';
 import Input from '@/components/ui/Input';
 import Radio from '@/components/ui/Radio';
-import Select from '@/components/ui/Select';
 import { REGEX } from '@/global/constants';
-import type { MapPoint } from '@/global/types';
+import type { Discount, MapPoint } from '@/global/types';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 import { formatPrice } from '@/utils/price-formatter';
 import Script from 'next/script';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import countryList from 'react-select-country-list';
 import { toast } from 'react-toastify';
 import { useCart } from 'react-use-cart';
 import styles from './Checkout.module.scss';
@@ -27,6 +25,25 @@ const generateNewInput = (
   selectedMapPoint: MapPoint | null,
   shippingMethods: { name: string; map: boolean; price: number }[]
 ) => {
+  // Compute combined discount for multi-coupon support (matches cart and server rules)
+  const discounts = (input as unknown as { discounts?: Discount[] }).discounts;
+  const delivery = shippingMethods.find((method) => method.name === data.shippingMethod)?.price || 0;
+  const discountsAmount = (() => {
+    if (!Array.isArray(discounts) || discounts.length === 0)
+      return input.discount ? calculateDiscountAmount(input.amount, input.discount, delivery) : 0;
+    const productTotal = discounts
+      .filter((d) => d.type === 'FIXED PRODUCT')
+      .reduce((sum, d) => sum + calculateDiscountAmount(input.amount, d, 0), 0);
+    const baseAfterProducts = Math.max(0, input.amount + delivery + productTotal);
+    const voucher = discounts.find((d) => d.type === 'VOUCHER');
+    const voucherTotal = voucher ? -Math.min(baseAfterProducts, voucher.amount ?? 0) : 0;
+    const cartWide = discounts.find((d) => d.type === 'PERCENTAGE' || d.type === 'FIXED CART');
+    if (cartWide && discounts.length === 1) return calculateDiscountAmount(input.amount, cartWide, delivery);
+    return productTotal + voucherTotal;
+  })();
+
+  // For analytics you may want to join codes here; not needed in payload
+
   return {
     ...input,
     firmOrder: data.invoiceType === 'Firma',
@@ -36,15 +53,10 @@ const generateNewInput = (
       price: shippingMethods.find((method) => method.name === data.shippingMethod)?.price || 0,
       data: shippingMethods.find((method) => method.name === data.shippingMethod)?.map ? selectedMapPoint : '',
     },
+    discounts: discounts, // keep array for server
     totalAmount:
       input.amount +
-      (input.discount
-        ? calculateDiscountAmount(
-            input.amount,
-            input.discount,
-            shippingMethods.find((method) => method.name === data.shippingMethod)?.price
-          )
-        : 0) -
+      discountsAmount -
       (input.virtualMoney ? input.virtualMoney * 100 : 0) +
       (input.needDelivery && !input.freeDelivery ? Number(input.delivery) : 0),
     client_notes: data.client_notes,
@@ -53,7 +65,7 @@ const generateNewInput = (
       firstName: data.shippingSameAsBilling ? data.fullName : data.shippingFullName,
       address1: data.shippingSameAsBilling ? data.address : data.shippingAddress,
       city: data.shippingSameAsBilling ? data.city : data.shippingCity,
-      country: data.shippingSameAsBilling ? data.country : data.shippingCountry,
+      country: 'PL', // Hardcoded to Poland
       postcode: data.shippingSameAsBilling ? data.zipCode : data.shippingZipCode,
       email: data.email,
       phone: data.phoneNumber,
@@ -64,7 +76,7 @@ const generateNewInput = (
       firstName: data.fullName,
       address1: data.address,
       city: data.city,
-      country: data.country,
+      country: 'PL', // Hardcoded to Poland
       postcode: data.zipCode,
       email: data.email,
       phone: data.phoneNumber,
@@ -82,14 +94,12 @@ const generateDefaults = (input: InputState, shippingMethods: { name: string }[]
     email: input.billing.email,
     address: input.billing.address1,
     city: input.billing.city,
-    country: input.billing.country,
     zipCode: input.billing.postcode,
     phoneNumber: input.billing.phone,
 
     shippingFullName: input.shipping.firstName,
     shippingAddress: input.shipping.address1,
     shippingCity: input.shipping.city,
-    shippingCountry: input.shipping.country,
     shippingZipCode: input.shipping.postcode,
     client_notes: input.client_notes,
 
@@ -109,6 +119,8 @@ export default function PersonalData({
   shippingMethods,
   setCurrentShippingMethod,
 }: MappingProps) {
+  // Check if this is a guest checkout
+  const isGuestCheckout = input.isGuestCheckout || false;
   const [selectedMapPoint, setSelectedMapPoint] = useState<MapPoint | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [apaczka, setApaczka] = useState(null);
@@ -118,7 +130,6 @@ export default function PersonalData({
     handleSubmit,
     watch,
     setValue,
-    control,
     formState: { errors },
   } = useForm<FormValues>({ mode: 'all', defaultValues: generateDefaults(input, shippingMethods) });
 
@@ -137,7 +148,6 @@ export default function PersonalData({
     setValue('shippingAddress', watch('address'));
     setValue('shippingCity', watch('city'));
     setValue('shippingZipCode', watch('zipCode'));
-    setValue('shippingCountry', watch('country'));
   }, [shippingSameAsBilling, setValue, watch]);
 
   const initApaczka = () => {
@@ -171,64 +181,70 @@ export default function PersonalData({
     const newInput = generateNewInput(data, input, selectedMapPoint, shippingMethods);
 
     setInput(newInput as InputState);
-    await fetch('/api/payment/create', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        input: newInput,
-        description: 'Zamówienie w sklepie internetowym Kierunek Dzierganie',
-      }),
-    })
-      .then((res) => res.json())
-      .then(({ link }) => {
-        if (!link) throw new Error('Błąd podczas tworzenia zamówienia');
 
-        if (typeof fbq !== 'undefined') {
-          fbq('track', 'InitiateCheckout', {
-            content_ids: newInput.products?.array.map(({ id }) => id),
-            contents: newInput.products?.array.map((el) => ({
-              id: el.id,
-              item_price: el.price! / 100,
-              quantity: el.quantity,
-            })),
-            content_type: 'product',
-            value: newInput.totalAmount / 100,
-            currency: 'PLN',
-          });
-        }
+    try {
+      const response = await fetch('/api/payment/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          input: newInput,
+          description: 'Zamówienie w sklepie internetowym Kierunek Dzierganie',
+        }),
+      });
 
-        gtag('event', 'begin_checkout', {
-          currency: 'PLN',
-          value: newInput.totalAmount / 100,
-          coupon: newInput.discount?.code,
-          // transaction_id: token,
-          // shipping: newInput.needDelivery
-          //   ? newInput.freeDelivery
-          //     ? 0
-          //     : newInput.shippingMethod.price / 100
-          //   : undefined,
-          items: newInput.products?.array.map((el) => ({
+      const payload = await response.json();
+
+      if (!response.ok) {
+        toast(payload?.error ?? 'Nie można utworzyć zamówienia. Spróbuj ponownie.');
+        return;
+      }
+
+      const { link } = payload;
+
+      if (!link) {
+        throw new Error('Błąd podczas tworzenia zamówienia');
+      }
+
+      if (typeof fbq !== 'undefined') {
+        fbq('track', 'InitiateCheckout', {
+          content_ids: newInput.products?.array.map(({ id }) => id),
+          contents: newInput.products?.array.map((el) => ({
             id: el.id,
-            name: el.name,
-            discount: el.discount ? (el.price! - el.discount) / 100 : undefined,
-            price: el.price! / 100,
-            item_variant: el.variantId,
-            item_category: el.type,
-            item_category2: el.basis,
+            item_price: el.price! / 100,
             quantity: el.quantity,
           })),
+          content_type: 'product',
+          value: newInput.totalAmount / 100,
+          currency: 'PLN',
         });
+      }
 
-        emptyCart();
-        window.location.href = link;
-      })
-      .catch((err) => {
-        toast('Błąd podczas tworzenia zamówienia');
-        console.log(err);
-      })
-      .finally(() => setSubmitting(false));
+      gtag('event', 'begin_checkout', {
+        currency: 'PLN',
+        value: newInput.totalAmount / 100,
+        coupon: newInput.discount?.code,
+        items: newInput.products?.array.map((el) => ({
+          id: el.id,
+          name: el.name,
+          discount: el.discount ? (el.price! - el.discount) / 100 : undefined,
+          price: el.price! / 100,
+          item_variant: el.variantId,
+          item_category: el.type,
+          item_category2: el.basis,
+          quantity: el.quantity,
+        })),
+      });
+
+      emptyCart();
+      window.location.href = link;
+    } catch (err) {
+      console.log(err);
+      toast('Błąd podczas tworzenia zamówienia');
+    } finally {
+      setSubmitting(false);
+    }
   });
 
   return (
@@ -330,6 +346,16 @@ export default function PersonalData({
         {/*  */}
         {/*  */}
         <legend>Dane do faktury</legend>
+
+        {/* Guest checkout notice */}
+        {isGuestCheckout && (
+          <div className={styles['guest-notice']}>
+            <p>
+              <strong>Zakup jako gość</strong> - Twoje dane będą wykorzystane tylko do realizacji tego zamówienia.
+            </p>
+          </div>
+        )}
+
         <fieldset>
           {invoiceType === 'Firma' ? (
             <>
@@ -397,6 +423,10 @@ export default function PersonalData({
                   value: true,
                   message: 'Pole wymagane',
                 },
+                pattern: {
+                  value: REGEX.zip,
+                  message: 'Niepoprawny kod pocztowy',
+                },
               })}
               label='Kod pocztowy'
               errors={errors}
@@ -412,14 +442,6 @@ export default function PersonalData({
               errors={errors}
             />
           </div>
-          <Select<FormValues>
-            control={control}
-            name={'country'}
-            rules={{ required: 'Pole wymagane' }}
-            label='Kraj'
-            errors={errors}
-            options={countryList().native().nativeData}
-          />
           <Input
             register={register('phoneNumber', {
               required: {
@@ -477,6 +499,10 @@ export default function PersonalData({
                           value: true,
                           message: 'Pole wymagane',
                         },
+                        pattern: {
+                          value: REGEX.zip,
+                          message: 'Niepoprawny kod pocztowy',
+                        },
                       })}
                       label='Kod pocztowy'
                       errors={errors}
@@ -496,15 +522,6 @@ export default function PersonalData({
                       tabIndex={shippingSameAsBilling ? -1 : 0}
                     />
                   </div>
-                  <Select<FormValues>
-                    control={control}
-                    name={'shippingCountry'}
-                    rules={{ required: 'Pole wymagane' }}
-                    label='Kraj'
-                    errors={errors}
-                    options={countryList().native().nativeData}
-                    tabIndex={shippingSameAsBilling ? -1 : 0}
-                  />
                 </>
               )}
             </fieldset>

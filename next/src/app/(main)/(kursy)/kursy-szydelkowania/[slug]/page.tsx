@@ -12,36 +12,34 @@ import { Img_Query } from '@/components/ui/image';
 import { MATERIAL_PACKAGE_QUERY, PRODUCT_CARD_QUERY } from '@/global/constants';
 import ProductSchema from '@/global/Schema/ProductSchema';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
-import type { CoursePageQuery, CoursePageQueryProps, generateStaticParamsProps } from '@/global/types';
+import type { CoursePageQueryProps, generateStaticParamsProps } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
-import { createClient } from '@/utils/supabase-server';
+import {
+  filterAvailableStorefrontProducts,
+  getTodayInWarsawDateString,
+  isStorefrontProductAvailable,
+} from '@/utils/storefront-course-availability';
 import { notFound } from 'next/navigation';
 
 const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
   const {
-    data: {
-      product: {
-        _id,
-        _type,
-        printed_manual,
-        relatedBundle,
-        name,
-        description,
-        chapters,
-        reviews,
-        courses,
-        previewLessons,
-        materialsPackage,
-      },
-      product,
-      card,
-      relatedCourses,
+    product: {
+      _id,
+      _type,
+      printed_manual,
+      relatedBundle,
+      name,
+      description,
+      chapters,
+      reviews,
+      courses,
+      previewLessons,
+      materialsPackage,
     },
-    user,
-    courses_progress,
+    product,
+    card,
+    relatedCourses,
   } = await query(slug);
-
-  const alreadyBought = !!courses_progress?.find((course) => course.course_id === product._id);
 
   return (
     <>
@@ -65,7 +63,6 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
         visible={true}
       />
       <HeroVirtual
-        alreadyBought={alreadyBought}
         course={product}
         previewLessons={previewLessons}
       />
@@ -74,8 +71,7 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
         {materialsPackage && <RequiredMaterials materialsPackage={materialsPackage} />}
         {chapters && <TableOfContent chapters={chapters} />}
         <Reviews
-          user={user}
-          alreadyBought={!!courses_progress?.find((course) => course.course_id === product._id)}
+          alreadyBought={false}
           reviews={reviews}
           course={true}
           product={{
@@ -94,7 +90,7 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
           courses={relatedBundle.courses}
         />
       )}
-      {courses && (
+      {courses && card && (
         <Package
           product={card}
           heading={'Jeden pakiet – niezliczona ilość wiedzy'}
@@ -105,7 +101,7 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
         />
       )}
 
-      {printed_manual && alreadyBought && <PrintedManual data={printed_manual} />}
+      {printed_manual && <PrintedManual data={printed_manual} />}
       <RelatedProducts
         relatedCourses={relatedCourses}
         title={'Pozwól sobie na <strong>chwilę relaksu!</strong>'}
@@ -121,44 +117,19 @@ export async function generateMetadata({ params: { slug } }: { params: { slug: s
   return await QueryMetadata(['course', 'bundle'], `/kursy-szydelkowania/${slug}`, slug);
 }
 
-const query = async (slug: string): Promise<CoursePageQuery> => {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const id = [];
-
-  const res = await supabase
-    .from('profiles')
-    .select(
-      `
-        id,
-        billing_data->firstName,
-        courses_progress (
-          id,
-          course_id,
-          owner_id,
-          progress
-        )
-      `
-    )
-    .eq('id', user?.id)
-    .single();
-
-  if (res.data?.courses_progress) {
-    id.push(...res.data!.courses_progress.map((course) => course.course_id));
-  }
-
+const query = async (slug: string): Promise<CoursePageQueryProps> => {
   const data = await sanityFetch<CoursePageQueryProps>({
     query: /* groq */ `
     {
       "product": *[(_type == 'course' || _type == 'bundle') && basis == 'crocheting' && slug.current == $slug][0] {
+        _type,
         name,
         'slug': slug.current,
         _id,
         basis,
         type,
+        accessMode,
+        accessFixedDate,
         price,
         discount,
         featuredVideo,
@@ -214,28 +185,53 @@ const query = async (slug: string): Promise<CoursePageQuery> => {
       "card": *[_type == 'bundle' && basis == 'crocheting' && slug.current == $slug][0] {
         ${PRODUCT_CARD_QUERY}
       },
-      "relatedCourses": *[_type == "course" && basis == 'crocheting' && visible == true && !(_id in $id) && !(slug.current == $slug)][0...3] {
+      "relatedCourses": *[_type == "course" && basis == 'crocheting' && visible == true && !(slug.current == $slug)][0...3] {
         ${PRODUCT_CARD_QUERY}
       }
     }
     `,
-    params: { slug, id },
+    params: { slug },
     tags: ['course', 'bundle', 'productReviewCollection'],
   });
-  !data?.product?._id && notFound();
-  return { data: data, user: res.data?.firstName as string, courses_progress: res.data?.courses_progress };
+  const todayWarsaw = getTodayInWarsawDateString();
+  if (!data?.product?._id || !isStorefrontProductAvailable(data.product, todayWarsaw)) notFound();
+
+  return {
+    ...data,
+    product: {
+      ...data.product,
+      relatedBundle: isStorefrontProductAvailable(data.product.relatedBundle, todayWarsaw) ? data.product.relatedBundle : null,
+    },
+    card: isStorefrontProductAvailable(data.card, todayWarsaw) ? data.card : null,
+    relatedCourses: filterAvailableStorefrontProducts(data.relatedCourses, todayWarsaw),
+  };
 };
 
 export async function generateStaticParams(): Promise<generateStaticParamsProps[]> {
-  const data: generateStaticParamsProps[] = await sanityFetch({
+  const data: Array<
+    generateStaticParamsProps & {
+      _type: 'course' | 'bundle';
+      accessMode?: 'unlimited' | 'duration_months' | 'fixed_date' | null;
+      accessFixedDate?: string | null;
+      courses?: { accessMode?: 'unlimited' | 'duration_months' | 'fixed_date' | null; accessFixedDate?: string | null }[];
+    }
+  > = await sanityFetch({
     query: /* groq */ `
       *[(_type == 'course' || _type == 'bundle') && basis == 'crocheting'] {
+        _type,
         'slug': slug.current,
+        accessMode,
+        accessFixedDate,
+        courses[]->{
+          accessMode,
+          accessFixedDate,
+        }
       }
     `,
+    tags: ['course', 'bundle'],
   });
 
-  return data.map(({ slug }) => ({
+  return filterAvailableStorefrontProducts(data).map(({ slug }) => ({
     slug,
   }));
 }

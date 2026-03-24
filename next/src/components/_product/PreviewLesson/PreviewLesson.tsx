@@ -12,8 +12,16 @@ import { toast } from 'react-toastify';
 import { setCookie } from '@/utils/set-cookie';
 import VideoPlayer from '@/components/ui/VideoPlayer/VideoPlayer';
 
-const LessonHero = ({ lesson, course, alreadySubscribed }: Props) => {
+const LessonHero = ({ lesson, course, alreadySubscribed: initialAlreadySubscribed }: Props) => {
   const [status, setStatus] = useState({ sending: false });
+
+  // Check cookie client-side if not provided from server
+  const alreadySubscribed = (() => {
+    if (initialAlreadySubscribed !== undefined) return initialAlreadySubscribed;
+    if (typeof document === 'undefined' || !course.previewGroupMailerLite) return false;
+    return document.cookie.split('; ').some((c) => c.startsWith(`${course.previewGroupMailerLite}=`));
+  })();
+
   const [popupOpen, setPopupOpen] = useState(alreadySubscribed ? false : !!course.previewGroupMailerLite);
 
   const {
@@ -51,7 +59,7 @@ const LessonHero = ({ lesson, course, alreadySubscribed }: Props) => {
   };
 
   const handleTimeUpdate = (seconds: number) => {
-    localStorage.setItem(`video-progress-${lesson.video}-${lesson.videoProvider || 'vimeo'}`, String(seconds));
+    window.localStorage.setItem(`video-progress-${lesson.video}-${lesson.videoProvider || 'vimeo'}`, String(seconds));
   };
 
   return (
@@ -136,9 +144,14 @@ const LessonHero = ({ lesson, course, alreadySubscribed }: Props) => {
               provider={lesson.videoProvider}
               libraryId={course.libraryId}
               libraryApiKey={course.libraryApiKey}
-              start={Number(
-                localStorage?.getItem(`video-progress-${lesson.video}-${lesson.videoProvider || 'vimeo'}`) ?? 0
-              )}
+              start={
+                typeof window === 'undefined'
+                  ? 0
+                  : Number(
+                      window.localStorage.getItem(`video-progress-${lesson.video}-${lesson.videoProvider || 'vimeo'}`) ??
+                        0
+                    )
+              }
               onTimeUpdate={handleTimeUpdate}
             />
           </div>

@@ -7,10 +7,9 @@
     "sanity"
   ],
   "scripts": {
-    "dev": "concurrently \"cd next && bun dev\" \"cd sanity && bun dev\" --names \"next,sanity\" --prefix-colors \"blue,green\"",
     "dev:next": "cd next && bun dev",
     "dev:sanity": "cd sanity && bun dev",
-    "dev:all": "concurrently \"bun dev:next\" \"bun dev:sanity\"",
+    "dev": "concurrently \"bun dev:next\" \"bun dev:sanity\"",
     "build": "cd next && bun build",
     "build:sanity": "cd sanity && bun build",
     "build:all": "bun run build && bun run build:sanity",

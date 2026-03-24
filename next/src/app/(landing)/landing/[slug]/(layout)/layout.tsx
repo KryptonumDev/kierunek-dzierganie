@@ -8,7 +8,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <>
       <Nav />
       <main id='main'>{children}</main>
-      <ToastContainer className='toast' />
+      <ToastContainer className='toast' limit={10} />
       <Footer />
     </>
   );

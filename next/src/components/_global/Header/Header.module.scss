@@ -670,6 +670,58 @@
             font-size: calc(18rem / 16);
           }
         }
+
+        .couponsBreakdown {
+          display: grid;
+          gap: 6px;
+
+          .couponsHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--primary-700, #766965);
+            font-size: calc(14rem / 16);
+            font-weight: 300;
+            line-height: 150%;
+
+            span:last-child {
+              color: var(--primary-800, #53423c);
+              font-size: calc(18rem / 16);
+            }
+          }
+
+          .couponDetail {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-left: 12px;
+            font-size: calc(12rem / 16);
+            color: var(--primary-600);
+            line-height: 140%;
+
+            .couponDetailInfo {
+              display: flex;
+              flex-direction: column;
+              gap: 2px;
+
+              .couponType {
+                margin-left: 4px;
+                color: var(--primary-500);
+              }
+
+              .couponDetailRestriction {
+                font-size: calc(11rem / 16);
+                color: var(--primary-500);
+              }
+            }
+
+            > span:last-child {
+              font-size: calc(14rem / 16);
+              color: var(--primary-700);
+              white-space: nowrap;
+            }
+          }
+        }
       }
     }
 
@@ -725,6 +777,51 @@
             }
           }
         }
+
+        .appliedCoupons {
+          grid-column: 1 / -1;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          margin-top: 4px;
+
+          .couponTagWrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+          }
+
+          .couponTag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 16px;
+            background: var(--primary-300);
+            color: var(--primary-800);
+            font-size: calc(14rem / 16);
+            width: fit-content;
+
+            button {
+              padding: 0 6px;
+              min-width: 28px;
+              min-height: 28px;
+              font-size: 18px;
+              line-height: 1;
+              text-decoration: none;
+            }
+          }
+
+          .couponRestriction {
+            font-size: calc(12rem / 16);
+            color: var(--primary-600);
+            padding-left: 10px;
+
+            .couponEligibility {
+              color: var(--primary-500);
+            }
+          }
+        }
       }
 
       .virtualCoins {
@@ -753,6 +850,31 @@
             right: 8px;
             bottom: 5px;
           }
+        }
+      }
+
+      .virtualMoneyWrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        .checkboxWrapper {
+          &[data-disabled='true'] {
+            opacity: 0.4;
+            pointer-events: none;
+            user-select: none;
+          }
+        }
+
+        .restrictionMessage {
+          margin: 0;
+          padding: 12px 16px;
+          background: var(--primary-300);
+          border-left: 3px solid var(--primary-500);
+          border-radius: 4px;
+          font-size: calc(13rem / 16);
+          line-height: 1.5;
+          color: var(--primary-800);
         }
       }
     }

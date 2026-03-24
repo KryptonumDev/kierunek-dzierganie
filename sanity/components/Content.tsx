@@ -33,6 +33,7 @@ export const contentArray = [
   { type: 'CompaniesShowcase' },
   { type: 'TeamShowcase' },
   { type: 'LogoSection' },
+  { type: 'ProductOptionsSection' },
 ];
 
 export default {

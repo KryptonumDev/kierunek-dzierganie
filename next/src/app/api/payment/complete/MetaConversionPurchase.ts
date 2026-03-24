@@ -11,8 +11,14 @@ function hashData(data: string) {
   return crypto.createHash('sha256').update(data).digest('hex');
 }
 
-export const MetaConversionPurchase = async ({ user_id, transaction_id, value, items, email }: {
-  user_id: string;
+export const MetaConversionPurchase = async ({
+  user_id,
+  transaction_id,
+  value,
+  items,
+  email,
+}: {
+  user_id: string | null;
   transaction_id: string;
   value: number;
   items: {
@@ -28,7 +34,7 @@ export const MetaConversionPurchase = async ({ user_id, transaction_id, value, i
   const fbc = getFbc();
 
   console.log('[Meta Event] Sending purchase event with:', {
-    user_id,
+    user_id: user_id || 'guest',
     transaction_id,
     value,
     items,
@@ -38,34 +44,39 @@ export const MetaConversionPurchase = async ({ user_id, transaction_id, value, i
   const META_ACCESS_TOKEN = process.env.META_ACCESS_TOKEN;
 
   try {
-    const response = await fetch(`https://graph.facebook.com/v20.0/${META_PIXEL_ID}/events?access_token=${META_ACCESS_TOKEN}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        data: [{
-          event_id: event_id,
-          event_name: 'Purchase',
-          event_time: Math.floor(Date.now() / 1000),
-          user_data: {
-            em: hashData(email.toLowerCase()),
-            external_id: hashData(user_id),
-            fbp: fbp,
-            fbc: fbc,
-          },
-          custom_data: {
-            currency: 'PLN',
-            value: value,
-            content_ids: items.map(item => item.item_id),
-            contents: items.map(item => ({
-              id: item.item_id,
-              quantity: item.quantity,
-            })),
-            content_type: 'product',
-            order_id: transaction_id,
-          },
-        }],
-      }),
-    });
+    const response = await fetch(
+      `https://graph.facebook.com/v20.0/${META_PIXEL_ID}/events?access_token=${META_ACCESS_TOKEN}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          data: [
+            {
+              event_id: event_id,
+              event_name: 'Purchase',
+              event_time: Math.floor(Date.now() / 1000),
+              user_data: {
+                em: hashData(email.toLowerCase()),
+                ...(user_id && { external_id: hashData(user_id) }), // Only include external_id if user_id exists
+                fbp: fbp,
+                fbc: fbc,
+              },
+              custom_data: {
+                currency: 'PLN',
+                value: value,
+                content_ids: items.map((item) => item.item_id),
+                contents: items.map((item) => ({
+                  id: item.item_id,
+                  quantity: item.quantity,
+                })),
+                content_type: 'product',
+                order_id: transaction_id,
+              },
+            },
+          ],
+        }),
+      }
+    );
 
     console.log('Meta purchase event response:', await response.json());
     if (!response.ok) {

@@ -16,15 +16,19 @@ export const useCartItems = () => {
           query: `
             *[(_type == 'product' || _type == 'course' || _type == 'bundle' || _type == 'voucher') && _id in $id]{
               ${PRODUCT_CARD_QUERY}
-              "related": *[_type == 'course' && references(^._id)][0]{
-                _id,
-                name
-              }
+              "related": *[
+                _type == 'course' && (
+                  materials_link._ref == ^._id ||
+                  ^._id in related_products[]._ref ||
+                  printed_manual._ref == ^._id
+                )
+              ][0]{ _id, name }
             }
           `,
           params: {
             id: rawCart?.map((el) => el.product) || [],
           },
+          tags: ['product', 'course', 'bundle', 'voucher'],
         });
 
         const newArr = rawCart
@@ -56,12 +60,12 @@ export const useCartItems = () => {
             const variant = item.variants?.find((v) => v._id === el.variant) || null;
 
             // check if quantity is not higher than countInStock
-            const quantity =
-              item._type === 'course' || item._type === 'bundle' || item._type === 'voucher'
-                ? 1
-                : variant
-                  ? Math.min(el.quantity!, variant.countInStock)
-                  : Math.min(el.quantity!, item.countInStock!);
+            const isNonQuantifiable = item._type === 'course' || item._type === 'bundle' || item._type === 'voucher';
+            const quantity = isNonQuantifiable
+              ? 1
+              : variant
+                ? Math.min(el.quantity!, variant.countInStock)
+                : Math.min(el.quantity!, item.countInStock!);
 
             if (item._type === 'voucher') {
               return {
@@ -121,9 +125,17 @@ export const useCartItems = () => {
             return item.id === productId;
           })!;
 
+          // Apply the same quantity validation logic as in initial processing
+          const isNonQuantifiable = el._type === 'course' || el._type === 'bundle' || el._type === 'voucher';
+          const validatedQuantity = isNonQuantifiable
+            ? 1
+            : el.variant
+              ? Math.min(itemInRawCart.quantity!, el.variant.countInStock)
+              : Math.min(itemInRawCart.quantity!, el.countInStock!);
+
           return {
             ...el,
-            quantity: itemInRawCart.quantity!,
+            quantity: validatedQuantity,
           };
         });
 
@@ -136,6 +148,16 @@ export const useCartItems = () => {
       });
 
       setFetchedItems(newArr);
+      // Normalize react-use-cart quantities for non-quantifiable items to avoid double-add effects
+      newArr.forEach((item) => {
+        if (item._type === 'course' || item._type === 'bundle' || item._type === 'voucher') {
+          const productId = item.variant ? item._id + 'variant:' + item.variant._id : item._id;
+          const raw = rawCart.find((r) => r.id === productId);
+          if (raw && (raw.quantity ?? 1) !== 1) {
+            updateItemQuantity(productId, 1);
+          }
+        }
+      });
       setLoading(false);
     } else {
       setLoading(false);
@@ -144,5 +166,14 @@ export const useCartItems = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rawCart]);
 
-  return { cart: rawCart, fetchedItems, updateItemQuantity, updateItem, removeItem, loading, totalItems, totalUniqueItems };
+  return {
+    cart: rawCart,
+    fetchedItems,
+    updateItemQuantity,
+    updateItem,
+    removeItem,
+    loading,
+    totalItems,
+    totalUniqueItems,
+  };
 };

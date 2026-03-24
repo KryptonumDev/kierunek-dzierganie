@@ -1,4 +1,4 @@
-import type { Billing, Discount, ImgType, ProductCard, Shipping } from '@/global/types';
+import type { Discount, ImgType, ProductCard } from '@/global/types';
 import { ReactNode } from 'react';
 import type { Item } from 'react-use-cart';
 
@@ -11,7 +11,6 @@ export type useCartItems = {
 
 export type QueryProps = {
   markdownNavAnnotation: JSX.Element;
-  ownedCourses?: string[];
   global: {
     image_knitting: ImgType;
     image_crochet: ImgType;
@@ -44,11 +43,6 @@ export type QueryProps = {
   NavigationCrossIcon: React.ReactNode;
   PopupCrossIcon: React.ReactNode;
   PromoCodeCrossIcon: React.ReactNode;
-  userId?: string;
-  userEmail?: string;
-  shipping?: Shipping;
-  billing?: Billing;
-  virtualWallet: number;
   deliverySettings: {
     deliveryPrice: number;
     paczkomatPrice: number;
@@ -79,9 +73,9 @@ export type Cart = {
   PromoCodeCrossIcon: React.ReactNode;
   virtualWallet: number;
   setUsedVirtualMoney: React.Dispatch<React.SetStateAction<number | null>>;
-  setUsedDiscount: React.Dispatch<React.SetStateAction<Discount | null>>;
+  setUsedDiscounts: React.Dispatch<React.SetStateAction<Discount[]>>;
   usedVirtualMoney: number | null;
-  usedDiscount: Discount | null;
+  usedDiscounts: Discount[];
   userId?: string;
   deliverySettings: {
     deliveryPrice: number;

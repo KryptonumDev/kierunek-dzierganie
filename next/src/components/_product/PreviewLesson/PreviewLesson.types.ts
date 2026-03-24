@@ -1,11 +1,15 @@
 import type { VideoProvider } from '@/components/ui/VideoPlayer/VideoPlayer.types';
+import type { CourseAccessMode } from '@/global/types';
 
 export type Props = {
-  alreadySubscribed: boolean;
+  alreadySubscribed?: boolean;
   course: {
     slug: string;
     name: string;
     _id: string;
+    _type?: 'course';
+    accessMode?: CourseAccessMode | null;
+    accessFixedDate?: string | null;
     libraryId?: string;
     libraryApiKey?: string;
     previewGroupMailerLite?: string;

@@ -27,7 +27,6 @@ export type PersonalDataFormTypes = {
   address1: string;
   postcode: string;
   city: string;
-  country: string;
   phone: string;
   invoiceType: 'Osoba prywatna' | 'Firma';
 

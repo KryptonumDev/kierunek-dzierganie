@@ -1,7 +1,11 @@
 import { P24, Currency, Country, Language, Encoding } from '@ingameltd/node-przelewy24';
 import { NextResponse } from 'next/server';
+import { siteUrl } from '@/utils/site-url';
 
 export const dynamic = 'force-dynamic';
+
+// Polish postal code regex: XX-XXX (two digits, hyphen, three digits)
+const POLISH_POSTAL_CODE_REGEX = /^\d{2}-\d{3}$/;
 
 export async function POST(request: Request) {
   const {
@@ -25,6 +29,15 @@ export async function POST(request: Request) {
     description: string;
   } = await request.json();
 
+  // Server-side postal code validation
+  if (!postcode || !POLISH_POSTAL_CODE_REGEX.test(postcode)) {
+    console.error('Invalid postal code in recreate:', postcode);
+    return NextResponse.json(
+      { error: 'Niepoprawny kod pocztowy (wymagany format: XX-XXX, np. 00-001)' },
+      { status: 400 }
+    );
+  }
+
   try {
     const p24 = new P24(
       Number(process.env.P24_MERCHANT_ID!),
@@ -36,7 +49,14 @@ export async function POST(request: Request) {
       }
     );
 
+    // Log P24 environment (server-side only)
+    if (typeof window === 'undefined') {
+      console.log(`💳 P24 Recreate Mode: ${process.env.SANDBOX === 'true' ? 'SANDBOX (Test)' : 'PRODUCTION (Real)'}`);
+    }
+
     const session = String(id + 'X' + Math.floor(Math.random() * 10000));
+    
+
 
     const order = {
       sessionId: session,
@@ -46,8 +66,8 @@ export async function POST(request: Request) {
       email: email,
       country: Country.Poland,
       language: Language.PL,
-      urlReturn: `https://kierunekdzierganie.pl/api/payment/verify/?session=${session}&id=${id}`,
-      urlStatus: `https://kierunekdzierganie.pl/api/payment/complete/?session=${session}&id=${id}`,
+      urlReturn: `${siteUrl}/api/payment/verify/?session=${session}&id=${id}`,
+      urlStatus: `${siteUrl}/api/payment/complete/?session=${session}&id=${id}`,
       timeLimit: 60,
       encoding: Encoding.UTF8,
       city: city,

@@ -3,15 +3,12 @@ import sanityFetch from '@/utils/sanity.fetch';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
 import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import type { generateLessonStaticParamsProps } from '@/global/types';
-import { createClient } from '@/utils/supabase-server';
 import PreviewLesson, { type PreviewLessonTypes } from '@/components/_product/PreviewLesson';
 import Reviews from '@/components/_product/Reviews';
-import { cookies } from 'next/headers';
+import { filterAvailableStorefrontProducts, getTodayInWarsawDateString, isStorefrontProductAvailable } from '@/utils/storefront-course-availability';
 
 const Course = async ({ params: { slug, lesson: lessonSlug } }: { params: { slug: string; lesson: string } }) => {
   const { course, lesson } = await query(slug, lessonSlug);
-
-  const alreadySubscribed = course.previewGroupMailerLite ? !!cookies().get(course.previewGroupMailerLite) : false;
 
   return (
     <>
@@ -35,10 +32,8 @@ const Course = async ({ params: { slug, lesson: lessonSlug } }: { params: { slug
       <PreviewLesson
         course={course}
         lesson={lesson}
-        alreadySubscribed={alreadySubscribed}
       />
       <Reviews
-        user={''}
         alreadyBought={false}
         reviews={course.reviews}
         course={true}
@@ -54,34 +49,6 @@ const Course = async ({ params: { slug, lesson: lessonSlug } }: { params: { slug
 export default Course;
 
 const query = async (slug: string, lesson: string): Promise<PreviewLessonTypes> => {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const id = [];
-
-  const res = await supabase
-    .from('profiles')
-    .select(
-      `
-        id,
-        billing_data->firstName,
-        courses_progress (
-          id,
-          course_id,
-          owner_id,
-          progress
-        )
-      `
-    )
-    .eq('id', user?.id)
-    .single();
-
-  if (res.data?.courses_progress) {
-    id.push(...res.data!.courses_progress.map((course) => course.course_id));
-  }
-
   const data: PreviewLessonTypes = await sanityFetch({
     query: /* groq */ `
     {
@@ -100,6 +67,9 @@ const query = async (slug: string, lesson: string): Promise<PreviewLessonTypes> 
       _id,
       name,
       "slug": slug.current,
+      _type,
+      accessMode,
+      accessFixedDate,
       libraryId,
       libraryApiKey,
       previewGroupMailerLite,
@@ -123,6 +93,7 @@ const query = async (slug: string, lesson: string): Promise<PreviewLessonTypes> 
   });
 
   !data?.course?._id && notFound();
+  if (!isStorefrontProductAvailable(data.course, getTodayInWarsawDateString())) notFound();
   !data?.lesson?._id && notFound();
   return data;
 };
@@ -132,18 +103,28 @@ export async function generateMetadata({ params: { slug, lesson } }: { params: {
 }
 
 export async function generateStaticParams() {
-  const data: generateLessonStaticParamsProps[] = await sanityFetch({
+  const data: Array<
+    generateLessonStaticParamsProps & {
+      _type: 'course';
+      accessMode?: 'unlimited' | 'duration_months' | 'fixed_date' | null;
+      accessFixedDate?: string | null;
+    }
+  > = await sanityFetch({
     query: /* groq */ `
       *[_type == 'course' && basis == 'crocheting'] {
+        _type,
         'slug': slug.current,
+        accessMode,
+        accessFixedDate,
         previewLessons[]->{
           'slug': slug.current,
         }
       }
     `,
+    tags: ['course', 'lesson'],
   });
 
-  return data
+  return filterAvailableStorefrontProducts(data)
     .filter((el) => el.previewLessons?.length > 0)
     .flatMap(({ previewLessons, slug }) =>
       previewLessons.map(({ slug: lesson }) => ({

@@ -12,6 +12,7 @@ export type Props = {
       message: string;
     } | null;
   };
+  ownedCourses?: string[];
   data: {
     price: number;
     discount?: number;
@@ -20,5 +21,9 @@ export type Props = {
     _type: string;
     variant?: string;
     basis?: string;
-  }
+    relatedCourse?: {
+      _id: string;
+      name?: string;
+    } | null;
+  };
 };

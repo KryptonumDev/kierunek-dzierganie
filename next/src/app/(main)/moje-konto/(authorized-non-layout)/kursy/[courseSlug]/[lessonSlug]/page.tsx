@@ -8,6 +8,7 @@ import Seo from '@/global/Seo';
 import { PRODUCT_CARD_QUERY } from '@/global/constants';
 import type { Chapter, Course, CoursesProgress, File, ImgType } from '@/global/types';
 import type { VideoProvider } from '@/components/ui/VideoPlayer/VideoPlayer.types';
+import { findActiveCourseProgress } from '@/utils/course-access';
 import { checkCourseProgress } from '@/utils/check-course-progress';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createClient } from '@/utils/supabase-server';
@@ -163,7 +164,8 @@ const query = async (courseSlug: string, lessonSlug: string) => {
           id,
           course_id,
           owner_id,
-          progress
+          progress,
+          access_expires_at
         )
       `
     )
@@ -289,14 +291,14 @@ const query = async (courseSlug: string, lessonSlug: string) => {
     params: { lessonSlug: lessonSlug, courseSlug: courseSlug },
   });
 
-  if (!res.data?.courses_progress?.some((el) => el.course_id === data?.course._id)) return notFound();
+  if (!res.data) return notFound();
+
+  const activeCourseProgress = findActiveCourseProgress(res.data?.courses_progress, data?.course._id);
+  if (!activeCourseProgress) return notFound();
 
   if (!data.lesson) return notFound();
 
-  const progress = await checkCourseProgress(
-    data.course,
-    res.data!.courses_progress.find((el) => el.course_id === data.course._id)!
-  );
+  const progress = await checkCourseProgress(data.course, activeCourseProgress);
 
   return {
     ...data,

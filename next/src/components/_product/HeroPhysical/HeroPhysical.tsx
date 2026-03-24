@@ -10,13 +10,23 @@ import ColorPicker from './ColorPicker';
 import styles from './HeroPhysical.module.scss';
 import type { AttributesTypes, Props, SelectedAttributesTypes } from './HeroPhysical.types';
 import type { VideoProvider } from '@/components/ui/VideoPlayer/VideoPlayer.types';
+import { getProductUserData } from '@/utils/user-actions';
 
 const gtag: Gtag.Gtag = function () {
   // eslint-disable-next-line prefer-rest-params
   window.dataLayer?.push(arguments);
 };
 
-const HeroPhysical = ({ name, id, variants, physical }: Props) => {
+const HeroPhysical = ({ name, id, variants, physical, relatedCourses, ownedCourses: initialOwnedCourses }: Props) => {
+  // Fetch ownedCourses client-side if not provided (allows static page rendering)
+  const [ownedCourses, setOwnedCourses] = useState(initialOwnedCourses);
+  useEffect(() => {
+    if (initialOwnedCourses === undefined) {
+      getProductUserData().then((data) => {
+        if (data.ownedCourses.length > 0) setOwnedCourses(data.ownedCourses);
+      });
+    }
+  }, [initialOwnedCourses]);
   const attributes = useMemo(() => {
     if (!variants) return [];
     const arr = [] as AttributesTypes;
@@ -71,7 +81,7 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
         libraryApiKey: chosenVariant.libraryApiKey,
       });
     }
-    chosenVariant?.gallery!.forEach((el) => images.push({ type: 'image', data: el }));
+    chosenVariant?.gallery?.forEach((el) => el && images.push({ type: 'image', data: el }));
     return images;
   }, [chosenVariant]);
 
@@ -141,6 +151,8 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
       return () => clearTimeout(timeoutId);
     }
   }, [attributes.length, chosenVariant, id, physical.basis]);
+
+  const requiredCourse = relatedCourses?.[0] ?? null;
 
   return (
     <section className={styles['HeroPhysical']}>
@@ -271,6 +283,7 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
             variant={variants ? chosenVariant?._id : undefined}
             disabled={!count || chosenVariant!.countInStock <= 0}
             quantity={count}
+            ownedCourses={ownedCourses}
             data={{
               price: chosenVariant!.price,
               discount: chosenVariant!.discount,
@@ -279,6 +292,7 @@ const HeroPhysical = ({ name, id, variants, physical }: Props) => {
               _type: 'product',
               variant: variants ? chosenVariant!._id : undefined,
               basis: physical.basis,
+              relatedCourse: requiredCourse,
             }}
           />
         </div>

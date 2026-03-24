@@ -7,6 +7,7 @@ import Courses from './Courses';
 import Articles from './Articles';
 import Products from './Products';
 import NotFound from './NotFound';
+import { searchProducts } from './_actions';
 
 const Search = ({ SearchIcon, CloseIcon }: { SearchIcon: React.ReactNode; CloseIcon: React.ReactNode }) => {
   const [isSearching, setIsSearching] = useState(false);
@@ -33,11 +34,8 @@ const Search = ({ SearchIcon, CloseIcon }: { SearchIcon: React.ReactNode; CloseI
 
   async function getSearchResults(value: string) {
     try {
-      const response = await fetch(`/api/search?search=${value}`, {
-        method: 'GET',
-      });
-      const results = await response.json();
-      setSearchResults(results.data);
+      const results = await searchProducts(value);
+      setSearchResults(results);
     } catch (error) {
       console.log(error);
     }
