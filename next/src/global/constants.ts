@@ -131,6 +131,8 @@ export const PRODUCT_CARD_QUERY = `
   visible,
   basis,
   _type,
+  accessMode,
+  accessFixedDate,
   "reviewsCount": count(*[_type == 'productReviewCollection' && references(^._id)]),
   "rating": math::avg(*[_type == 'productReviewCollection' && references(^._id)]{rating}.rating),
   gallery[0]{
@@ -200,6 +202,8 @@ export const PRODUCT_CARD_QUERY = `
   courses[]->{
     _id,
     automatizationId,
+    accessMode,
+    accessFixedDate,
   },
   automatizationId,
 `;

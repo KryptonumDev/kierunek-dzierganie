@@ -4,6 +4,7 @@ import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import { Img_Query } from '@/components/ui/image';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
 import type { Complexity, ImgType } from '@/global/types';
+import { getActiveCourseProgressList, getActiveOwnedCourseIds } from '@/utils/course-access';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createClient } from '@/utils/supabase-server';
 
@@ -11,7 +12,7 @@ const currentUrl = '/moje-konto/kursy';
 const page = [{ name: 'Moje kursy', path: currentUrl }];
 
 type QueryProps = {
-  lastWatchedCourse: string;
+  lastWatchedCourse: string | null;
   lastWatchedList: string[];
   totalCourses: number;
   global: {
@@ -28,7 +29,7 @@ type QueryProps = {
     courseLength: string;
     excerpt: string;
     progressId: string;
-  };
+  } | null;
   courses: {
     _id: string;
     name: string;
@@ -105,12 +106,24 @@ const query = async (searchParams: { [key: string]: string }): Promise<QueryProp
           id,
           course_id,
           owner_id,
-          progress
+          progress,
+          access_expires_at
         )
       `
     )
     .eq('id', user!.id)
     .single();
+
+  const activeCoursesProgress = getActiveCourseProgressList(res.data?.courses_progress);
+  const activeCourseIds = getActiveOwnedCourseIds(activeCoursesProgress);
+  const activeLastWatchedCourse =
+    res.data?.last_watched_course && activeCourseIds.includes(res.data.last_watched_course)
+      ? res.data.last_watched_course
+      : null;
+  const activeLastWatchedList =
+    res.data?.last_watched_list?.filter(
+      (courseId: unknown): courseId is string => typeof courseId === 'string' && activeCourseIds.includes(courseId)
+    ) ?? [];
 
   const data = await sanityFetch<QueryProps>({
     query: /* groq */ ` {
@@ -175,11 +188,9 @@ const query = async (searchParams: { [key: string]: string }): Promise<QueryProp
     }`,
     tags: ['global', 'course', 'courseCategory', 'CourseAuthor_Collection'],
     params: {
-      totalCourses: res.data!.courses_progress.map((course) => course.course_id),
-      id: res
-        .data!.courses_progress.filter((el) => el.course_id !== res.data!.last_watched_course)
-        .map((course) => course.course_id),
-      last_watched_course: res.data!.last_watched_course,
+      totalCourses: activeCourseIds,
+      id: activeCourseIds.filter((courseId) => courseId !== activeLastWatchedCourse),
+      last_watched_course: activeLastWatchedCourse,
       category: searchParams.rodzaj ?? null,
       complexity: searchParams['poziom-trudnosci'] ?? null,
       author: searchParams.autor ?? null,
@@ -189,14 +200,13 @@ const query = async (searchParams: { [key: string]: string }): Promise<QueryProp
 
   return {
     ...data,
-    lastWatchedList: res.data!.last_watched_list,
-    lastWatchedCourse: res.data!.last_watched_course,
-    courses: data.courses
-      .concat(data.lastWatched)
+    lastWatchedList: activeLastWatchedList,
+    lastWatchedCourse: activeLastWatchedCourse,
+    courses: [...data.courses, ...(data.lastWatched ? [data.lastWatched] : [])]
       .filter((el) => el)
       .map((course) => {
-        const progress = res.data!.courses_progress.find((el) => el.course_id === course._id)!;
-        const progressId = res.data!.courses_progress.find((el) => el.course_id === course._id)?.id;
+        const progress = activeCoursesProgress.find((el) => el.course_id === course._id)!;
+        const progressId = activeCoursesProgress.find((el) => el.course_id === course._id)?.id;
 
         if (!progress)
           return {

@@ -14,6 +14,11 @@ import ProductSchema from '@/global/Schema/ProductSchema';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
 import type { CoursePageQueryProps, generateStaticParamsProps } from '@/global/types';
 import sanityFetch from '@/utils/sanity.fetch';
+import {
+  filterAvailableStorefrontProducts,
+  getTodayInWarsawDateString,
+  isStorefrontProductAvailable,
+} from '@/utils/storefront-course-availability';
 import { notFound } from 'next/navigation';
 
 const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
@@ -82,7 +87,7 @@ const Course = async ({ params: { slug } }: { params: { slug: string } }) => {
           courses={relatedBundle.courses}
         />
       )}
-      {courses && (
+      {courses && card && (
         <Package
           product={card}
           heading={'Jeden pakiet – niezliczona ilość wiedzy'}
@@ -113,11 +118,14 @@ const query = async (slug: string): Promise<CoursePageQueryProps> => {
     query: /* groq */ `
     {
       "product": *[(_type == 'course' || _type == 'bundle') && basis == 'knitting' && slug.current == $slug][0] {
+        _type,
         name,
         'slug': slug.current,
         _id,
         basis,
         type,
+        accessMode,
+        accessFixedDate,
         price,
         discount,
         featuredVideo,
@@ -183,21 +191,45 @@ const query = async (slug: string): Promise<CoursePageQueryProps> => {
     },
     tags: ['course', 'bundle', 'productReviewCollection'],
   });
-  !data?.product && notFound();
-  return data;
+  const todayWarsaw = getTodayInWarsawDateString();
+  if (!data?.product?._id || !isStorefrontProductAvailable(data.product, todayWarsaw)) notFound();
+
+  return {
+    ...data,
+    product: {
+      ...data.product,
+      relatedBundle: isStorefrontProductAvailable(data.product.relatedBundle, todayWarsaw) ? data.product.relatedBundle : null,
+    },
+    card: isStorefrontProductAvailable(data.card, todayWarsaw) ? data.card : null,
+    relatedCourses: filterAvailableStorefrontProducts(data.relatedCourses, todayWarsaw),
+  };
 };
 
 export async function generateStaticParams(): Promise<generateStaticParamsProps[]> {
-  const data: generateStaticParamsProps[] = await sanityFetch({
+  const data: Array<
+    generateStaticParamsProps & {
+      _type: 'course' | 'bundle';
+      accessMode?: 'unlimited' | 'duration_months' | 'fixed_date' | null;
+      accessFixedDate?: string | null;
+      courses?: { accessMode?: 'unlimited' | 'duration_months' | 'fixed_date' | null; accessFixedDate?: string | null }[];
+    }
+  > = await sanityFetch({
     query: /* groq */ `
       *[(_type == 'course' || _type == 'bundle') && basis == 'knitting'] {
+        _type,
         'slug': slug.current,
+        accessMode,
+        accessFixedDate,
+        courses[]->{
+          accessMode,
+          accessFixedDate,
+        }
       }
     `,
     tags: ['course', 'bundle'],
   });
 
-  return data.map(({ slug }) => ({
+  return filterAvailableStorefrontProducts(data).map(({ slug }) => ({
     slug,
   }));
 }

@@ -8,6 +8,8 @@ import type { KnittingPage_QueryTypes } from '../page.types';
 import ProductsListing from '@/components/_global/ProductsListing';
 import Markdown from '@/components/ui/markdown';
 import { PRODUCT_CARD_QUERY } from '@/global/constants';
+import { getActiveOwnedCourseIds } from '@/utils/course-access';
+import { filterAvailableStorefrontProducts, getTodayInWarsawDateString } from '@/utils/storefront-course-availability';
 import { createClient } from '@/utils/supabase-server';
 import LogoSection, { LogoSection_Query } from '@/components/_global/LogoSection';
 
@@ -45,7 +47,8 @@ const KnittingPage = async ({ searchParams }: { searchParams: { [key: string]: s
         `
         id,
         courses_progress (
-          course_id
+          course_id,
+          access_expires_at
         )
       `
       )
@@ -74,7 +77,7 @@ const KnittingPage = async ({ searchParams }: { searchParams: { [key: string]: s
         courses={true}
         productsTotalCount={productsTotalCount}
         authors={authors}
-        ownedCourses={res?.data?.courses_progress?.map((course) => course.course_id as string)}
+        ownedCourses={getActiveOwnedCourseIds(res?.data?.courses_progress)}
         bestSeller={listing_HighlightedCourse}
         bestSellerBadge={listing_HighlightedCourse_Badge}
       />
@@ -86,7 +89,8 @@ const KnittingPage = async ({ searchParams }: { searchParams: { [key: string]: s
 export default KnittingPage;
 
 const query = async (searchParams: { [key: string]: string }): Promise<KnittingPage_QueryTypes> => {
-  return await sanityFetch<KnittingPage_QueryTypes>({
+  const pageNumber = Number(searchParams.strona ?? 1);
+  const data = await sanityFetch<KnittingPage_QueryTypes>({
     query: /* groq */ `
     {
       "page": *[_type == "KnittingCourses_Page"][0] {
@@ -110,7 +114,7 @@ const query = async (searchParams: { [key: string]: string }): Promise<KnittingP
         && (!defined($complexity) || complexity == $complexity)
         && (!defined($author) || author->slug.current == $author)
         && (!defined($discount) || defined(discount))
-      ][$before...$after]{
+      ]{
         ${PRODUCT_CARD_QUERY}
       },
       "productsTotalCount": count(*[
@@ -137,8 +141,6 @@ const query = async (searchParams: { [key: string]: string }): Promise<KnittingP
     }
     `,
     params: {
-      before: (Number(searchParams.strona ?? 1) - 1) * 9,
-      after: Number(searchParams.strona ?? 1) * 9,
       category: searchParams.rodzaj ?? null,
       complexity: searchParams['poziom-trudnosci'] ?? null,
       author: searchParams.autor ?? null,
@@ -147,6 +149,14 @@ const query = async (searchParams: { [key: string]: string }): Promise<KnittingP
     },
     tags: ['KnittingCourses_Page', 'course', 'bundle', 'courseCategory', 'CourseAuthor_Collection'],
   });
+
+  const availableProducts = filterAvailableStorefrontProducts(data.products, getTodayInWarsawDateString());
+
+  return {
+    ...data,
+    products: availableProducts.slice((pageNumber - 1) * 9, pageNumber * 9),
+    productsTotalCount: availableProducts.length,
+  };
 };
 
 export async function generateMetadata() {

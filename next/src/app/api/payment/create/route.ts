@@ -1,7 +1,9 @@
 import type { InputState } from '@/components/_global/Header/Checkout/Checkout.types';
 import { hasPostPurchaseOffer } from '@/utils/resolve-post-purchase-offer';
+import { getActiveOwnedCourseIds } from '@/utils/course-access';
 import { createClient } from '@/utils/supabase-admin';
 import { siteUrl } from '@/utils/site-url';
+import { getTodayInWarsawDateString, isFixedDateCourseExpired } from '@/utils/storefront-course-availability';
 import sanityFetch from '@/utils/sanity.fetch';
 import { Country, Currency, Encoding, Language, P24 } from '@ingameltd/node-przelewy24';
 import { NextResponse } from 'next/server';
@@ -95,7 +97,46 @@ export async function POST(request: Request) {
     console.log('productIdsNeedingRelation', productIdsNeedingRelation);
     console.log('productItems', productItems);
 
+    const orderCourseIds = new Set<string>();
+    productItems.forEach((item) => {
+      if (item.type === 'course') {
+        orderCourseIds.add(item.id);
+      }
+      const linkedCourses = (item as { courses?: Array<{ _id?: string }> | null }).courses;
+      if (Array.isArray(linkedCourses)) {
+        linkedCourses.forEach((course) => {
+          if (course?._id) {
+            orderCourseIds.add(course._id);
+          }
+        });
+      }
+    });
 
+    const todayWarsaw = getTodayInWarsawDateString();
+    if (orderCourseIds.size > 0) {
+      const orderCourses = await sanityFetch<
+        Array<{
+          _id: string;
+          name?: string;
+          accessMode?: 'unlimited' | 'duration_months' | 'fixed_date' | null;
+          accessFixedDate?: string | null;
+        }>
+      >({
+        query: '*[_type == "course" && _id in $courseIds]{_id, name, accessMode, accessFixedDate}',
+        params: { courseIds: Array.from(orderCourseIds) },
+        noCache: true,
+      });
+
+      const expiredFixedDateCourse = orderCourses.find((course) => isFixedDateCourseExpired(course, todayWarsaw));
+      if (expiredFixedDateCourse) {
+        return NextResponse.json(
+          {
+            error: `Kurs "${expiredFixedDateCourse.name}" nie jest już dostępny w sprzedaży.`,
+          },
+          { status: 400 }
+        );
+      }
+    }
 
     const productRequiredCourseMap = new Map<string, { _id: string; name?: string }>();
     if (productIdsNeedingRelation.length > 0) {
@@ -126,21 +167,6 @@ export async function POST(request: Request) {
     }
 
     if (productRequiredCourseMap.size > 0) {
-      const orderCourseIds = new Set<string>();
-      productItems.forEach((item) => {
-        if (item.type === 'course') {
-          orderCourseIds.add(item.id);
-        }
-        const linkedCourses = (item as { courses?: Array<{ _id?: string }> | null }).courses;
-        if (Array.isArray(linkedCourses)) {
-          linkedCourses.forEach((course) => {
-            if (course?._id) {
-              orderCourseIds.add(course._id);
-            }
-          });
-        }
-      });
-
       const requiredCourseIds = new Set(
         Array.from(productRequiredCourseMap.values())
           .map((related) => related._id)
@@ -151,7 +177,7 @@ export async function POST(request: Request) {
       if (input.user_id && requiredCourseIds.size > 0) {
         const { data: ownedCoursesData, error: ownedCoursesError } = await supabase
           .from('courses_progress')
-          .select('course_id')
+          .select('course_id, access_expires_at')
           .eq('owner_id', input.user_id)
           .in('course_id', Array.from(requiredCourseIds));
 
@@ -160,11 +186,7 @@ export async function POST(request: Request) {
           return NextResponse.json({ error: 'Nie udało się zweryfikować uprawnień do kursów' }, { status: 500 });
         }
 
-        ownedRelatedCourseIds = new Set(
-          (ownedCoursesData ?? [])
-            .map((row) => row.course_id)
-            .filter((courseId): courseId is string => typeof courseId === 'string')
-        );
+        ownedRelatedCourseIds = new Set(getActiveOwnedCourseIds(ownedCoursesData ?? []));
       }
 
       for (const product of productItems) {

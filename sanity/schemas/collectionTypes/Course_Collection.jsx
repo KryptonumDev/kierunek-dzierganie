@@ -9,6 +9,12 @@ import {
   UnorderedList,
 } from '../components/Product_Components';
 
+const accessModeOptions = [
+  { title: 'Bez ograniczenia czasu', value: 'unlimited' },
+  { title: 'Przez określoną liczbę miesięcy od zakupu', value: 'duration_months' },
+  { title: 'Do wskazanej daty', value: 'fixed_date' },
+];
+
 export default {
   name: 'course',
   title: 'Kursy',
@@ -147,6 +153,48 @@ export default {
       type: 'string',
       title: 'Identyfikator automatyzacji',
       description: 'ID grupy w automatyzacji MailerLite',
+      group: 'configuration',
+    },
+    {
+      name: 'accessMode',
+      type: 'string',
+      title: 'Sposób ograniczenia dostępu',
+      description:
+        'Określa, czy kurs ma być dostępny bez limitu, przez określoną liczbę miesięcy od zakupu, czy tylko do wybranej daty.',
+      options: {
+        list: accessModeOptions,
+      },
+      initialValue: 'unlimited',
+      validation: Rule => Rule.required(),
+      group: 'configuration',
+    },
+    {
+      name: 'accessDurationMonths',
+      type: 'number',
+      title: 'Dostęp przez liczbę miesięcy od zakupu',
+      description: 'Np. 6 oznacza dostęp przez 6 miesięcy liczonych od momentu zakupu przez użytkownika.',
+      hidden: ({ document }) => document?.accessMode !== 'duration_months',
+      validation: Rule =>
+        Rule.custom((value, context) => {
+          if (context.document?.accessMode !== 'duration_months') return true;
+          if (value === undefined || value === null) return 'Podaj liczbę miesięcy dla ograniczenia czasowego';
+          if (!Number.isInteger(value) || value <= 0) return 'Wpisz liczbę całkowitą większą od 0';
+          return true;
+        }),
+      group: 'configuration',
+    },
+    {
+      name: 'accessFixedDate',
+      type: 'date',
+      title: 'Dostęp do wskazanej daty',
+      description: 'Po tej dacie użytkownik traci dostęp do kursu, nawet jeśli kupił go wcześniej.',
+      hidden: ({ document }) => document?.accessMode !== 'fixed_date',
+      validation: Rule =>
+        Rule.custom((value, context) => {
+          if (context.document?.accessMode !== 'fixed_date') return true;
+          if (!value) return 'Wybierz datę końca dostępu';
+          return true;
+        }),
       group: 'configuration',
     },
     {

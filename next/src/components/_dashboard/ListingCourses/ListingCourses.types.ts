@@ -2,7 +2,7 @@ import type { Complexity, ImgType } from '@/global/types';
 
 export type Props = {
   totalCourses: number;
-  lastWatchedCourse: string;
+  lastWatchedCourse: string | null;
   lastWatchedList: string[];
   courses: {
     _id: string;

@@ -5,6 +5,7 @@ import Breadcrumbs from '@/components/_global/Breadcrumbs';
 import { Img_Query } from '@/components/ui/image';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
 import type { CoursesProgress, File, ImgType } from '@/global/types';
+import { getActiveCourseProgressList, getActiveOwnedCourseIds } from '@/utils/course-access';
 import sanityFetch from '@/utils/sanity.fetch';
 import { createClient } from '@/utils/supabase-server';
 
@@ -91,12 +92,15 @@ const query = async (): Promise<QueryProps> => {
           id,
           course_id,
           owner_id,
-          progress
+          progress,
+          access_expires_at
         )
       `
     )
     .eq('id', user!.id)
     .single();
+
+  const activeCoursesProgress = getActiveCourseProgressList(res.data?.courses_progress);
 
   const data = await sanityFetch<QueryProps['data']>({
     query: /* groq */ ` {
@@ -153,7 +157,7 @@ const query = async (): Promise<QueryProps> => {
     }`,
     tags: ['global', 'course'],
     params: {
-      id: res.data!.courses_progress.map((course) => course.course_id).filter(Boolean),
+      id: getActiveOwnedCourseIds(activeCoursesProgress),
     },
   });
 
@@ -161,6 +165,6 @@ const query = async (): Promise<QueryProps> => {
     data: data,
     id: res.data!.id,
     left_handed: res.data!.left_handed,
-    progress: res.data!.courses_progress,
+    progress: activeCoursesProgress,
   };
 };

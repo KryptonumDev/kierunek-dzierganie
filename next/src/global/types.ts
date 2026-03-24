@@ -16,6 +16,7 @@ import type { TableOfContentTypes } from '@/components/_product/TableOfContent/T
 import type { VideoProvider } from '@/components/ui/VideoPlayer/VideoPlayer.types';
 
 export type Complexity = 'dla-poczatkujacych' | 'dla-srednio-zaawansowanych' | 'dla-zaawansowanych';
+export type CourseAccessMode = 'unlimited' | 'duration_months' | 'fixed_date';
 
 export type CtaType = {
   href: string;
@@ -55,6 +56,8 @@ export type ProductCard = {
   rating: number;
   needDelivery: boolean;
   automatizationId: string | null;
+  accessMode?: CourseAccessMode | null;
+  accessFixedDate?: string | null;
   materials_link?: {
     _id: string;
     gallery?: ImgType;
@@ -117,6 +120,8 @@ export type ProductCard = {
   courses: Array<{
     _id: string;
     automatizationId: string;
+    accessMode?: CourseAccessMode | null;
+    accessFixedDate?: string | null;
   }>;
   related?: {
     _id: string;
@@ -366,7 +371,7 @@ export type CoursePageQueryProps = {
         } & ProductCard);
   } & TableOfContentTypes &
     ReviewsTypes;
-  card: ProductCard;
+  card: ProductCard | null;
   relatedCourses: ProductCard[];
 };
 
@@ -421,6 +426,10 @@ export type CoursesProgress = {
   id: number;
   course_id: string;
   owner_id: string;
+  access_granted_at?: string | null;
+  access_expires_at?: string | null;
+  access_source_order_id?: number | null;
+  mailerlite_access_removed_at?: string | null;
   progress: {
     [key: string]: {
       [key: string]: {
