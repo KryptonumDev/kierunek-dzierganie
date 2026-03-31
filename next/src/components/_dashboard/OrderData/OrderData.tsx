@@ -3,74 +3,17 @@ import Link from 'next/link';
 import styles from './OrderData.module.scss';
 import type { OrderDataTypes } from './OrderData.types';
 import { formatDateToPolishLocale } from '@/utils/formatDateToPolishLocale';
+import { getOrderDisplaySummary } from '@/utils/order-display-summary';
 import { formatPrice } from '@/utils/price-formatter';
 import { courseComplexityEnum, statusesSwitch } from '@/global/constants';
 import Img from '@/components/ui/image';
-import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 import { toast } from 'react-toastify';
 import AddReview from '@/components/_global/AddReview';
 import { useMemo, useState } from 'react';
 
 const OrderData = ({ order }: OrderDataTypes) => {
   const [addReview, setAddReview] = useState<string | null>(null);
-
-  const totalItemsCount = useMemo(
-    () => order.products.array?.reduce((acc, item) => acc + item.quantity!, 0) ?? 0,
-    [order.products.array]
-  );
-  const totalItemsPrice = useMemo(
-    () => order.products.array?.reduce((acc, item) => acc + item.price! * item.quantity!, 0) ?? 0,
-    [order.products.array]
-  );
-
-  // Calculate total discount amount (supports multiple coupons)
-  // NOTE: Discounts no longer apply to delivery (except FREE DELIVERY type)
-  const discountsAmount = useMemo(() => {
-    // Use new discounts array if available, otherwise fall back to legacy single discount
-    const discounts =
-      order.discounts && order.discounts.length > 0 ? order.discounts : order.discount ? [order.discount] : [];
-
-    if (discounts.length === 0) return 0;
-
-    // Products subtotal (NO delivery in discount calculation)
-    const productsSubtotal = totalItemsPrice;
-
-    // Sum FIXED PRODUCT discounts
-    // NOTE: In stored orders, the server pre-computes the FIXED PRODUCT total
-    // (per-unit amount × eligible units) and saves it in `amount`. We must NOT
-    // call calculateDiscountAmount here because it would multiply by eligibleCount
-    // again, causing a double-multiplication bug (e.g., -40 zł shown as -80 zł).
-    const productTotal = Math.max(
-      -productsSubtotal,
-      discounts
-        .filter((d) => d.type === 'FIXED PRODUCT')
-        .reduce((sum, d) => sum - (d.amount ?? 0), 0)
-    );
-
-    // Calculate base after product-specific discounts
-    const baseAfterProducts = Math.max(0, productsSubtotal + productTotal); // productTotal is negative
-
-    // Apply VOUCHER if present (respects eligibleSubtotal if available)
-    const voucher = discounts.find((d) => d.type === 'VOUCHER');
-    let voucherTotal = 0;
-    if (voucher) {
-      const voucherBase = voucher.eligibleSubtotal !== undefined
-        ? Math.min(voucher.eligibleSubtotal, baseAfterProducts)
-        : baseAfterProducts;
-      voucherTotal = -Math.min(voucherBase, voucher.amount ?? 0);
-    }
-
-    // Check for cart-wide discount (PERCENTAGE or FIXED CART)
-    const cartWide = discounts.find((d) => d.type === 'PERCENTAGE' || d.type === 'FIXED CART');
-
-    // If cart-wide discount is the only one, use calculation with eligibleSubtotal
-    if (cartWide && discounts.length === 1) {
-      return calculateDiscountAmount(productsSubtotal, cartWide, cartWide.eligibleSubtotal);
-    }
-
-    // Otherwise combine product-specific and voucher discounts
-    return productTotal + voucherTotal;
-  }, [order.discounts, order.discount, totalItemsPrice]);
+  const summary = useMemo(() => getOrderDisplaySummary(order), [order]);
 
   const createIntent = async () => {
     await fetch('/api/payment/recreate', {
@@ -314,45 +257,32 @@ const OrderData = ({ order }: OrderDataTypes) => {
       <div className={styles['summary']}>
         <p>
           <span>
-            {totalItemsCount} {totalItemsCount === 1 ? 'produkt' : totalItemsCount < 5 ? 'produkty' : 'produktów'}
+              {summary.totalItemsCount}{' '}
+              {summary.totalItemsCount === 1 ? 'produkt' : summary.totalItemsCount < 5 ? 'produkty' : 'produktów'}
           </span>
-          <span>{formatPrice(totalItemsPrice)}</span>
+          <span>{formatPrice(summary.productsSubtotal)}</span>
         </p>
         {order.shippingMethod && (
           <p>
             <span>Dostawa</span>
-            <span>{formatPrice(order.shippingMethod.price)}</span>
+            <span>{formatPrice(summary.shippingCents)}</span>
           </p>
         )}
-        {order.virtualMoney && order.virtualMoney > 0 && (
+        {summary.virtualMoneyCents > 0 && (
           <p>
             <span>Wykorzystane WZ</span>
-            <span>-{formatPrice(order.virtualMoney * 100)}</span>
+            <span>-{formatPrice(summary.virtualMoneyCents)}</span>
           </p>
         )}
-        {/* Display coupons - supports both single and multiple coupons */}
-        {(order.discounts && order.discounts.length > 0 ? order.discounts : order.discount ? [order.discount] : [])
-          .length > 0 && (
+        {summary.hasDiscounts && (
           <p>
-            <span>
-              {(order.discounts && order.discounts.length > 0 ? order.discounts : [order.discount!]).length === 1
-                ? `Kupon: ${(order.discounts && order.discounts.length > 0 ? order.discounts : [order.discount!])[0]!.code}`
-                : 'Kupony'}
-            </span>
-            <span>{formatPrice(discountsAmount)}</span>
+            <span>{summary.discountLabel}</span>
+            <span>{formatPrice(summary.discountCents)}</span>
           </p>
         )}
         <p>
           <span>{order.statement ? 'Zapłacono' : 'Razem'}</span>
-          <span>
-            {formatPrice(
-              totalItemsPrice +
-                discountsAmount -
-                (order.virtualMoney ? order.virtualMoney * 100 : 0) +
-                (order.shippingMethod ? order.shippingMethod.price : 0),
-              0
-            )}
-          </span>
+          <span>{formatPrice(summary.totalCents, 0)}</span>
         </p>
         {order.refundAmount && (
           <p>

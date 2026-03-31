@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { formatDateToPolishLocale } from '@/utils/formatDateToPolishLocale';
+import { getOrderDisplaySummary, getOrderLineUnitPrice } from '@/utils/order-display-summary';
 import { formatPrice } from '@/utils/price-formatter';
-import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 import countryList from 'react-select-country-list';
 import type { CreateOrderTypes } from './Order.types';
 
@@ -25,15 +25,8 @@ const TextsIterator = {
 };
 
 const CreateOrder = ({ data, type }: CreateOrderTypes) => {
-  const totalItemsCount = data.products.array?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
-  const totalItemsPrice =
-    data.products.array?.reduce((acc, item) => acc + (item.discount ?? item.price!) * item.quantity!, 0) ?? 0;
+  const summary = getOrderDisplaySummary(data);
   const hasCourses = data.products.array?.some((item) => item.type === 'course') ?? false;
-  const discountCents = data.used_discount
-    ? data.used_discount.type === 'FIXED PRODUCT'
-      ? -Math.min(data.used_discount.amount, totalItemsPrice)
-      : calculateDiscountAmount(totalItemsPrice, data.used_discount, data.shipping_method?.price)
-    : 0;
   return (
     <div style={{ width: '620px', margin: '0 auto' }}>
       <div style={{ borderRadius: '6px 6px 0px 0px', backgroundColor: '#fdfbf8', padding: '36px 42px 48px 42px' }}>
@@ -158,7 +151,7 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
                     margin: '0',
                   }}
                 >
-                  {formatPrice(product.price)}
+                  {formatPrice(getOrderLineUnitPrice(product))}
                 </p>
               </div>
             ))}
@@ -166,7 +159,8 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
           <div style={{ marginTop: '32px', width: '220px' }}>
             <p style={{ display: 'flex' }}>
               <span style={{ color: '#766965', fontSize: '14px', fontWeight: '300', lineHeight: '150%' }}>
-                {totalItemsCount} {totalItemsCount === 1 ? 'produkt' : totalItemsCount < 5 ? 'produkty' : 'produktów'}
+                {summary.totalItemsCount}{' '}
+                {summary.totalItemsCount === 1 ? 'produkt' : summary.totalItemsCount < 5 ? 'produkty' : 'produktów'}
               </span>
               <span
                 style={{
@@ -178,7 +172,7 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
                   lineHeight: '150%',
                 }}
               >
-                {formatPrice(totalItemsPrice)}
+                {formatPrice(summary.productsSubtotal)}
               </span>
             </p>
             {data.shipping_method && (
@@ -200,10 +194,10 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
                 </span>
               </p>
             )}
-            {data.used_discount && (
+            {summary.hasDiscounts && (
               <p style={{ display: 'flex', marginTop: '8px' }}>
                 <span style={{ color: '#766965', fontSize: '14px', fontWeight: '300', lineHeight: '150%' }}>
-                  Kupon: {data.used_discount.code}
+                  {summary.discountLabel}
                 </span>
                 <span
                   style={{
@@ -215,7 +209,7 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
                     lineHeight: '150%',
                   }}
                 >
-                  {formatPrice(discountCents)}
+                  {formatPrice(summary.discountCents)}
                 </span>
               </p>
             )}
@@ -236,7 +230,7 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
                 {data.payment_method}
               </span>
             </p>
-            {data.virtualMoney && data.virtualMoney > 0 && (
+            {summary.virtualMoneyCents > 0 && (
               <p style={{ display: 'flex', marginTop: '8px' }}>
                 <span style={{ color: '#766965', fontSize: '14px', fontWeight: '300', lineHeight: '150%' }}>
                   Wykorzystane WZ
@@ -251,7 +245,7 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
                     lineHeight: '150%',
                   }}
                 >
-                  -{formatPrice(data.virtualMoney * 100)}
+                  -{formatPrice(summary.virtualMoneyCents)}
                 </span>
               </p>
             )}
@@ -267,12 +261,7 @@ const CreateOrder = ({ data, type }: CreateOrderTypes) => {
                   lineHeight: '150%',
                 }}
               >
-                {formatPrice(
-                  totalItemsPrice +
-                    (data.used_discount ? discountCents : 0) -
-                    (data.virtualMoney ? data.virtualMoney * 100 : 0) +
-                    (data.shipping_method ? data.shipping_method.price : 0)
-                )}
+                {formatPrice(summary.totalCents)}
               </span>
             </p>
           </div>
