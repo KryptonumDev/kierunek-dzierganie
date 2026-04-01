@@ -5,7 +5,3 @@ export type PostPurchaseHeroProps = {
   offer: PostPurchaseOfferPayload;
   previewMode?: boolean;
 };
-
-export type OfferSectionProps = {
-  offer: PostPurchaseOfferPayload;
-};

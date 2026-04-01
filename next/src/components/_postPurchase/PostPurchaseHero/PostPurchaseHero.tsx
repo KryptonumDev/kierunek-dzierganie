@@ -1,13 +1,14 @@
 import Markdown from '@/components/ui/markdown';
 import Link from 'next/link';
 import type { PostPurchaseHeroProps } from './PostPurchaseHero.types';
+import NewsletterSection from './_NewsletterSection';
 import OfferSection from './_OfferSection';
 import styles from './PostPurchaseHero.module.scss';
 
 const PostPurchaseHero = ({ orderId, offer, previewMode = false }: PostPurchaseHeroProps) => {
   return (
     <section className={styles.PostPurchaseHero}>
-      <div className={`${styles.container} ${offer.offeredItems.length === 1 ? styles.containerSingle : ''}`}>
+      <div className={styles.container}>
 
         {/* ── Left: minimal confirmation ── */}
         <aside className={styles.confirmation}>
@@ -35,18 +36,54 @@ const PostPurchaseHero = ({ orderId, offer, previewMode = false }: PostPurchaseH
         </aside>
 
         {/* ── Right: offer ── */}
-        <div className={styles.offer}>
-          <Markdown.h2 className={styles.offerHeading}>{offer.heading}</Markdown.h2>
-          {offer.paragraph && (
-            <Markdown className={styles.offerParagraph}>{offer.paragraph}</Markdown>
-          )}
-          <OfferSection
-            offeredItems={offer.offeredItems}
-            offerMode={offer.offerMode}
-            discountAmount={offer.discountAmount}
-            expirationDate={offer.expirationDate}
-            couponCode={offer.couponCode}
-          />
+        <div className={styles.offerSections}>
+          {offer.sections.map((section, index) => {
+            const isNarrowSection =
+              section._type === 'newsletterSignup' ||
+              (section._type === 'productOffer' && section.offeredItems.length === 1);
+            const isPrimarySection = index === 0;
+            const normalizedHeading = section.heading ? normalizeMarkdownStrong(section.heading) : null;
+            const normalizedParagraph = section.paragraph ? normalizeMarkdownStrong(section.paragraph) : null;
+
+            return (
+              <section
+                className={`${styles.offerSection} ${isNarrowSection ? styles.offerSectionNarrow : ''}`}
+                key={`${section._type}-${index}`}
+              >
+              {(normalizedHeading || normalizedParagraph) && (
+                <header className={`${styles.sectionHeader} ${isPrimarySection ? styles.sectionHeaderPrimary : ''}`}>
+                  {normalizedHeading &&
+                    (isPrimarySection ? (
+                      <Markdown.h1 className={styles.offerHeadingPrimary}>
+                        {normalizedHeading}
+                      </Markdown.h1>
+                    ) : (
+                      <Markdown.h2 className={styles.offerHeading}>{normalizedHeading}</Markdown.h2>
+                    ))}
+                  {normalizedParagraph && (
+                    <Markdown className={styles.offerParagraph}>{normalizedParagraph}</Markdown>
+                  )}
+                </header>
+              )}
+
+              {section._type === 'productOffer' ? (
+                <OfferSection
+                  offeredItems={section.offeredItems}
+                  offerMode={section.offerMode}
+                  discountAmount={section.discountAmount}
+                  expirationDate={section.expirationDate}
+                  couponCode={section.couponCode}
+                />
+              ) : (
+                <NewsletterSection
+                  groupId={section.groupId}
+                  image={section.image}
+                  previewMode={previewMode}
+                />
+              )}
+              </section>
+            );
+          })}
         </div>
 
       </div>
@@ -55,6 +92,13 @@ const PostPurchaseHero = ({ orderId, offer, previewMode = false }: PostPurchaseH
 };
 
 export default PostPurchaseHero;
+
+const normalizeMarkdownStrong = (value: string) =>
+  value
+    .replace(/\*\*\s+/g, '**')
+    .replace(/\s+\*\*/g, '**')
+    .replace(/__\s+/g, '__')
+    .replace(/\s+__/g, '__');
 
 const CheckIcon = () => (
   <svg
