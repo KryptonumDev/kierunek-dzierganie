@@ -77,6 +77,9 @@ const PostPurchaseHero = ({ orderId, offer, previewMode = false }: PostPurchaseH
               ) : (
                 <NewsletterSection
                   groupId={section.groupId}
+                  buttonLabel={section.buttonLabel}
+                  successMessage={section.successMessage}
+                  errorMessage={section.errorMessage}
                   image={section.image}
                   previewMode={previewMode}
                 />

@@ -36,6 +36,9 @@ export type PostPurchaseNewsletterSectionPayload = {
   heading: string | null;
   paragraph: string | null;
   groupId: string | null;
+  buttonLabel: string | null;
+  successMessage: string | null;
+  errorMessage: string | null;
   image: ImgType | null;
 };
 
@@ -66,6 +69,9 @@ type LegacyNewsletterConfig = {
   heading?: string;
   paragraph?: string;
   groupId?: string;
+  buttonLabel?: string;
+  successMessage?: string;
+  errorMessage?: string;
 };
 
 type PostPurchaseProductSectionConfig = {
@@ -83,6 +89,9 @@ type PostPurchaseNewsletterSectionConfig = {
   heading?: string;
   paragraph?: string;
   groupId?: string;
+  buttonLabel?: string;
+  successMessage?: string;
+  errorMessage?: string;
   image?: ImgType | null;
 };
 
@@ -136,6 +145,9 @@ const POST_PURCHASE_OFFER_QUERY = `
       heading,
       paragraph,
       groupId,
+      buttonLabel,
+      successMessage,
+      errorMessage,
       image {
         ${Img_Query}
       },
@@ -199,6 +211,9 @@ const normalizeLegacySections = (offerConfig: PostPurchaseOfferConfig): PostPurc
         heading: newsletterHeading ?? undefined,
         paragraph: newsletterParagraph ?? undefined,
         groupId: offerConfig.newsletter?.groupId,
+        buttonLabel: offerConfig.newsletter?.buttonLabel,
+        successMessage: offerConfig.newsletter?.successMessage,
+        errorMessage: offerConfig.newsletter?.errorMessage,
       });
     }
   }
@@ -281,6 +296,9 @@ const createNewsletterSectionPayload = (
     heading,
     paragraph,
     groupId: resolveOptionalText(section.groupId),
+    buttonLabel: resolveOptionalText(section.buttonLabel),
+    successMessage: resolveOptionalText(section.successMessage),
+    errorMessage: resolveOptionalText(section.errorMessage),
     image: section.image ?? null,
   };
 };

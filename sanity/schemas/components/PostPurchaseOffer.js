@@ -121,6 +121,26 @@ const newsletterSection = {
         'Jeśli pole pozostanie puste, użyjemy domyślnej grupy newsletterowej. Darmowy produkt wysyła automatyzacja MailerLite.',
     },
     {
+      name: 'buttonLabel',
+      type: 'string',
+      title: 'Tekst przycisku (opcjonalny)',
+      description: 'Jeśli pole pozostanie puste, użyjemy domyślnego tekstu przycisku.',
+    },
+    {
+      name: 'successMessage',
+      type: 'text',
+      rows: 3,
+      title: 'Komunikat po poprawnym zapisie (opcjonalny)',
+      description: 'Jeśli pole pozostanie puste, użyjemy domyślnego komunikatu sukcesu.',
+    },
+    {
+      name: 'errorMessage',
+      type: 'text',
+      rows: 3,
+      title: 'Komunikat błędu formularza (opcjonalny)',
+      description: 'Jeśli pole pozostanie puste, użyjemy domyślnego komunikatu błędu.',
+    },
+    {
       name: 'image',
       type: 'image',
       title: 'Obrazek sekcji (opcjonalny)',
