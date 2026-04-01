@@ -20,9 +20,11 @@
     display: grid;
     gap: clamp(16px, calc(28vw / 7.68), 32px);
     grid-template-columns: 1fr;
+    max-width: 580px;
 
-    @media (min-width: 700px) {
+    @media (min-width: 900px) {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+      max-width: none;
     }
 
     @media (min-width: 1024px) {
@@ -64,5 +66,97 @@
 
   .cta {
     margin-left: clamp(16px, calc(24vw / 7.68), 28px);
+  }
+
+  .newsletterItem {
+    padding-bottom: clamp(16px, calc(22vw / 7.68), 24px);
+
+    .image {
+      aspect-ratio: 16/10;
+      margin-bottom: clamp(14px, calc(18vw / 7.68), 20px);
+    }
+  }
+
+  .newsletterContent {
+    padding: 0 clamp(16px, calc(24vw / 7.68), 28px);
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: clamp(10px, calc(14vw / 7.68), 14px);
+
+    h3 {
+      padding: 0;
+      margin-bottom: 0;
+    }
+  }
+
+  .newsletterText {
+    margin-bottom: 0;
+    font-size: calc(15rem / 16);
+    line-height: 1.45;
+  }
+
+  .newsletterForm {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: clamp(8px, calc(10vw / 7.68), 10px);
+  }
+
+  .newsletterFormMain {
+    display: grid;
+    gap: clamp(10px, calc(14vw / 7.68), 12px);
+  }
+
+  .newsletterFields {
+    display: grid;
+    gap: clamp(8px, calc(12vw / 7.68), 10px);
+
+    label {
+      font-size: calc(13rem / 16);
+    }
+
+    label p {
+      margin-bottom: 6px;
+    }
+
+    input {
+      height: 32px;
+      padding: 6px 8px;
+    }
+  }
+
+  .newsletterSubmit {
+    align-self: flex-start;
+    margin-top: auto;
+  }
+
+  .newsletterForm > label {
+    gap: 6px;
+    padding: 2px 0 0;
+    width: 100%;
+    font-size: calc(13rem / 16);
+
+    .icon {
+      width: 28px;
+      height: 28px;
+    }
+
+    p {
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+  }
+
+  .newsletterSuccess {
+    margin-top: auto;
+    color: var(--success-800, #2d4031);
+    font-weight: 500;
+  }
+
+  .newsletterError {
+    margin-top: 2px;
+    color: var(--error-700);
+    font-weight: 500;
   }
 }
