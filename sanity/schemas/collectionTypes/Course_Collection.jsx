@@ -1,5 +1,6 @@
 import CourseSlug from '../../components/CourseSlug';
 import { removeMarkdown } from '../../utils/remove-markdown';
+import postPurchaseOffer from '../components/PostPurchaseOffer';
 
 import {
   ColumnImageSection,
@@ -552,107 +553,7 @@ export default {
         },
       ],
     },
-    {
-      name: 'postPurchaseOffer',
-      title: 'Oferta po zakupie',
-      type: 'object',
-      description: 'Skonfiguruj ofertę specjalną wyświetlaną użytkownikowi zaraz po zakupie tego kursu.',
-      group: 'postPurchaseOffer',
-      options: {
-        collapsible: true,
-        collapsed: true,
-      },
-      fields: [
-        {
-          name: 'enabled',
-          type: 'boolean',
-          title: 'Aktywna oferta po zakupie',
-          description:
-            'Włącz, aby po zakupie tego kursu wyświetlała się dedykowana strona z podziękowaniem i ofertą specjalną.',
-          initialValue: false,
-        },
-        {
-          name: 'heading',
-          type: 'markdown',
-          title: 'Nagłówek oferty',
-          description: 'Główny nagłówek wyświetlany w sekcji z ofertą (np. "Specjalna oferta tylko dla Ciebie!").',
-          hidden: ({ parent }) => !parent?.enabled,
-          validation: Rule =>
-            Rule.custom((value, context) => {
-              if (context.parent?.enabled && !value) return 'Wymagane gdy oferta jest aktywna';
-              return true;
-            }),
-        },
-        {
-          name: 'paragraph',
-          type: 'markdown',
-          title: 'Paragraf oferty',
-          description: 'Dodatkowy opis lub zachęta do skorzystania z oferty (opcjonalnie).',
-          hidden: ({ parent }) => !parent?.enabled,
-        },
-        {
-          name: 'offeredItems',
-          title: 'Oferowane produkty',
-          type: 'array',
-          description: 'Kursy lub pakiety kursów, które mają być zaproponowane po zakupie.',
-          hidden: ({ parent }) => !parent?.enabled,
-          of: [{ type: 'reference', to: [{ type: 'course' }, { type: 'bundle' }] }],
-          validation: Rule =>
-            Rule.custom((value, context) => {
-              if (context.parent?.enabled && (!value || value.length === 0))
-                return 'Dodaj co najmniej jeden produkt do oferty';
-              return true;
-            }),
-        },
-        {
-          name: 'offerMode',
-          type: 'string',
-          title: 'Tryb oferty',
-          description:
-            'Wybierz, czy oferta ma zawierać dodatkowy rabat, czy ma być jedynie propozycją innych kursów bez kuponu rabatowego.',
-          hidden: ({ parent }) => !parent?.enabled,
-          initialValue: 'discounted',
-          options: {
-            list: [
-              { title: 'Oferta z rabatem', value: 'discounted' },
-              { title: 'Oferta bez rabatu', value: 'standard' },
-            ],
-            layout: 'radio',
-          },
-        },
-        {
-          name: 'discountAmount',
-          type: 'number',
-          title: 'Wysokość rabatu w groszach',
-          description:
-            'Wartość rabatu wyrażona w groszach (np. 5000 = 50 zł). To pole jest wymagane tylko dla oferty z rabatem.',
-          hidden: ({ parent }) => !parent?.enabled || parent?.offerMode === 'standard',
-          validation: Rule =>
-            Rule.custom((value, context) => {
-              const offerMode = context.parent?.offerMode ?? 'discounted';
-              if (context.parent?.enabled && offerMode === 'discounted' && (value === undefined || value === null)) {
-                return 'Wymagane gdy oferta z rabatem jest aktywna';
-              }
-              if (value !== undefined && value !== null && value <= 0) return 'Rabat musi być większy od 0';
-              return true;
-            }),
-        },
-        {
-          name: 'discountTimeMinutes',
-          type: 'number',
-          title: 'Czas trwania oferty w minutach (opcjonalne)',
-          description:
-            'Po upływie tego czasu od momentu zakupu promocja wygaśnie (np. 30 = 30 minut). Zostaw puste, aby promocja była bezterminowa.',
-          hidden: ({ parent }) => !parent?.enabled || parent?.offerMode === 'standard',
-          validation: Rule =>
-            Rule.custom((value) => {
-              if (value !== undefined && value !== null && (!Number.isInteger(value) || value <= 1))
-                return 'Wartość musi być liczbą całkowitą większą od 1';
-              return true;
-            }),
-        },
-      ],
-    },
+    postPurchaseOffer,
     { name: 'seo', type: 'seo', title: 'SEO', group: 'seo' },
   ],
   groups: [

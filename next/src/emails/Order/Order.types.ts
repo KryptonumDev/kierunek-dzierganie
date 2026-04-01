@@ -24,9 +24,13 @@ export type CreateOrderTypes = {
       data: MapPoint | null;
       name: string;
       price: number;
-    };
+    } | null;
     virtualMoney?: number | null;
+    used_virtual_money?: number | null;
     used_discount?: Discount | null;
+    used_discounts?: Discount[] | null;
+    discount?: Discount | null;
+    discounts?: Discount[] | null;
     billing: Billing;
     shipping: Shipping;
   };

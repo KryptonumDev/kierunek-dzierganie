@@ -16,15 +16,31 @@ export type OfferedItem = {
 };
 
 export type PostPurchaseOfferMode = 'discounted' | 'standard';
+export type PostPurchaseOfferSection =
+  | PostPurchaseProductSectionPayload
+  | PostPurchaseNewsletterSectionPayload;
 
-export type PostPurchaseOfferPayload = {
-  heading: string;
+export type PostPurchaseProductSectionPayload = {
+  _type: 'productOffer';
+  heading: string | null;
   paragraph: string | null;
   offerMode: PostPurchaseOfferMode;
   discountAmount: number | null;
   expirationDate: string | null;
   couponCode: string | null;
   offeredItems: OfferedItem[];
+};
+
+export type PostPurchaseNewsletterSectionPayload = {
+  _type: 'newsletterSignup';
+  heading: string | null;
+  paragraph: string | null;
+  groupId: string | null;
+  image: ImgType | null;
+};
+
+export type PostPurchaseOfferPayload = {
+  sections: PostPurchaseOfferSection[];
 };
 
 export type ResolvePostPurchaseOfferResult =
@@ -36,15 +52,7 @@ export type ResolvePostPurchaseOfferResult =
 type SanityProductWithOffer = {
   _id: string;
   _type: string;
-  postPurchaseOffer?: {
-    enabled: boolean;
-    heading: string;
-    paragraph?: string;
-    offerMode?: PostPurchaseOfferMode;
-    discountAmount?: number | null;
-    discountTimeMinutes?: number | null;
-    offeredItems: OfferedItem[];
-  };
+  postPurchaseOffer?: PostPurchaseOfferConfig;
 };
 
 type OrderProduct = {
@@ -52,18 +60,356 @@ type OrderProduct = {
   type: string;
 };
 
+type PostPurchaseOfferLayout = 'product-only' | 'product-plus-newsletter';
+
+type LegacyNewsletterConfig = {
+  heading?: string;
+  paragraph?: string;
+  groupId?: string;
+};
+
+type PostPurchaseProductSectionConfig = {
+  _type: 'postPurchaseProductOfferSection';
+  heading?: string;
+  paragraph?: string;
+  offeredItems?: OfferedItem[];
+  offerMode?: PostPurchaseOfferMode;
+  discountAmount?: number | null;
+  discountTimeMinutes?: number | null;
+};
+
+type PostPurchaseNewsletterSectionConfig = {
+  _type: 'postPurchaseNewsletterSignupSection';
+  heading?: string;
+  paragraph?: string;
+  groupId?: string;
+  image?: ImgType | null;
+};
+
+type PostPurchaseSectionConfig =
+  | PostPurchaseProductSectionConfig
+  | PostPurchaseNewsletterSectionConfig;
+
+type PostPurchaseOfferConfig = {
+  enabled: boolean;
+  sections?: PostPurchaseSectionConfig[];
+  heading?: string;
+  paragraph?: string;
+  layout?: PostPurchaseOfferLayout;
+  newsletter?: LegacyNewsletterConfig;
+  offerMode?: PostPurchaseOfferMode;
+  discountAmount?: number | null;
+  discountTimeMinutes?: number | null;
+  offeredItems?: OfferedItem[];
+};
+
 type PreviewableOfferDocument = {
   _id: string;
   _type: 'course' | 'bundle';
-  postPurchaseOffer?: {
-    enabled: boolean;
-    heading: string;
-    paragraph?: string;
-    offerMode?: PostPurchaseOfferMode;
-    discountAmount?: number | null;
-    discountTimeMinutes?: number | null;
-    offeredItems: OfferedItem[];
+  postPurchaseOffer?: PostPurchaseOfferConfig;
+};
+
+type DiscountSectionCoupon = {
+  code: string;
+  amount: number;
+  expirationDate: string | null;
+};
+
+const OFFERED_ITEMS_QUERY = `
+  _id,
+  _type,
+  name,
+  price,
+  discount,
+  basis,
+  "slug": slug.current,
+  "image": gallery[0] {
+    ${Img_Query}
+  }
+`;
+
+const POST_PURCHASE_OFFER_QUERY = `
+  postPurchaseOffer {
+    enabled,
+    sections[]{
+      _type,
+      heading,
+      paragraph,
+      groupId,
+      image {
+        ${Img_Query}
+      },
+      offerMode,
+      discountAmount,
+      discountTimeMinutes,
+      "offeredItems": offeredItems[] -> {
+        ${OFFERED_ITEMS_QUERY}
+      }
+    },
+    heading,
+    paragraph,
+    layout,
+    newsletter {
+      heading,
+      paragraph,
+      groupId,
+    },
+    offerMode,
+    discountAmount,
+    discountTimeMinutes,
+    "offeredItems": offeredItems[] -> {
+      ${OFFERED_ITEMS_QUERY}
+    }
+  }
+`;
+
+const resolveOfferLayout = (layout?: PostPurchaseOfferLayout): PostPurchaseOfferLayout =>
+  layout === 'product-plus-newsletter' ? 'product-plus-newsletter' : 'product-only';
+
+const resolveOptionalText = (value?: string | null): string | null => {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  return trimmed.length ? trimmed : null;
+};
+
+const normalizeLegacySections = (offerConfig: PostPurchaseOfferConfig): PostPurchaseSectionConfig[] => {
+  const sections: PostPurchaseSectionConfig[] = [];
+  const legacyHeading = resolveOptionalText(offerConfig.heading) ?? undefined;
+  const legacyParagraph = resolveOptionalText(offerConfig.paragraph) ?? undefined;
+
+  if (offerConfig.offeredItems?.length) {
+    sections.push({
+      _type: 'postPurchaseProductOfferSection',
+      heading: legacyHeading,
+      paragraph: legacyParagraph,
+      offeredItems: offerConfig.offeredItems,
+      offerMode: offerConfig.offerMode,
+      discountAmount: offerConfig.discountAmount,
+      discountTimeMinutes: offerConfig.discountTimeMinutes,
+    });
+  }
+
+  if (resolveOfferLayout(offerConfig.layout) === 'product-plus-newsletter') {
+    const newsletterHeading = resolveOptionalText(offerConfig.newsletter?.heading);
+    const newsletterParagraph = resolveOptionalText(offerConfig.newsletter?.paragraph);
+
+    if (newsletterHeading || newsletterParagraph) {
+      sections.push({
+        _type: 'postPurchaseNewsletterSignupSection',
+        heading: newsletterHeading ?? undefined,
+        paragraph: newsletterParagraph ?? undefined,
+        groupId: offerConfig.newsletter?.groupId,
+      });
+    }
+  }
+
+  return sections;
+};
+
+const getConfiguredSections = (offerConfig?: PostPurchaseOfferConfig | null): PostPurchaseSectionConfig[] => {
+  if (!offerConfig) return [];
+  if (Array.isArray(offerConfig.sections) && offerConfig.sections.length) return offerConfig.sections;
+  return normalizeLegacySections(offerConfig);
+};
+
+const isProductSection = (
+  section: PostPurchaseSectionConfig
+): section is PostPurchaseProductSectionConfig => section._type === 'postPurchaseProductOfferSection';
+
+const isNewsletterSection = (
+  section: PostPurchaseSectionConfig
+): section is PostPurchaseNewsletterSectionConfig => section._type === 'postPurchaseNewsletterSignupSection';
+
+const resolveSectionOfferMode = (offerMode?: PostPurchaseOfferMode): PostPurchaseOfferMode =>
+  offerMode === 'standard' ? 'standard' : 'discounted';
+
+const hasDiscountedProductSections = (
+  sections: PostPurchaseSectionConfig[]
+): PostPurchaseProductSectionConfig[] =>
+  sections.filter(
+    (section): section is PostPurchaseProductSectionConfig =>
+      isProductSection(section) &&
+      Array.isArray(section.offeredItems) &&
+      section.offeredItems.length > 0 &&
+      resolveSectionOfferMode(section.offerMode) === 'discounted'
+  );
+
+const hasRenderableSection = (section: PostPurchaseSectionConfig) => {
+  if (isProductSection(section)) return Boolean(section.offeredItems?.length);
+  if (isNewsletterSection(section)) return true;
+  return false;
+};
+
+const hasValidOfferConfig = (offerConfig?: PostPurchaseOfferConfig | null) => {
+  if (!offerConfig?.enabled) return false;
+
+  const sections = getConfiguredSections(offerConfig).filter(hasRenderableSection);
+  if (!sections.length) return false;
+
+  return hasDiscountedProductSections(sections).length <= 1;
+};
+
+const createProductSectionPayload = ({
+  section,
+  offerMode,
+  discountCoupon,
+}: {
+  section: PostPurchaseProductSectionConfig;
+  offerMode: PostPurchaseOfferMode;
+  discountCoupon?: DiscountSectionCoupon | null;
+}): PostPurchaseProductSectionPayload => ({
+  _type: 'productOffer',
+  heading: resolveOptionalText(section.heading),
+  paragraph: resolveOptionalText(section.paragraph),
+  offerMode,
+  discountAmount: discountCoupon?.amount ?? null,
+  expirationDate: discountCoupon?.expirationDate ?? null,
+  couponCode: discountCoupon?.code ?? null,
+  offeredItems: section.offeredItems ?? [],
+});
+
+const createNewsletterSectionPayload = (
+  section: PostPurchaseNewsletterSectionConfig
+): PostPurchaseNewsletterSectionPayload | null => {
+  const heading = resolveOptionalText(section.heading);
+  const paragraph = resolveOptionalText(section.paragraph);
+
+  if (!heading && !paragraph) return null;
+
+  return {
+    _type: 'newsletterSignup',
+    heading,
+    paragraph,
+    groupId: resolveOptionalText(section.groupId),
+    image: section.image ?? null,
   };
+};
+
+const getDiscountExpirationDate = (discountTimeMinutes: number | null | undefined, baseDate: Date) => {
+  if (!discountTimeMinutes) return null;
+  return new Date(baseDate.getTime() + discountTimeMinutes * 60_000).toISOString();
+};
+
+const resolveDiscountCouponForOrder = async ({
+  supabase,
+  orderId,
+  userId,
+  paidAt,
+  section,
+}: {
+  supabase: ReturnType<typeof createClient>;
+  orderId: string;
+  userId: string;
+  paidAt: string | null;
+  section: PostPurchaseProductSectionConfig;
+}): Promise<DiscountSectionCoupon | null> => {
+  const expirationDate = getDiscountExpirationDate(section.discountTimeMinutes, paidAt ? new Date(paidAt) : new Date());
+
+  const { data: existingCoupon } = await supabase
+    .from('coupons')
+    .select('code, expiration_date, amount')
+    .contains('course_discount_data', { order_id: orderId })
+    .maybeSingle();
+
+  const existingCouponAmount =
+    typeof existingCoupon?.amount === 'number' && existingCoupon.amount > 0 ? existingCoupon.amount : null;
+
+  if (existingCoupon?.code && existingCouponAmount) {
+    return {
+      code: existingCoupon.code,
+      amount: existingCouponAmount,
+      expirationDate: existingCoupon.expiration_date ?? expirationDate,
+    };
+  }
+
+  if (typeof section.discountAmount !== 'number' || section.discountAmount <= 0) {
+    console.error('❌ Invalid post-purchase discount configuration for order', orderId);
+    return null;
+  }
+
+  const discountedProducts = (section.offeredItems ?? []).map((item) => ({
+    id: item._id,
+    name: item.name,
+  }));
+
+  const { data: newCoupon, error: couponError } = await supabase
+    .from('coupons')
+    .insert({
+      description: 'Post-purchase offer',
+      type: 3,
+      code: generateRandomCode(),
+      state: 2,
+      amount: section.discountAmount,
+      use_limit: 1,
+      expiration_date: expirationDate,
+      discounted_product: discountedProducts[0] ?? null,
+      discounted_products: discountedProducts,
+      course_discount_data: {
+        order_id: orderId,
+        user_id: userId,
+      },
+    })
+    .select('code, expiration_date')
+    .single();
+
+  if (couponError || !newCoupon) {
+    console.error('❌ Failed to create post-purchase coupon for order', orderId, couponError?.message);
+    return null;
+  }
+
+  return {
+    code: newCoupon.code,
+    amount: section.discountAmount,
+    expirationDate: newCoupon.expiration_date ?? expirationDate,
+  };
+};
+
+const resolvePreviewDiscountCoupon = (section: PostPurchaseProductSectionConfig): DiscountSectionCoupon | null => {
+  if (typeof section.discountAmount !== 'number' || section.discountAmount <= 0) {
+    return null;
+  }
+
+  return {
+    code: 'PODGLAD-RABAT',
+    amount: section.discountAmount,
+    expirationDate: getDiscountExpirationDate(section.discountTimeMinutes, new Date()),
+  };
+};
+
+const buildResolvedSections = ({
+  sections,
+  discountCoupon,
+}: {
+  sections: PostPurchaseSectionConfig[];
+  discountCoupon?: DiscountSectionCoupon | null;
+}): PostPurchaseOfferSection[] => {
+  return sections.reduce<PostPurchaseOfferSection[]>((acc, section) => {
+    if (isNewsletterSection(section)) {
+      const newsletterSection = createNewsletterSectionPayload(section);
+      if (newsletterSection) acc.push(newsletterSection);
+      return acc;
+    }
+
+    if (!isProductSection(section) || !section.offeredItems?.length) {
+      return acc;
+    }
+
+    const offerMode = resolveSectionOfferMode(section.offerMode);
+
+    if (offerMode === 'discounted' && !discountCoupon) {
+      return acc;
+    }
+
+    acc.push(
+      createProductSectionPayload({
+        section,
+        offerMode,
+        discountCoupon: offerMode === 'discounted' ? discountCoupon : null,
+      })
+    );
+
+    return acc;
+  }, []);
 };
 
 /**
@@ -80,17 +426,19 @@ export async function hasPostPurchaseOffer(
 
   if (courseAndBundleIds.length === 0) return false;
 
-  const results = await sanityFetch<Array<{ postPurchaseOfferEnabled: boolean | null }>>({
+  const results = await sanityFetch<SanityProductWithOffer[]>({
     query: /* groq */ `
       *[(_type == "course" || _type == "bundle") && _id in $ids] {
-        "postPurchaseOfferEnabled": postPurchaseOffer.enabled
+        _id,
+        _type,
+        ${POST_PURCHASE_OFFER_QUERY}
       }
     `,
     params: { ids: courseAndBundleIds },
     noCache: true,
   });
 
-  return results?.some((r) => r.postPurchaseOfferEnabled === true) ?? false;
+  return results?.some((result) => hasValidOfferConfig(result.postPurchaseOffer)) ?? false;
 }
 
 /**
@@ -136,26 +484,7 @@ export async function resolvePostPurchaseOffer(
       *[(_type == "course" || _type == "bundle") && _id in $ids] {
         _id,
         _type,
-        postPurchaseOffer {
-          enabled,
-          heading,
-          paragraph,
-          offerMode,
-          discountAmount,
-          discountTimeMinutes,
-          "offeredItems": offeredItems[] -> {
-            _id,
-            _type,
-            name,
-            price,
-            discount,
-            basis,
-            "slug": slug.current,
-            "image": gallery[0] {
-              ${Img_Query}
-            },
-          },
-        }
+        ${POST_PURCHASE_OFFER_QUERY}
       }
     `,
     params: { ids: courseAndBundleIds },
@@ -170,107 +499,44 @@ export async function resolvePostPurchaseOffer(
   }
 
   const offerConfig = productWithOffer.postPurchaseOffer;
+  const configuredSections = getConfiguredSections(offerConfig).filter(hasRenderableSection);
 
-  if (!offerConfig.offeredItems || offerConfig.offeredItems.length === 0) {
+  if (!configuredSections.length) {
     return { type: 'no-offer' };
   }
 
-  const configuredOfferMode: PostPurchaseOfferMode =
-    offerConfig.offerMode === 'standard' ? 'standard' : 'discounted';
-
-  // Expiration anchored to paid_at so timer survives page refreshes.
-  // The timer applies only to discounted offers.
-  let expirationDate: string | null = null;
-  if (configuredOfferMode === 'discounted' && offerConfig.discountTimeMinutes) {
-    const paidAt = order.paid_at ? new Date(order.paid_at) : new Date();
-    expirationDate = new Date(paidAt.getTime() + offerConfig.discountTimeMinutes * 60_000).toISOString();
-  }
-
-  // Idempotency check — return the existing coupon if one was already created for this order
-  const { data: existingCoupon } = await supabase
-    .from('coupons')
-    .select('code, expiration_date, amount')
-    .contains('course_discount_data', { order_id: orderId })
-    .maybeSingle();
-
-  const existingCouponAmount =
-    typeof existingCoupon?.amount === 'number' && existingCoupon.amount > 0 ? existingCoupon.amount : null;
-
-  if (existingCoupon?.code && existingCouponAmount) {
-    return {
-      type: 'offer',
-      offer: {
-        heading: offerConfig.heading,
-        paragraph: offerConfig.paragraph ?? null,
-        offerMode: 'discounted',
-        discountAmount: existingCouponAmount,
-        expirationDate: existingCoupon.expiration_date ?? expirationDate,
-        couponCode: existingCoupon.code,
-        offeredItems: offerConfig.offeredItems,
-      },
-    };
-  }
-
-  if (configuredOfferMode === 'standard') {
-    return {
-      type: 'offer',
-      offer: {
-        heading: offerConfig.heading,
-        paragraph: offerConfig.paragraph ?? null,
-        offerMode: 'standard',
-        discountAmount: null,
-        expirationDate: null,
-        couponCode: null,
-        offeredItems: offerConfig.offeredItems,
-      },
-    };
-  }
-
-  if (typeof offerConfig.discountAmount !== 'number' || offerConfig.discountAmount <= 0) {
-    console.error('❌ Invalid post-purchase discount configuration for order', orderId);
+  const discountedSections = hasDiscountedProductSections(configuredSections);
+  if (discountedSections.length > 1) {
+    console.error('❌ More than one discounted post-purchase section configured', orderId);
     return { type: 'no-offer' };
   }
 
-  const discountedProducts = offerConfig.offeredItems.map((item) => ({
-    id: item._id,
-    name: item.name,
-  }));
+  const discountedSection = discountedSections[0];
 
-  const { data: newCoupon, error: couponError } = await supabase
-    .from('coupons')
-    .insert({
-      description: 'Post-purchase offer',
-      type: 3, // FIXED PRODUCT
-      code: generateRandomCode(),
-      state: 2, // active
-      amount: offerConfig.discountAmount,
-      use_limit: 1,
-      expiration_date: expirationDate,
-      discounted_product: discountedProducts[0] ?? null,
-      discounted_products: discountedProducts,
-      course_discount_data: {
-        order_id: orderId,
-        user_id: userId,
-      },
-    })
-    .select('code, expiration_date')
-    .single();
+  const discountCoupon =
+    discountedSections.length === 1 && discountedSection
+      ? await resolveDiscountCouponForOrder({
+          supabase,
+          orderId,
+          userId,
+          paidAt: order.paid_at ?? null,
+          section: discountedSection,
+        })
+      : null;
 
-  if (couponError || !newCoupon) {
-    console.error('❌ Failed to create post-purchase coupon for order', orderId, couponError?.message);
+  const resolvedSections = buildResolvedSections({
+    sections: configuredSections,
+    discountCoupon,
+  });
+
+  if (!resolvedSections.length) {
     return { type: 'no-offer' };
   }
 
   return {
     type: 'offer',
     offer: {
-      heading: offerConfig.heading,
-      paragraph: offerConfig.paragraph ?? null,
-      offerMode: 'discounted',
-      discountAmount: offerConfig.discountAmount,
-      expirationDate: newCoupon.expiration_date ?? expirationDate,
-      couponCode: newCoupon.code,
-      offeredItems: offerConfig.offeredItems,
+      sections: resolvedSections,
     },
   };
 }
@@ -289,26 +555,7 @@ export async function resolvePostPurchaseOfferPreview(
       ][0]{
         _id,
         _type,
-        postPurchaseOffer {
-          enabled,
-          heading,
-          paragraph,
-          offerMode,
-          discountAmount,
-          discountTimeMinutes,
-          "offeredItems": offeredItems[] -> {
-            _id,
-            _type,
-            name,
-            price,
-            discount,
-            basis,
-            "slug": slug.current,
-            "image": gallery[0] {
-              ${Img_Query}
-            },
-          },
-        }
+        ${POST_PURCHASE_OFFER_QUERY}
       }
     `,
     params: {
@@ -324,36 +571,34 @@ export async function resolvePostPurchaseOfferPreview(
   }
 
   const offerConfig = previewDocument.postPurchaseOffer;
+  const configuredSections = getConfiguredSections(offerConfig).filter(hasRenderableSection);
 
-  if (!offerConfig?.enabled || !offerConfig.offeredItems?.length) {
+  if (!offerConfig?.enabled || !configuredSections.length) {
     return { type: 'no-offer' };
   }
 
-  const offerMode: PostPurchaseOfferMode = offerConfig.offerMode === 'standard' ? 'standard' : 'discounted';
-  const previewDiscountAmount =
-    offerMode === 'discounted' && typeof offerConfig.discountAmount === 'number' && offerConfig.discountAmount > 0
-      ? offerConfig.discountAmount
-      : null;
-
-  if (offerMode === 'discounted' && previewDiscountAmount === null) {
+  const discountedSections = hasDiscountedProductSections(configuredSections);
+  if (discountedSections.length > 1) {
     return { type: 'no-offer' };
   }
 
-  const expirationDate =
-    offerMode === 'discounted' && offerConfig.discountTimeMinutes
-      ? new Date(Date.now() + offerConfig.discountTimeMinutes * 60_000).toISOString()
-      : null;
+  const discountedSection = discountedSections[0];
+  const discountCoupon =
+    discountedSections.length === 1 && discountedSection ? resolvePreviewDiscountCoupon(discountedSection) : null;
+
+  const resolvedSections = buildResolvedSections({
+    sections: configuredSections,
+    discountCoupon,
+  });
+
+  if (!resolvedSections.length) {
+    return { type: 'no-offer' };
+  }
 
   return {
     type: 'offer',
     offer: {
-      heading: offerConfig.heading,
-      paragraph: offerConfig.paragraph ?? null,
-      offerMode,
-      discountAmount: previewDiscountAmount,
-      expirationDate,
-      couponCode: previewDiscountAmount ? 'PODGLAD-RABAT' : null,
-      offeredItems: offerConfig.offeredItems,
+      sections: resolvedSections,
     },
   };
 }

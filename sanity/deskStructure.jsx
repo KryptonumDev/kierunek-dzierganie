@@ -123,10 +123,12 @@ const createListItem = (S, typeName) => {
         .documentId(documentId)
         .schemaType(name)
         .title(title)
-        .views([
-          S.view.form().title('Edycja'),
-          !withoutPreview.includes(name) && S.view.component(WebPreview).title('Podgląd'),
-        ])
+        .views(
+          [
+            S.view.form().title('Edycja'),
+            !withoutPreview.includes(name) && S.view.component(WebPreview).title('Podgląd'),
+          ].filter(Boolean)
+        )
     );
 };
 
@@ -153,12 +155,14 @@ const createDocumentTypeListItem = (S, name) => {
           S.document()
             .documentId(documentId)
             .schemaType(name)
-            .views([
-              S.view.form().title('Edycja'),
-              !withoutPreview.includes(name) && S.view.component(WebPreview).title('Podgląd'),
-              (name === 'course' || name === 'bundle') &&
-                S.view.component(OfferPreview).title('Podgląd oferty po zakupie'),
-            ])
+            .views(
+              [
+                S.view.form().title('Edycja'),
+                !withoutPreview.includes(name) && S.view.component(WebPreview).title('Podgląd'),
+                (name === 'course' || name === 'bundle') &&
+                  S.view.component(OfferPreview).title('Podgląd oferty po zakupie'),
+              ].filter(Boolean)
+            )
         )
     );
 };

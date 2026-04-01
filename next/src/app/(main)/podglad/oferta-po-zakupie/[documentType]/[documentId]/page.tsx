@@ -29,7 +29,7 @@ export default async function PostPurchaseOfferPreviewPage({
       <section style={{ maxWidth: '860px', margin: '0 auto', padding: '3rem var(--pageMargin)' }}>
         <h1 style={{ marginBottom: '0.75rem' }}>Podgląd oferty po zakupie</h1>
         <p style={{ color: 'var(--primary-600, #7a6560)', lineHeight: 1.7 }}>
-          Włącz ofertę po zakupie, wybierz tryb oferty i uzupełnij wymagane pola, aby zobaczyć pełny podgląd.
+          Włącz ofertę po zakupie i dodaj przynajmniej jedną sekcję produktów lub newslettera, aby zobaczyć pełny podgląd.
         </p>
       </section>
     );

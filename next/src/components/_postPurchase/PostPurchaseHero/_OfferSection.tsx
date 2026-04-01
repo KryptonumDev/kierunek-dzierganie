@@ -66,7 +66,9 @@ const OfferSection = ({ offeredItems, offerMode, discountAmount, expirationDate,
       )}
 
       {/* Product cards — 2-column grid when multiple items */}
-      <div className={`${styles.offerItems} ${multipleItems ? styles.offerItemsGrid : ''}`}>
+      <div
+        className={`${styles.offerItems} ${multipleItems ? styles.offerItemsGrid : styles.offerItemsSingle}`}
+      >
         {offeredItems.map((item) => {
           const basePrice = item.discount ?? item.price;
           const discountedPrice = hasDiscount ? Math.max(0, basePrice - discountAmount) : basePrice;
