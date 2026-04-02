@@ -18,6 +18,7 @@ import {
   shippingModeChargesDelivery,
   shippingModeRequiresDelivery,
 } from '@/utils/resolve-shipping-mode';
+import { resolveProductCardShipmentDeclaredValue } from '@/utils/resolve-shipment-declared-value';
 // import { pdf } from '@react-pdf/renderer';
 
 export const dynamic = 'force-dynamic';
@@ -109,17 +110,23 @@ export async function POST(request: Request) {
       Array<{
         _id: string;
         _type: 'product' | 'course' | 'bundle' | 'voucher';
+        price?: number | null;
+        discount?: number | null;
         shippingMode?: 'none' | 'included' | 'paid' | null;
         shippingLabel?: string | null;
+        shipmentDeclaredValue?: number | null;
         courses?: Array<{
           _id: string;
+          price?: number | null;
+          discount?: number | null;
           shippingMode?: 'none' | 'included' | 'paid' | null;
           shippingLabel?: string | null;
+          shipmentDeclaredValue?: number | null;
         }> | null;
       }>
     >({
       query:
-        '*[(_type == "product" || _type == "course" || _type == "bundle" || _type == "voucher") && _id in $ids]{_id, _type, shippingMode, shippingLabel, "courses": courses[]->{_id, shippingMode, shippingLabel}}',
+        '*[(_type == "product" || _type == "course" || _type == "bundle" || _type == "voucher") && _id in $ids]{_id, _type, price, discount, shippingMode, shippingLabel, shipmentDeclaredValue, "courses": courses[]->{_id, price, discount, shippingMode, shippingLabel, shipmentDeclaredValue}}',
       params: { ids: Array.from(new Set(productItems.map((item) => item.id))) },
       noCache: true,
     });
@@ -136,6 +143,31 @@ export async function POST(request: Request) {
         ...sourceItem,
         voucherData: product.voucherData,
       };
+    });
+    const serverResolvedShipmentDeclaredValues = productItems.map((product) => {
+      const sourceItem = shippingSourceMap.get(product.id);
+
+      if (!sourceItem) {
+        throw new Error(`Missing shipment declared value source item for ${product.id}`);
+      }
+
+      const declaredValueContext = {
+        ...sourceItem,
+        price:
+          sourceItem._type === 'course'
+            ? sourceItem.price ?? product.price
+            : product.price,
+        discount:
+          sourceItem._type === 'course'
+            ? sourceItem.discount ?? (typeof product.discount === 'number' ? product.discount : undefined)
+            : typeof product.discount === 'number'
+              ? product.discount
+              : undefined,
+        quantity: product.quantity ?? 1,
+        voucherData: product.voucherData,
+      };
+
+      return resolveProductCardShipmentDeclaredValue(declaredValueContext);
     });
 
     const resolvedOrderShippingInfo = resolveProductCardsShippingInfo(serverResolvedShippingItems);
@@ -291,12 +323,19 @@ export async function POST(request: Request) {
     // NOTE: Voucher coupons are NO LONGER created here to prevent orphaned coupons
     // when users click multiple times. Coupons are created AFTER payment confirmation
     // in /api/payment/complete via createVoucherCoupons()
-    const products = productItems.map(async (product) => {
+    const products = productItems.map(async (product, index) => {
+      const resolvedShipmentDeclaredValue = serverResolvedShipmentDeclaredValues[index] ?? {
+        value: null,
+        source: null,
+      };
+
       if (product.type === 'voucher') {
         // Don't create coupon yet - just pass voucher data through
         // Coupon will be created after payment is confirmed
         return {
           ...product,
+          shipmentDeclaredValue: resolvedShipmentDeclaredValue.value,
+          shipmentDeclaredValueSource: resolvedShipmentDeclaredValue.source,
           voucherBase64: null, // Will be generated after payment
           voucherPending: true, // Flag to indicate coupon needs to be created
           vat: 0,
@@ -305,6 +344,8 @@ export async function POST(request: Request) {
       } else {
         return {
           ...product,
+          shipmentDeclaredValue: resolvedShipmentDeclaredValue.value,
+          shipmentDeclaredValueSource: resolvedShipmentDeclaredValue.source,
           vat: product.courses ? settingsData?.value.vatCourses : settingsData?.value.vatPhysical,
           ryczalt: product.courses ? settingsData?.value.ryczaltCourses : settingsData?.value.ryczaltPhysical,
         };

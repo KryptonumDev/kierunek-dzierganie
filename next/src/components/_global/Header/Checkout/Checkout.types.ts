@@ -1,4 +1,14 @@
-import type { Billing, Complexity, CourseGrantLink, CourseShippingMode, Discount, ImgType, MapPoint, Shipping } from '@/global/types';
+import type {
+  Billing,
+  Complexity,
+  CourseGrantLink,
+  CourseShippingMode,
+  Discount,
+  ImgType,
+  MapPoint,
+  ShipmentDeclaredValueSource,
+  Shipping,
+} from '@/global/types';
 import type { Dispatch, SetStateAction } from 'react';
 import type { useCartItems } from '../Header.types';
 
@@ -72,6 +82,8 @@ export type InputState = {
       shipmentMode: CourseShippingMode;
       shipmentSource: 'product' | 'course' | 'bundle' | 'voucher';
       shipmentLabel?: string | null;
+      shipmentDeclaredValue?: number | null;
+      shipmentDeclaredValueSource?: ShipmentDeclaredValueSource | null;
     }[];
   };
   client_notes: string;

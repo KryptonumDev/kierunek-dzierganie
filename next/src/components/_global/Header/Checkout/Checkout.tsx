@@ -188,6 +188,8 @@ export default function Checkout({
                 shipmentMode: item.shippingMode ?? 'none',
                 shipmentSource: item._type,
                 shipmentLabel: item.shippingLabel ?? null,
+                shipmentDeclaredValue: item.shipmentDeclaredValue ?? null,
+                shipmentDeclaredValueSource: item.shipmentDeclaredValueSource ?? null,
               };
             }),
           },

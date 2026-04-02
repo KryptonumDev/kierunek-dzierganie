@@ -19,6 +19,11 @@ export type Complexity = 'dla-poczatkujacych' | 'dla-srednio-zaawansowanych' | '
 export type CourseAccessMode = 'unlimited' | 'duration_months' | 'fixed_date';
 /** Course shipping after purchase (Sanity `course` document). */
 export type CourseShippingMode = 'none' | 'included' | 'paid';
+export type ShipmentDeclaredValueSource =
+  | 'product_default'
+  | 'course_override'
+  | 'line_price_fallback'
+  | 'bundle_resolved';
 
 export type CtaType = {
   href: string;
@@ -48,8 +53,11 @@ export type CourseGrantLink = {
 };
 
 export type BundleCourseShippingLink = CourseGrantLink & {
+  price?: number | null;
+  discount?: number | null;
   shippingMode?: CourseShippingMode | null;
   shippingLabel?: string | null;
+  shipmentDeclaredValue?: number | null;
 };
 
 export type ProductCard = {
@@ -77,6 +85,8 @@ export type ProductCard = {
   /** Present on `course` (and nested course refs on bundles). Omitted or null for products without shipping fields. */
   shippingMode?: CourseShippingMode | null;
   shippingLabel?: string | null;
+  shipmentDeclaredValue?: number | null;
+  shipmentDeclaredValueSource?: ShipmentDeclaredValueSource | null;
   materials_link?: {
     _id: string;
     gallery?: ImgType;
@@ -530,6 +540,8 @@ export type Order = {
       shipmentMode?: CourseShippingMode | null;
       shipmentSource?: 'product' | 'course' | 'bundle' | 'voucher';
       shipmentLabel?: string | null;
+      shipmentDeclaredValue?: number | null;
+      shipmentDeclaredValueSource?: ShipmentDeclaredValueSource | null;
     }[];
   };
   shippingMethod: {

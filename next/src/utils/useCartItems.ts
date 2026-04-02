@@ -4,6 +4,7 @@ import sanityFetch from './sanity.fetch';
 import type { ProductCard } from '@/global/types';
 import { PRODUCT_CARD_QUERY } from 'src/global/constants';
 import { resolveProductCardShippingInfo, shippingModeRequiresDelivery } from './resolve-shipping-mode';
+import { resolveProductCardShipmentDeclaredValue } from './resolve-shipment-declared-value';
 
 export const useCartItems = () => {
   const { items: rawCart, updateItemQuantity, updateItem, removeItem, totalItems, totalUniqueItems } = useCart();
@@ -73,6 +74,12 @@ export const useCartItems = () => {
                 ...item,
                 voucherData: el.voucherData,
               });
+              const shipmentDeclaredValue = resolveProductCardShipmentDeclaredValue({
+                ...item,
+                voucherData: el.voucherData,
+                price: el.voucherData.amount!,
+                quantity,
+              });
 
               return {
                 ...item,
@@ -83,11 +90,21 @@ export const useCartItems = () => {
                 variants: null,
                 shippingMode: shippingInfo.mode,
                 shippingLabel: shippingInfo.label,
+                shipmentDeclaredValue: shipmentDeclaredValue.value,
+                shipmentDeclaredValueSource: shipmentDeclaredValue.source,
                 needDelivery: shippingModeRequiresDelivery(shippingInfo.mode),
               };
             }
 
-            const shippingInfo = resolveProductCardShippingInfo(item);
+            const shippingInfo = resolveProductCardShippingInfo({
+              ...item,
+            });
+            const shipmentDeclaredValue = resolveProductCardShipmentDeclaredValue({
+              ...item,
+              price: variant ? variant.price! : item.price!,
+              discount: variant ? variant.discount : item.discount,
+              quantity,
+            });
 
             return {
               ...item,
@@ -98,6 +115,8 @@ export const useCartItems = () => {
               variants: variant ? item.variants : [],
               shippingMode: shippingInfo.mode,
               shippingLabel: shippingInfo.label,
+              shipmentDeclaredValue: shipmentDeclaredValue.value,
+              shipmentDeclaredValueSource: shipmentDeclaredValue.source,
               needDelivery: shippingModeRequiresDelivery(shippingInfo.mode),
             };
           });
