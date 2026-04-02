@@ -5,6 +5,7 @@ import Informations from '@/components/_product/Informations';
 import Parameters from '@/components/_product/Parameters';
 import Reviews from '@/components/_product/Reviews';
 import { Img_Query } from '@/components/ui/image';
+import { PRODUCT_PURCHASE_ELIGIBILITY_SOURCE_QUERY } from '@/global/constants';
 import ProductSchema from '@/global/Schema/ProductSchema';
 import { QueryMetadata } from '@/global/Seo/query-metadata';
 import type { ProductPageQueryProps, generateStaticParamsProps } from '@/global/types';
@@ -144,9 +145,8 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
               value
             }
           },
-          "relatedCourses": *[_type == 'course' && (materials_link._ref == ^._id || ^._id in related_products[]._ref)][]{
-            _id,
-            name
+          "relatedCourses": *[_type == 'course' && (materials_link._ref == ^._id || ^._id in related_products[]._ref || printed_manual._ref == ^._id)][]{
+            ${PRODUCT_PURCHASE_ELIGIBILITY_SOURCE_QUERY}
           },
           "reviews": *[_type == 'productReviewCollection' && visible == true && references(^._id)][0...10]{
             rating,

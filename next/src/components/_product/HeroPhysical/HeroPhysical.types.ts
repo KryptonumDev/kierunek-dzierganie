@@ -1,4 +1,4 @@
-import type { ImgType } from '@/global/types';
+import type { ImgType, PurchaseEligibilitySource } from '@/global/types';
 import type { VideoProvider } from '@/components/ui/VideoPlayer/VideoPlayer.types';
 
 export type ProductVariant = {
@@ -41,7 +41,7 @@ export type Props = {
   type?: string;
   variants?: ProductVariant[];
   physical: ProductPhysical;
-  relatedCourses?: Array<{ _id: string; name?: string }>;
+  relatedCourses?: PurchaseEligibilitySource[];
   ownedCourses?: string[];
 };
 

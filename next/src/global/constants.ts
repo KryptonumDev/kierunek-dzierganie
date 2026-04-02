@@ -224,6 +224,17 @@ export const PRODUCT_CARD_QUERY = `
   automatizationId,
 `;
 
+export const PRODUCT_PURCHASE_ELIGIBILITY_SOURCE_QUERY = `
+  _id,
+  name,
+  type,
+  "includedByPrograms": *[_type == 'course' && type == 'program' && ^._id in includedCourses[]._ref][]{
+    _id,
+    name,
+    type
+  }
+`;
+
 export const MATERIAL_PACKAGE_QUERY = `materialsPackage[] {
           _type,
           heading,

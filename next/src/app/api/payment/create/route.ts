@@ -246,39 +246,60 @@ export async function POST(request: Request) {
       }
     }
 
-    const productRequiredCourseMap = new Map<string, { _id: string; name?: string }>();
+    const productEligibilityMap = new Map<string, Map<string, { _id: string; name?: string }>>();
     if (productIdsNeedingRelation.length > 0) {
       const sanityCourses = await sanityFetch<
         Array<{
           _id: string;
           name?: string;
+          type?: 'course' | 'program' | null;
           materials_link?: { _id: string; name?: string } | null;
           related_products?: Array<{ _id: string; name?: string }> | null;
+          printed_manual?: { _id: string; name?: string } | null;
+          includedByPrograms?: Array<{ _id: string; name?: string; type?: 'program' | null }> | null;
         }>
       >({
-        query: '*[_type == "course" && references($productIds)]{_id, name, "materials_link": materials_link->{_id, name}, "related_products": related_products[]->{_id, name}}',
+        query:
+          '*[_type == "course" && references($productIds)]{_id, name, type, "materials_link": materials_link->{_id, name}, "related_products": related_products[]->{_id, name}, "printed_manual": printed_manual->{_id, name}, "includedByPrograms": *[_type == "course" && type == "program" && ^._id in includedCourses[]._ref]{_id, name, type}}',
         params: { productIds: productIdsNeedingRelation },
         noCache: true,
       });
 
       const productIdSet = new Set(productIdsNeedingRelation);
+      const addEligibilityForProduct = (productId: string | undefined, eligibleRefs: Array<{ _id: string; name?: string }>) => {
+        if (!productId || !productIdSet.has(productId)) return;
+
+        const currentRefs = productEligibilityMap.get(productId) ?? new Map<string, { _id: string; name?: string }>();
+
+        eligibleRefs.forEach((ref) => {
+          if (!ref?._id) return;
+          currentRefs.set(ref._id, { _id: ref._id, name: ref.name });
+        });
+
+        productEligibilityMap.set(productId, currentRefs);
+      };
+
       sanityCourses?.forEach((course) => {
-        if (course.materials_link?._id && productIdSet.has(course.materials_link._id)) {
-          productRequiredCourseMap.set(course.materials_link._id, { _id: course._id, name: course.name });
-        }
+        const eligibleRefs = [
+          { _id: course._id, name: course.name },
+          ...(course.includedByPrograms ?? []).map((program) => ({ _id: program._id, name: program.name })),
+        ];
+
+        addEligibilityForProduct(course.materials_link?._id, eligibleRefs);
+        addEligibilityForProduct(course.printed_manual?._id, eligibleRefs);
         course.related_products?.forEach((product) => {
-          if (product?._id && productIdSet.has(product._id)) {
-            productRequiredCourseMap.set(product._id, { _id: course._id, name: course.name });
-          }
+          addEligibilityForProduct(product?._id, eligibleRefs);
         });
       });
     }
 
-    if (productRequiredCourseMap.size > 0) {
+    if (productEligibilityMap.size > 0) {
       const requiredCourseIds = new Set(
-        Array.from(productRequiredCourseMap.values())
-          .map((related) => related._id)
-          .filter((courseId): courseId is string => typeof courseId === 'string')
+        Array.from(productEligibilityMap.values()).flatMap((eligibleRefs) =>
+          Array.from(eligibleRefs.values())
+            .map((related) => related._id)
+            .filter((courseId): courseId is string => typeof courseId === 'string')
+        )
       );
 
       let ownedRelatedCourseIds = new Set<string>();
@@ -298,21 +319,30 @@ export async function POST(request: Request) {
       }
 
       for (const product of productItems) {
-        const relatedCourse = productRequiredCourseMap.get(product.id);
-        if (!relatedCourse) continue;
+        const eligibleRefs = productEligibilityMap.get(product.id);
+        if (!eligibleRefs?.size) continue;
 
-        const hasCourseInOrder = orderCourseIds.has(relatedCourse._id);
-        const userOwnsCourse = input.user_id ? ownedRelatedCourseIds.has(relatedCourse._id) : false;
+        const eligibleIds = Array.from(eligibleRefs.keys());
+        const hasCourseInOrder = eligibleIds.some((eligibleId) => orderCourseIds.has(eligibleId));
+        const userOwnsCourse = input.user_id ? eligibleIds.some((eligibleId) => ownedRelatedCourseIds.has(eligibleId)) : false;
 
         if (!hasCourseInOrder && !userOwnsCourse) {
+          const eligibleNames = Array.from(eligibleRefs.values())
+            .map((related) => related.name)
+            .filter((name): name is string => typeof name === 'string' && name.length > 0);
+          const eligibleLabel =
+            eligibleNames.length === 1
+              ? `kursu lub programu "${eligibleNames[0]}"`
+              : 'powiązanego kursu lub programu';
+
           console.warn('Order blocked: product requires related course', {
             productId: product.id,
-            relatedCourseId: relatedCourse._id,
+            relatedCourseIds: eligibleIds,
             userId: input.user_id ?? 'guest',
           });
           return NextResponse.json(
             {
-              error: `Produkt "${product.name}" wymaga posiadania kursu "${relatedCourse.name}". Dodaj kurs do zamówienia lub zaloguj się na konto z dostępem do kursu.`,
+              error: `Produkt "${product.name}" wymaga posiadania ${eligibleLabel}. Dodaj odpowiedni kurs lub program do zamówienia albo zaloguj się na konto z dostępem.`,
             },
             { status: 400 }
           );

@@ -189,6 +189,36 @@ export default {
       group: 'configuration',
     },
     {
+      name: 'includedCourses',
+      type: 'array',
+      title: 'Kursy zawarte w programie',
+      description:
+        'Wskaż kursy wchodzące w skład programu. Ta lista służy m.in. do sprawdzania, czy kupująca programu może kupić powiązane produkty fizyczne przypisane do tych kursów.',
+      of: [
+        {
+          type: 'reference',
+          to: [{ type: 'course' }],
+          options: {
+            filter: ({ document }) => {
+              const courseId = document?._id?.replace('drafts.', '');
+
+              if (!courseId) {
+                return { filter: '_type == "course" && type != "program"' };
+              }
+
+              return {
+                filter: '_type == "course" && type != "program" && _id != $courseId',
+                params: { courseId },
+              };
+            },
+          },
+        },
+      ],
+      hidden: ({ document }) => document?.type !== 'program',
+      validation: Rule => Rule.unique(),
+      group: 'configuration',
+    },
+    {
       name: 'shippingMode',
       type: 'string',
       title: 'Wysyłka po zakupie',

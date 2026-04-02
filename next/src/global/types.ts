@@ -52,6 +52,16 @@ export type CourseGrantLink = {
   accessFixedDate?: string | null;
 };
 
+export type PurchaseEligibilityRef = {
+  _id: string;
+  name?: string | null;
+  type?: 'course' | 'program' | null;
+};
+
+export type PurchaseEligibilitySource = PurchaseEligibilityRef & {
+  includedByPrograms?: PurchaseEligibilityRef[] | null;
+};
+
 export type BundleCourseShippingLink = CourseGrantLink & {
   price?: number | null;
   discount?: number | null;
@@ -148,6 +158,7 @@ export type ProductCard = {
   }> | null;
   courses?: BundleCourseShippingLink[] | null;
   grantedCourses?: CourseGrantLink[] | null;
+  purchaseEligibility?: PurchaseEligibilityRef[] | null;
   related?: {
     _id: string;
     name: string;
@@ -345,7 +356,7 @@ export type ProductPageQueryProps = {
       name: string;
       value: string;
     }>;
-    relatedCourses?: { _id: string; name?: string }[];
+    relatedCourses?: PurchaseEligibilitySource[];
     rating: number;
     reviewsCount: number;
     description: DescriptionTypes[];

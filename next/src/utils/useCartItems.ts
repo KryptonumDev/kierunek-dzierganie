@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useCart } from 'react-use-cart';
 import sanityFetch from './sanity.fetch';
-import type { ProductCard } from '@/global/types';
-import { PRODUCT_CARD_QUERY } from 'src/global/constants';
+import type { ProductCard, PurchaseEligibilitySource } from '@/global/types';
+import { PRODUCT_CARD_QUERY, PRODUCT_PURCHASE_ELIGIBILITY_SOURCE_QUERY } from 'src/global/constants';
 import { resolveProductCardShippingInfo, shippingModeRequiresDelivery } from './resolve-shipping-mode';
 import { resolveProductCardShipmentDeclaredValue } from './resolve-shipment-declared-value';
+import { normalizePurchaseEligibility } from './product-purchase-eligibility';
 
 export const useCartItems = () => {
   const { items: rawCart, updateItemQuantity, updateItem, removeItem, totalItems, totalUniqueItems } = useCart();
@@ -14,17 +15,19 @@ export const useCartItems = () => {
     const fetchCartItems = async () => {
       setLoading(true);
       try {
-        const res = await sanityFetch<ProductCard[]>({
+        const res = await sanityFetch<Array<ProductCard & { purchaseEligibilitySources?: PurchaseEligibilitySource[] | null }>>({
           query: `
             *[(_type == 'product' || _type == 'course' || _type == 'bundle' || _type == 'voucher') && _id in $id]{
               ${PRODUCT_CARD_QUERY}
-              "related": *[
+              "purchaseEligibilitySources": *[
                 _type == 'course' && (
                   materials_link._ref == ^._id ||
                   ^._id in related_products[]._ref ||
                   printed_manual._ref == ^._id
                 )
-              ][0]{ _id, name }
+              ]{
+                ${PRODUCT_PURCHASE_ELIGIBILITY_SOURCE_QUERY}
+              }
             }
           `,
           params: {
@@ -93,6 +96,7 @@ export const useCartItems = () => {
                 shipmentDeclaredValue: shipmentDeclaredValue.value,
                 shipmentDeclaredValueSource: shipmentDeclaredValue.source,
                 needDelivery: shippingModeRequiresDelivery(shippingInfo.mode),
+                purchaseEligibility: normalizePurchaseEligibility(item.purchaseEligibilitySources),
               };
             }
 
@@ -118,6 +122,7 @@ export const useCartItems = () => {
               shipmentDeclaredValue: shipmentDeclaredValue.value,
               shipmentDeclaredValueSource: shipmentDeclaredValue.source,
               needDelivery: shippingModeRequiresDelivery(shippingInfo.mode),
+              purchaseEligibility: normalizePurchaseEligibility(item.purchaseEligibilitySources),
             };
           });
 

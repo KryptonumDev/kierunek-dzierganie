@@ -1,3 +1,5 @@
+import type { PurchaseEligibilityRef } from '@/global/types';
+
 export type Props = {
   id: string;
   disabled?: boolean;
@@ -21,9 +23,6 @@ export type Props = {
     _type: string;
     variant?: string;
     basis?: string;
-    relatedCourse?: {
-      _id: string;
-      name?: string;
-    } | null;
+    purchaseEligibility?: PurchaseEligibilityRef[] | null;
   };
 };

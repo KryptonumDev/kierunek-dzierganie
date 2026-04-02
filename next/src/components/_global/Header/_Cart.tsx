@@ -21,6 +21,10 @@ import {
   getEligibleItemIds,
   getRestrictionDescription,
 } from '@/utils/coupon-eligibility';
+import {
+  getPurchaseEligibilityLabel,
+  hasSatisfiedPurchaseEligibility,
+} from '@/utils/product-purchase-eligibility';
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -221,15 +225,19 @@ export default function Cart({
     fetchedItems.forEach((el) => {
       const cartId = el.variant ? el._id + `variant:${el.variant._id}` : el._id;
 
-      // 1) Products that require owning/having related course (any product with a related course)
-      if (el.related?._id && el._type === 'product') {
-        const relatedInCart = fetchedItems.some((item) => item._id === el.related!._id);
-        const relatedOwned = ownedCourses?.includes(el.related._id) ?? false;
-        if (!relatedInCart && !relatedOwned) {
+      // 1) Products that require owning/having a related course or program
+      if (el.purchaseEligibility?.length && el._type === 'product') {
+        const isEligible = hasSatisfiedPurchaseEligibility({
+          eligibility: el.purchaseEligibility,
+          ownedCourseIds: ownedCourses,
+          cartProductIds: fetchedItems.map((item) => item._id),
+        });
+
+        if (!isEligible) {
           if (!processedRemovalsRef.current.has(cartId)) {
             plannedRemovals.push({
               id: cartId,
-              message: `${el.name} został usunięty z koszyka, ponieważ nie posiadasz ${el.related.name}`,
+              message: `${el.name} został usunięty z koszyka, ponieważ nie posiadasz ${getPurchaseEligibilityLabel(el.purchaseEligibility)}`,
             });
           }
         }
