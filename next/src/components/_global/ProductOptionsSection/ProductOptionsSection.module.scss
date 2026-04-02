@@ -56,7 +56,7 @@
 
   h3 {
     margin-bottom: clamp(12px, calc(20vw / 7.68), 20px);
-    font-size: clamp(calc(24rem / 16), calc(34vw / 7.68), calc(34rem / 16));
+    font-size: clamp(calc(21rem / 16), calc(28vw / 7.68), calc(30rem / 16));
   }
 
   .description {
@@ -70,11 +70,6 @@
 
   .newsletterItem {
     padding-bottom: clamp(16px, calc(22vw / 7.68), 24px);
-
-    .image {
-      aspect-ratio: 16/10;
-      margin-bottom: clamp(14px, calc(18vw / 7.68), 20px);
-    }
   }
 
   .newsletterContent {
@@ -92,8 +87,8 @@
 
   .newsletterText {
     margin-bottom: 0;
-    font-size: calc(15rem / 16);
-    line-height: 1.45;
+    font-size: inherit;
+    line-height: inherit;
   }
 
   .newsletterForm {
