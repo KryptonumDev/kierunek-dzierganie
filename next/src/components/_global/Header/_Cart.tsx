@@ -9,6 +9,11 @@ import ProductCard from '@/components/ui/ProductCard';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 import { formatToOnlyDigits } from '@/utils/format-to-only-digits';
 import { formatPrice } from '@/utils/price-formatter';
+import {
+  resolveProductCardsShippingInfo,
+  shippingModeChargesDelivery,
+  shippingModeRequiresDelivery,
+} from '@/utils/resolve-shipping-mode';
 import { canUseVirtualMoney, getVirtualMoneyRestrictionMessage } from '@/utils/can-use-virtual-money';
 import {
   type CategoryRestrictions,
@@ -73,13 +78,6 @@ export default function Cart({
   const canApplyVirtualMoney = useMemo(() => canUseVirtualMoney(fetchedItems), [fetchedItems]);
   const virtualMoneyRestrictionMessage = useMemo(() => getVirtualMoneyRestrictionMessage(fetchedItems), [fetchedItems]);
 
-  const delivery = useMemo<number | null>(
-    () =>
-      fetchedItems?.some((item) => item.needDelivery)
-        ? Number(shippingMethods.find((method) => method.name === currentShippingMethod)?.price)
-        : null,
-    [fetchedItems, currentShippingMethod, shippingMethods]
-  );
   const totalItemsCount = useMemo(() => {
     return cart?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
   }, [cart]);
@@ -87,6 +85,18 @@ export default function Cart({
     if (!fetchedItems) return null;
     return fetchedItems?.reduce((acc, item) => acc + (item.discount ?? item.price!) * item.quantity!, 0) ?? 0;
   }, [fetchedItems]);
+  const orderShippingInfo = useMemo(() => resolveProductCardsShippingInfo(fetchedItems), [fetchedItems]);
+  const delivery = useMemo<number | null>(() => {
+    if (!shippingModeRequiresDelivery(orderShippingInfo.mode)) return null;
+    if (!shippingModeChargesDelivery(orderShippingInfo.mode)) return 0;
+
+    const selectedShippingMethodPrice = Number(
+      shippingMethods.find((method) => method.name === currentShippingMethod)?.price ?? 0
+    );
+    const qualifiesForFreeDelivery = freeShipping > 0 && typeof totalItemsPrice === 'number' && totalItemsPrice >= freeShipping;
+
+    return qualifiesForFreeDelivery ? 0 : selectedShippingMethodPrice;
+  }, [currentShippingMethod, freeShipping, orderShippingInfo.mode, shippingMethods, totalItemsPrice]);
 
   const discountCode = watch('discount');
 
@@ -960,6 +970,7 @@ const CartGrid = ({ fetchedItems, removeItem, updateItemQuantity }: Grid) => {
               <h3>
                 {item.name} {item.variant ? `- ${item.variant.name}` : ''}
               </h3>
+              {item.shippingLabel && <p className={styles['shippingLabel']}>{item.shippingLabel}</p>}
               {item._type === 'voucher' && (
                 <div className={styles['voucher-data']}>
                   <p>

@@ -3,14 +3,23 @@ import type { ProductCard } from '@/global/types';
 export type CartValidationResult = {
   canCheckoutAsGuest: boolean;
   hasPhysicalOnly: boolean;
-  hasDigitalOnly: boolean;
+  hasAccountRequiredOnly: boolean;
   hasMixedCart: boolean;
   isEmpty: boolean;
-  digitalProductTypes: string[];
+  accountRequiredProductTypes: string[];
   physicalProductCount: number;
-  digitalProductCount: number;
+  accountRequiredProductCount: number;
   guestCheckoutBlockedReason?: string;
 };
+
+/**
+ * Guest checkout is based on account eligibility, not on delivery need.
+ * Courses, bundles, and vouchers still require an account even if some of them
+ * may now participate in the shipping flow.
+ */
+export const isGuestCheckoutEligibleItem = (item: Pick<ProductCard, '_type'>): boolean => item._type === 'product';
+export const isAccountRequiredItem = (item: Pick<ProductCard, '_type'>): boolean =>
+  item._type === 'course' || item._type === 'bundle' || item._type === 'voucher';
 
 /**
  * Validates cart contents to determine if guest checkout is allowed
@@ -24,46 +33,44 @@ export const validateGuestCart = (cartItems: ProductCard[]): CartValidationResul
     return {
       canCheckoutAsGuest: false,
       hasPhysicalOnly: false,
-      hasDigitalOnly: false,
+      hasAccountRequiredOnly: false,
       hasMixedCart: false,
       isEmpty: true,
-      digitalProductTypes: [],
+      accountRequiredProductTypes: [],
       physicalProductCount: 0,
-      digitalProductCount: 0,
+      accountRequiredProductCount: 0,
       guestCheckoutBlockedReason: 'Koszyk jest pusty',
     };
   }
 
-  const physicalProducts = cartItems.filter((item) => item._type === 'product');
-  const digitalProducts = cartItems.filter(
-    (item) => item._type === 'course' || item._type === 'bundle' || item._type === 'voucher'
-  );
+  const physicalProducts = cartItems.filter(isGuestCheckoutEligibleItem);
+  const accountRequiredProducts = cartItems.filter(isAccountRequiredItem);
 
   const physicalProductCount = physicalProducts.length;
-  const digitalProductCount = digitalProducts.length;
-  const digitalProductTypes = Array.from(new Set(digitalProducts.map((item) => item._type)));
+  const accountRequiredProductCount = accountRequiredProducts.length;
+  const accountRequiredProductTypes = Array.from(new Set(accountRequiredProducts.map((item) => item._type)));
 
-  const hasPhysicalOnly = physicalProductCount > 0 && digitalProductCount === 0;
-  const hasDigitalOnly = physicalProductCount === 0 && digitalProductCount > 0;
-  const hasMixedCart = physicalProductCount > 0 && digitalProductCount > 0;
+  const hasPhysicalOnly = physicalProductCount > 0 && accountRequiredProductCount === 0;
+  const hasAccountRequiredOnly = physicalProductCount === 0 && accountRequiredProductCount > 0;
+  const hasMixedCart = physicalProductCount > 0 && accountRequiredProductCount > 0;
 
   let guestCheckoutBlockedReason: string | undefined;
 
-  if (hasDigitalOnly) {
-    guestCheckoutBlockedReason = 'Produkty cyfrowe wymagają utworzenia konta';
+  if (hasAccountRequiredOnly) {
+    guestCheckoutBlockedReason = 'Ten koszyk zawiera kursy, pakiety lub vouchery wymagające utworzenia konta';
   } else if (hasMixedCart) {
-    guestCheckoutBlockedReason = 'Koszyk zawiera produkty cyfrowe wymagające utworzenia konta';
+    guestCheckoutBlockedReason = 'Koszyk zawiera produkty wymagające utworzenia konta';
   }
 
   return {
     canCheckoutAsGuest: hasPhysicalOnly,
     hasPhysicalOnly,
-    hasDigitalOnly,
+    hasAccountRequiredOnly,
     hasMixedCart,
     isEmpty: false,
-    digitalProductTypes,
+    accountRequiredProductTypes,
     physicalProductCount,
-    digitalProductCount,
+    accountRequiredProductCount,
     guestCheckoutBlockedReason,
   };
 };
@@ -79,8 +86,8 @@ export const getGuestCheckoutBlockedMessage = (validation: CartValidationResult)
     return 'Dodaj produkty do koszyka, aby kontynuować';
   }
 
-  if (validation.hasDigitalOnly) {
-    const productTypes = validation.digitalProductTypes
+  if (validation.hasAccountRequiredOnly) {
+    const productTypes = validation.accountRequiredProductTypes
       .map((type) => {
         switch (type) {
           case 'course':
@@ -100,7 +107,7 @@ export const getGuestCheckoutBlockedMessage = (validation: CartValidationResult)
   }
 
   if (validation.hasMixedCart) {
-    return 'Twój koszyk zawiera produkty cyfrowe wymagające utworzenia konta.';
+    return 'Twój koszyk zawiera kursy, pakiety lub vouchery wymagające utworzenia konta.';
   }
 
   return validation.guestCheckoutBlockedReason || 'Zakup jako gość nie jest dostępny';

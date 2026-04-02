@@ -1,4 +1,5 @@
 import type { Billing, Complexity, Discount, ImgType, MapPoint, ProductCard, Shipping } from '@/global/types';
+import type { CourseShippingMode } from '@/global/types';
 
 export type CreateOrderTypes = {
   data: {
@@ -18,6 +19,10 @@ export type CreateOrderTypes = {
         name: string;
         price: number;
         quantity: number;
+        shipmentRequired?: boolean;
+        shipmentMode?: CourseShippingMode | null;
+        shipmentSource?: 'product' | 'course' | 'bundle' | 'voucher';
+        shipmentLabel?: string | null;
       }[];
     };
     shipping_method: {

@@ -17,6 +17,8 @@ import type { VideoProvider } from '@/components/ui/VideoPlayer/VideoPlayer.type
 
 export type Complexity = 'dla-poczatkujacych' | 'dla-srednio-zaawansowanych' | 'dla-zaawansowanych';
 export type CourseAccessMode = 'unlimited' | 'duration_months' | 'fixed_date';
+/** Course shipping after purchase (Sanity `course` document). */
+export type CourseShippingMode = 'none' | 'included' | 'paid';
 
 export type CtaType = {
   href: string;
@@ -45,6 +47,11 @@ export type CourseGrantLink = {
   accessFixedDate?: string | null;
 };
 
+export type BundleCourseShippingLink = CourseGrantLink & {
+  shippingMode?: CourseShippingMode | null;
+  shippingLabel?: string | null;
+};
+
 export type ProductCard = {
   _type: 'product' | 'course' | 'bundle' | 'voucher';
   _id: string;
@@ -67,6 +74,9 @@ export type ProductCard = {
   previewGroupMailerLite?: string | null;
   accessMode?: CourseAccessMode | null;
   accessFixedDate?: string | null;
+  /** Present on `course` (and nested course refs on bundles). Omitted or null for products without shipping fields. */
+  shippingMode?: CourseShippingMode | null;
+  shippingLabel?: string | null;
   materials_link?: {
     _id: string;
     gallery?: ImgType;
@@ -126,7 +136,7 @@ export type ProductCard = {
     featuredVideo: string;
     gallery: ImgType;
   }> | null;
-  courses?: CourseGrantLink[] | null;
+  courses?: BundleCourseShippingLink[] | null;
   grantedCourses?: CourseGrantLink[] | null;
   related?: {
     _id: string;
@@ -516,6 +526,10 @@ export type Order = {
       name: string;
       price: number;
       quantity: number;
+      shipmentRequired?: boolean;
+      shipmentMode?: CourseShippingMode | null;
+      shipmentSource?: 'product' | 'course' | 'bundle' | 'voucher';
+      shipmentLabel?: string | null;
     }[];
   };
   shippingMethod: {

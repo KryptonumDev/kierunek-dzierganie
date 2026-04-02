@@ -133,6 +133,8 @@ export const PRODUCT_CARD_QUERY = `
   _type,
   accessMode,
   accessFixedDate,
+  shippingMode,
+  shippingLabel,
   "reviewsCount": count(*[_type == 'productReviewCollection' && references(^._id)]),
   "rating": math::avg(*[_type == 'productReviewCollection' && references(^._id)]{rating}.rating),
   gallery[0]{
@@ -205,6 +207,8 @@ export const PRODUCT_CARD_QUERY = `
     previewGroupMailerLite,
     accessMode,
     accessFixedDate,
+    shippingMode,
+    shippingLabel,
   },
   grantedCourses[]->{
     _id,

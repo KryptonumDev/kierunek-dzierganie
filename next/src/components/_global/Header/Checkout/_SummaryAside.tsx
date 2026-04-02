@@ -59,7 +59,7 @@ export default function SummaryAside({ input }: AsideProps) {
       {input.needDelivery && (
         <p>
           <span>Dostawa</span>
-          <span>{input.freeDelivery ? formatPrice(0) : formatPrice(input.delivery)}</span>
+          <span>{formatPrice(input.delivery)}</span>
         </p>
       )}
       {Array.isArray((input as unknown as { discounts?: Discount[] }).discounts) &&
@@ -93,7 +93,7 @@ export default function SummaryAside({ input }: AsideProps) {
                   ? calculateDiscountAmount(input.amount, input.discount, input.discount.eligibleSubtotal)
                   : 0) -
               (input.virtualMoney ? input.virtualMoney * 100 : 0) +
-              (input.needDelivery && !input.freeDelivery ? input.delivery : 0),
+              (input.needDelivery ? input.delivery : 0),
             0
           )}
         </span>
@@ -123,6 +123,7 @@ export default function SummaryAside({ input }: AsideProps) {
           </div>
           <div>
             <p className={styles['title']}>{product.name}</p>
+            {product.shipmentLabel && <p className={styles['shipping-label']}>{product.shipmentLabel}</p>}
             <span
               className={`${styles['price']} ${product.discount ? styles['discount'] : ''}`}
               dangerouslySetInnerHTML={{ __html: formatPrice(product.price * product.quantity) }}

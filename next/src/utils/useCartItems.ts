@@ -3,6 +3,7 @@ import { useCart } from 'react-use-cart';
 import sanityFetch from './sanity.fetch';
 import type { ProductCard } from '@/global/types';
 import { PRODUCT_CARD_QUERY } from 'src/global/constants';
+import { resolveProductCardShippingInfo, shippingModeRequiresDelivery } from './resolve-shipping-mode';
 
 export const useCartItems = () => {
   const { items: rawCart, updateItemQuantity, updateItem, removeItem, totalItems, totalUniqueItems } = useCart();
@@ -68,6 +69,11 @@ export const useCartItems = () => {
                 : Math.min(el.quantity!, item.countInStock!);
 
             if (item._type === 'voucher') {
+              const shippingInfo = resolveProductCardShippingInfo({
+                ...item,
+                voucherData: el.voucherData,
+              });
+
               return {
                 ...item,
                 quantity: quantity,
@@ -75,9 +81,13 @@ export const useCartItems = () => {
                 voucherData: el.voucherData,
                 variant: null,
                 variants: null,
-                needDelivery: el.voucherData.type === 'PHYSICAL',
+                shippingMode: shippingInfo.mode,
+                shippingLabel: shippingInfo.label,
+                needDelivery: shippingModeRequiresDelivery(shippingInfo.mode),
               };
             }
+
+            const shippingInfo = resolveProductCardShippingInfo(item);
 
             return {
               ...item,
@@ -86,7 +96,9 @@ export const useCartItems = () => {
               discount: variant ? variant.discount : item.discount,
               variant: variant,
               variants: variant ? item.variants : [],
-              needDelivery: item._type === 'product',
+              shippingMode: shippingInfo.mode,
+              shippingLabel: shippingInfo.label,
+              needDelivery: shippingModeRequiresDelivery(shippingInfo.mode),
             };
           });
 

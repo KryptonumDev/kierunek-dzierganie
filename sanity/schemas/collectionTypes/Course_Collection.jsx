@@ -189,6 +189,34 @@ export default {
       group: 'configuration',
     },
     {
+      name: 'shippingMode',
+      type: 'string',
+      title: 'Wysyłka po zakupie',
+      description:
+        'Jeśli kurs wymaga wysłania paczki (np. pakiet powitalny), wybierz wliczoną lub płatną dostawę. Kupujący zobaczy odpowiedni krok dostawy w koszyku.',
+      options: {
+        list: [
+          { title: 'Brak', value: 'none' },
+          { title: 'Wliczona w cenę', value: 'included' },
+          { title: 'Płatna', value: 'paid' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'none',
+      validation: Rule => Rule.required(),
+      group: 'shipping',
+    },
+    {
+      name: 'shippingLabel',
+      type: 'text',
+      title: 'Tekst dla kupującego (koszyk / checkout)',
+      description:
+        'Krótki komunikat wyjaśniający, dlaczego przy zakupie kursu potrzebne są dane do wysyłki. Pole opcjonalne, ale zalecane przy wysyłce wliczonej lub płatnej.',
+      rows: 3,
+      hidden: ({ document }) => !document?.shippingMode || document.shippingMode === 'none',
+      group: 'shipping',
+    },
+    {
       name: 'accessMode',
       type: 'string',
       title: 'Sposób ograniczenia dostępu',
@@ -558,6 +586,7 @@ export default {
   ],
   groups: [
     { name: 'configuration', title: 'Konfiguracja' },
+    { name: 'shipping', title: 'Wysyłka po zakupie' },
     { name: 'prices', title: 'Ceny' },
     { name: 'description', title: 'Treści' },
     { name: 'preview', title: 'Podgląd kursu' },
