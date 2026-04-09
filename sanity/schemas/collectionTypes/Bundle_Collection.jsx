@@ -1,3 +1,4 @@
+import BundleSlug from '../../components/BundleSlug';
 import {
   ColumnImageSection,
   OrderedList,
@@ -32,6 +33,9 @@ export default {
       title: 'Slug',
       options: {
         source: 'name',
+      },
+      components: {
+        input: BundleSlug,
       },
       validation: Rule => Rule.required(),
     },

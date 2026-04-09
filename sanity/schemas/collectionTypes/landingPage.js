@@ -1,3 +1,5 @@
+import LandingPageSlug from '../../components/LandingPageSlug';
+
 export default {
   name: 'landingPage',
   title: 'Strony lądowania',
@@ -15,6 +17,9 @@ export default {
       title: 'Slug',
       options: {
         source: 'name',
+      },
+      components: {
+        input: LandingPageSlug,
       },
       description: 'Do adresu URL zostanie dodany automatycznie prefix "/landing" - np. "/landing/twoj-slug"',
     },
