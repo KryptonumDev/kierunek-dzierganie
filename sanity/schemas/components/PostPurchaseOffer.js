@@ -24,7 +24,7 @@ const productSection = {
       name: 'offeredItems',
       title: 'Oferowane produkty',
       type: 'array',
-      of: [{ type: 'reference', to: [{ type: 'course' }, { type: 'bundle' }] }],
+      of: [{ type: 'reference', to: [{ type: 'course' }, { type: 'bundle' }, { type: 'product' }] }],
       validation: Rule =>
         Rule.custom((value) => {
           if (!value || value.length === 0) return 'Dodaj co najmniej jeden produkt do sekcji';

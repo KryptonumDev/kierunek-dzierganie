@@ -6,13 +6,18 @@ import { createClient } from '@/utils/supabase-admin';
 
 export type OfferedItem = {
   _id: string;
-  _type: 'course' | 'bundle';
+  _type: 'course' | 'bundle' | 'product';
   name: string;
-  price: number;
+  price: number | null;
   discount?: number;
   slug: string;
   basis: string;
   image: ImgType | null;
+  variants?: Array<{
+    price: number;
+    discount?: number;
+    image: ImgType | null;
+  }> | null;
 };
 
 export type PostPurchaseOfferMode = 'discounted' | 'standard';
@@ -132,8 +137,21 @@ const OFFERED_ITEMS_QUERY = `
   discount,
   basis,
   "slug": slug.current,
-  "image": gallery[0] {
-    ${Img_Query}
+  "image": select(
+    defined(gallery[0]) => gallery[0] {
+      ${Img_Query}
+    },
+    defined(variants[0].gallery[0]) => variants[0].gallery[0] {
+      ${Img_Query}
+    },
+    null
+  ),
+  "variants": variants[]{
+    price,
+    discount,
+    "image": gallery[0] {
+      ${Img_Query}
+    }
   }
 `;
 
