@@ -189,6 +189,79 @@ export default {
       group: 'configuration',
     },
     {
+      name: 'includedCourses',
+      type: 'array',
+      title: 'Kursy zawarte w programie',
+      description:
+        'Wskaż kursy wchodzące w skład programu. Ta lista służy m.in. do sprawdzania, czy kupująca programu może kupić powiązane produkty fizyczne przypisane do tych kursów.',
+      of: [
+        {
+          type: 'reference',
+          to: [{ type: 'course' }],
+          options: {
+            filter: ({ document }) => {
+              const courseId = document?._id?.replace('drafts.', '');
+
+              if (!courseId) {
+                return { filter: '_type == "course" && type != "program"' };
+              }
+
+              return {
+                filter: '_type == "course" && type != "program" && _id != $courseId',
+                params: { courseId },
+              };
+            },
+          },
+        },
+      ],
+      hidden: ({ document }) => document?.type !== 'program',
+      validation: Rule => Rule.unique(),
+      group: 'configuration',
+    },
+    {
+      name: 'shippingMode',
+      type: 'string',
+      title: 'Wysyłka po zakupie',
+      description:
+        'Jeśli kurs wymaga wysłania paczki (np. pakiet powitalny), wybierz wliczoną lub płatną dostawę. Kupujący zobaczy odpowiedni krok dostawy w koszyku.',
+      options: {
+        list: [
+          { title: 'Brak', value: 'none' },
+          { title: 'Wliczona w cenę', value: 'included' },
+          { title: 'Płatna', value: 'paid' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'none',
+      validation: Rule => Rule.required(),
+      group: 'shipping',
+    },
+    {
+      name: 'shippingLabel',
+      type: 'text',
+      title: 'Tekst dla kupującego (koszyk / checkout)',
+      description:
+        'Krótki komunikat wyjaśniający, dlaczego przy zakupie kursu potrzebne są dane do wysyłki. Pole opcjonalne, ale zalecane przy wysyłce wliczonej lub płatnej.',
+      rows: 3,
+      hidden: ({ document }) => !document?.shippingMode || document.shippingMode === 'none',
+      group: 'shipping',
+    },
+    {
+      name: 'shipmentDeclaredValue',
+      type: 'number',
+      title: 'Deklarowana wartość zawartości przesyłki (w groszach)',
+      description:
+        'Opcjonalna deklarowana wartość zawartości paczki dla tego kursu. To NIE jest koszt dostawy dla kupującej, tylko wartość przesyłki używana operacyjnie np. przy deklaracji / zagubieniu / uszkodzeniu. Jeśli pole jest puste, sklep użyje wartości kursu.',
+      hidden: ({ document }) => !document?.shippingMode || document.shippingMode === 'none',
+      validation: Rule =>
+        Rule.min(0).custom((value) => {
+          if (value === undefined || value === null) return true;
+          if (!Number.isInteger(value)) return 'Wpisz pełną kwotę w groszach';
+          return true;
+        }),
+      group: 'shipping',
+    },
+    {
       name: 'accessMode',
       type: 'string',
       title: 'Sposób ograniczenia dostępu',
@@ -558,6 +631,7 @@ export default {
   ],
   groups: [
     { name: 'configuration', title: 'Konfiguracja' },
+    { name: 'shipping', title: 'Wysyłka po zakupie' },
     { name: 'prices', title: 'Ceny' },
     { name: 'description', title: 'Treści' },
     { name: 'preview', title: 'Podgląd kursu' },

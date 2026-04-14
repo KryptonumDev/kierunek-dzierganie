@@ -1,5 +1,10 @@
 import type { Billing, CourseGrantLink, ProductCard, Shipping } from '@/global/types';
 import { getProductBasis } from '@/utils/get-product-basis';
+import {
+  resolveProductCardsShippingInfo,
+  shippingModeChargesDelivery,
+  shippingModeRequiresDelivery,
+} from '@/utils/resolve-shipping-mode';
 import { validateGuestCart } from '@/utils/validate-guest-cart';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -16,6 +21,7 @@ const createInputState = (billing?: Billing, shipping?: Shipping, userEmail?: st
   amount: 0,
   totalAmount: 0,
   needDelivery: false,
+  shippingMode: 'none' as const,
   client_notes: '',
   freeDelivery: false,
   shipping: {
@@ -108,11 +114,15 @@ export default function Checkout({
   useEffect(
     () => {
       if (!fetchedItems?.length) {
-        if (input.amount > 0)
+        if (input.amount > 0 || input.needDelivery || input.products)
           setInput((prev) => ({
             ...prev,
             products: undefined,
             amount: 0,
+            delivery: 0,
+            freeDelivery: false,
+            needDelivery: false,
+            shippingMode: 'none',
           }));
 
         return;
@@ -127,10 +137,18 @@ export default function Checkout({
 
         // Show notification when guest checkout is reset
         if (shouldResetGuestCheckout) {
-          toast.error('Dodano produkty cyfrowe - wymagane jest założenie konta lub zalogowanie się');
+          toast.error('Dodano kurs, pakiet lub voucher wymagający konta - zaloguj się lub utwórz konto');
         }
 
         const newAmount = fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0);
+        const resolvedShippingInfo = resolveProductCardsShippingInfo(fetchedItems);
+        const needsDelivery = shippingModeRequiresDelivery(resolvedShippingInfo.mode);
+        const chargesDelivery = shippingModeChargesDelivery(resolvedShippingInfo.mode);
+        const selectedShippingMethodPrice = Number(
+          shippingMethods.find((method) => method.name === currentShippingMethod)?.price
+        );
+        const qualifiesForFreeDelivery = chargesDelivery && freeShipping > 0 && newAmount >= freeShipping;
+        const deliveryAmount = chargesDelivery && !qualifiesForFreeDelivery ? selectedShippingMethodPrice : 0;
 
         return {
           ...prev,
@@ -138,11 +156,10 @@ export default function Checkout({
           // Reset guest checkout flag if cart is no longer eligible
           isGuestCheckout: shouldResetGuestCheckout ? undefined : prev.isGuestCheckout,
           amount: newAmount,
-          needDelivery: fetchedItems.some((item) => item.needDelivery),
-          delivery: fetchedItems.some((item) => item.needDelivery)
-            ? Number(shippingMethods.find((method) => method.name === currentShippingMethod)?.price)
-            : 0,
-          freeDelivery: freeShipping > 0 && newAmount >= freeShipping,
+          needDelivery: needsDelivery,
+          shippingMode: resolvedShippingInfo.mode,
+          delivery: needsDelivery ? deliveryAmount : 0,
+          freeDelivery: needsDelivery ? qualifiesForFreeDelivery : false,
           // Legacy single discount retained for old flows; new array provided in parallel
           discount:
             usedDiscounts.length === 1 && usedDiscounts[0]?.affiliatedBy === userId ? null : (usedDiscounts[0] ?? null),
@@ -167,6 +184,12 @@ export default function Checkout({
                 voucherData: item.voucherData,
                 basis: item.basis,
                 automatizationId: item.automatizationId, // Add automatizationId for all product types
+                shipmentRequired: item.needDelivery,
+                shipmentMode: item.shippingMode ?? 'none',
+                shipmentSource: item._type,
+                shipmentLabel: item.shippingLabel ?? null,
+                shipmentDeclaredValue: item.shipmentDeclaredValue ?? null,
+                shipmentDeclaredValueSource: item.shipmentDeclaredValueSource ?? null,
               };
             }),
           },
@@ -183,11 +206,14 @@ export default function Checkout({
       fetchedItems,
       input.amount,
       input.isGuestCheckout,
+      currentShippingMethod,
+      freeShipping,
+      shippingMethods,
       step,
       setInput,
       usedDiscounts,
       usedVirtualMoney,
-      deliverySettings,
+      userId,
     ]
   );
 

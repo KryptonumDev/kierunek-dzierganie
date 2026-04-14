@@ -12,6 +12,9 @@ import styles from './PostPurchaseHero.module.scss';
 
 type NewsletterSectionProps = {
   groupId: string | null;
+  buttonLabel: string | null;
+  successMessage: string | null;
+  errorMessage: string | null;
   image: ImgType | null;
   previewMode?: boolean;
 };
@@ -22,7 +25,18 @@ type FormValues = {
   legal: boolean;
 };
 
-const NewsletterSection = ({ groupId, image, previewMode = false }: NewsletterSectionProps) => {
+const defaultButtonLabel = 'Zapisuje się';
+const defaultSuccessMessage = 'Dziękujemy! Sprawdź swoją skrzynkę mailową, tam trafi informacja zapisie.';
+const defaultErrorMessage = 'Wystąpił błąd przy zapisie. Spróbuj ponownie.';
+
+const NewsletterSection = ({
+  groupId,
+  buttonLabel,
+  successMessage,
+  errorMessage,
+  image,
+  previewMode = false,
+}: NewsletterSectionProps) => {
   const [state, setState] = useState<'idle' | 'success' | 'error'>('idle');
   const [sending, setSending] = useState(false);
   const {
@@ -81,7 +95,7 @@ const NewsletterSection = ({ groupId, image, previewMode = false }: NewsletterSe
       <aside className={styles.newsletterCard}>
         {!previewMode && state === 'success' ? (
           <p className={styles.newsletterSuccess}>
-            Dziękujemy! Sprawdź swoją skrzynkę mailową, tam trafi darmowy produkt po zapisie do newslettera.
+            {successMessage || defaultSuccessMessage}
           </p>
         ) : (
           <>
@@ -136,17 +150,17 @@ const NewsletterSection = ({ groupId, image, previewMode = false }: NewsletterSe
                 className={styles.newsletterButton}
                 disabled={sending}
               >
-                {sending ? 'Zapisywanie...' : 'Odbieram gratis'}
+                {sending ? 'Zapisywanie...' : buttonLabel || defaultButtonLabel}
               </Button>
 
               {!previewMode && state === 'error' && (
-                <p className={styles.newsletterError}>Wystąpił błąd przy zapisie. Spróbuj ponownie.</p>
+                <p className={styles.newsletterError}>{errorMessage || defaultErrorMessage}</p>
               )}
             </form>
 
             {previewMode && state === 'success' && (
               <p className={styles.newsletterSuccess}>
-                Podgląd wysłany lokalnie. Po publikacji formularz zapisze użytkownika do wskazanej grupy MailerLite.
+                {successMessage || defaultSuccessMessage}
               </p>
             )}
           </>

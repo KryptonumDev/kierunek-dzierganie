@@ -9,6 +9,11 @@ import ProductCard from '@/components/ui/ProductCard';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 import { formatToOnlyDigits } from '@/utils/format-to-only-digits';
 import { formatPrice } from '@/utils/price-formatter';
+import {
+  resolveProductCardsShippingInfo,
+  shippingModeChargesDelivery,
+  shippingModeRequiresDelivery,
+} from '@/utils/resolve-shipping-mode';
 import { canUseVirtualMoney, getVirtualMoneyRestrictionMessage } from '@/utils/can-use-virtual-money';
 import {
   type CategoryRestrictions,
@@ -16,6 +21,10 @@ import {
   getEligibleItemIds,
   getRestrictionDescription,
 } from '@/utils/coupon-eligibility';
+import {
+  getPurchaseEligibilityLabel,
+  hasSatisfiedPurchaseEligibility,
+} from '@/utils/product-purchase-eligibility';
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -73,13 +82,6 @@ export default function Cart({
   const canApplyVirtualMoney = useMemo(() => canUseVirtualMoney(fetchedItems), [fetchedItems]);
   const virtualMoneyRestrictionMessage = useMemo(() => getVirtualMoneyRestrictionMessage(fetchedItems), [fetchedItems]);
 
-  const delivery = useMemo<number | null>(
-    () =>
-      fetchedItems?.some((item) => item.needDelivery)
-        ? Number(shippingMethods.find((method) => method.name === currentShippingMethod)?.price)
-        : null,
-    [fetchedItems, currentShippingMethod, shippingMethods]
-  );
   const totalItemsCount = useMemo(() => {
     return cart?.reduce((acc, item) => acc + (item.quantity ?? 0), 0) ?? 0;
   }, [cart]);
@@ -87,6 +89,18 @@ export default function Cart({
     if (!fetchedItems) return null;
     return fetchedItems?.reduce((acc, item) => acc + (item.discount ?? item.price!) * item.quantity!, 0) ?? 0;
   }, [fetchedItems]);
+  const orderShippingInfo = useMemo(() => resolveProductCardsShippingInfo(fetchedItems), [fetchedItems]);
+  const delivery = useMemo<number | null>(() => {
+    if (!shippingModeRequiresDelivery(orderShippingInfo.mode)) return null;
+    if (!shippingModeChargesDelivery(orderShippingInfo.mode)) return 0;
+
+    const selectedShippingMethodPrice = Number(
+      shippingMethods.find((method) => method.name === currentShippingMethod)?.price ?? 0
+    );
+    const qualifiesForFreeDelivery = freeShipping > 0 && typeof totalItemsPrice === 'number' && totalItemsPrice >= freeShipping;
+
+    return qualifiesForFreeDelivery ? 0 : selectedShippingMethodPrice;
+  }, [currentShippingMethod, freeShipping, orderShippingInfo.mode, shippingMethods, totalItemsPrice]);
 
   const discountCode = watch('discount');
 
@@ -211,15 +225,19 @@ export default function Cart({
     fetchedItems.forEach((el) => {
       const cartId = el.variant ? el._id + `variant:${el.variant._id}` : el._id;
 
-      // 1) Products that require owning/having related course (any product with a related course)
-      if (el.related?._id && el._type === 'product') {
-        const relatedInCart = fetchedItems.some((item) => item._id === el.related!._id);
-        const relatedOwned = ownedCourses?.includes(el.related._id) ?? false;
-        if (!relatedInCart && !relatedOwned) {
+      // 1) Products that require owning/having a related course or program
+      if (el.purchaseEligibility?.length && el._type === 'product') {
+        const isEligible = hasSatisfiedPurchaseEligibility({
+          eligibility: el.purchaseEligibility,
+          ownedCourseIds: ownedCourses,
+          cartProductIds: fetchedItems.map((item) => item._id),
+        });
+
+        if (!isEligible) {
           if (!processedRemovalsRef.current.has(cartId)) {
             plannedRemovals.push({
               id: cartId,
-              message: `${el.name} został usunięty z koszyka, ponieważ nie posiadasz ${el.related.name}`,
+              message: `${el.name} został usunięty z koszyka, ponieważ nie posiadasz ${getPurchaseEligibilityLabel(el.purchaseEligibility)}`,
             });
           }
         }
@@ -960,6 +978,7 @@ const CartGrid = ({ fetchedItems, removeItem, updateItemQuantity }: Grid) => {
               <h3>
                 {item.name} {item.variant ? `- ${item.variant.name}` : ''}
               </h3>
+              {item.shippingLabel && <p className={styles['shippingLabel']}>{item.shippingLabel}</p>}
               {item._type === 'voucher' && (
                 <div className={styles['voucher-data']}>
                   <p>

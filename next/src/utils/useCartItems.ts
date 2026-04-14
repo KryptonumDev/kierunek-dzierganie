@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useCart } from 'react-use-cart';
 import sanityFetch from './sanity.fetch';
-import type { ProductCard } from '@/global/types';
-import { PRODUCT_CARD_QUERY } from 'src/global/constants';
+import type { ProductCard, PurchaseEligibilitySource } from '@/global/types';
+import { PRODUCT_CARD_QUERY, PRODUCT_PURCHASE_ELIGIBILITY_SOURCE_QUERY } from 'src/global/constants';
+import { resolveProductCardShippingInfo, shippingModeRequiresDelivery } from './resolve-shipping-mode';
+import { resolveProductCardShipmentDeclaredValue } from './resolve-shipment-declared-value';
+import { normalizePurchaseEligibility } from './product-purchase-eligibility';
 
 export const useCartItems = () => {
   const { items: rawCart, updateItemQuantity, updateItem, removeItem, totalItems, totalUniqueItems } = useCart();
@@ -12,17 +15,19 @@ export const useCartItems = () => {
     const fetchCartItems = async () => {
       setLoading(true);
       try {
-        const res = await sanityFetch<ProductCard[]>({
+        const res = await sanityFetch<Array<ProductCard & { purchaseEligibilitySources?: PurchaseEligibilitySource[] | null }>>({
           query: `
             *[(_type == 'product' || _type == 'course' || _type == 'bundle' || _type == 'voucher') && _id in $id]{
               ${PRODUCT_CARD_QUERY}
-              "related": *[
+              "purchaseEligibilitySources": *[
                 _type == 'course' && (
                   materials_link._ref == ^._id ||
                   ^._id in related_products[]._ref ||
                   printed_manual._ref == ^._id
                 )
-              ][0]{ _id, name }
+              ]{
+                ${PRODUCT_PURCHASE_ELIGIBILITY_SOURCE_QUERY}
+              }
             }
           `,
           params: {
@@ -68,6 +73,17 @@ export const useCartItems = () => {
                 : Math.min(el.quantity!, item.countInStock!);
 
             if (item._type === 'voucher') {
+              const shippingInfo = resolveProductCardShippingInfo({
+                ...item,
+                voucherData: el.voucherData,
+              });
+              const shipmentDeclaredValue = resolveProductCardShipmentDeclaredValue({
+                ...item,
+                voucherData: el.voucherData,
+                price: el.voucherData.amount!,
+                quantity,
+              });
+
               return {
                 ...item,
                 quantity: quantity,
@@ -75,9 +91,24 @@ export const useCartItems = () => {
                 voucherData: el.voucherData,
                 variant: null,
                 variants: null,
-                needDelivery: el.voucherData.type === 'PHYSICAL',
+                shippingMode: shippingInfo.mode,
+                shippingLabel: shippingInfo.label,
+                shipmentDeclaredValue: shipmentDeclaredValue.value,
+                shipmentDeclaredValueSource: shipmentDeclaredValue.source,
+                needDelivery: shippingModeRequiresDelivery(shippingInfo.mode),
+                purchaseEligibility: normalizePurchaseEligibility(item.purchaseEligibilitySources),
               };
             }
+
+            const shippingInfo = resolveProductCardShippingInfo({
+              ...item,
+            });
+            const shipmentDeclaredValue = resolveProductCardShipmentDeclaredValue({
+              ...item,
+              price: variant ? variant.price! : item.price!,
+              discount: variant ? variant.discount : item.discount,
+              quantity,
+            });
 
             return {
               ...item,
@@ -86,7 +117,12 @@ export const useCartItems = () => {
               discount: variant ? variant.discount : item.discount,
               variant: variant,
               variants: variant ? item.variants : [],
-              needDelivery: item._type === 'product',
+              shippingMode: shippingInfo.mode,
+              shippingLabel: shippingInfo.label,
+              shipmentDeclaredValue: shipmentDeclaredValue.value,
+              shipmentDeclaredValueSource: shipmentDeclaredValue.source,
+              needDelivery: shippingModeRequiresDelivery(shippingInfo.mode),
+              purchaseEligibility: normalizePurchaseEligibility(item.purchaseEligibilitySources),
             };
           });
 

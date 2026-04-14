@@ -11,6 +11,7 @@ import styles from './HeroPhysical.module.scss';
 import type { AttributesTypes, Props, SelectedAttributesTypes } from './HeroPhysical.types';
 import type { VideoProvider } from '@/components/ui/VideoPlayer/VideoPlayer.types';
 import { getProductUserData } from '@/utils/user-actions';
+import { normalizePurchaseEligibility } from '@/utils/product-purchase-eligibility';
 
 const gtag: Gtag.Gtag = function () {
   // eslint-disable-next-line prefer-rest-params
@@ -152,7 +153,7 @@ const HeroPhysical = ({ name, id, variants, physical, relatedCourses, ownedCours
     }
   }, [attributes.length, chosenVariant, id, physical.basis]);
 
-  const requiredCourse = relatedCourses?.[0] ?? null;
+  const purchaseEligibility = useMemo(() => normalizePurchaseEligibility(relatedCourses), [relatedCourses]);
 
   return (
     <section className={styles['HeroPhysical']}>
@@ -292,7 +293,7 @@ const HeroPhysical = ({ name, id, variants, physical, relatedCourses, ownedCours
               _type: 'product',
               variant: variants ? chosenVariant!._id : undefined,
               basis: physical.basis,
-              relatedCourse: requiredCourse,
+              purchaseEligibility,
             }}
           />
         </div>

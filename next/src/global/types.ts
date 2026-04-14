@@ -17,6 +17,13 @@ import type { VideoProvider } from '@/components/ui/VideoPlayer/VideoPlayer.type
 
 export type Complexity = 'dla-poczatkujacych' | 'dla-srednio-zaawansowanych' | 'dla-zaawansowanych';
 export type CourseAccessMode = 'unlimited' | 'duration_months' | 'fixed_date';
+/** Course shipping after purchase (Sanity `course` document). */
+export type CourseShippingMode = 'none' | 'included' | 'paid';
+export type ShipmentDeclaredValueSource =
+  | 'product_default'
+  | 'course_override'
+  | 'line_price_fallback'
+  | 'bundle_resolved';
 
 export type CtaType = {
   href: string;
@@ -45,6 +52,24 @@ export type CourseGrantLink = {
   accessFixedDate?: string | null;
 };
 
+export type PurchaseEligibilityRef = {
+  _id: string;
+  name?: string | null;
+  type?: 'course' | 'program' | null;
+};
+
+export type PurchaseEligibilitySource = PurchaseEligibilityRef & {
+  includedByPrograms?: PurchaseEligibilityRef[] | null;
+};
+
+export type BundleCourseShippingLink = CourseGrantLink & {
+  price?: number | null;
+  discount?: number | null;
+  shippingMode?: CourseShippingMode | null;
+  shippingLabel?: string | null;
+  shipmentDeclaredValue?: number | null;
+};
+
 export type ProductCard = {
   _type: 'product' | 'course' | 'bundle' | 'voucher';
   _id: string;
@@ -67,6 +92,11 @@ export type ProductCard = {
   previewGroupMailerLite?: string | null;
   accessMode?: CourseAccessMode | null;
   accessFixedDate?: string | null;
+  /** Present on `course` (and nested course refs on bundles). Omitted or null for products without shipping fields. */
+  shippingMode?: CourseShippingMode | null;
+  shippingLabel?: string | null;
+  shipmentDeclaredValue?: number | null;
+  shipmentDeclaredValueSource?: ShipmentDeclaredValueSource | null;
   materials_link?: {
     _id: string;
     gallery?: ImgType;
@@ -126,8 +156,9 @@ export type ProductCard = {
     featuredVideo: string;
     gallery: ImgType;
   }> | null;
-  courses?: CourseGrantLink[] | null;
+  courses?: BundleCourseShippingLink[] | null;
   grantedCourses?: CourseGrantLink[] | null;
+  purchaseEligibility?: PurchaseEligibilityRef[] | null;
   related?: {
     _id: string;
     name: string;
@@ -325,7 +356,7 @@ export type ProductPageQueryProps = {
       name: string;
       value: string;
     }>;
-    relatedCourses?: { _id: string; name?: string }[];
+    relatedCourses?: PurchaseEligibilitySource[];
     rating: number;
     reviewsCount: number;
     description: DescriptionTypes[];
@@ -516,6 +547,12 @@ export type Order = {
       name: string;
       price: number;
       quantity: number;
+      shipmentRequired?: boolean;
+      shipmentMode?: CourseShippingMode | null;
+      shipmentSource?: 'product' | 'course' | 'bundle' | 'voucher';
+      shipmentLabel?: string | null;
+      shipmentDeclaredValue?: number | null;
+      shipmentDeclaredValueSource?: ShipmentDeclaredValueSource | null;
     }[];
   };
   shippingMethod: {

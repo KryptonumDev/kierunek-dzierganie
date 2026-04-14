@@ -10,6 +10,9 @@ export async function generateBill(data: any, id: string) {
 
   const { data: settingsData } = await supabase.from('settings').select('value').eq('name', 'ifirma').single();
 
+  const isVoucherProduct = (product: { _type?: string; type?: string }) =>
+    product._type === 'voucher' || product.type === 'voucher';
+
   // Support both legacy single discount and new multi-discount array
   const discounts: Array<{
     id: string;
@@ -22,14 +25,6 @@ export async function generateBill(data: any, id: string) {
     eligibleSubtotal?: number;
     eligibleItemIds?: string[];
   }> = Array.isArray(data.used_discounts) ? data.used_discounts : data.used_discount ? [data.used_discount] : [];
-
-  // TEMP: If the bought items is only a voucher, don't generate a bill
-  if (
-    data.products.array.every(
-      (product: { _type: string; type: string }) => product._type === 'voucher' || product.type === 'voucher'
-    )
-  )
-    return;
 
   // Build base per-unit prices (in cents)
   type Line = {
@@ -91,6 +86,23 @@ export async function generateBill(data: any, id: string) {
 
     throw new Error(`Invalid ryczalt rate: ${value}. Allowed fractions: ${allowed.join(', ')}`);
   };
+
+  const isVoucherOnlyOrder = data.products.array.every((product: { _type?: string; type?: string }) =>
+    isVoucherProduct(product)
+  );
+  const chargeableShippingPrice = data.shipping_method?.price ?? 0;
+  const shouldCreateShippingOnlyInvoice = isVoucherOnlyOrder && chargeableShippingPrice > 0;
+
+  if (isVoucherOnlyOrder && !shouldCreateShippingOnlyInvoice) {
+    await supabase
+      .from('orders')
+      .update({
+        status: data.need_delivery ? 2 : 3,
+      })
+      .eq('id', id);
+
+    return { success: true, skipped: true };
+  }
 
   // Check discount logic version: version 2+ uses category restrictions and doesn't reduce shipping
   // Version 1 (or undefined) is legacy: discounts apply to all products and can reduce shipping
@@ -273,7 +285,7 @@ export async function generateBill(data: any, id: string) {
   }
 
   const requestContent = {
-    Zaplacono: data.amount / 100,
+    Zaplacono: shouldCreateShippingOnlyInvoice ? chargeableShippingPrice / 100 : data.amount / 100,
     LiczOd: 'BRT',
     DataWystawienia: new Date().toISOString().split('T')[0],
     MiejsceWystawienia: 'Miasto',
@@ -287,7 +299,8 @@ export async function generateBill(data: any, id: string) {
     // BWO (bez podpisu odbiorcy i wystawcy)
     Numer: null,
     Pozycje: [
-      ...productsWithDiscount.map((product) => {
+      ...(!shouldCreateShippingOnlyInvoice
+        ? productsWithDiscount.map((product) => {
         if (product.type === 'product') {
           return {
             StawkaVat: (product.vat ?? 0) / 100,
@@ -313,7 +326,8 @@ export async function generateBill(data: any, id: string) {
           TypStawkiVat: 'PRC',
           Rabat: product.rabat,
         };
-      }),
+          })
+        : []),
     ],
     Kontrahent: {
       Nazwa: data.billing.invoiceType === 'Firma' ? data.billing.company : data.billing.firstName,

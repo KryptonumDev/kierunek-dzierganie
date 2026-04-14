@@ -1,1304 +1,651 @@
-# Course Shipping / Welcome Package - Two-Phase Implementation Plan
+# Course Shipping Implementation Plan
 
-Updated: 2026-03-24
+## Context
 
-## Background
+This plan is based on:
 
-### Client request
+- the client email thread about sending welcome packages with selected course purchases
+- repository-wide research in `kierunek-dzierganie`
+- repository-wide research in `kierunek-dzierganie-admin`
+- follow-up product decisions made during planning
 
-The client wants selected courses, mainly larger program-style offers, to support shipping during checkout.
+The goal is to allow selected courses to participate in the existing shipping flow, so buyers can provide delivery details during checkout and the team can later create shipments from the existing admin dashboard.
 
-Business reason:
+For this release, the work is intentionally split into two phases:
 
-- some programs include a physical welcome package,
-- collecting shipping data manually after a launch is too time-consuming,
-- the preferred editorial workflow is a simple checkbox on the course in CMS.
+1. storefront work in `kierunek-dzierganie`, including Sanity schema changes
+2. minimal operational changes in `kierunek-dzierganie-admin`
 
-### Product interpretation
-
-This feature should not be treated as "convert courses into physical products".
-
-It should be treated as:
-
-- keep the course as a digital enrollment,
-- keep course access and ownership logic unchanged,
-- but allow selected courses to require fulfillment,
-- so checkout collects delivery details and the order enters the shipping workflow.
-
-That is the cleanest business and technical framing.
+This release does **not** include bulk shipment tooling.
 
 ---
 
-## What Changed After Reviewing The Admin Repo
+## Locked Product Decisions
 
-The original assumption was that most work would be in the storefront and CMS repo, and the admin panel might only need a light compatibility check.
+### 1. Shipping modes
 
-After reviewing `/Users/oliwiersellig/Developer/kierunek-dzierganie-admin`, that assumption is no longer valid.
+Courses should support three shipping modes:
 
-### Main admin findings
+- `none`
+- `included`
+- `paid`
 
-1. The admin panel already trusts `orders.need_delivery` to decide whether an order is a shipping order.
-2. The order detail view already shows a `Wysyłka` tab only when `need_delivery = true`.
-3. The order detail sidebar already shows the `Apaczka` shipment block only when `need_delivery = true`.
-4. The critical problem is that parcel creation currently filters order lines down to `type === 'product'` only.
-5. That means a delivery-required order created from a shipping-enabled course would appear as a shipping order in admin, but shipment generation could still be wrong or incomplete.
+Meaning:
 
-### Critical coupling point
+- `none`: course behaves like a normal digital product, no delivery step
+- `included`: course requires delivery details, but shipping cost is `0`
+- `paid`: course requires delivery details and standard shipping pricing applies
 
-Current admin parcel creation logic:
+### 2. Bundle shipping inheritance
 
-- reads `order.products.array`,
-- keeps only lines where `type === 'product'`,
-- recalculates parcel amount from those lines only,
-- sends that reduced payload to the Apaczka API.
+A bundle should inherit shipping behavior from its courses.
 
-Implication:
+If at least one bundled course requires shipping, the bundle requires shipping.
 
-- if a course requires shipping but remains `type === 'course'`, the admin panel will show shipping UI,
-- but Apaczka shipment creation may send an empty set of shippable items or an incorrect declared value.
+### 3. Bundle precedence rule
 
-### Conclusion
+Bundle shipping mode must resolve with this priority:
 
-Phase 2 is required.
+- `paid > included > none`
 
-This is a real two-repository feature:
+Examples:
 
-- Phase 1 = storefront / CMS / order-shaping
-- Phase 2 = admin-panel fulfillment updates
+- all courses `none` -> bundle `none`
+- at least one `included` and no `paid` -> bundle `included`
+- at least one `paid` -> bundle `paid`
 
-Without Phase 2, the client would get shipping data collection in checkout, but not a reliable operational fulfillment flow.
+Specific agreed example:
 
----
+- one course has no shipping
+- one course has included shipping
+- one course has paid shipping
+- result for the bundle: `paid`
 
-## High-Level Recommendation
+### 4. Admin scope for this release
 
-Implement the feature as a course-level fulfillment flag, and shape the resulting order so the admin panel can understand and process it.
+The admin/dashboard work should stay minimal.
 
-Recommended MVP approach:
+In scope:
 
-1. Add a checkbox on the `course` schema in Sanity.
-2. Make flagged courses trigger shipping UI in the storefront checkout.
-3. Recompute shipping requirement on the server.
-4. Persist delivery-friendly line-item metadata in `orders.products.array`.
-5. Update the admin panel so shipment generation uses "shippable lines" rather than only `type === 'product'`.
+- make sure orders created from shipped courses work in the existing operational flow
+- make sure operators can still create shipments from those orders
+- add only minimal visibility if needed
 
-This preserves the digital course model while enabling real-world fulfillment.
+Out of scope:
 
----
-
-## Target Model
-
-### Business model
-
-A selected course or program remains:
-
-- a digital product for access,
-- but also a fulfillment-triggering item for shipping.
-
-### Technical model
-
-The order should carry two things:
-
-1. Order-level shipping state
-  - `need_delivery`
-  - `shipping`
-  - `shipping_method`
-2. Line-level fulfillment metadata
-  - which lines are physically fulfillable,
-  - and why they are physically fulfillable.
-
-### Recommended line-item metadata
-
-For each persisted item in `orders.products.array`, add a field like:
-
-```ts
-fulfillment?: {
-  required: boolean;
-  source: 'physical-product' | 'welcome-package';
-}
-```
-
-Why this is recommended:
-
-- no DB migration is required if it lives inside the existing `products` JSON,
-- the storefront can persist it at order creation time,
-- the admin panel can read it without trying to infer fulfillment from `type` alone,
-- the team can distinguish a physical product shipment from a course welcome package.
-
-For MVP, this is better than adding a new top-level DB column.
-
----
-
-## Admin Panel Context We Must Respect
-
-When updating the storefront, we need to shape data for how the admin panel already works today.
-
-### Current admin behavior
-
-Relevant admin files:
-
-- `src/app/(authorized)/orders/_table.tsx`
-- `src/app/(authorized)/orders/_preview-popup.tsx`
-- `src/app/(authorized)/orders/(order)/[id]/_tabs.tsx`
-- `src/app/(authorized)/orders/(order)/[id]/aside.tsx`
-- `src/app/api/apaczka/create-order/route.ts`
-
-Current UX pattern:
-
-1. Orders list
-  - shows shipping-related controls when `need_delivery` is true.
-2. Order detail
-  - shows the `Wysyłka` tab only when `needDelivery` is true.
-3. Sidebar
-  - shows the `Apaczka` shipment block only when `needDelivery` is true.
-4. Parcel creation
-  - currently packages only `type === 'product'` lines.
-
-This means the storefront must not only set `need_delivery` correctly, but also persist line data that Phase 2 can use safely.
-
----
-
-## Two-Phase Plan
-
-## Phase 1 - Storefront, CMS, and Order Model
-
-Goal: make selected courses require shipping in checkout and persist orders in a way the admin panel can consume safely.
-
-### Step 1.1 - Lock the business rules
-
-Before coding, confirm:
-
-1. Is shipping charged separately or included in the course price?
-2. Should the feature apply to any `course`, or mainly to `program` entries?
-3. Are bundles in scope for v1, or explicitly out of scope?
-4. Do we need different customer-facing copy for welcome-package courses?
-5. Is summing the full course lin e value acceptable as the parcel declared value for MVP, or is a separate declared value needed later?
-
-Recommended MVP assumptions:
-
-- use existing shipping methods and prices,
-- keep bundles out of scope unless explicitly requested,
-- keep guest checkout rules unchanged,
-- accept line price as parcel value for v1 if a dedicated declared value field is not introduced.
-
-### Step 1.2 - Add the CMS checkbox
-
-Primary file:
-
-- `sanity/schemas/collectionTypes/Course_Collection.jsx`
-
-Add a boolean field such as:
-
-```ts
-{
-  name: 'requiresShipping',
-  type: 'boolean',
-  title: 'Wymaga wysylki',
-  initialValue: false,
-  group: 'configuration',
-}
-```
-
-Why:
-
-- it matches the client request exactly,
-- it keeps editorial control simple,
-- it avoids creating fake physical SKUs.
-
-### Step 1.3 - Expose the field to the storefront
-
-Primary files:
-
-- `next/src/global/constants.ts`
-- `next/src/global/types.ts`
-
-Tasks:
-
-1. Add `requiresShipping` to the relevant Sanity queries.
-2. Extend `ProductCard` and any related order-item typing.
-3. Ensure cart hydration receives the field for course items.
-
-### Step 1.4 - Change cart delivery logic from type-only to rule-based
-
-Primary file:
-
-- `next/src/utils/useCartItems.ts`
-
-Current behavior:
-
-- `product` lines require shipping,
-- physical vouchers require shipping,
-- courses do not require shipping.
-
-New behavior:
-
-- `product` => shipping required
-- physical `voucher` => shipping required
-- `course` with `requiresShipping === true` => shipping required
-
-Recommended rule shape:
-
-```ts
-const requiresDelivery =
-  item._type === 'product' ||
-  (item._type === 'voucher' && el.voucherData.type === 'PHYSICAL') ||
-  (item._type === 'course' && item.requiresShipping === true);
-```
-
-### Step 1.5 - Reuse the existing checkout UX
-
-Primary files:
-
-- `next/src/components/_global/Header/Checkout/Checkout.tsx`
-- `next/src/components/_global/Header/Checkout/_PersonalData.tsx`
-- `next/src/components/_global/Header/Checkout/_SummaryAside.tsx`
-- `next/src/components/_global/Header/_Content.tsx`
-
-Expected result:
-
-1. User adds a shipping-enabled course.
-2. Checkout computes `needDelivery = true`.
-3. Existing delivery method UI appears.
-4. Existing shipping address UI appears.
-5. Existing Paczkomat / InPost flow continues to work.
-6. Existing delivery cost settings continue to work.
-
-This phase should avoid inventing any new customer-facing shipping workflow.
-
-### Step 1.6 - Keep authentication rules unchanged
-
-Primary file:
-
-- `next/src/utils/validate-guest-cart.ts`
-
-Recommendation:
-
-- do not allow guest checkout for these course orders,
-- keep all course purchases account-bound.
-
-Reason:
-
-- the order still grants digital access,
-- course ownership should remain attached to a real user account.
-
-### Step 1.7 - Make the server authoritative
-
-Primary file:
-
-- `next/src/app/api/payment/create/route.ts`
-
-This is the most important implementation step in Phase 1.
-
-Current issue:
-
-- the server relies on `input.needDelivery` from the client.
-
-Required change:
-
-1. Re-read ordered item data on the server.
-2. Fetch the shipping flag for relevant course items.
-3. Recompute whether the order requires shipping.
-4. Validate that shipping data is present when required.
-5. Use the server-computed result for:
-  - `deliveryAmount`
-  - `need_delivery`
-  - `shipping`
-  - `shipping_method`
-  - initial order status
-
-This prevents the storefront from becoming the only source of truth.
-
-### Step 1.8 - Persist admin-friendly fulfillment metadata
-
-Primary file:
-
-- `next/src/app/api/payment/create/route.ts`
-
-When building `products.array`, persist fulfillment metadata per line.
-
-Recommended persisted shape:
-
-```ts
-{
-  ...existingItem,
-  fulfillment: {
-    required: boolean,
-    source: 'physical-product' | 'welcome-package'
-  }
-}
-```
-
-Mapping recommendation:
-
-- physical product => `required: true`, `source: 'physical-product'`
-- shipping-enabled course => `required: true`, `source: 'welcome-package'`
-- normal digital course => `required: false`
-- bundle => `required: false` in v1 unless explicitly added to scope
-
-Why this matters:
-
-- the admin panel can use this in Phase 2 instead of relying on `type === 'product'`,
-- the order becomes self-describing,
-- no extra DB migration is required for the MVP.
-
-### Step 1.9 - Preserve downstream behavior
-
-Relevant storefront files:
-
-- `next/src/app/api/payment/complete/process-background.ts`
-- `next/src/app/api/payment/complete/send-emails.ts`
-- `next/src/components/_dashboard/OrderData/OrderData.tsx`
-
-Expected outcome:
-
-- `need_delivery` continues to drive delivery-oriented emails,
-- order status continues to follow the shipping-capable path,
-- account order details continue to show delivery data normally.
-
-### Step 1.10 - Phase 1 QA
-
-Storefront QA checklist:
-
-- Buy a normal course with `requiresShipping = false` -> no shipping UI
-- Buy a course with `requiresShipping = true` -> shipping UI appears
-- Confirm delivery cost is added correctly
-- Confirm Paczkomat selection works
-- Confirm order persists `need_delivery = true`
-- Confirm order persists `shipping` and `shipping_method`
-- Confirm order persists line-level `fulfillment` metadata
-- Confirm course access is still granted after payment
-- Confirm guest checkout remains blocked for course purchases
-
-Phase 1 done means:
-
-- the storefront correctly creates delivery-required course orders,
-- and those orders are shaped for admin consumption.
-
----
-
-## Phase 2 - Admin Panel Updates
-
-Goal: make the admin panel operationally support shipping-enabled course orders, not just display them.
-
-### Why Phase 2 is necessary
-
-Current admin parcel generation is incompatible with course-driven shipping.
-
-Primary admin file:
-
-- `src/app/(authorized)/orders/(order)/[id]/aside.tsx`
-
-Current behavior:
-
-- filters parcel lines with `el.type === 'product'`,
-- sums only those lines into `physicalSum`,
-- sends only those lines to `/api/apaczka/create-order`.
-
-If a course requires shipping:
-
-- `need_delivery` may be true,
-- the shipping tab may appear,
-- but shipment creation may ignore the course line completely.
-
-That is why Phase 2 is mandatory.
-
-### Step 2.1 - Update admin order typing
-
-Primary files:
-
-- `kierunek-dzierganie-admin/src/global/types.ts`
-- `kierunek-dzierganie-admin/src/app/(authorized)/orders/(order)/[id]/types.ts`
-- `kierunek-dzierganie-admin/database.types.ts` if regenerated types are needed later
-
-Tasks:
-
-1. Extend `OrderProducts.array[]` typing to include the new `fulfillment` object.
-2. Keep the existing `type` field unchanged.
-3. Ensure order detail code can safely read the new metadata.
-
-This is the foundation for all admin-side changes.
-
-### Step 2.2 - Keep existing `need_delivery` UI gates, but enrich the meaning
-
-Primary files:
-
-- `src/app/(authorized)/orders/(order)/[id]/_tabs.tsx`
-- `src/app/(authorized)/orders/_preview-popup.tsx`
-- `src/app/(authorized)/orders/_table.tsx`
-
-Good news:
-
-- the current panel already uses `need_delivery` to show shipping-related UI.
-
-Recommendation:
-
-- keep that behavior,
-- but add a visible explanation where useful, such as:
-  - "Welcome package"
-  - "Physical products"
-  - "Mixed shipment"
-
-This will help operations understand why an order ships.
-
-### Step 2.3 - Fix shipment creation in the order sidebar
-
-Primary file:
-
-- `src/app/(authorized)/orders/(order)/[id]/aside.tsx`
-
-This is the key Phase 2 implementation step.
-
-Current logic:
-
-- `physicalProducts = order.products.array.filter((el) => el.type === 'product')`
-
-Required new logic:
-
-- build `shippableItems` from fulfillment metadata, not only from `type`.
-
-Recommended rule:
-
-```ts
-const shippableItems =
-  order.products.array.filter(
-    (item) => item.fulfillment?.required || item.type === 'product'
-  );
-```
-
-Recommended amount logic for MVP:
-
-```ts
-const shippableSum = shippableItems.reduce(
-  (sum, item) => sum + item.price * item.quantity,
-  0
-);
-```
-
-This is not perfect for insurance semantics if a course price includes digital value, but it is a coherent MVP and much safer than the current product-only filter.
-
-If the team later wants more precise parcel valuation, add a dedicated value field in v2.
-
-### Step 2.4 - Keep Apaczka route compatible
-
-Primary file:
-
-- `src/app/api/apaczka/create-order/route.ts`
-
-Good news:
-
-- the route already accepts the order object and uses `order.amount` for `shipment_value`.
-
-What Phase 2 needs:
-
-- ensure the caller now passes the correct shippable amount and shippable items,
-- no major route redesign should be necessary for MVP.
-
-### Step 2.5 - Update the order detail view for operator clarity
-
-Primary files:
-
-- `src/app/(authorized)/orders/(order)/[id]/_products.tsx`
-- `src/app/(authorized)/orders/(order)/[id]/content.tsx`
-- `src/app/(authorized)/orders/_preview-popup.tsx`
-
-Recommended UI additions:
-
-1. Show a badge or label on a course line if it ships as a welcome package.
-2. Show a simple shipment reason summary on the order detail page.
-3. Keep the existing shipping tab logic unchanged.
-
-This is important because the panel currently distinguishes line items mostly by `type`, and operators may otherwise assume course lines are always purely digital.
-
-### Step 2.6 - Decide how much list/filter/export support is needed
-
-Primary files:
-
-- `src/actions/get-orders.ts`
-- `src/actions/get-all-filtered-orders.ts`
-- `src/utils/export-to-csv.ts`
-
-For MVP:
-
-- no dedicated DB-level filter is required,
-- the panel can operate with delivery orders using `need_delivery`.
-
-Recommended small improvements:
-
-1. Add optional shipping-reason text in CSV export.
-2. Add optional list badge in the orders table.
-
-Do not overbuild filters unless operations explicitly ask for them.
-
-### Step 2.7 - Update admin QA
-
-Admin QA checklist:
-
-- Delivery-required course order appears with shipping UI in admin
-- `Wysyłka` tab appears for that order
-- `Apaczka` block appears for that order
-- Shipment creation succeeds even when the order has no `type === 'product'` lines
-- Shipment creation succeeds for mixed orders: physical products + shipping-enabled course
-- Order detail clearly indicates why shipping is required
-- Tracking link and waybill download still work
-- No regression for standard physical-product orders
-
-Phase 2 done means:
-
-- operations can actually fulfill the welcome-package order, not just view it.
-
----
-
-## Open Decisions
-
-These decisions should be confirmed before implementation starts:
-
-1. Shipping price
-  - charged separately using current methods,
-  - or included in the course price?
-2. Scope
-  - any course,
-  - or mainly programs?
-3. Bundles
-  - out of scope for v1,
-  - or should a bundle inherit shipping from included courses?
-4. Parcel declared value
-  - use the full shippable line price in v1,
-  - or add a more precise declared value in a later phase?
-
-Recommended MVP answers:
-
-- charged separately,
-- applies to any course where editors enable it,
-- bundles out of scope,
-- use the shippable line price as parcel value for v1.
-
----
-
-## Likely Files To Change
-
-### Storefront / CMS repo
-
-
-| File                                                            | Purpose                                             |
-| --------------------------------------------------------------- | --------------------------------------------------- |
-| `sanity/schemas/collectionTypes/Course_Collection.jsx`          | Add `requiresShipping` checkbox                     |
-| `next/src/global/constants.ts`                                  | Expose field in queries                             |
-| `next/src/global/types.ts`                                      | Extend types and order-item metadata                |
-| `next/src/utils/useCartItems.ts`                                | Compute delivery for flagged courses                |
-| `next/src/components/_global/Header/Checkout/Checkout.tsx`      | Aggregate delivery state                            |
-| `next/src/components/_global/Header/Checkout/_PersonalData.tsx` | Reuse existing shipping form                        |
-| `next/src/components/_global/Header/Checkout/_SummaryAside.tsx` | Confirm delivery display                            |
-| `next/src/app/api/payment/create/route.ts`                      | Recompute shipping and persist fulfillment metadata |
-
-
-### Admin repo
-
-
-| File                                                     | Purpose                                                              |
-| -------------------------------------------------------- | -------------------------------------------------------------------- |
-| `src/global/types.ts`                                    | Extend order item typing with `fulfillment`                          |
-| `src/app/(authorized)/orders/(order)/[id]/types.ts`      | Order detail typing alignment                                        |
-| `src/app/(authorized)/orders/(order)/[id]/aside.tsx`     | Build Apaczka payload from shippable items, not just `product` lines |
-| `src/app/(authorized)/orders/(order)/[id]/_products.tsx` | Show welcome-package / shipping-reason context                       |
-| `src/app/(authorized)/orders/_preview-popup.tsx`         | Surface shipping reason in preview if useful                         |
-| `src/app/(authorized)/orders/_table.tsx`                 | Optional badge or label in list view                                 |
-| `src/utils/export-to-csv.ts`                             | Optional shipping-reason export                                      |
-
-
----
-
-## Final Recommendation
-
-Proceed as a two-phase feature.
-
-### Phase 1
-
-Update the storefront and CMS so selected courses can require shipping and so orders are persisted with admin-friendly fulfillment metadata.
-
-### Phase 2
-
-Update the admin panel so shipment generation and operator UX no longer assume that only `type === 'product'` lines are physically fulfillable.
-
-This is now the correct implementation strategy.
-
-The key lesson from the admin review is:
-
-- `need_delivery` is enough to show the shipping UI,
-- but it is not enough to make fulfillment work correctly.
-
-That is why the plan must explicitly include Phase 2.
-
-# Course Shipping / Welcome Package - Implementation Plan
-
-Updated: 2026-03-24
-
-## Background
-
-### Client request
-
-The client wants selected courses, mainly larger "program" offers, to support shipping during checkout.
-
-Business reason:
-
-- Some programs include a physical welcome package.
-- Manual shipment creation for a large cohort is operationally expensive.
-- The ideal editor workflow is a simple checkbox on the course in CMS.
-
-### Product interpretation
-
-This is not really "make courses physical products".
-
-It is:
-
-- keep the course as a digital enrollment,
-- keep course access logic unchanged,
-- but mark selected courses as requiring fulfillment,
-- so the checkout collects shipping details and the order enters the shipping workflow.
-
-That framing is the safest business and technical approach.
+- bulk shipment creation
+- mass actions for welcome-package orders
+- warehouse automation beyond the current per-order flow
 
 ---
 
 ## Executive Summary
 
-### Recommendation
+The existing platform already has a working shipping flow for physical products:
 
-Implement a course-level CMS flag that marks a course or program as requiring shipping.
+- cart items expose `needDelivery`
+- checkout can collect shipping method and shipping address
+- the payment API stores `need_delivery`, `shipping`, and `shipping_method`
+- the admin dashboard uses those fields to create Apaczka shipments
 
-For MVP:
+The problem is that courses and bundles are explicitly excluded from this shipping system today.
 
-1. Add a checkbox in Sanity on the `course` schema.
-2. Expose that flag to the storefront cart and checkout flow.
-3. Reuse the existing shipping address and shipping-method UI.
-4. Recompute shipping requirement on the server, not only on the client.
-5. Save the order as `need_delivery = true` when the purchased course requires shipping.
-6. Ensure the separate admin panel can treat such orders as shipment-ready.
+Current behavior:
 
-### Why this approach is best
+- `product` lines are treated as shippable
+- physical `voucher` lines are treated as shippable
+- `course` lines are treated as non-shippable
+- `bundle` lines are treated as non-shippable
 
-- It matches the client's requested CMS workflow.
-- It avoids faking a welcome pack as a separate physical SKU.
-- It keeps course access, email, and payment flows mostly unchanged.
-- It reuses the existing delivery pipeline already present in checkout and orders.
-- It minimizes schema and product-model complexity.
+So this feature does **not** require building a new shipping architecture. It requires extending the existing one so courses and bundles can participate in it consistently and safely.
 
----
+The recommended approach is:
 
-## Business Diagnosis
-
-### What problem the client is actually trying to solve
-
-The client is not asking for a shipping feature in isolation. They are asking for operational scalability.
-
-Current pain point:
-
-- sell a digital program,
-- collect participants,
-- then manually generate shipments for welcome packages.
-
-Desired outcome:
-
-- the order should already contain shipping details,
-- the order should automatically appear as a shippable order,
-- fulfillment should be possible in the admin workflow with minimal manual setup.
-
-### Business value
-
-This feature creates value in four places:
-
-1. Operations
-  Reduces manual shipping setup during large launches.
-2. Customer experience
-  One purchase captures both digital access and physical delivery details.
-3. Editorial control
-  The team can enable it per selected course/program in CMS.
-4. Fulfillment visibility
-  Orders can clearly enter a shipping-required pipeline.
-
-### Main business decision to lock before implementation
-
-These decisions must be confirmed before development starts:
-
-1. Is shipping paid by the customer or included in the course price?
-2. Should selected courses use the existing global shipping methods and prices?
-3. Should this apply only to `program` courses, or to any `course` document?
-4. How should bundles behave if they contain a shipping-enabled course?
-5. Should loyalty wallet and coupon behavior remain exactly the same for these orders?
-
-My default MVP assumption:
-
-- shipping uses the existing shipping methods,
-- shipping price is charged normally,
-- any `course` can opt into shipping,
-- bundles are out of scope unless explicitly required.
+1. add a shipping mode field to courses in Sanity
+2. derive bundle shipping from included courses
+3. carry resolved shipping metadata into cart and checkout
+4. recompute shipping server-side in the payment API
+5. persist line-level shipment metadata on the order
+6. update the admin dashboard so shipped course orders can still be processed
 
 ---
 
 ## Repository Diagnosis
 
-### Repo role
+### Storefront / Sanity
 
-This repository is the storefront plus CMS layer.
+Important files in `kierunek-dzierganie`:
 
-- `next/` contains the customer-facing store, checkout, payment flow, and account area.
-- `sanity/` contains the CMS schema and editorial setup.
-
-There is also a separate admin panel in another codebase connected to the same transactional backend.
-
-### Backend services used here
-
-- `Supabase` for orders, profiles, course access, coupons, and settings
-- `Sanity` for CMS content
-- `Przelewy24` for payments
-- `iFirma` for invoices
-- `Resend` for emails
-- `Apaczka` / `InPost` for shipping method UI and pickup-point selection
-
-### Important architectural finding
-
-Shipping is currently derived mostly from item type, not from a configurable CMS flag.
-
-Today:
-
-- `product` => requires shipping
-- physical `voucher` => requires shipping
-- `course` => does not require shipping
-- `bundle` => does not require shipping
-
-So the platform already supports delivery flows, but only for item types that are hardcoded as shippable.
-
-### Important product-model finding
-
-`program` is not a separate purchase engine in this repo.
-
-It is an editorial subtype on the `course` schema:
-
-- `type: 'course' | 'program'`
-
-That means a course-level checkbox is the correct CMS location for this feature.
-
----
-
-## Current Flow Today
-
-### Purchase flow
-
-1. User adds products to cart.
-2. Cart items are hydrated from Sanity.
-3. Checkout builds `InputState`.
-4. `needDelivery` is derived from cart items.
-5. Checkout collects billing and, if needed, shipping data.
-6. `/api/payment/create` creates the order and payment session.
-7. Payment completion grants access, sends emails, creates invoice, and updates order status.
-
-### Where shipping is decided today
-
-Relevant files:
-
+- `sanity/schemas/collectionTypes/Course_Collection.jsx`
+- `next/src/global/constants.ts`
+- `next/src/global/types.ts`
 - `next/src/utils/useCartItems.ts`
+- `next/src/utils/validate-guest-cart.ts`
 - `next/src/components/_global/Header/Checkout/Checkout.tsx`
+- `next/src/components/_global/Header/Checkout/_PersonalData.tsx`
+- `next/src/components/_global/Header/_Cart.tsx`
 - `next/src/app/api/payment/create/route.ts`
 
-Current behavior:
+What already exists:
 
-- frontend computes `needDelivery`,
-- checkout displays shipping UI only when `needDelivery` is `true`,
-- backend uses `input.needDelivery` to add delivery cost and persist shipping fields.
+- shipping methods and delivery UI
+- shipping address collection
+- order-level shipping persistence
+- admin dashboard integration via `need_delivery`
 
-### Why this matters
+What does not exist yet:
 
-The UI is already capable of collecting shipping data for a course order.
+- course shipping configuration in Sanity
+- bundle shipping resolution from child courses
+- course/bundle shipping propagation into cart items
+- server-side shipping revalidation for courses
+- line-level metadata explaining why a course order needs shipment
 
-The missing part is:
+### Admin dashboard
 
-- a CMS-controlled rule that can make a course require shipping,
-- plus backend validation so the server independently confirms that requirement.
+Important files in `kierunek-dzierganie-admin`:
 
----
+- `src/app/(authorized)/orders/(order)/[id]/aside.tsx`
+- `src/app/api/apaczka/create-order/route.ts`
+- `src/app/(authorized)/orders/_table.tsx`
+- `src/global/types.ts`
 
-## Recommended Solution
+What already exists:
 
-## Principle
+- order list and order detail views
+- shipment creation per order
+- shipment tracking / waybill visibility
+- order CSV export
 
-Treat selected courses as:
+What does not exist yet:
 
-- digitally fulfilled for access,
-- physically fulfilled for welcome-package logistics.
-
-Do not convert them into physical products.
-
-### MVP shape
-
-Add a new boolean flag to the course document, for example:
-
-- `requiresShipping`
-
-Meaning:
-
-- if `false`, course behaves exactly as today,
-- if `true`, checkout requires delivery details and order is persisted as a delivery order.
-
-This is the simplest solution that matches the client's "checkbox in course" request.
+- understanding of course-specific shipment metadata
+- inclusion of non-`product` shippable lines when generating a shipment
+- batch shipment tools
 
 ---
 
-## Detailed Implementation Strategy
+## Desired Business Behavior
 
-### Phase 1 - Finalize rules and scope
+### Course level
 
-Goal: avoid hidden complexity before coding.
+Each course should have a shipping mode configured in Sanity:
 
-Tasks:
+- `none`
+- `included`
+- `paid`
 
-1. Confirm whether shipping cost is charged separately or included.
-2. Confirm whether the feature applies only to programs or to all courses.
-3. Decide how bundles should behave.
-4. Decide whether any course-specific shipping copy is needed in checkout or order emails.
-5. Confirm how the admin panel should identify these orders for fulfillment.
+### Bundle level
 
-Expected output:
+Bundles should not have a separately maintained shipping mode for this release.
 
-- one locked MVP rule set,
-- no ambiguity before schema or backend changes.
+Instead, bundle shipping should be derived from bundled courses using:
+
+- `paid > included > none`
+
+### Cart / order level
+
+The whole order should resolve to one shipping mode using the same precedence:
+
+- if any line resolves to `paid`, the order is `paid`
+- else if any line resolves to `included`, the order is `included`
+- else the order is `none`
+
+This rule should be used consistently in:
+
+- cart display
+- checkout UI
+- order totals
+- payment API validation
+- stored order metadata
+
+### Account requirement
+
+Shipping requirement and account requirement must stay separate.
+
+Courses still require an account because access is granted after purchase.
+
+So:
+
+- course shipping must **not** enable guest checkout
+- guest checkout remains physical-only unless handled in a separate project
 
 ---
 
-### Phase 2 - Add CMS control in Sanity
+## Recommended Data Model
 
-Goal: let editors enable shipping per course.
+### Course source of truth in Sanity
 
-Primary file:
+Add to `course`:
+
+- `shippingMode: 'none' | 'included' | 'paid'`
+
+Optional helper field:
+
+- `shippingLabel` for customer-facing checkout/cart copy such as `Ten kurs zawiera pakiet powitalny wysyłany po zakupie`
+- `shippingNote` for internal informational text if operations need extra clarity (optional future use; not in CMS today)
+
+For this release, only `shippingMode` is required.
+
+### Meaning of the helper text
+
+`shippingLabel` should be customer-facing text shown in cart and/or checkout so the buyer understands why they are being asked for delivery details even though they are buying a course.
+
+Examples:
+
+- `Ten kurs zawiera pakiet powitalny wysyłany po zakupie`
+- `Do tego kursu wyślemy pakiet powitalny`
+- `Zakup tego kursu wymaga podania danych do wysyłki pakietu powitalnego`
+
+### Order line metadata
+
+Each order line in `products.array` should carry enough information for operational handling:
+
+- `shipmentRequired: boolean`
+- `shipmentMode: 'none' | 'included' | 'paid'`
+- `shipmentSource: 'product' | 'voucher' | 'course' | 'bundle'`
+- `shipmentLabel?: string`
+
+This avoids guessing from `type` alone in the admin dashboard.
+
+### Database impact
+
+No new Supabase columns are required for this release because:
+
+- `orders.need_delivery` already exists
+- `orders.shipping` already exists
+- `orders.shipping_method` already exists
+- `orders.products` already stores structured JSON
+
+---
+
+## Phase 1: Storefront Strategy
+
+This phase covers both the public storefront and Sanity because they live in the same repository.
+
+### 1. Add course shipping fields in Sanity
+
+Update:
 
 - `sanity/schemas/collectionTypes/Course_Collection.jsx`
 
-Recommended field:
+Add:
 
-```ts
-{
-  name: 'requiresShipping',
-  type: 'boolean',
-  title: 'Wymaga wysylki',
-  initialValue: false,
-  group: 'configuration',
-}
-```
+- `shippingMode`
+- optionally `shippingLabel`
 
-Optional v2 fields if needed later:
+Recommended editor UX:
 
-- `shippingDescription`
-- `shippingIncluded`
-- `fulfillmentTag`
+- section label: `Wysyłka po zakupie`
+- options:
+  - `Brak`
+  - `Wliczona w cenę`
+  - `Płatna`
 
-For MVP, only the boolean is recommended.
+Recommended customer-facing copy behavior:
 
-Why:
+- `shippingLabel` should be shown to the buyer in the cart and/or checkout
+- the purpose is to explain why delivery details are required for a course purchase
 
-- minimal editor complexity,
-- directly aligned with the client's request,
-- low risk to existing content.
+### 2. Expose shipping fields in storefront queries and types
 
----
-
-### Phase 3 - Expose the flag to the storefront
-
-Goal: make cart and checkout aware of the new rule.
-
-Primary files:
+Update:
 
 - `next/src/global/constants.ts`
 - `next/src/global/types.ts`
 
-Tasks:
+The goal is for course and bundle payloads to carry enough information to compute:
 
-1. Add the new field to `PRODUCT_CARD_QUERY`.
-2. Extend `ProductCard` with the new property.
-3. Ensure course detail and cart hydration queries receive the field.
+- whether shipping is required
+- whether it is `included` or `paid`
 
-Suggested data model:
+Important detail:
 
-```ts
-requiresShipping?: boolean;
-```
+Bundle queries must expose enough child-course shipping data to resolve bundle mode without relying on brittle client-only assumptions.
 
-Why:
+### 3. Add a shared shipping resolver
 
-- the frontend cannot compute shipping for courses until the CMS field is available in the fetched item data.
+Recommended new utility:
 
----
+- `next/src/utils/resolve-shipping-mode.ts`
 
-### Phase 4 - Replace type-only shipping logic with rule-based logic
+This utility should normalize the rules for:
 
-Goal: make a selected course behave like a delivery-required order without changing its product type.
+- product -> `paid`
+- physical voucher -> `paid`
+- digital voucher -> `none`
+- course -> `none` / `included` / `paid`
+- bundle -> derived from child courses using `paid > included > none`
 
-Primary file:
+This should become the single source of truth used by:
+
+- cart mapping
+- checkout state
+- totals calculation
+- payment API validation
+
+### 4. Update cart item mapping
+
+Update:
 
 - `next/src/utils/useCartItems.ts`
 
-Current logic:
+Current issue:
 
-- `needDelivery: item._type === 'product'`
+- cart items default to `needDelivery: item._type === 'product'`
+- courses and bundles are therefore excluded from delivery
 
-Recommended logic:
+Required change:
 
-- `product` => `true`
-- physical `voucher` => `true`
-- `course` with `requiresShipping === true` => `true`
-- `bundle` => `true` only if explicitly included in scope
+- replace direct type checks with the shared shipping resolver
+- store both `needDelivery` and the resolved `shippingMode`
 
-Recommended implementation idea:
+### 5. Update checkout state and UI
 
-```ts
-const requiresDelivery =
-  item._type === 'product' ||
-  (item._type === 'voucher' && el.voucherData.type === 'PHYSICAL') ||
-  (item._type === 'course' && item.requiresShipping === true);
-```
-
-If bundles are included later:
-
-- either add a bundle-level flag,
-- or infer from included course references,
-- but do not decide this implicitly without product approval.
-
----
-
-### Phase 5 - Reuse existing checkout UX
-
-Goal: avoid building a new shipping flow.
-
-Primary files:
+Update:
 
 - `next/src/components/_global/Header/Checkout/Checkout.tsx`
+- `next/src/components/_global/Header/Checkout/Checkout.types.ts`
 - `next/src/components/_global/Header/Checkout/_PersonalData.tsx`
 - `next/src/components/_global/Header/Checkout/_SummaryAside.tsx`
-- `next/src/components/_global/Header/_Content.tsx`
+- `next/src/components/_global/Header/_Cart.tsx`
 
-Expected behavior after Phase 4:
+Required behavior:
 
-1. User adds a shipping-enabled course.
-2. Checkout computes `needDelivery = true`.
-3. Shipping method section appears automatically.
-4. Shipping address section appears automatically.
-5. Existing InPost / Paczkomat logic continues to work.
-6. Delivery price is added using current shipping settings.
+- if order mode is `none`, no delivery UI
+- if order mode is `included`, show delivery UI but charge `0`
+- if order mode is `paid`, show delivery UI and apply normal shipping pricing
 
-This is a strong reason to implement the feature this way:
+This is an important conceptual split:
 
-- most UI infrastructure already exists.
+- `delivery required`
+- `delivery charged`
 
----
+These are no longer the same thing.
 
-### Phase 6 - Keep authentication requirement unchanged
+### 6. Keep guest checkout unchanged for courses
 
-Goal: preserve course-access rules.
-
-Primary file:
+Update:
 
 - `next/src/utils/validate-guest-cart.ts`
 
-Recommendation:
+Rule should remain:
 
-- do not enable guest checkout for shipping-enabled courses,
-- keep account creation / login required for all course purchases.
+- course and bundle carts still require an account
 
-Reason:
+Shipping on a course must **not** accidentally make it behave like a guest-eligible physical-only cart.
 
-- the order still grants course access,
-- access is tied to the user account,
-- shipping does not change the digital ownership requirement.
+### 7. Free shipping behavior
 
-This keeps the business logic coherent and avoids downstream access issues.
+The project already has a free-shipping mechanism in code:
 
----
+- the storefront reads `settings.value.freeDeliveryAmount` from Supabase
+- the cart and checkout receive it as `freeShipping`
+- the order stores `free_delivery`
 
-### Phase 7 - Harden the payment backend
+However, the current production value is `0`, which means the threshold is effectively disabled right now.
 
-Goal: make the server the source of truth for whether shipping is required.
+Practical consequence for this release:
 
-Primary file:
+- the shipped-course implementation must not depend on free-shipping behavior being active
+- but the logic should remain compatible if the threshold is enabled later
 
+Recommended rule:
+
+- free-shipping threshold logic only matters when the resolved order mode is `paid`
+- if the resolved order mode is `included`, delivery remains `0` regardless of threshold
+
+Resolution order:
+
+1. resolve item shipping modes
+2. resolve overall order shipping mode
+3. if order mode is `included`, delivery charge is `0`
+4. if order mode is `paid`, apply existing delivery pricing
+5. if a future non-zero free-shipping threshold is configured, it may reduce that paid delivery to `0`
+
+So for the current rollout:
+
+- there is no active free-shipping threshold in production
+- `included` vs `paid` is the only shipping-price distinction that currently matters
+
+### 8. Virtual money behavior
+
+Current code allows virtual money for course and bundle purchases.
+
+This creates a business decision:
+
+- either shipped courses still remain eligible because they are still courses
+- or shipped courses become ineligible because they include physical fulfillment
+
+Recommended for this release:
+
+- keep the current rule unchanged unless the business explicitly decides otherwise
+- but include this in QA because it affects totals and customer expectations
+
+Files affected:
+
+- `next/src/utils/can-use-virtual-money.ts`
 - `next/src/app/api/payment/create/route.ts`
 
-This is the most important implementation phase.
+### 9. Harden the payment API
 
-Current weakness:
+This is mandatory.
 
-- the server uses `input.needDelivery` from the client request.
+Current issue:
 
-Recommended change:
+- `next/src/app/api/payment/create/route.ts` trusts client-provided `needDelivery`
+- delivery amount is derived from client state instead of fully revalidated server-side
 
-1. Read the real ordered items from `input.products.array`.
-2. Fetch any required Sanity metadata for those item IDs.
-3. Recompute whether delivery is required.
-4. Recompute whether shipping fields are mandatory.
-5. Persist `need_delivery`, `shipping`, and `shipping_method` from server-verified logic.
-6. Use that computed result for `deliveryAmount` and initial status.
+Required change:
 
-Why this matters:
+- fetch fresh product/course/bundle shipping source data on the server
+- resolve item shipping modes again on the server
+- resolve order shipping mode again on the server
+- compute final delivery amount on the server
+- reject inconsistent payloads
 
-- prevents incorrect or manipulated client payloads,
-- keeps order data consistent,
-- protects future admin-side automation.
+### 10. Persist shipment metadata on order lines
 
-Recommended validation outcomes:
+When checkout builds `products.array`, include line-level shipment metadata so the admin dashboard can tell:
 
-- shipping-enabled course without shipping method => reject request
-- shipping-enabled course with missing delivery data => reject request
-- digital-only course without flag => no shipping charged
+- which line triggered shipment
+- whether it was `included` or `paid`
+- whether the shipment comes from a course, bundle, product, or voucher
 
----
+### 11. Add customer-facing explanation in UI
 
-### Phase 8 - Preserve and enrich order semantics
+Recommended places to render `shippingLabel`:
 
-Goal: make orders understandable to downstream systems.
+- on the shipped course line in the cart
+- near the delivery section in checkout
+- optionally in the order summary
 
-Current good news:
+The purpose is to avoid confusion when a course purchase suddenly asks for shipping details.
 
-- the order model already supports `need_delivery`,
-- order emails already branch on `need_delivery`,
-- order status flow already supports shipping-related states.
+### 12. Storefront acceptance criteria
 
-Relevant files:
+Phase 1 is complete when:
 
-- `next/src/app/api/payment/complete/process-background.ts`
-- `next/src/app/api/payment/complete/send-emails.ts`
-- `next/src/components/_dashboard/OrderData/OrderData.tsx`
-
-Recommendation:
-
-- keep reusing `need_delivery`,
-- additionally store item-level metadata indicating why shipping is required.
-
-Suggested per-item metadata:
-
-- `requiresShipping: true`
-- `shippingSource: 'course' | 'product' | 'voucher'`
-
-Why:
-
-- helps the separate admin panel understand that a digital course order still has fulfillment attached,
-- reduces ambiguity for ops and future debugging.
+- a course with `none` behaves like a normal digital course
+- a course with `included` collects delivery details and charges `0`
+- a course with `paid` collects delivery details and charges standard shipping
+- a bundle with at least one `included` and no `paid` resolves to `included`
+- a bundle with at least one `paid` resolves to `paid`
+- the payment API revalidates shipping safely
+- guest checkout remains blocked for course and bundle carts
+- order lines include shipment metadata
 
 ---
 
-### Phase 9 - Validate invoice and email behavior
+## Phase 2: Admin Dashboard Strategy
 
-Goal: ensure order communication stays coherent.
+This phase should stay intentionally small.
 
-Relevant files:
+### 1. Support shipped course lines in per-order shipment flow
 
-- `next/src/app/api/payment/complete/generate-bill.ts`
-- `next/src/app/api/payment/complete/send-emails.ts`
-- `next/src/emails/Order/Order.tsx`
+Current issue:
 
-Expected result:
+- `src/app/(authorized)/orders/(order)/[id]/aside.tsx` filters shipment lines with `el.type === 'product'`
 
-- invoice still includes shipping as a delivery line when applicable,
-- order confirmation uses the delivery-aware branch,
-- customer receives a normal delivery-capable order confirmation,
-- internal team receives a delivery-capable order notification.
+That means a shipped course or bundle would not flow correctly into shipment generation.
 
-Potential UX improvement:
+Required change:
 
-- optionally mention in the email that the course includes a welcome package.
+- replace hardcoded `product` filtering with shipment metadata
+- include any line with `shipmentRequired === true`
 
-This is a nice enhancement, not an MVP blocker.
+This should cover:
 
----
+- physical products
+- physical vouchers
+- shipped courses
+- shipped bundles
 
-### Phase 10 - Update the admin panel if needed
+### 2. Keep the current per-order Apaczka workflow
 
-Goal: ensure the operational "one click shipment" promise is actually achieved.
+Current shipment creation already lives in:
 
-This repository alone probably does not complete the client's full desired outcome.
+- `src/app/(authorized)/orders/(order)/[id]/aside.tsx`
+- `src/app/api/apaczka/create-order/route.ts`
 
-Reason:
+For this release, keep that workflow as-is:
 
-- I found checkout shipping collection and order persistence here,
-- but I did not find server-side shipment-label creation in this codebase.
+- operator opens an order
+- operator creates shipment for that order
 
-That strongly suggests the separate admin panel is where fulfillment actions actually happen.
+No bulk workflow should be added now.
 
-So the admin panel must be checked for any assumptions like:
+### 3. Add minimal operator visibility
 
-- "only physical product lines are shippable"
-- "only orders containing `_type === product` can generate shipment"
-- "shipping queue ignores delivery-required course orders"
+Recommended small UI additions:
 
-This is the biggest cross-repo dependency.
+- show which order line triggered shipping
+- show whether shipment is `included` or `paid`
+- optionally show `shipmentLabel` (customer-facing copy persisted on the order line) if configured
 
----
+Likely affected files:
 
-## Recommended Technical Scope
+- `src/app/(authorized)/orders/(order)/[id]/_products.tsx`
+- `src/app/(authorized)/orders/(order)/[id]/content.tsx`
+- `src/global/types.ts`
 
-### This repo
+### 4. Update admin types
 
-Likely changes in this repository:
+Update:
 
-1. Add `requiresShipping` to Sanity course schema.
-2. Add the field to storefront queries and types.
-3. Update cart item delivery logic.
-4. Reuse checkout delivery UI for flagged courses.
-5. Add server-side shipping recomputation in payment creation.
-6. Optionally enrich stored order item metadata.
+- `src/global/types.ts`
+- `src/app/(authorized)/orders/(order)/[id]/types.ts`
 
-### Separate admin repo
+The dashboard must be able to read the new shipment metadata stored in `orders.products`.
 
-Likely changes in the admin repository:
+### 5. Admin acceptance criteria
 
-1. Ensure delivery-required course orders appear in fulfillment views.
-2. Ensure shipment creation is allowed for such orders.
-3. Ensure order detail UI explains why shipping is required.
-4. Ensure any automations based on product type also handle course-triggered delivery.
+Phase 2 is complete when:
 
----
-
-## Files Most Likely To Change In This Repo
-
-
-| File                                                            | Why                                      |
-| --------------------------------------------------------------- | ---------------------------------------- |
-| `sanity/schemas/collectionTypes/Course_Collection.jsx`          | Add CMS checkbox                         |
-| `next/src/global/constants.ts`                                  | Expose new field in queries              |
-| `next/src/global/types.ts`                                      | Add type support                         |
-| `next/src/utils/useCartItems.ts`                                | Compute delivery for flagged courses     |
-| `next/src/components/_global/Header/Checkout/Checkout.tsx`      | Aggregate delivery state                 |
-| `next/src/components/_global/Header/Checkout/_PersonalData.tsx` | Reuse shipping form for flagged courses  |
-| `next/src/components/_global/Header/Checkout/_SummaryAside.tsx` | Confirm delivery cost display            |
-| `next/src/app/api/payment/create/route.ts`                      | Server-side recomputation and validation |
-
+- shipped course orders appear as deliverable orders
+- operators can create Apaczka shipments from those orders
+- shipment generation no longer assumes only `product` lines are shippable
+- order details make it clear why the order requires shipment
+- no bulk shipment or batch tooling is introduced
 
 ---
 
-## Database Impact
+## Suggested Implementation Order
 
-### Initial view
-
-This feature probably does not require a major database migration in this repo.
-
-Reason:
-
-- orders already store shipping details,
-- orders already store `need_delivery`,
-- status logic already supports shipment-oriented states.
-
-Possible optional enhancement:
-
-- add or persist better item-level metadata inside `orders.products.array`
-
-That is likely enough for MVP unless the admin repo reveals a stronger schema dependency.
+1. Add Sanity schema fields on `course`
+2. Extend storefront queries and types
+3. Build shared shipping resolution utility
+4. Update cart item mapping
+5. Update checkout state, totals, and customer-facing UI
+6. Harden server-side validation in payment creation
+7. Persist line-level shipment metadata on orders
+8. Update admin dashboard per-order shipment handling
+9. Run QA across both repos
 
 ---
 
-## Risks
+## QA Matrix
 
-### Risk 1 - Backend trusts the client too much
+### Storefront scenarios
 
-If the frontend alone decides `needDelivery`, order data can become inconsistent.
+- course with `none`
+- course with `included`
+- course with `paid`
+- bundle with all `none`
+- bundle with `included` and `none`
+- bundle with `paid` and `included`
+- bundle with `paid`, `included`, and `none`
+- course with included shipping plus physical product
+- course with paid shipping plus physical product
+- multiple shipped courses in one order
+- free order created by coupon
+- order using virtual money
+- guest attempt with shipped course in cart
 
-Mitigation:
+### Admin scenarios
 
-- recompute on the server in `payment/create`.
-
-### Risk 2 - Admin panel may assume only physical SKUs are shippable
-
-If true, the checkout change will collect delivery data, but ops still will not get the promised workflow.
-
-Mitigation:
-
-- inspect admin repo before implementation is considered complete.
-
-### Risk 3 - Bundle behavior can become unclear
-
-If bundles include shipping-enabled courses, the business rule must be explicit.
-
-Mitigation:
-
-- exclude bundles from MVP unless the client explicitly needs them.
-
-### Risk 4 - Shipping pricing may be ambiguous
-
-If welcome packages are "included" in premium programs, existing global shipping charging may be wrong.
-
-Mitigation:
-
-- confirm whether delivery is charged or absorbed into price before implementation.
+- shipped course order visible as deliverable
+- shipped bundle order visible as deliverable
+- Apaczka shipment creation works for shipped-course orders
+- order detail view explains shipment source
+- standard physical-product orders still behave as before
 
 ---
 
-## Suggested MVP Decision Set
+## Risks and Open Questions
 
-If we want the fastest safe version, I recommend this exact MVP:
+### 1. Virtual money policy
 
-1. Add `requiresShipping` boolean on `course`.
-2. Support it for `course` documents only.
-3. Keep guest checkout rules unchanged.
-4. Reuse current shipping methods and current shipping prices.
-5. Recompute shipping requirement server-side.
-6. Save delivery-required course orders exactly like physical delivery orders.
-7. Update the admin panel only as much as needed so those orders can enter shipment handling.
+The current system allows virtual money for courses and bundles.
 
-This is the cleanest path to business value with the lowest implementation risk.
+If the business later decides that shipped courses should block virtual money, that must be implemented explicitly as a separate rule change.
 
----
+### 2. Free-shipping threshold semantics
 
-## QA Plan
+The threshold system exists technically, but the current production `freeDeliveryAmount` is `0`, so it is not active today.
 
-### Storefront QA
+The recommended approach remains:
 
-- Buy a normal course with `requiresShipping = false` -> no shipping UI
-- Buy a course with `requiresShipping = true` -> shipping UI appears
-- Buy a program with `requiresShipping = true` -> shipping UI appears
-- Confirm delivery amount is added correctly
-- Confirm InPost point selection works
-- Confirm order is saved with `need_delivery = true`
-- Confirm order is saved with shipping data
-- Confirm course access is still granted after payment
+- `included` shipping ignores threshold because it is already free by definition
+- `paid` shipping can still respect the threshold if that feature is re-enabled later
 
-### Backend QA
+### 3. Bundle payload depth
 
-- Remove shipping data from a flagged course checkout payload -> server rejects
-- Force `needDelivery = false` from client for a flagged course -> server still computes delivery
-- Confirm correct order status after payment for a delivery-required course
+Bundle shipping depends on child-course shipping data being available in queries.
 
-### Admin / ops QA
+If the current bundle payload is too shallow, the query layer must be expanded before the resolver is finalized.
 
-- Delivery-required course order appears in fulfillment workflow
-- Shipment creation action is available
-- Order detail clearly shows shipping method and delivery data
-- Ops can distinguish physical product shipments from course welcome-package shipments if needed
+### 4. Operational shipment labeling
+
+Use `shippingLabel` in Sanity for buyer-facing explanation; the same text can be persisted on order lines as `shipmentLabel` for admin clarity.
+
+### 5. No bulk flow in this release
+
+This release solves:
+
+- delivery data collection for shipped courses
+- shipping-aware order creation
+- compatibility with the existing per-order admin shipment flow
+
+This release does **not** solve:
+
+- one-click shipment creation for hundreds of welcome-package orders
 
 ---
 
-## What We Need From The Admin Repo
+## Scope Statement
 
-Before final implementation planning is complete, we should inspect these areas in the separate admin codebase:
+This release should be treated as:
 
-1. Order list page
-2. Order detail page
-3. Shipping queue or fulfillment filters
-4. Shipment / label generation logic
-5. Any logic that checks order line item type before enabling shipment actions
+- extending the existing shipping architecture to selected courses and bundles
+- collecting delivery details during course checkout when needed
+- storing enough metadata for operations to process those orders correctly
+- keeping the admin work minimal and per-order
 
-This will tell us whether:
+This release should not be treated as:
 
-- no admin changes are needed,
-- a small compatibility update is needed,
-- or the feature must be split across both repositories.
+- a bulk fulfillment automation project
+- a warehouse tooling project
+- a redesign of guest checkout
+- a redesign of the entire discount or shipping promotion system
 
----
-
-## Final Recommendation
-
-Proceed with a CMS-driven, course-level shipping flag.
-
-Do not model this as a fake physical SKU unless the admin panel or reporting layer forces that choice.
-
-This repo already has most of the shipping infrastructure needed for checkout and order persistence. The real technical work is:
-
-- exposing the new course rule,
-- making cart and checkout honor it,
-- validating it server-side,
-- and confirming the separate admin panel can operationalize the resulting order.
-
-If the admin repo cooperates cleanly, this should be a relatively contained feature with strong business value.

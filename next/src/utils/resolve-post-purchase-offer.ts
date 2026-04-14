@@ -6,13 +6,18 @@ import { createClient } from '@/utils/supabase-admin';
 
 export type OfferedItem = {
   _id: string;
-  _type: 'course' | 'bundle';
+  _type: 'course' | 'bundle' | 'product';
   name: string;
-  price: number;
+  price: number | null;
   discount?: number;
   slug: string;
   basis: string;
   image: ImgType | null;
+  variants?: Array<{
+    price: number;
+    discount?: number;
+    image: ImgType | null;
+  }> | null;
 };
 
 export type PostPurchaseOfferMode = 'discounted' | 'standard';
@@ -36,6 +41,9 @@ export type PostPurchaseNewsletterSectionPayload = {
   heading: string | null;
   paragraph: string | null;
   groupId: string | null;
+  buttonLabel: string | null;
+  successMessage: string | null;
+  errorMessage: string | null;
   image: ImgType | null;
 };
 
@@ -66,6 +74,9 @@ type LegacyNewsletterConfig = {
   heading?: string;
   paragraph?: string;
   groupId?: string;
+  buttonLabel?: string;
+  successMessage?: string;
+  errorMessage?: string;
 };
 
 type PostPurchaseProductSectionConfig = {
@@ -83,6 +94,9 @@ type PostPurchaseNewsletterSectionConfig = {
   heading?: string;
   paragraph?: string;
   groupId?: string;
+  buttonLabel?: string;
+  successMessage?: string;
+  errorMessage?: string;
   image?: ImgType | null;
 };
 
@@ -123,8 +137,21 @@ const OFFERED_ITEMS_QUERY = `
   discount,
   basis,
   "slug": slug.current,
-  "image": gallery[0] {
-    ${Img_Query}
+  "image": select(
+    defined(gallery[0]) => gallery[0] {
+      ${Img_Query}
+    },
+    defined(variants[0].gallery[0]) => variants[0].gallery[0] {
+      ${Img_Query}
+    },
+    null
+  ),
+  "variants": variants[]{
+    price,
+    discount,
+    "image": gallery[0] {
+      ${Img_Query}
+    }
   }
 `;
 
@@ -136,6 +163,9 @@ const POST_PURCHASE_OFFER_QUERY = `
       heading,
       paragraph,
       groupId,
+      buttonLabel,
+      successMessage,
+      errorMessage,
       image {
         ${Img_Query}
       },
@@ -199,6 +229,9 @@ const normalizeLegacySections = (offerConfig: PostPurchaseOfferConfig): PostPurc
         heading: newsletterHeading ?? undefined,
         paragraph: newsletterParagraph ?? undefined,
         groupId: offerConfig.newsletter?.groupId,
+        buttonLabel: offerConfig.newsletter?.buttonLabel,
+        successMessage: offerConfig.newsletter?.successMessage,
+        errorMessage: offerConfig.newsletter?.errorMessage,
       });
     }
   }
@@ -281,6 +314,9 @@ const createNewsletterSectionPayload = (
     heading,
     paragraph,
     groupId: resolveOptionalText(section.groupId),
+    buttonLabel: resolveOptionalText(section.buttonLabel),
+    successMessage: resolveOptionalText(section.successMessage),
+    errorMessage: resolveOptionalText(section.errorMessage),
     image: section.image ?? null,
   };
 };

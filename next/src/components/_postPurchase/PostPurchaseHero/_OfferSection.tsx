@@ -2,7 +2,7 @@
 
 import Button from '@/components/ui/Button';
 import Img from '@/components/ui/image';
-import { pageUrls } from '@/global/constants';
+import { pageUrls, productUrls } from '@/global/constants';
 import { formatPrice } from '@/utils/price-formatter';
 import { useCountdown } from '@/utils/countdown';
 import { toast } from 'react-toastify';
@@ -16,6 +16,46 @@ type OfferSectionProps = {
   discountAmount: number | null;
   expirationDate: string | null;
   couponCode: string | null;
+};
+
+const getOfferItemHref = (item: OfferedItem) => {
+  if (item._type === 'product' && item.basis in productUrls) {
+    return `${productUrls[item.basis as keyof typeof productUrls]}/${item.slug}`;
+  }
+
+  if (item.basis in pageUrls) {
+    return `${pageUrls[item.basis as keyof typeof pageUrls]}/${item.slug}`;
+  }
+
+  return `/${item.slug}`;
+};
+
+const getOfferItemEffectivePrices = (item: OfferedItem): number[] => {
+  const variantPrices =
+    item.variants
+      ?.map((variant) => (typeof variant.discount === 'number' ? variant.discount : variant.price))
+      .filter((price): price is number => typeof price === 'number' && price >= 0) ?? [];
+
+  if (variantPrices.length) {
+    return variantPrices;
+  }
+
+  const singlePrice = typeof item.discount === 'number' ? item.discount : item.price;
+  return typeof singlePrice === 'number' && singlePrice >= 0 ? [singlePrice] : [];
+};
+
+const formatOfferPriceRange = (prices: number[]): string | null => {
+  if (!prices.length) return null;
+
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+
+  return minPrice === maxPrice ? formatPrice(minPrice) : `${formatPrice(minPrice)} - ${formatPrice(maxPrice)}`;
+};
+
+const getOfferItemImage = (item: OfferedItem) => {
+  if (item.image) return item.image;
+  return item.variants?.find((variant) => variant.image)?.image ?? null;
 };
 
 const OfferSection = ({ offeredItems, offerMode, discountAmount, expirationDate, couponCode }: OfferSectionProps) => {
@@ -70,9 +110,15 @@ const OfferSection = ({ offeredItems, offerMode, discountAmount, expirationDate,
         className={`${styles.offerItems} ${multipleItems ? styles.offerItemsGrid : styles.offerItemsSingle}`}
       >
         {offeredItems.map((item) => {
-          const basePrice = item.discount ?? item.price;
-          const discountedPrice = hasDiscount ? Math.max(0, basePrice - discountAmount) : basePrice;
-          const itemHref = `${pageUrls[item.basis as 'knitting' | 'crocheting']}/${item.slug}`;
+          const effectivePrices = getOfferItemEffectivePrices(item);
+          const discountedPrices =
+            hasDiscount && typeof discountAmount === 'number'
+              ? effectivePrices.map((price) => Math.max(0, price - discountAmount))
+              : effectivePrices;
+          const basePriceLabel = formatOfferPriceRange(effectivePrices);
+          const discountedPriceLabel = formatOfferPriceRange(discountedPrices);
+          const itemHref = getOfferItemHref(item);
+          const itemImage = getOfferItemImage(item);
 
           return (
             <div
@@ -87,25 +133,27 @@ const OfferSection = ({ offeredItems, offerMode, discountAmount, expirationDate,
                 tabIndex={-1}
               />
 
-              {item.image && (
+              {itemImage && (
                 <div className={styles.offerItemImage}>
                   <Img
-                    data={item.image}
+                    data={itemImage}
                     sizes='(max-width: 900px) 100vw, 400px'
                   />
                 </div>
               )}
               <div className={styles.offerItemData}>
                 <p className={styles.offerItemName}>{item.name}</p>
-                <p className={styles.offerItemPrice}>
-                  {hasDiscount && <span className={styles.originalPrice}>{formatPrice(basePrice)}</span>}
-                  <span className={styles.discountedPrice}>{formatPrice(discountedPrice)}</span>
-                </p>
+                {discountedPriceLabel && (
+                  <p className={styles.offerItemPrice}>
+                    {hasDiscount && basePriceLabel && <span className={styles.originalPrice}>{basePriceLabel}</span>}
+                    <span className={styles.discountedPrice}>{discountedPriceLabel}</span>
+                  </p>
+                )}
                 <Button
                   href={itemHref}
                   className={styles.offerItemBtn}
                 >
-                  {hasDiscount ? `Kup za ${formatPrice(discountedPrice)}` : 'Zobacz kurs'}
+                  {hasDiscount && discountedPriceLabel ? `Kup za ${discountedPriceLabel}` : 'Zobacz szczegóły'}
                 </Button>
               </div>
             </div>
@@ -118,7 +166,7 @@ const OfferSection = ({ offeredItems, offerMode, discountAmount, expirationDate,
         <div className={styles.couponBlock}>
           {multipleItems && (
             <p className={styles.couponNotice}>
-              Kod działa jednorazowo — wybierz jeden kurs i użyj go przy kasie.
+              Kod działa jednorazowo — wybierz jeden produkt i użyj go przy kasie.
             </p>
           )}
           <button

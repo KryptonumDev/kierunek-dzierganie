@@ -8,6 +8,7 @@ import { QueryMetadata } from '@/global/Seo/query-metadata';
 import Informations from '@/components/_product/Informations';
 import Description, { Description_Query } from '@/components/_product/Description';
 import { Img_Query } from '@/components/ui/image';
+import { PRODUCT_PURCHASE_ELIGIBILITY_SOURCE_QUERY } from '@/global/constants';
 import Reviews from '@/components/_product/Reviews';
 import ProductSchema from '@/global/Schema/ProductSchema';
 import HeroVoucher from '@/components/_product/HeroVoucher/HeroVoucher';
@@ -162,9 +163,8 @@ const query = async (slug: string): Promise<ProductPageQueryProps> => {
             value
           }
         },
-        "relatedCourses": *[_type == 'course' && (materials_link._ref == ^._id || ^._id in related_products[]._ref)][]{
-          _id,
-          name
+        "relatedCourses": *[_type == 'course' && (materials_link._ref == ^._id || ^._id in related_products[]._ref || printed_manual._ref == ^._id)][]{
+          ${PRODUCT_PURCHASE_ELIGIBILITY_SOURCE_QUERY}
         },
         "reviews": *[_type == 'productReviewCollection' && visible == true && references(^._id)][0...10]{
           rating,

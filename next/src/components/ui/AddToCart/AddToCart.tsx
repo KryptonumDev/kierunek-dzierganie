@@ -4,6 +4,10 @@ import Button from '../Button';
 import styles from './AddToCart.module.scss';
 import type { Props } from './AddToCart.types';
 import { toast } from 'react-toastify';
+import {
+  getPurchaseEligibilityLabel,
+  hasSatisfiedPurchaseEligibility,
+} from '@/utils/product-purchase-eligibility';
 
 const gtag: Gtag.Gtag = function () {
   // eslint-disable-next-line prefer-rest-params
@@ -15,15 +19,15 @@ const AddToCart = ({ id, variant, disabled, quantity = 1, voucherData, data, own
   const productId = variant ? id + 'variant:' + variant : id;
 
   const addItemToCart = () => {
-    if (data._type === 'product' && data.relatedCourse?._id) {
-      const requiredCourseId = data.relatedCourse._id;
-      const ownsRequiredCourse = ownedCourses?.includes(requiredCourseId) ?? false;
-      const requiredCourseInCart = items?.some((item) => item.product === requiredCourseId) ?? false;
+    if (data._type === 'product' && data.purchaseEligibility?.length) {
+      const isEligible = hasSatisfiedPurchaseEligibility({
+        eligibility: data.purchaseEligibility,
+        ownedCourseIds: ownedCourses,
+        cartProductIds: items?.map((item) => item.product) ?? [],
+      });
 
-      if (!ownsRequiredCourse && !requiredCourseInCart) {
-        toast(
-          `${data.name} został usunięty z koszyka, ponieważ nie posiadasz ${data.relatedCourse.name ?? 'powiązanego kursu'}`
-        );
+      if (!isEligible) {
+        toast(`${data.name} został usunięty z koszyka, ponieważ nie posiadasz ${getPurchaseEligibilityLabel(data.purchaseEligibility)}`);
         return;
       }
     }

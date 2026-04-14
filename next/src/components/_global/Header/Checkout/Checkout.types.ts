@@ -1,4 +1,14 @@
-import type { Billing, Complexity, CourseGrantLink, Discount, ImgType, MapPoint, Shipping } from '@/global/types';
+import type {
+  Billing,
+  Complexity,
+  CourseGrantLink,
+  CourseShippingMode,
+  Discount,
+  ImgType,
+  MapPoint,
+  ShipmentDeclaredValueSource,
+  Shipping,
+} from '@/global/types';
 import type { Dispatch, SetStateAction } from 'react';
 import type { useCartItems } from '../Header.types';
 
@@ -35,6 +45,7 @@ export type InputState = {
   firmOrder: boolean;
   shippingSameAsBilling: boolean;
   isGuestCheckout?: boolean; // New field for guest checkout flag
+  shippingMode: CourseShippingMode;
   shipping: Shipping;
   shippingMethod?: {
     data: string | MapPoint | null;
@@ -67,6 +78,12 @@ export type InputState = {
         type: 'PHYSICAL' | 'DIGITAL';
       };
       automatizationId?: string | null;
+      shipmentRequired: boolean;
+      shipmentMode: CourseShippingMode;
+      shipmentSource: 'product' | 'course' | 'bundle' | 'voucher';
+      shipmentLabel?: string | null;
+      shipmentDeclaredValue?: number | null;
+      shipmentDeclaredValueSource?: ShipmentDeclaredValueSource | null;
     }[];
   };
   client_notes: string;

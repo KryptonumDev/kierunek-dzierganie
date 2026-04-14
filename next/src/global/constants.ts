@@ -133,6 +133,9 @@ export const PRODUCT_CARD_QUERY = `
   _type,
   accessMode,
   accessFixedDate,
+  shippingMode,
+  shippingLabel,
+  shipmentDeclaredValue,
   "reviewsCount": count(*[_type == 'productReviewCollection' && references(^._id)]),
   "rating": math::avg(*[_type == 'productReviewCollection' && references(^._id)]{rating}.rating),
   gallery[0]{
@@ -201,10 +204,15 @@ export const PRODUCT_CARD_QUERY = `
   },
   courses[]->{
     _id,
+    price,
+    discount,
     automatizationId,
     previewGroupMailerLite,
     accessMode,
     accessFixedDate,
+    shippingMode,
+    shippingLabel,
+    shipmentDeclaredValue,
   },
   grantedCourses[]->{
     _id,
@@ -214,6 +222,17 @@ export const PRODUCT_CARD_QUERY = `
     accessFixedDate,
   },
   automatizationId,
+`;
+
+export const PRODUCT_PURCHASE_ELIGIBILITY_SOURCE_QUERY = `
+  _id,
+  name,
+  type,
+  "includedByPrograms": *[_type == 'course' && type == 'program' && ^._id in includedCourses[]._ref][]{
+    _id,
+    name,
+    type
+  }
 `;
 
 export const MATERIAL_PACKAGE_QUERY = `materialsPackage[] {

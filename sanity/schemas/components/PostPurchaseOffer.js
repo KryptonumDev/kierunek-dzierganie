@@ -24,7 +24,7 @@ const productSection = {
       name: 'offeredItems',
       title: 'Oferowane produkty',
       type: 'array',
-      of: [{ type: 'reference', to: [{ type: 'course' }, { type: 'bundle' }] }],
+      of: [{ type: 'reference', to: [{ type: 'course' }, { type: 'bundle' }, { type: 'product' }] }],
       validation: Rule =>
         Rule.custom((value) => {
           if (!value || value.length === 0) return 'Dodaj co najmniej jeden produkt do sekcji';
@@ -119,6 +119,26 @@ const newsletterSection = {
       title: 'ID grupy MailerLite (opcjonalne)',
       description:
         'Jeśli pole pozostanie puste, użyjemy domyślnej grupy newsletterowej. Darmowy produkt wysyła automatyzacja MailerLite.',
+    },
+    {
+      name: 'buttonLabel',
+      type: 'string',
+      title: 'Tekst przycisku (opcjonalny)',
+      description: 'Jeśli pole pozostanie puste, użyjemy domyślnego tekstu przycisku.',
+    },
+    {
+      name: 'successMessage',
+      type: 'text',
+      rows: 3,
+      title: 'Komunikat po poprawnym zapisie (opcjonalny)',
+      description: 'Jeśli pole pozostanie puste, użyjemy domyślnego komunikatu sukcesu.',
+    },
+    {
+      name: 'errorMessage',
+      type: 'text',
+      rows: 3,
+      title: 'Komunikat błędu formularza (opcjonalny)',
+      description: 'Jeśli pole pozostanie puste, użyjemy domyślnego komunikatu błędu.',
     },
     {
       name: 'image',

@@ -1130,6 +1130,14 @@
         line-height: 155%;
         margin-bottom: 12px;
       }
+
+      .shippingLabel {
+        color: var(--secondary-500, #5c7360);
+        font-size: calc(14rem / 16);
+        font-weight: 300;
+        line-height: 150%;
+        margin-bottom: 12px;
+      }
     }
 
     .omnibus {

@@ -13,6 +13,12 @@ import { updateItemsQuantity } from '../complete/update-items-quantity';
 import { generateGuestOrderToken, isGuestOrder } from '@/utils/generate-guest-order-token';
 import { createVoucherCoupons } from '../complete/create-voucher-coupons';
 import { type CategoryRestrictions, calculateEligibleSubtotal } from '@/utils/coupon-eligibility';
+import {
+  resolveProductCardsShippingInfo,
+  shippingModeChargesDelivery,
+  shippingModeRequiresDelivery,
+} from '@/utils/resolve-shipping-mode';
+import { resolveProductCardShipmentDeclaredValue } from '@/utils/resolve-shipment-declared-value';
 // import { pdf } from '@react-pdf/renderer';
 
 export const dynamic = 'force-dynamic';
@@ -39,8 +45,8 @@ export async function POST(request: Request) {
     );
   }
 
-  // Validate shipping postal code only if delivery is needed and shipping is different from billing
-  if (input.needDelivery && input.shippingSameAsBilling && shippingPostcode) {
+  // Validate shipping postal code only if the customer entered a separate shipping address.
+  if (!input.shippingSameAsBilling && shippingPostcode) {
     if (!POLISH_POSTAL_CODE_REGEX.test(shippingPostcode)) {
       console.error('Invalid shipping postal code:', shippingPostcode);
       return NextResponse.json(
@@ -74,6 +80,17 @@ export async function POST(request: Request) {
       console.log(`💳 P24 Mode: ${process.env.SANDBOX === 'true' ? 'SANDBOX (Test)' : 'PRODUCTION (Real)'}`);
     }
     const { data: settingsData } = await supabase.from('settings').select('value').eq('name', 'ifirma').single();
+    const { data: deliverySettings } = await supabase
+      .from('settings')
+      .select('value->deliveryPrice, value->paczkomatPrice')
+      .eq('name', 'apaczka')
+      .returns<{ deliveryPrice: number; paczkomatPrice: number }[]>()
+      .single();
+    const { data: freeShippingData } = await supabase
+      .from('settings')
+      .select('value->freeDeliveryAmount')
+      .eq('name', 'general')
+      .single();
 
     // Ensure we always have an array to map over
     const productItems = input.products?.array ?? [];
@@ -87,6 +104,97 @@ export async function POST(request: Request) {
         timestamp: new Date().toISOString(),
       });
       return NextResponse.json({ error: 'Cannot create order with empty products array' }, { status: 400 });
+    }
+
+    const shippingSourceItems = await sanityFetch<
+      Array<{
+        _id: string;
+        _type: 'product' | 'course' | 'bundle' | 'voucher';
+        price?: number | null;
+        discount?: number | null;
+        shippingMode?: 'none' | 'included' | 'paid' | null;
+        shippingLabel?: string | null;
+        shipmentDeclaredValue?: number | null;
+        courses?: Array<{
+          _id: string;
+          price?: number | null;
+          discount?: number | null;
+          shippingMode?: 'none' | 'included' | 'paid' | null;
+          shippingLabel?: string | null;
+          shipmentDeclaredValue?: number | null;
+        }> | null;
+      }>
+    >({
+      query:
+        '*[(_type == "product" || _type == "course" || _type == "bundle" || _type == "voucher") && _id in $ids]{_id, _type, price, discount, shippingMode, shippingLabel, shipmentDeclaredValue, "courses": courses[]->{_id, price, discount, shippingMode, shippingLabel, shipmentDeclaredValue}}',
+      params: { ids: Array.from(new Set(productItems.map((item) => item.id))) },
+      noCache: true,
+    });
+
+    const shippingSourceMap = new Map(shippingSourceItems.map((item) => [item._id, item]));
+    const serverResolvedShippingItems = productItems.map((product) => {
+      const sourceItem = shippingSourceMap.get(product.id);
+
+      if (!sourceItem) {
+        throw new Error(`Missing shipping source item for ${product.id}`);
+      }
+
+      return {
+        ...sourceItem,
+        voucherData: product.voucherData,
+      };
+    });
+    const serverResolvedShipmentDeclaredValues = productItems.map((product) => {
+      const sourceItem = shippingSourceMap.get(product.id);
+
+      if (!sourceItem) {
+        throw new Error(`Missing shipment declared value source item for ${product.id}`);
+      }
+
+      const declaredValueContext = {
+        ...sourceItem,
+        price:
+          sourceItem._type === 'course'
+            ? sourceItem.price ?? product.price
+            : product.price,
+        discount:
+          sourceItem._type === 'course'
+            ? sourceItem.discount ?? (typeof product.discount === 'number' ? product.discount : undefined)
+            : typeof product.discount === 'number'
+              ? product.discount
+              : undefined,
+        quantity: product.quantity ?? 1,
+        voucherData: product.voucherData,
+      };
+
+      return resolveProductCardShipmentDeclaredValue(declaredValueContext);
+    });
+
+    const resolvedOrderShippingInfo = resolveProductCardsShippingInfo(serverResolvedShippingItems);
+    const serverNeedDelivery = shippingModeRequiresDelivery(resolvedOrderShippingInfo.mode);
+    const serverChargesDelivery = shippingModeChargesDelivery(resolvedOrderShippingInfo.mode);
+    const configuredShippingMethods = [
+      {
+        name: 'Kurier InPost',
+        price: deliverySettings?.deliveryPrice ?? 2000,
+        map: false,
+      },
+      {
+        name: 'Paczkomat Inpost',
+        price: deliverySettings?.paczkomatPrice ?? 2000,
+        map: true,
+      },
+    ];
+    const selectedShippingMethod = input.shippingMethod?.name
+      ? configuredShippingMethods.find((method) => method.name === input.shippingMethod?.name)
+      : null;
+
+    if (serverNeedDelivery && !selectedShippingMethod) {
+      return NextResponse.json({ error: 'Wybierz sposób dostawy' }, { status: 400 });
+    }
+
+    if (selectedShippingMethod?.map && !input.shippingMethod?.data) {
+      return NextResponse.json({ error: 'Musisz wybrać paczkomat' }, { status: 400 });
     }
 
     // Server-side guard: block products whose parent course references them as materials/manuals
@@ -138,39 +246,60 @@ export async function POST(request: Request) {
       }
     }
 
-    const productRequiredCourseMap = new Map<string, { _id: string; name?: string }>();
+    const productEligibilityMap = new Map<string, Map<string, { _id: string; name?: string }>>();
     if (productIdsNeedingRelation.length > 0) {
       const sanityCourses = await sanityFetch<
         Array<{
           _id: string;
           name?: string;
+          type?: 'course' | 'program' | null;
           materials_link?: { _id: string; name?: string } | null;
           related_products?: Array<{ _id: string; name?: string }> | null;
+          printed_manual?: { _id: string; name?: string } | null;
+          includedByPrograms?: Array<{ _id: string; name?: string; type?: 'program' | null }> | null;
         }>
       >({
-        query: '*[_type == "course" && references($productIds)]{_id, name, "materials_link": materials_link->{_id, name}, "related_products": related_products[]->{_id, name}}',
+        query:
+          '*[_type == "course" && references($productIds)]{_id, name, type, "materials_link": materials_link->{_id, name}, "related_products": related_products[]->{_id, name}, "printed_manual": printed_manual->{_id, name}, "includedByPrograms": *[_type == "course" && type == "program" && ^._id in includedCourses[]._ref]{_id, name, type}}',
         params: { productIds: productIdsNeedingRelation },
         noCache: true,
       });
 
       const productIdSet = new Set(productIdsNeedingRelation);
+      const addEligibilityForProduct = (productId: string | undefined, eligibleRefs: Array<{ _id: string; name?: string }>) => {
+        if (!productId || !productIdSet.has(productId)) return;
+
+        const currentRefs = productEligibilityMap.get(productId) ?? new Map<string, { _id: string; name?: string }>();
+
+        eligibleRefs.forEach((ref) => {
+          if (!ref?._id) return;
+          currentRefs.set(ref._id, { _id: ref._id, name: ref.name });
+        });
+
+        productEligibilityMap.set(productId, currentRefs);
+      };
+
       sanityCourses?.forEach((course) => {
-        if (course.materials_link?._id && productIdSet.has(course.materials_link._id)) {
-          productRequiredCourseMap.set(course.materials_link._id, { _id: course._id, name: course.name });
-        }
+        const eligibleRefs = [
+          { _id: course._id, name: course.name },
+          ...(course.includedByPrograms ?? []).map((program) => ({ _id: program._id, name: program.name })),
+        ];
+
+        addEligibilityForProduct(course.materials_link?._id, eligibleRefs);
+        addEligibilityForProduct(course.printed_manual?._id, eligibleRefs);
         course.related_products?.forEach((product) => {
-          if (product?._id && productIdSet.has(product._id)) {
-            productRequiredCourseMap.set(product._id, { _id: course._id, name: course.name });
-          }
+          addEligibilityForProduct(product?._id, eligibleRefs);
         });
       });
     }
 
-    if (productRequiredCourseMap.size > 0) {
+    if (productEligibilityMap.size > 0) {
       const requiredCourseIds = new Set(
-        Array.from(productRequiredCourseMap.values())
-          .map((related) => related._id)
-          .filter((courseId): courseId is string => typeof courseId === 'string')
+        Array.from(productEligibilityMap.values()).flatMap((eligibleRefs) =>
+          Array.from(eligibleRefs.values())
+            .map((related) => related._id)
+            .filter((courseId): courseId is string => typeof courseId === 'string')
+        )
       );
 
       let ownedRelatedCourseIds = new Set<string>();
@@ -190,21 +319,30 @@ export async function POST(request: Request) {
       }
 
       for (const product of productItems) {
-        const relatedCourse = productRequiredCourseMap.get(product.id);
-        if (!relatedCourse) continue;
+        const eligibleRefs = productEligibilityMap.get(product.id);
+        if (!eligibleRefs?.size) continue;
 
-        const hasCourseInOrder = orderCourseIds.has(relatedCourse._id);
-        const userOwnsCourse = input.user_id ? ownedRelatedCourseIds.has(relatedCourse._id) : false;
+        const eligibleIds = Array.from(eligibleRefs.keys());
+        const hasCourseInOrder = eligibleIds.some((eligibleId) => orderCourseIds.has(eligibleId));
+        const userOwnsCourse = input.user_id ? eligibleIds.some((eligibleId) => ownedRelatedCourseIds.has(eligibleId)) : false;
 
         if (!hasCourseInOrder && !userOwnsCourse) {
+          const eligibleNames = Array.from(eligibleRefs.values())
+            .map((related) => related.name)
+            .filter((name): name is string => typeof name === 'string' && name.length > 0);
+          const eligibleLabel =
+            eligibleNames.length === 1
+              ? `kursu lub programu "${eligibleNames[0]}"`
+              : 'powiązanego kursu lub programu';
+
           console.warn('Order blocked: product requires related course', {
             productId: product.id,
-            relatedCourseId: relatedCourse._id,
+            relatedCourseIds: eligibleIds,
             userId: input.user_id ?? 'guest',
           });
           return NextResponse.json(
             {
-              error: `Produkt "${product.name}" wymaga posiadania kursu "${relatedCourse.name}". Dodaj kurs do zamówienia lub zaloguj się na konto z dostępem do kursu.`,
+              error: `Produkt "${product.name}" wymaga posiadania ${eligibleLabel}. Dodaj odpowiedni kurs lub program do zamówienia albo zaloguj się na konto z dostępem.`,
             },
             { status: 400 }
           );
@@ -215,12 +353,19 @@ export async function POST(request: Request) {
     // NOTE: Voucher coupons are NO LONGER created here to prevent orphaned coupons
     // when users click multiple times. Coupons are created AFTER payment confirmation
     // in /api/payment/complete via createVoucherCoupons()
-    const products = productItems.map(async (product) => {
+    const products = productItems.map(async (product, index) => {
+      const resolvedShipmentDeclaredValue = serverResolvedShipmentDeclaredValues[index] ?? {
+        value: null,
+        source: null,
+      };
+
       if (product.type === 'voucher') {
         // Don't create coupon yet - just pass voucher data through
         // Coupon will be created after payment is confirmed
         return {
           ...product,
+          shipmentDeclaredValue: resolvedShipmentDeclaredValue.value,
+          shipmentDeclaredValueSource: resolvedShipmentDeclaredValue.source,
           voucherBase64: null, // Will be generated after payment
           voucherPending: true, // Flag to indicate coupon needs to be created
           vat: 0,
@@ -229,6 +374,8 @@ export async function POST(request: Request) {
       } else {
         return {
           ...product,
+          shipmentDeclaredValue: resolvedShipmentDeclaredValue.value,
+          shipmentDeclaredValueSource: resolvedShipmentDeclaredValue.source,
           vat: product.courses ? settingsData?.value.vatCourses : settingsData?.value.vatPhysical,
           ryczalt: product.courses ? settingsData?.value.ryczaltCourses : settingsData?.value.ryczaltPhysical,
         };
@@ -363,7 +510,20 @@ export async function POST(request: Request) {
       (acc, p) => acc + (typeof p.discount === 'number' ? p.discount : p.price) * (p.quantity ?? 1),
       0
     );
-    const deliveryAmount = input.needDelivery ? (input.shippingMethod?.price ?? 0) : 0;
+    const freeShippingThreshold = Number(freeShippingData?.freeDeliveryAmount ?? 0);
+    const qualifiesForFreeDelivery = serverChargesDelivery && freeShippingThreshold > 0 && productsSubtotal >= freeShippingThreshold;
+    const deliveryAmount = serverNeedDelivery
+      ? serverChargesDelivery && !qualifiesForFreeDelivery
+        ? (selectedShippingMethod?.price ?? 0)
+        : 0
+      : 0;
+    const persistedShippingMethod = serverNeedDelivery
+      ? {
+          name: selectedShippingMethod!.name,
+          price: deliveryAmount,
+          data: selectedShippingMethod!.map ? input.shippingMethod?.data ?? null : '',
+        }
+      : null;
 
     // Helper to transform product items for eligibility check
     const transformProductForEligibility = (item: (typeof productItems)[0]) => ({
@@ -460,20 +620,20 @@ export async function POST(request: Request) {
         products: {
           array: await Promise.all(products),
         },
-        status: computedFinalTotal <= 0 ? (input.needDelivery ? 2 : 3) : 1,
+        status: computedFinalTotal <= 0 ? (serverNeedDelivery ? 2 : 3) : 1,
         billing: input.billing,
-        shipping: input.needDelivery && !input.shippingMethod?.data ? input.shipping : null,
+        shipping: serverNeedDelivery && !persistedShippingMethod?.data ? input.shipping : null,
         amount: computedFinalTotal,
-        shipping_method: input.needDelivery ? input.shippingMethod : null,
+        shipping_method: persistedShippingMethod,
         used_discounts,
         used_discount: used_discounts.length === 1 ? used_discounts[0]! : null,
         used_virtual_money: null, // Guests cannot use virtual money
         paid_at: null,
         payment_id: null,
         payment_method: 'Przelewy24',
-        need_delivery: input.needDelivery,
+        need_delivery: serverNeedDelivery,
         client_notes: input.client_notes,
-        free_delivery: input.freeDelivery,
+        free_delivery: qualifiesForFreeDelivery,
         // Version 2: Discounts apply only to products, not delivery. Supports category_restrictions.
         discount_logic_version: 2,
       }
@@ -485,20 +645,20 @@ export async function POST(request: Request) {
         products: {
           array: await Promise.all(products),
         },
-        status: computedFinalTotal <= 0 ? (input.needDelivery ? 2 : 3) : 1,
+        status: computedFinalTotal <= 0 ? (serverNeedDelivery ? 2 : 3) : 1,
         billing: input.billing,
-        shipping: input.needDelivery && !input.shippingMethod?.data ? input.shipping : null,
+        shipping: serverNeedDelivery && !persistedShippingMethod?.data ? input.shipping : null,
         amount: computedFinalTotal,
-        shipping_method: input.needDelivery ? input.shippingMethod : null,
+        shipping_method: persistedShippingMethod,
         used_discounts,
         used_discount: used_discounts.length === 1 ? used_discounts[0]! : null,
         used_virtual_money: input.virtualMoney,
         paid_at: null,
         payment_id: null,
         payment_method: 'Przelewy24',
-        need_delivery: input.needDelivery,
+        need_delivery: serverNeedDelivery,
         client_notes: input.client_notes,
-        free_delivery: input.freeDelivery,
+        free_delivery: qualifiesForFreeDelivery,
         // Version 2: Discounts apply only to products, not delivery. Supports category_restrictions.
         discount_logic_version: 2,
       };

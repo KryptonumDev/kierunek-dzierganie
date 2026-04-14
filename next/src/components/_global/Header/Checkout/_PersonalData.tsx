@@ -6,6 +6,7 @@ import { REGEX } from '@/global/constants';
 import type { Discount, MapPoint } from '@/global/types';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
 import { formatPrice } from '@/utils/price-formatter';
+import { shippingModeChargesDelivery } from '@/utils/resolve-shipping-mode';
 import Script from 'next/script';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -27,7 +28,9 @@ const generateNewInput = (
 ) => {
   // Compute combined discount for multi-coupon support (matches cart and server rules)
   const discounts = (input as unknown as { discounts?: Discount[] }).discounts;
-  const delivery = shippingMethods.find((method) => method.name === data.shippingMethod)?.price || 0;
+  const selectedShippingMethod = shippingMethods.find((method) => method.name === data.shippingMethod);
+  const selectedShippingMethodPrice = selectedShippingMethod?.price || 0;
+  const delivery = shippingModeChargesDelivery(input.shippingMode) && !input.freeDelivery ? selectedShippingMethodPrice : 0;
   const discountsAmount = (() => {
     if (!Array.isArray(discounts) || discounts.length === 0)
       return input.discount ? calculateDiscountAmount(input.amount, input.discount, delivery) : 0;
@@ -50,15 +53,15 @@ const generateNewInput = (
     billingDifferentThanShipping: !data.shippingSameAsBilling,
     shippingMethod: {
       name: data.shippingMethod,
-      price: shippingMethods.find((method) => method.name === data.shippingMethod)?.price || 0,
-      data: shippingMethods.find((method) => method.name === data.shippingMethod)?.map ? selectedMapPoint : '',
+      price: delivery,
+      data: selectedShippingMethod?.map ? selectedMapPoint : '',
     },
     discounts: discounts, // keep array for server
     totalAmount:
       input.amount +
       discountsAmount -
       (input.virtualMoney ? input.virtualMoney * 100 : 0) +
-      (input.needDelivery && !input.freeDelivery ? Number(input.delivery) : 0),
+      (input.needDelivery ? delivery : 0),
     client_notes: data.client_notes,
     freeDelivery: input.freeDelivery,
     shipping: {
@@ -139,7 +142,10 @@ export default function PersonalData({
   useEffect(() => {
     setInput((prev) => ({
       ...prev,
-      delivery: shippingMethods.find((method) => method.name === shippingMethod)?.price || 0,
+      delivery:
+        shippingModeChargesDelivery(prev.shippingMode) && !prev.freeDelivery
+          ? shippingMethods.find((method) => method.name === shippingMethod)?.price || 0
+          : 0,
     }));
   }, [shippingMethod, setInput, shippingMethods]);
 
@@ -166,6 +172,9 @@ export default function PersonalData({
   const invoiceType = watch('invoiceType');
 
   const shippingMethodd = watch('shippingMethod');
+  const displayShippingPrice = (price: number) => {
+    return shippingModeChargesDelivery(input.shippingMode) && !input.freeDelivery ? price : 0;
+  };
 
   useEffect(() => {
     if (shippingMethodd) setCurrentShippingMethod(shippingMethodd);
@@ -277,7 +286,7 @@ export default function PersonalData({
                             shippingMethod !== method.name || !!selectedMapPoint || 'Musisz wybrać paczkomat',
                         })}
                         value={method.name}
-                        label={`${method.name} <strong>${formatPrice(method.price)}</strong>`}
+                        label={`${method.name} <strong>${formatPrice(displayShippingPrice(method.price))}</strong>`}
                         errors={errors}
                       />
                       {shippingMethod === method.name && (
@@ -320,7 +329,7 @@ export default function PersonalData({
                     <Radio
                       register={register('shippingMethod')}
                       value={method.name}
-                      label={`${method.name} <strong>${formatPrice(method.price)}</strong>`}
+                      label={`${method.name} <strong>${formatPrice(displayShippingPrice(method.price))}</strong>`}
                       errors={{}}
                     />
                   </div>
