@@ -103,7 +103,7 @@ const query = async (slug: string): Promise<ThankYouPageQueryProps> => {
       }
     `,
     params: { slug },
-    tags: ['landingPage'],
+    tags: ['thankYouPage'],
   });
   !data && notFound();
   return data as ThankYouPageQueryProps;

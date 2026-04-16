@@ -33,6 +33,8 @@ const DEPENDENCY_MAP: Record<string, string[]> = {
   BlogCategory_Collection: ['BlogPost_Collection'],
   // Blog posts may appear on the blog page
   BlogPost_Collection: ['Blog_Page'],
+  // Landing pages dereference thank-you pages in newsletter / lead-gen sections
+  thankYouPage: ['landingPage'],
 };
 
 export async function POST(request: NextRequest) {
