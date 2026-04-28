@@ -5,6 +5,8 @@ import Input from '@/components/ui/Input';
 import PasswordInput from '@/components/ui/PasswordInput';
 import { REGEX } from '@/global/constants';
 import type { ProductCard } from '@/global/types';
+import { checkAccountExists } from '@/utils/check-account-exists';
+import { normalizeEmail } from '@/utils/normalize-email';
 import { createClient } from '@/utils/supabase-client';
 import {
   validateGuestCart,
@@ -26,6 +28,34 @@ type FormValues = {
   accept: boolean;
 };
 
+type ProfileData = {
+  billing_data?: Partial<InputState['billing']> | null;
+  shipping_data?: Partial<InputState['shipping']> | null;
+};
+
+const EXISTING_ACCOUNT_MESSAGE = 'Konto z tym adresem e-mail już istnieje. Zaloguj się lub ustaw hasło.';
+const SIGNUP_RECOVERY_MESSAGE =
+  'Nie udało się dokończyć rejestracji. Jeśli konto już istnieje, zaloguj się lub ustaw hasło.';
+const PROFILE_LOAD_ERROR_MESSAGE = 'Nie udało się pobrać danych konta. Spróbuj ponownie.';
+
+const getAuthErrorMessage = (error: unknown) => {
+  const message = error instanceof Error ? error.message : 'Wystąpił błąd. Spróbuj ponownie.';
+
+  if (message === 'Invalid login credentials') {
+    return 'Nieprawidłowe dane logowania!';
+  }
+
+  if (
+    message === 'User already registered' ||
+    message.toLowerCase().includes('user_already_exists') ||
+    (message.toLowerCase().includes('already') && message.toLowerCase().includes('exist'))
+  ) {
+    return EXISTING_ACCOUNT_MESSAGE;
+  }
+
+  return message;
+};
+
 export default function Authorization({
   setStep,
   goToCart,
@@ -33,6 +63,7 @@ export default function Authorization({
   fetchedItems,
 }: MappingProps & { fetchedItems: ProductCard[] | null }) {
   const [isRegister, setRegister] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const supabase = createClient();
   const router = useRouter();
 
@@ -71,125 +102,137 @@ export default function Authorization({
     mode: 'all',
   });
 
+  const updateInputFromProfile = (userId: string, email: string, profile: ProfileData) => {
+    setInput((prev: InputState) => {
+      return {
+        ...prev,
+        user_id: userId,
+        shipping: {
+          firstName: profile.shipping_data?.firstName ?? '',
+          address1: profile.shipping_data?.address1 ?? '',
+          city: profile.shipping_data?.city ?? '',
+          country: profile.shipping_data?.country ?? '',
+          postcode: profile.shipping_data?.postcode ?? '',
+          phone: profile.shipping_data?.phone ?? '',
+        },
+        billing: {
+          nip: profile.billing_data?.nip ?? '',
+          firstName: profile.billing_data?.firstName ?? '',
+          address1: profile.billing_data?.address1 ?? '',
+          city: profile.billing_data?.city ?? '',
+          country: profile.billing_data?.country ?? '',
+          postcode: profile.billing_data?.postcode ?? '',
+          email,
+          phone: profile.billing_data?.phone ?? '',
+          company: profile.billing_data?.company ?? '',
+          invoiceType: profile.billing_data?.invoiceType ?? 'Osoba prywatna',
+        },
+      };
+    });
+  };
+
   const onSubmit: SubmitHandler<FormValues> = async (data: FormValues) => {
-    if (isRegister) {
-      await supabase.auth
-        .signUp({
-          email: data.email,
+    setIsSubmitting(true);
+
+    try {
+      if (isRegister) {
+        const { exists, normalizedEmail } = await checkAccountExists(data.email);
+
+        if (exists) {
+          toast(EXISTING_ACCOUNT_MESSAGE);
+          setRegister(false);
+          return;
+        }
+
+        const res = await supabase.auth.signUp({
+          email: normalizedEmail,
           password: data.password,
           options: {
             emailRedirectTo: `${location.origin}/api/auth/confirm`,
           },
-        })
-        .then(async (res) => {
-          if (res.error) throw res.error;
-
-          if (res.data.user) {
-            const { data } = await supabase
-              .from('profiles')
-              .select(
-                `
-                id,
-                billing_data,
-                shipping_data
-              `
-              )
-              .eq('id', res.data.user!.id)
-              .single();
-
-            setInput((prev: InputState) => {
-              return {
-                ...prev,
-                user_id: res.data.user!.id,
-                shipping: {
-                  firstName: data!.shipping_data?.firstName ?? '',
-                  address1: data!.shipping_data?.address1 ?? '',
-                  city: data!.shipping_data?.city ?? '',
-                  country: data!.shipping_data?.country ?? '',
-                  postcode: data!.shipping_data?.postcode ?? '',
-                  phone: data!.shipping_data?.phone ?? '',
-                },
-                billing: {
-                  nip: data!.billing_data?.nip ?? '',
-                  firstName: data!.billing_data?.firstName ?? '',
-                  address1: data!.billing_data?.address1 ?? '',
-                  city: data!.billing_data?.city ?? '',
-                  country: data!.billing_data?.country ?? '',
-                  postcode: data!.billing_data?.postcode ?? '',
-                  email: res.data.user?.email ?? '',
-                  phone: data!.billing_data?.phone ?? '',
-                  company: data!.billing_data?.company ?? '',
-                  invoiceType: data!.billing_data?.invoiceType ?? 'Osoba prywatna',
-                },
-              };
-            });
-
-            if (!res.data.session) {
-              toast('Na podany adres e-mail został wysłany link aktywacyjny');
-            }
-
-            setStep(2);
-            return;
-          }
-        })
-        .catch((error) => {
-          toast(error.message);
-          console.error(error);
         });
-    } else {
-      await supabase.auth
-        .signInWithPassword({
-          email: data.email,
-          password: data.password,
-        })
-        .then(async (res) => {
-          if (res.error) throw res.error;
 
-          const { data } = await supabase
-            .from('profiles')
-            .select(
-              `
+        if (res.error) {
+          throw res.error;
+        }
+
+        if (!res.data.user) {
+          toast(SIGNUP_RECOVERY_MESSAGE);
+          setRegister(false);
+          return;
+        }
+
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select(
+            `
               id,
               billing_data,
               shipping_data
             `
-            )
-            .eq('id', res.data.user!.id)
-            .single();
+          )
+          .eq('id', res.data.user.id)
+          .maybeSingle();
 
-          setInput((prev: InputState) => {
-            return {
-              ...prev,
-              user_id: res.data.user!.id,
-              shipping: {
-                firstName: data!.shipping_data?.firstName ?? '',
-                address1: data!.shipping_data?.address1 ?? '',
-                city: data!.shipping_data?.city ?? '',
-                country: data!.shipping_data?.country ?? '',
-                postcode: data!.shipping_data?.postcode ?? '',
-                phone: data!.shipping_data?.phone ?? '',
-              },
-              billing: {
-                nip: data!.billing_data?.nip ?? '',
-                firstName: data!.billing_data?.firstName ?? '',
-                address1: data!.billing_data?.address1 ?? '',
-                city: data!.billing_data?.city ?? '',
-                country: data!.billing_data?.country ?? '',
-                postcode: data!.billing_data?.postcode ?? '',
-                email: res.data.user?.email ?? '',
-                phone: data!.billing_data?.phone ?? '',
-                company: data!.billing_data?.company ?? '',
-                invoiceType: data!.billing_data?.invoiceType ?? 'Osoba prywatna',
-              },
-            };
-          });
-          setStep(2);
-          router.refresh();
-        })
-        .catch((error) => {
-          toast(error.message);
-          console.error(error);
-        });
+        if (profileError) {
+          throw profileError;
+        }
+
+        if (!profile) {
+          toast(SIGNUP_RECOVERY_MESSAGE);
+          setRegister(false);
+          return;
+        }
+
+        updateInputFromProfile(res.data.user.id, res.data.user.email ?? normalizedEmail, profile);
+
+        if (!res.data.session) {
+          toast('Na podany adres e-mail został wysłany link aktywacyjny');
+        }
+
+        setStep(2);
+        return;
+      }
+
+      const normalizedEmail = normalizeEmail(data.email);
+      const res = await supabase.auth.signInWithPassword({
+        email: normalizedEmail,
+        password: data.password,
+      });
+
+      if (res.error) {
+        throw res.error;
+      }
+
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select(
+          `
+            id,
+            billing_data,
+            shipping_data
+          `
+        )
+        .eq('id', res.data.user!.id)
+        .maybeSingle();
+
+      if (profileError) {
+        throw profileError;
+      }
+
+      if (!profile) {
+        toast(PROFILE_LOAD_ERROR_MESSAGE);
+        return;
+      }
+
+      updateInputFromProfile(res.data.user!.id, res.data.user?.email ?? normalizedEmail, profile);
+      setStep(2);
+      router.refresh();
+    } catch (error) {
+      toast(getAuthErrorMessage(error));
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -263,7 +306,7 @@ export default function Authorization({
             errors={errors}
           />
         )}
-        <Button>{isRegister ? 'Zarejestruj się' : 'Zaloguj się'}</Button>
+        <Button disabled={isSubmitting}>{isRegister ? 'Zarejestruj się' : 'Zaloguj się'}</Button>
 
         {/* Guest Checkout Option - Only show for physical-only carts */}
         {cartValidation.canCheckoutAsGuest && (
@@ -274,6 +317,7 @@ export default function Authorization({
             <Button
               type='button'
               onClick={handleGuestCheckout}
+              disabled={isSubmitting}
             >
               Kontynuuj jako gość
             </Button>
@@ -290,6 +334,7 @@ export default function Authorization({
                 setRegister(false);
               }}
               type='button'
+              disabled={isSubmitting}
             >
               Zaloguj się
             </button>
@@ -303,6 +348,7 @@ export default function Authorization({
                 setRegister(true);
               }}
               type='button'
+              disabled={isSubmitting}
             >
               Zarejestruj się
             </button>
@@ -314,6 +360,7 @@ export default function Authorization({
           className={`link ${styles['return']}`}
           type='button'
           onClick={goToCart}
+          disabled={isSubmitting}
         >
           Wróć do koszyka
         </button>
