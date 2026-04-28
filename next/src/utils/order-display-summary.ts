@@ -1,4 +1,5 @@
 import type { Discount } from '@/global/types';
+import { getNonDeliveryDiscounts } from '@/utils/delivery-discount';
 
 type OrderProductLine = {
   price?: number | null;
@@ -44,7 +45,7 @@ export function getOrderDisplaySummary(order: OrderDisplaySummaryInput) {
   const shippingCents = order.shippingMethod?.price ?? order.shipping_method?.price ?? 0;
   const virtualMoneyUnits = order.virtualMoney ?? order.used_virtual_money ?? 0;
   const virtualMoneyCents = Math.max(0, virtualMoneyUnits * 100);
-  const discounts = getOrderDiscounts(order);
+  const discounts = getNonDeliveryDiscounts(getOrderDiscounts(order));
   const baseBeforeDiscounts = productsSubtotal + shippingCents - virtualMoneyCents;
   const discountCents = discounts.length > 0 ? Math.min(0, order.amount - baseBeforeDiscounts) : 0;
 

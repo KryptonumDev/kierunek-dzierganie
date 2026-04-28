@@ -5,6 +5,7 @@ import Radio from '@/components/ui/Radio';
 import { REGEX } from '@/global/constants';
 import type { Discount, MapPoint } from '@/global/types';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
+import { getNonDeliveryDiscounts } from '@/utils/delivery-discount';
 import { formatPrice } from '@/utils/price-formatter';
 import { shippingModeChargesDelivery } from '@/utils/resolve-shipping-mode';
 import Script from 'next/script';
@@ -27,21 +28,23 @@ const generateNewInput = (
   shippingMethods: { name: string; map: boolean; price: number }[]
 ) => {
   // Compute combined discount for multi-coupon support (matches cart and server rules)
-  const discounts = (input as unknown as { discounts?: Discount[] }).discounts;
+  const discounts = getNonDeliveryDiscounts((input as unknown as { discounts?: Discount[] }).discounts);
   const selectedShippingMethod = shippingMethods.find((method) => method.name === data.shippingMethod);
   const selectedShippingMethodPrice = selectedShippingMethod?.price || 0;
   const delivery = shippingModeChargesDelivery(input.shippingMode) && !input.freeDelivery ? selectedShippingMethodPrice : 0;
   const discountsAmount = (() => {
-    if (!Array.isArray(discounts) || discounts.length === 0)
-      return input.discount ? calculateDiscountAmount(input.amount, input.discount, delivery) : 0;
+    if (discounts.length === 0) {
+      if (!input.discount || input.discount.type === 'DELIVERY') return 0;
+      return calculateDiscountAmount(input.amount, input.discount, input.discount.eligibleSubtotal);
+    }
     const productTotal = discounts
       .filter((d) => d.type === 'FIXED PRODUCT')
       .reduce((sum, d) => sum + calculateDiscountAmount(input.amount, d, 0), 0);
-    const baseAfterProducts = Math.max(0, input.amount + delivery + productTotal);
+    const baseAfterProducts = Math.max(0, input.amount + productTotal);
     const voucher = discounts.find((d) => d.type === 'VOUCHER');
     const voucherTotal = voucher ? -Math.min(baseAfterProducts, voucher.amount ?? 0) : 0;
     const cartWide = discounts.find((d) => d.type === 'PERCENTAGE' || d.type === 'FIXED CART');
-    if (cartWide && discounts.length === 1) return calculateDiscountAmount(input.amount, cartWide, delivery);
+    if (cartWide && discounts.length === 1) return calculateDiscountAmount(input.amount, cartWide, cartWide.eligibleSubtotal);
     return productTotal + voucherTotal;
   })();
 

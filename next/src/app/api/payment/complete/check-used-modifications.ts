@@ -34,7 +34,7 @@ export async function checkUsedModifications(data: any) {
         // Subtract other non-voucher discounts (FIXED PRODUCT, etc.) for a tighter safety cap
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const otherDiscountsTotal = (data.used_discounts as any[])
-          .filter((disc: { type?: string }) => disc.type !== 'VOUCHER')
+          .filter((disc: { type?: string }) => disc.type !== 'VOUCHER' && disc.type !== 'DELIVERY')
           .reduce((acc: number, disc: { amount?: number }) => acc + (disc.amount ?? 0), 0);
 
         // Voucher cap: products minus other discounts minus virtual money (NO shipping – vouchers don't cover delivery)

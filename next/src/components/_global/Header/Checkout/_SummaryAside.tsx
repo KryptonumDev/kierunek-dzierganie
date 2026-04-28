@@ -1,6 +1,7 @@
 import Img from '@/components/ui/image';
 import { courseComplexityEnum } from '@/global/constants';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
+import { getNonDeliveryDiscounts } from '@/utils/delivery-discount';
 import { formatPrice } from '@/utils/price-formatter';
 import { useMemo } from 'react';
 import type { Discount } from '@/global/types';
@@ -15,8 +16,8 @@ export default function SummaryAside({ input }: AsideProps) {
 
   // Calculate discounts - NO LONGER includes delivery (except FREE DELIVERY type)
   const discountsAmount = useMemo(() => {
-    const discounts = (input as unknown as { discounts?: Discount[] }).discounts;
-    if (!Array.isArray(discounts) || discounts.length === 0) return 0;
+    const discounts = getNonDeliveryDiscounts((input as unknown as { discounts?: Discount[] }).discounts);
+    if (discounts.length === 0) return 0;
 
     // Products subtotal (NO delivery in discount calculation)
     const productsSubtotal = input.amount;
@@ -62,19 +63,21 @@ export default function SummaryAside({ input }: AsideProps) {
           <span>{formatPrice(input.delivery)}</span>
         </p>
       )}
-      {Array.isArray((input as unknown as { discounts?: Discount[] }).discounts) &&
-        ((input as unknown as { discounts?: Discount[] }).discounts as Discount[]).length > 0 && (
+      {getNonDeliveryDiscounts((input as unknown as { discounts?: Discount[] }).discounts).length > 0 && (
           <p>
             <span>Kupony</span>
             <span>{formatPrice(discountsAmount)}</span>
           </p>
         )}
-      {!((input as unknown as { discounts?: Discount[] }).discounts || []).length && input.discount && (
-        <p>
-          <span>Kupon: {input.discount.code}</span>
-          <span>{formatPrice(calculateDiscountAmount(input.amount, input.discount, input.discount.eligibleSubtotal))}</span>
-        </p>
-      )}
+      {!input.discount?.type || input.discount.type !== 'DELIVERY'
+        ? !((input as unknown as { discounts?: Discount[] }).discounts || []).length &&
+          input.discount && (
+            <p>
+              <span>Kupon: {input.discount.code}</span>
+              <span>{formatPrice(calculateDiscountAmount(input.amount, input.discount, input.discount.eligibleSubtotal))}</span>
+            </p>
+          )
+        : null}
       {input.virtualMoney && input.virtualMoney > 0 && (
         <p>
           <span>Wykorzystane WZ</span>
@@ -86,11 +89,12 @@ export default function SummaryAside({ input }: AsideProps) {
         <span>
           {formatPrice(
             input.amount +
-              (Array.isArray((input as unknown as { discounts?: Discount[] }).discounts) &&
-              ((input as unknown as { discounts?: Discount[] }).discounts as Discount[]).length > 0
+              (getNonDeliveryDiscounts((input as unknown as { discounts?: Discount[] }).discounts).length > 0
                 ? discountsAmount
                 : input.discount
-                  ? calculateDiscountAmount(input.amount, input.discount, input.discount.eligibleSubtotal)
+                  ? input.discount.type === 'DELIVERY'
+                    ? 0
+                    : calculateDiscountAmount(input.amount, input.discount, input.discount.eligibleSubtotal)
                   : 0) -
               (input.virtualMoney ? input.virtualMoney * 100 : 0) +
               (input.needDelivery ? input.delivery : 0),

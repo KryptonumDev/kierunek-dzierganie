@@ -1,8 +1,8 @@
 import type { Billing, CourseGrantLink, ProductCard, Shipping } from '@/global/types';
+import { resolveDeliveryPricing } from '@/utils/delivery-discount';
 import { getProductBasis } from '@/utils/get-product-basis';
 import {
   resolveProductCardsShippingInfo,
-  shippingModeChargesDelivery,
   shippingModeRequiresDelivery,
 } from '@/utils/resolve-shipping-mode';
 import { validateGuestCart } from '@/utils/validate-guest-cart';
@@ -143,12 +143,17 @@ export default function Checkout({
         const newAmount = fetchedItems.reduce((acc, item) => acc + (item.discount ?? item.price! * item.quantity!), 0);
         const resolvedShippingInfo = resolveProductCardsShippingInfo(fetchedItems);
         const needsDelivery = shippingModeRequiresDelivery(resolvedShippingInfo.mode);
-        const chargesDelivery = shippingModeChargesDelivery(resolvedShippingInfo.mode);
         const selectedShippingMethodPrice = Number(
           shippingMethods.find((method) => method.name === currentShippingMethod)?.price
         );
-        const qualifiesForFreeDelivery = chargesDelivery && freeShipping > 0 && newAmount >= freeShipping;
-        const deliveryAmount = chargesDelivery && !qualifiesForFreeDelivery ? selectedShippingMethodPrice : 0;
+        const deliveryPricing = resolveDeliveryPricing({
+          discounts: usedDiscounts,
+          freeShippingThreshold: freeShipping,
+          needsDelivery,
+          productsSubtotal: newAmount,
+          selectedShippingMethodPrice,
+          shippingMode: resolvedShippingInfo.mode,
+        });
 
         return {
           ...prev,
@@ -158,8 +163,8 @@ export default function Checkout({
           amount: newAmount,
           needDelivery: needsDelivery,
           shippingMode: resolvedShippingInfo.mode,
-          delivery: needsDelivery ? deliveryAmount : 0,
-          freeDelivery: needsDelivery ? qualifiesForFreeDelivery : false,
+          delivery: needsDelivery ? deliveryPricing.deliveryAmount : 0,
+          freeDelivery: needsDelivery ? deliveryPricing.freeDelivery : false,
           // Legacy single discount retained for old flows; new array provided in parallel
           discount:
             usedDiscounts.length === 1 && usedDiscounts[0]?.affiliatedBy === userId ? null : (usedDiscounts[0] ?? null),

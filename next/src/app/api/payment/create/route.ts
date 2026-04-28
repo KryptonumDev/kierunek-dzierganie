@@ -13,9 +13,9 @@ import { updateItemsQuantity } from '../complete/update-items-quantity';
 import { generateGuestOrderToken, isGuestOrder } from '@/utils/generate-guest-order-token';
 import { createVoucherCoupons } from '../complete/create-voucher-coupons';
 import { type CategoryRestrictions, calculateEligibleSubtotal } from '@/utils/coupon-eligibility';
+import { countDeliveryDiscounts, getNonDeliveryDiscounts, resolveDeliveryPricing } from '@/utils/delivery-discount';
 import {
   resolveProductCardsShippingInfo,
-  shippingModeChargesDelivery,
   shippingModeRequiresDelivery,
 } from '@/utils/resolve-shipping-mode';
 import { resolveProductCardShipmentDeclaredValue } from '@/utils/resolve-shipment-declared-value';
@@ -172,7 +172,6 @@ export async function POST(request: Request) {
 
     const resolvedOrderShippingInfo = resolveProductCardsShippingInfo(serverResolvedShippingItems);
     const serverNeedDelivery = shippingModeRequiresDelivery(resolvedOrderShippingInfo.mode);
-    const serverChargesDelivery = shippingModeChargesDelivery(resolvedOrderShippingInfo.mode);
     const configuredShippingMethods = [
       {
         name: 'Kurier InPost',
@@ -441,10 +440,17 @@ export async function POST(request: Request) {
       return d.amount * unitsUsed;
     };
 
+    const deliveryCouponCount = countDeliveryDiscounts(discountsArray);
+    const nonDeliveryDiscounts = getNonDeliveryDiscounts(discountsArray);
+
+    if (deliveryCouponCount > 1) {
+      return NextResponse.json({ error: 'W koszyku można użyć tylko jednego kodu darmowej dostawy' }, { status: 400 });
+    }
+
     // Separate by type
-    const fixedProduct = discountsArray.filter((d) => d.type === 'FIXED PRODUCT');
-    const voucher = discountsArray.filter((d) => d.type === 'VOUCHER');
-    const cartWide = discountsArray.filter((d) => d.type === 'PERCENTAGE' || d.type === 'FIXED CART');
+    const fixedProduct = nonDeliveryDiscounts.filter((d) => d.type === 'FIXED PRODUCT');
+    const voucher = nonDeliveryDiscounts.filter((d) => d.type === 'VOUCHER');
+    const cartWide = nonDeliveryDiscounts.filter((d) => d.type === 'PERCENTAGE' || d.type === 'FIXED CART');
 
     // CRITICAL FIX: Server-side voucher validation (protect against race conditions)
     if (voucher.length > 0) {
@@ -468,7 +474,7 @@ export async function POST(request: Request) {
     }
 
     // v1 policy enforcement: reject cart-wide mixes (soft-fail to legacy single)
-    if (cartWide.length > 0 && discountsArray.length > 1) {
+    if (cartWide.length > 0 && nonDeliveryDiscounts.length > 1) {
       return NextResponse.json({ error: 'Nie można łączyć kodów koszykowych z innymi zniżkami' }, { status: 400 });
     }
 
@@ -511,12 +517,36 @@ export async function POST(request: Request) {
       0
     );
     const freeShippingThreshold = Number(freeShippingData?.freeDeliveryAmount ?? 0);
-    const qualifiesForFreeDelivery = serverChargesDelivery && freeShippingThreshold > 0 && productsSubtotal >= freeShippingThreshold;
-    const deliveryAmount = serverNeedDelivery
-      ? serverChargesDelivery && !qualifiesForFreeDelivery
-        ? (selectedShippingMethod?.price ?? 0)
-        : 0
-      : 0;
+    const deliveryPricing = resolveDeliveryPricing({
+      discounts: discountsArray,
+      freeShippingThreshold,
+      needsDelivery: serverNeedDelivery,
+      productsSubtotal,
+      selectedShippingMethodPrice: selectedShippingMethod?.price ?? 0,
+      shippingMode: resolvedOrderShippingInfo.mode,
+    });
+
+    if (deliveryCouponCount > 0) {
+      if (!serverNeedDelivery) {
+        return NextResponse.json(
+          { error: 'Kod darmowej dostawy można użyć tylko przy zamówieniach wymagających dostawy' },
+          { status: 400 }
+        );
+      }
+
+      if (!deliveryPricing.chargesDelivery) {
+        return NextResponse.json(
+          { error: 'Ten koszyk nie ma płatnej dostawy, więc kod darmowej dostawy nie może zostać użyty' },
+          { status: 400 }
+        );
+      }
+
+      if (deliveryPricing.thresholdFreeDelivery) {
+        return NextResponse.json({ error: 'Dostawa dla tego koszyka jest już darmowa' }, { status: 400 });
+      }
+    }
+
+    const deliveryAmount = deliveryPricing.deliveryAmount;
     const persistedShippingMethod = serverNeedDelivery
       ? {
           name: selectedShippingMethod!.name,
@@ -538,7 +568,7 @@ export async function POST(request: Request) {
 
     // If there is a single cart-wide discount (percentage or fixed cart), apply it to products only (NOT delivery)
     let cartWideUsed = 0;
-    if (cartWide.length === 1 && discountsArray.length === 1) {
+    if (cartWide.length === 1 && nonDeliveryDiscounts.length === 1) {
       const d = cartWide[0]!;
       const restrictions = d.category_restrictions;
 
@@ -607,6 +637,9 @@ export async function POST(request: Request) {
       if (d.type === 'VOUCHER') {
         return { ...d, amount: voucherUsed };
       }
+      if (d.type === 'DELIVERY') {
+        return { ...d, amount: 0 };
+      }
       return d; // PERCENTAGE/FIXED CART not mixed in v1
     });
 
@@ -633,7 +666,7 @@ export async function POST(request: Request) {
         payment_method: 'Przelewy24',
         need_delivery: serverNeedDelivery,
         client_notes: input.client_notes,
-        free_delivery: qualifiesForFreeDelivery,
+        free_delivery: deliveryPricing.freeDelivery,
         // Version 2: Discounts apply only to products, not delivery. Supports category_restrictions.
         discount_logic_version: 2,
       }
@@ -658,7 +691,7 @@ export async function POST(request: Request) {
         payment_method: 'Przelewy24',
         need_delivery: serverNeedDelivery,
         client_notes: input.client_notes,
-        free_delivery: qualifiesForFreeDelivery,
+        free_delivery: deliveryPricing.freeDelivery,
         // Version 2: Discounts apply only to products, not delivery. Supports category_restrictions.
         discount_logic_version: 2,
       };

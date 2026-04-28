@@ -129,12 +129,14 @@ export async function createInvoiceForOrder({
     .filter((discount: { type: string }) => discount.type === 'FIXED CART' || discount.type === 'VOUCHER')
     .reduce((acc: number, discount: { amount: number }) => acc + (discount.amount ?? 0), 0);
 
-  const hasFreeDelivery = discountsArray.some((discount: { type: string }) => discount.type === 'DELIVERY');
+  const hasLegacyDeliveryCoupon = discountsArray.some((discount: { type: string }) => discount.type === 'DELIVERY');
+  const shippingPrice = Math.round(data.shipping_method?.price ?? 0);
+  const hasFreeDelivery = Boolean(data.free_delivery) || hasLegacyDeliveryCoupon;
   const isVoucherOnlyOrder = data.products.array.every((product: { _type?: string; type?: string }) =>
     isVoucherProduct(product)
   );
-  const chargeableShippingPrice =
-    data.shipping_method && !hasFreeDelivery ? Math.round(data.shipping_method.price ?? 0) : 0;
+  const shouldInvoiceShipping = Boolean(data.shipping_method) && shippingPrice > 0 && !hasFreeDelivery;
+  const chargeableShippingPrice = shouldInvoiceShipping ? shippingPrice : 0;
   const shouldCreateShippingOnlyInvoice = isVoucherOnlyOrder && chargeableShippingPrice > 0;
 
   if (isVoucherOnlyOrder && !shouldCreateShippingOnlyInvoice) {
@@ -230,8 +232,8 @@ export async function createInvoiceForOrder({
     });
   }
 
-  if (data.shipping_method && !hasFreeDelivery) {
-    let shippingAmount = data.shipping_method.price;
+  if (shouldInvoiceShipping) {
+    let shippingAmount = shippingPrice;
 
     if (!isV2Logic && remainingFixedCart > 0) {
       shippingAmount = Math.max(1, Math.round(shippingAmount - remainingFixedCart));
@@ -299,7 +301,7 @@ export async function createInvoiceForOrder({
     Uwagi: hasFreeDelivery ? 'Darmowa wysyłka.' : '',
   };
 
-  if (data.shipping_method && !hasFreeDelivery && finalShippingGrosze !== null) {
+  if (shouldInvoiceShipping && finalShippingGrosze !== null) {
     requestContent.Pozycje.push({
       StawkaVat: settingsData?.value?.vatDelivery ? roundTo(settingsData.value.vatDelivery / 100, 2) : 0.23,
       StawkaRyczaltu: settingsData?.value?.ryczaltPhysical

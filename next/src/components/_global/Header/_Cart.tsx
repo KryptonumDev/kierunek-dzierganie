@@ -7,11 +7,12 @@ import Input from '@/components/ui/Input';
 import PickQuantity from '@/components/ui/PickQuantity';
 import ProductCard from '@/components/ui/ProductCard';
 import { calculateDiscountAmount } from '@/utils/calculate-discount-amount';
+import { getNonDeliveryDiscounts, resolveDeliveryPricing } from '@/utils/delivery-discount';
 import { formatToOnlyDigits } from '@/utils/format-to-only-digits';
 import { formatPrice } from '@/utils/price-formatter';
 import {
+  resolveProductCardShippingMode,
   resolveProductCardsShippingInfo,
-  shippingModeChargesDelivery,
   shippingModeRequiresDelivery,
 } from '@/utils/resolve-shipping-mode';
 import { canUseVirtualMoney, getVirtualMoneyRestrictionMessage } from '@/utils/can-use-virtual-money';
@@ -92,15 +93,20 @@ export default function Cart({
   const orderShippingInfo = useMemo(() => resolveProductCardsShippingInfo(fetchedItems), [fetchedItems]);
   const delivery = useMemo<number | null>(() => {
     if (!shippingModeRequiresDelivery(orderShippingInfo.mode)) return null;
-    if (!shippingModeChargesDelivery(orderShippingInfo.mode)) return 0;
-
     const selectedShippingMethodPrice = Number(
       shippingMethods.find((method) => method.name === currentShippingMethod)?.price ?? 0
     );
-    const qualifiesForFreeDelivery = freeShipping > 0 && typeof totalItemsPrice === 'number' && totalItemsPrice >= freeShipping;
+    if (typeof totalItemsPrice !== 'number') return 0;
 
-    return qualifiesForFreeDelivery ? 0 : selectedShippingMethodPrice;
-  }, [currentShippingMethod, freeShipping, orderShippingInfo.mode, shippingMethods, totalItemsPrice]);
+    return resolveDeliveryPricing({
+      discounts: usedDiscounts,
+      freeShippingThreshold: freeShipping,
+      needsDelivery: true,
+      productsSubtotal: totalItemsPrice,
+      selectedShippingMethodPrice,
+      shippingMode: orderShippingInfo.mode,
+    }).deliveryAmount;
+  }, [currentShippingMethod, freeShipping, orderShippingInfo.mode, shippingMethods, totalItemsPrice, usedDiscounts]);
 
   const discountCode = watch('discount');
 
@@ -286,12 +292,14 @@ export default function Cart({
     const fetchedItem = fetchedItems?.find((f) => f._id === item.product);
     const type = fetchedItem?._type;
     const basis = fetchedItem?.basis;
+    const shipmentMode = fetchedItem ? resolveProductCardShippingMode(fetchedItem) : 'none';
     const isNonQuantifiable = type === 'course' || type === 'bundle' || type === 'voucher';
     const price = fetchedItem?.discount ?? fetchedItem?.price ?? 0;
     return {
       ...item,
       _type: type,
       basis,
+      shipmentMode,
       quantity: isNonQuantifiable ? 1 : item.quantity,
       price,
       discount: fetchedItem?.discount,
@@ -448,14 +456,15 @@ export default function Cart({
   // Sum discounts for UI display
   // IMPORTANT: Discounts NO LONGER apply to delivery (except FREE DELIVERY type)
   const discountsAmount = useMemo(() => {
-    if (!Array.isArray(usedDiscounts) || usedDiscounts.length === 0 || typeof totalItemsPrice !== 'number') return 0;
+    const nonDeliveryDiscounts = getNonDeliveryDiscounts(usedDiscounts);
+    if (nonDeliveryDiscounts.length === 0 || typeof totalItemsPrice !== 'number') return 0;
 
     const productsSubtotal = totalItemsPrice;
 
     // FIXED PRODUCT discounts with per-product price cap to prevent
     // stacked coupons from exceeding any individual product's price
     const productTotal = (() => {
-      const fixedDiscounts = usedDiscounts.filter((d) => d.type === 'FIXED PRODUCT');
+      const fixedDiscounts = nonDeliveryDiscounts.filter((d) => d.type === 'FIXED PRODUCT');
       if (fixedDiscounts.length === 0 || !fetchedItems) return 0;
       const perProductDiscount = new Map<string, number>();
       for (const d of fixedDiscounts) {
@@ -488,7 +497,7 @@ export default function Cart({
     const baseAfterProducts = Math.max(0, productsSubtotal + productTotal); // productTotal is negative
 
     // Voucher (respects category restrictions via eligibleSubtotal)
-    const voucher = usedDiscounts.find((d) => d.type === 'VOUCHER');
+    const voucher = nonDeliveryDiscounts.find((d) => d.type === 'VOUCHER');
     let voucherTotal = 0;
     if (voucher) {
       const voucherBase = voucher.eligibleSubtotal !== undefined
@@ -498,8 +507,8 @@ export default function Cart({
     }
 
     // Cart-wide discount (PERCENTAGE or FIXED CART) - can only be used alone
-    const cartWide = usedDiscounts.find((d) => d.type === 'PERCENTAGE' || d.type === 'FIXED CART');
-    if (cartWide && usedDiscounts.length === 1) {
+    const cartWide = nonDeliveryDiscounts.find((d) => d.type === 'PERCENTAGE' || d.type === 'FIXED CART');
+    if (cartWide && nonDeliveryDiscounts.length === 1) {
       return calculateDiscountAmount(productsSubtotal, cartWide, cartWide.eligibleSubtotal);
     }
 
@@ -765,13 +774,13 @@ export default function Cart({
                             <span>{formatPrice(delivery)}</span>
                           </p>
                         )}
-                        {Array.isArray(usedDiscounts) && usedDiscounts.length > 0 && (
+                        {getNonDeliveryDiscounts(usedDiscounts).length > 0 && (
                           <div className={styles.couponsBreakdown}>
                             <p className={styles.couponsHeader}>
                               <span>Kupony</span>
                               <span>{formatPrice(discountsAmount)}</span>
                             </p>
-                            {usedDiscounts.map((d, i) => {
+                            {getNonDeliveryDiscounts(usedDiscounts).map((d, i) => {
                               const restrictionDesc = d.category_restrictions
                                 ? getRestrictionDescription(d.category_restrictions)
                                 : null;
@@ -782,7 +791,7 @@ export default function Cart({
                                 }
                                 if (d.type === 'VOUCHER') {
                                   // Account for FIXED PRODUCT discounts before computing voucher display amount
-                                  const fixedProductTotal = usedDiscounts
+                                  const fixedProductTotal = getNonDeliveryDiscounts(usedDiscounts)
                                     .filter((disc) => disc.type === 'FIXED PRODUCT')
                                     .reduce((sum, disc) => sum + calculateDiscountAmount(totalItemsPrice, disc), 0);
                                   const baseAfterProducts = Math.max(0, totalItemsPrice + fixedProductTotal); // fixedProductTotal is negative

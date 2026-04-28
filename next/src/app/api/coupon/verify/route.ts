@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
+import type { CourseShippingMode } from '@/global/types';
 import {
   type CategoryRestrictions,
   hasEligibleItems,
@@ -26,11 +27,57 @@ type CartItem = {
   basis?: string;
   price?: number;
   discount?: number;
+  shipmentMode?: CourseShippingMode;
 };
 
 export async function POST(request: Request) {
   const { code, codes, userId, cart, isSubmit } = await request.json();
   try {
+    const validateDeliveryCouponAvailability = async (cartItems?: CartItem[]) => {
+      if (!Array.isArray(cartItems) || cartItems.length === 0) {
+        return {
+          error: 'Kod darmowej dostawy można użyć tylko przy zamówieniach z płatną dostawą',
+          status: 400,
+        };
+      }
+
+      const hasChargeableDelivery = cartItems.some((item) => item.shipmentMode === 'paid');
+      if (!hasChargeableDelivery) {
+        return {
+          error: 'Kod darmowej dostawy dotyczy tylko zamówień z płatną dostawą',
+          status: 400,
+        };
+      }
+
+      const productsSubtotal = cartItems.reduce(
+        (sum, item) => sum + (item.discount ?? item.price ?? 0) * (item.quantity ?? 1),
+        0
+      );
+
+      const { data: freeShippingData, error: freeShippingError } = await supabase
+        .from('settings')
+        .select('value->freeDeliveryAmount')
+        .eq('name', 'general')
+        .single();
+
+      if (freeShippingError) {
+        return {
+          error: freeShippingError.message,
+          status: 500,
+        };
+      }
+
+      const freeShippingThreshold = Number(freeShippingData?.freeDeliveryAmount ?? 0);
+      if (freeShippingThreshold > 0 && productsSubtotal >= freeShippingThreshold) {
+        return {
+          error: 'Dostawa dla tego koszyka jest już darmowa',
+          status: 400,
+        };
+      }
+
+      return null;
+    };
+
     // If no code(s) provided, treat as no coupon scenario (return OK)
     if ((!code || String(code).trim().length === 0) && (!Array.isArray(codes) || codes.length === 0)) {
       return NextResponse.json({ ok: true });
@@ -320,6 +367,9 @@ export async function POST(request: Request) {
         }
 
         const normalized = normalizeCouponRow(selected);
+        if (normalized.coupons_types?.coupon_type === 'DELIVERY') {
+          normalized.amount = 0;
+        }
         selectedCoupons.push(normalized);
       }
 
@@ -330,17 +380,30 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: 'W koszyku można użyć tylko jednego vouchera' }, { status: 400 });
       }
 
-      const cartWide = selectedCoupons.filter((c) => {
+      const deliveryCoupons = selectedCoupons.filter((c) => typeOf(c) === 'DELIVERY');
+      if (deliveryCoupons.length > 1) {
+        return NextResponse.json({ error: 'W koszyku można użyć tylko jednego kodu darmowej dostawy' }, { status: 400 });
+      }
+
+      const nonDeliveryCoupons = selectedCoupons.filter((c) => typeOf(c) !== 'DELIVERY');
+      const cartWide = nonDeliveryCoupons.filter((c) => {
         const t = typeOf(c);
         return t === 'PERCENTAGE' || t === 'FIXED CART';
       });
-      if (cartWide.length > 0 && selectedCoupons.length > 1) {
+      if (cartWide.length > 0 && nonDeliveryCoupons.length > 1) {
         return NextResponse.json({ error: 'Nie można łączyć kodów koszykowych z innymi zniżkami' }, { status: 400 });
       }
 
       const hasAffiliate = selectedCoupons.some((c) => !!c.affiliation_of);
       if (hasAffiliate && selectedCoupons.length > 1) {
         return NextResponse.json({ error: 'Kod afiliacyjny nie łączy się z innymi zniżkami' }, { status: 400 });
+      }
+
+      if (deliveryCoupons.length > 0) {
+        const deliveryValidation = await validateDeliveryCouponAvailability(Array.isArray(cart) ? (cart as CartItem[]) : []);
+        if (deliveryValidation) {
+          return NextResponse.json({ error: deliveryValidation.error }, { status: deliveryValidation.status });
+        }
       }
 
       // Submit path: keep same course-only check already done per coupon; just return coupons
@@ -417,6 +480,16 @@ export async function POST(request: Request) {
 
     if (!selected) {
       return NextResponse.json({ error: 'Kod rabatowy nie istnieje' }, { status: 500 });
+    }
+
+    // @ts-expect-error wrong types from supabase
+    const selectedCouponType = selected?.coupons_types?.coupon_type as string | undefined;
+    if (selectedCouponType === 'DELIVERY') {
+      const deliveryValidation = await validateDeliveryCouponAvailability(Array.isArray(cart) ? (cart as CartItem[]) : []);
+      if (deliveryValidation) {
+        return NextResponse.json({ error: deliveryValidation.error }, { status: deliveryValidation.status });
+      }
+      selected.amount = 0;
     }
 
     // Affiliation + submit pathway
